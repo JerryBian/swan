@@ -1,0 +1,128 @@
+﻿@using Laobian.Share.BlogEngine
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="@ViewData["robots"]">
+    @*<meta name="description" content="@AppSetting.Default.BlogDescription" />*@
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>
+        @TitleHelper.GetTitle(ViewData["Title"])
+    </title>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#da532c">
+    <link rel="canonical" href="@ViewData["canonical"]">
+    <link rel="license" href="https://creativecommons.org/licenses/by/4.0">
+    <link rel="alternate" href="/rss" type="application/rss+xml" title="@BlogConstant.BlogName">
+    <link rel="dns-prefetch" href="//laobian.blob.core.windows.net">
+    <link rel="dns-prefetch" href="//www.googletagmanager.com">
+    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="//www.google-analytics.com">
+
+    @*<environment include="Staging,Production">
+            <link rel="stylesheet" href="~/style.min.css" asp-append-version ="true"
+                  asp-fallback-href="https://jerrybian.github.io/static/style/blog.min.css"
+                  asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+        </environment>
+
+        <environment include="Development">
+            <link rel="stylesheet" href="~/lib/bootstrap/bootstrap.css"/>
+            <link rel="stylesheet" href="~/custom/style.css"/>
+        </environment>*@
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="~/custom/style.css" />
+    
+    <link rel="stylesheet"
+          href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/default.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+    
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    @*<script src="https://kit.fontawesome.com/d5577c2a22.js"></script>*@
+    @*<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>*@
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-97849167-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() { dataLayer.push(arguments); }
+
+        gtag('js', new Date());
+
+        gtag('config', 'UA-97849167-1');
+    </script>
+</head>
+<body>
+    <div id="ieWarning" class="d-none" role="alert">
+        该页面在 IE 下可能渲染不完整，为了更好的体验推荐 Edge/Chrome 等浏览器。
+    </div>
+    <script type="text/javascript">
+        if (/MSIE|Trident/.test(window.navigator.userAgent)) {
+            document.getElementById("ieWarning").className = 'alert alert-warning text-center';
+        }
+    </script>
+    <nav class="navbar">
+        <div class="container">
+            <a class="navbar-brand" href="/">@BlogConstant.BlogName</a>
+            <ul class="nav ml-auto">
+                <li><a class="nav-item nav-link" href="/archive/">存档</a></li>
+                <li><a class="nav-item nav-link" href="/about/">关于</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container body-content pl-3 pr-3 pt-5 mb-2">
+
+        <div class="row">
+            <main class="col-lg-9">
+                @RenderBody()
+            </main>
+            <aside class="col-lg-3 d-none d-lg-block">
+                <div class="card mb-3">
+                    <div class="card-header">关于</div>
+                    <div class="card-body">
+                        <p class="card-text">卞良忠，英文名: Jerry Bian。<br />软件工程师，热爱技术与写作。<br />居住在中国杭州。</p>
+                        <a href="/about" class="btn btn-light btn-block">更多 &rarr;</a>
+                    </div>
+                </div>
+
+                @RenderSection("sidebar", false)
+
+                <div class="sticky-top">
+                    @RenderSection("stickySidebar", false)
+
+                    <div class="card mb-3">
+                        <div class="card-header">声明</div>
+                        <div class="card-body">
+                            <p class="card-text">本站点所有内容均为个人观点，不代表本人雇主或其他任何团体。</p>
+                        </div>
+                    </div>
+                </div>
+
+            </aside>
+        </div>
+    </div>
+
+    <footer>
+
+        <div class="container text-center pt-3 pb-2">
+            <small>
+                &copy; 2008 - @DateTime.UtcNow.ToChinaTime().Year @BlogConstant.AuthorChineseName
+            </small>
+        </div>
+    </footer>
+
+    @RenderSection("Scripts", false)
+
+</body>
+</html>

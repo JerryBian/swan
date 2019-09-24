@@ -1,0 +1,25 @@
+﻿@model IEnumerable<ArchiveViewModel>
+
+<div class="archive">
+    <div class="mb-4">
+        @foreach (var item in Model)
+        {
+            <a class="btn btn-light" href="#@item.Link">
+                @item.Name <span class="badge badge-light">@item.Posts.Count.ToMetric()</span>
+            </a>
+        }
+    </div>
+
+    <div>
+        @foreach (var item in Model)
+        {
+            <h3 id="@item.Link">@item.Name (@item.Posts.Count.ToMetric())</h3>
+            <ul>
+                @foreach (var post in item.Posts.OrderByDescending(p => p.CreationTimeUtc))
+                {
+                    <li><a href="@post.FullUrl">@post.Title</a></li>
+                }
+            </ul>
+        }
+    </div>
+</div>
