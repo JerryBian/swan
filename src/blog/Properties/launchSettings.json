@@ -15,7 +15,7 @@
         "SendGridKey": "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",
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "http://localhost:5000"
+      "applicationUrl": "http://localhost:8000"
     }
   }
 }

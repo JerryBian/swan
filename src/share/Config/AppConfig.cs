@@ -13,5 +13,7 @@
         public string AssetGitHubRepoOwner { get; set; }
 
         public string AssetGitHubRepoName { get; set; }
+
+        public bool CloneAssetsDuringStartup { get; set; }
     }
 }

@@ -24,6 +24,7 @@ namespace Laobian.Blog
                 ac.AssetGitHubRepoOwner = config.GetValue<string>("ASSET_GITHUB_REPO_OWNER");
                 ac.AssetGitHubRepoName = config.GetValue<string>("ASSET_GITHUB_REPO_NAME");
                 ac.AssetRepoLocalDir = config.GetValue<string>("ASSET_REPO_LOCAL_DIR");
+                ac.CloneAssetsDuringStartup = config.GetValue("STARTUP_CLONE_ASSETS", true);
             });
 
             services.AddSingleton<IMemoryCacheClient, MemoryCacheClient>();

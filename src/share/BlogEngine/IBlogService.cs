@@ -16,6 +16,6 @@ namespace Laobian.Share.BlogEngine
 
         Task UpdateCloudAssetsAsync();
 
-        Task UpdateLocalAssetsAsync();
+        Task UpdateLocalAssetsAsync(bool cloneFirst = true);
     }
 }
