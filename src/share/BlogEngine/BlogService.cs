@@ -91,10 +91,13 @@ namespace Laobian.Share.BlogEngine
             await UpdateCloudPostsAsync();
         }
 
-        public async Task UpdateLocalAssetsAsync()
+        public async Task UpdateLocalAssetsAsync(bool cloneFirst = true)
         {
-            await _gitHubClient.CloneAsync(_gitConfig);
-
+            if (cloneFirst)
+            {
+                await _gitHubClient.CloneAsync(_gitConfig);
+            }
+            
             var tasks = new List<Task>
             {
                 UpdateLocalCategoriesAsync(),
