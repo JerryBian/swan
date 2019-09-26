@@ -40,5 +40,6 @@
     <PackageReference Include="Microsoft.PowerShell.SDK" Version="6.2.3" />
     <PackageReference Include="Octokit" Version="0.34.0" />
     <PackageReference Include="protobuf-net" Version="2.4.0" />
+    <PackageReference Include="Sendgrid" Version="9.12.0" />
   </ItemGroup>
 </Project>
