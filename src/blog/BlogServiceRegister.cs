@@ -5,6 +5,7 @@ using Laobian.Share.BlogEngine;
 using Laobian.Share.Config;
 using Laobian.Share.Infrastructure.Cache;
 using Laobian.Share.Infrastructure.Command;
+using Laobian.Share.Infrastructure.Email;
 using Laobian.Share.Infrastructure.GitHub;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,6 +32,7 @@ namespace Laobian.Blog
             services.AddSingleton<ICommand, PowerShellCommand>();
             services.AddSingleton<IBlogService, BlogService>();
             services.AddSingleton<IGitHubClient, GitHubClient2>();
+            services.AddSingleton<IEmailClient, SendGridEmailClient>();
 
             services.AddHostedService<BlogAssetHostedService>();
         }
