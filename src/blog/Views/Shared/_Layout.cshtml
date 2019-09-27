@@ -11,20 +11,20 @@
         @TitleHelper.GetTitle(ViewData["Title"])
     </title>
 
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="manifest" href="/site.webmanifest">
-    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
-    <meta name="msapplication-TileColor" content="#da532c">
-    <meta name="theme-color" content="#da532c">
-    <link rel="canonical" href="@ViewData["canonical"]">
-    <link rel="license" href="https://creativecommons.org/licenses/by/4.0">
-    <link rel="alternate" href="/rss" type="application/rss+xml" title="@BlogConstant.BlogName">
-    <link rel="dns-prefetch" href="//laobian.blob.core.windows.net">
-    <link rel="dns-prefetch" href="//www.googletagmanager.com">
-    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
-    <link rel="dns-prefetch" href="//www.google-analytics.com">
+    @*<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+        <link rel="manifest" href="/site.webmanifest">
+        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+        <meta name="msapplication-TileColor" content="#da532c">
+        <meta name="theme-color" content="#da532c">
+        <link rel="canonical" href="@ViewData["canonical"]">
+        <link rel="license" href="https://creativecommons.org/licenses/by/4.0">
+        <link rel="alternate" href="/rss" type="application/rss+xml" title="@BlogConstant.BlogName">
+        <link rel="dns-prefetch" href="//laobian.blob.core.windows.net">
+        <link rel="dns-prefetch" href="//www.googletagmanager.com">
+        <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+        <link rel="dns-prefetch" href="//www.google-analytics.com">*@
 
     @*<environment include="Staging,Production">
             <link rel="stylesheet" href="~/style.min.css" asp-append-version ="true"
@@ -37,40 +37,11 @@
             <link rel="stylesheet" href="~/custom/style.css"/>
         </environment>*@
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="~/custom/style.css" />
-    
-    <link rel="stylesheet"
-          href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/default.min.css">
-    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
-    
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    @*<script src="https://kit.fontawesome.com/d5577c2a22.js"></script>*@
-    @*<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>*@
+    <link rel="stylesheet" href="~/style/index.min.css" asp-append-version="true" />
 
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-97849167-1"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
 
-        function gtag() { dataLayer.push(arguments); }
-
-        gtag('js', new Date());
-
-        gtag('config', 'UA-97849167-1');
-    </script>
 </head>
 <body>
-    <div id="ieWarning" class="d-none" role="alert">
-        该页面在 IE 下可能渲染不完整，为了更好的体验推荐 Edge/Chrome 等浏览器。
-    </div>
-    <script type="text/javascript">
-        if (/MSIE|Trident/.test(window.navigator.userAgent)) {
-            document.getElementById("ieWarning").className = 'alert alert-warning text-center';
-        }
-    </script>
     <nav class="navbar">
         <div class="container">
             <a class="navbar-brand" href="/">@BlogConstant.BlogName</a>
@@ -123,6 +94,17 @@
     </footer>
 
     @RenderSection("Scripts", false)
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-97849167-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() { dataLayer.push(arguments); }
+
+        gtag('js', new Date());
+
+        gtag('config', 'UA-97849167-1');
+    </script>
 
 </body>
 </html>
