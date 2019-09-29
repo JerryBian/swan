@@ -146,7 +146,7 @@ namespace Laobian.Share.BlogEngine.Model
 
         public static string GetFullUrl(int year, int month, string link)
         {
-            return $"/{year}/{month:D2}/{link}{BlogConstant.PostHtmlExtension}";
+            return $"https://blog.laobian.me/{year}/{month:D2}/{link}{BlogConstant.PostHtmlExtension}";
         }
 
         private string GetHtmlContent()

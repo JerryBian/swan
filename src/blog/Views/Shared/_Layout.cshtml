@@ -47,7 +47,7 @@
             <a class="navbar-brand" href="/">@BlogConstant.BlogName</a>
             <ul class="nav ml-auto">
                 <li><a class="nav-item nav-link" href="/archive/">存档</a></li>
-                <li><a class="nav-item nav-link" href="/about/">关于</a></li>
+                <li><a class="nav-item nav-link" href="/subscribe/">订阅</a></li>
             </ul>
         </div>
     </nav>
@@ -87,9 +87,10 @@
     <footer>
 
         <div class="container text-center pt-3 pb-2">
-            <small>
+            <p>
                 &copy; 2008 - @DateTime.UtcNow.ToChinaTime().Year @BlogConstant.AuthorChineseName
-            </small>
+            </p>
+            <p>Powered by @BlogState.NetCoreVersion</p>
         </div>
     </footer>
 

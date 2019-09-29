@@ -43,5 +43,17 @@
         public const string AuthorChineseName = "卞良忠";
 
         public const string BlogName = "Jerry Bian's blog";
+
+        public const string BlogDescription = "";
+
+        public const string RssLink = "https://blog.laobian.me/rss";
+
+        public const string AtomLink = "https://blog.laobian.me/atom";
+
+        public const string AuthorEnglishName = "Jerry Bian";
+
+        public const string AuthorEmail = "JerryBian@outlook.com";
+
+        public const string WebAddress = "https://blog.laobian.me";
     }
 }
