@@ -1,12 +1,12 @@
-﻿@model Laobian.Share.BlogEngine.Model.BlogPost
+﻿@model PostViewModel
 
 <article class="post">
     <h2>
-        @Model.Title
+        @Model.Post.Title
     </h2>
-    <div class="text-muted text-right size-smaller d-block d-lg-none">@Model.CreationTimeUtc.ToRelativeTime() &middot; @Model.Visits.ToThousandsPlace() 次访问</div>
+    <div class="text-muted text-left size-smaller d-block d-lg-none">@Html.Raw(Model.GetSimpleMetadataHtml())</div>
     <div class="mt-2 mb-4 post-content">
-        @Html.Raw(Model.HtmlContent)
+        @Html.Raw(Model.Post.HtmlContent)
     </div>
 </article>
 
@@ -17,15 +17,15 @@
                 <table>
                     <tr>
                         <td>访问</td>
-                        <td>@Model.Visits.ToThousandsPlace() 次</td>
+                        <td>@Model.Post.Visits.ToThousandsPlace() 次</td>
                     </tr>
                     <tr>
                         <td>创建</td>
-                        <td title="@Model.CreationTimeUtc.ToChinaTime().ToDateAndTime()">@Model.CreationTimeUtc.ToRelativeTime()</td>
+                        <td title="@Model.Post.CreationTimeUtc.ToChinaTime().ToDateAndTime()">@Model.Post.CreationTimeUtc.ToRelativeTime()</td>
                     </tr>
                     <tr>
                         <td>更新</td>
-                        <td title="@Model.LastUpdateTimeUtc.ToChinaTime().ToDateAndTime()">@Model.LastUpdateTimeUtc.ToRelativeTime()</td>
+                        <td title="@Model.Post.LastUpdateTimeUtc.ToChinaTime().ToDateAndTime()">@Model.Post.LastUpdateTimeUtc.ToRelativeTime()</td>
                     </tr>
                 </table>
             </div>

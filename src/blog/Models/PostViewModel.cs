@@ -21,8 +21,7 @@ namespace Laobian.Blog.Models
         public string GetMetadataHtml()
         {
             var results = new List<string>();
-            results.Add($"发表于 {Post.CreationTimeUtc.Humanize()}");
-            results.Add($"{Post.Visits.ToMetric(decimals:1)} 访问");
+            results.Add(GetSimpleMetadataHtml());
 
             var catHtml = GetCategoryHtml();
             if (!string.IsNullOrEmpty(catHtml))
@@ -35,6 +34,15 @@ namespace Laobian.Blog.Models
             {
                 results.Add(tagHtml);
             }
+
+            return string.Join(" &middot; ", results);
+        }
+
+        public string GetSimpleMetadataHtml()
+        {
+            var results = new List<string>();
+            results.Add($"发表于 {Post.CreationTimeUtc.Humanize()}");
+            results.Add($"{Post.Visits.ToMetric(decimals: 1)} 次访问");
 
             return string.Join(" &middot; ", results);
         }
