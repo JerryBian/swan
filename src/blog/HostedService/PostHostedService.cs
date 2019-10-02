@@ -8,12 +8,12 @@ using Microsoft.Extensions.Options;
 
 namespace Laobian.Blog.HostedService
 {
-    public class BlogAssetHostedService : BackgroundService
+    public class PostHostedService : BackgroundService
     {
         private readonly AppConfig _appConfig;
         private readonly IBlogService _blogService;
 
-        public BlogAssetHostedService(IBlogService blogService, IOptions<AppConfig> appConfig)
+        public PostHostedService(IBlogService blogService, IOptions<AppConfig> appConfig)
         {
             _blogService = blogService;
             _appConfig = appConfig.Value;
@@ -23,21 +23,21 @@ namespace Laobian.Blog.HostedService
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                await Task.Delay(TimeSpan.FromDays(1), stoppingToken);
+                await Task.Delay(TimeSpan.FromSeconds(_appConfig.BlogPostHostingServiceInterval), stoppingToken);
                 try
                 {
                     await _blogService.UpdateCloudAssetsAsync();
                 }
                 catch (Exception ex)
                 {
-
+                    
                 }
             }
         }
 
         public override async Task StartAsync(CancellationToken cancellationToken)
         {
-            await _blogService.UpdateLocalAssetsAsync(_appConfig.CloneAssetsDuringStartup);
+            await _blogService.UpdateMemoryAssetsAsync(_appConfig.CloneAssetsDuringStartup);
             await base.StartAsync(cancellationToken);
         }
 

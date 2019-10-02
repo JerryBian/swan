@@ -1,4 +1,5 @@
-﻿using System.Text.Encodings.Web;
+﻿using System;
+using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using Laobian.Blog.HostedService;
 using Laobian.Share.BlogEngine;
@@ -6,7 +7,7 @@ using Laobian.Share.Config;
 using Laobian.Share.Infrastructure.Cache;
 using Laobian.Share.Infrastructure.Command;
 using Laobian.Share.Infrastructure.Email;
-using Laobian.Share.Infrastructure.GitHub;
+using Laobian.Share.Infrastructure.Git;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -26,15 +27,19 @@ namespace Laobian.Blog
                 ac.AssetGitHubRepoName = config.GetValue<string>("ASSET_GITHUB_REPO_NAME");
                 ac.AssetRepoLocalDir = config.GetValue<string>("ASSET_REPO_LOCAL_DIR");
                 ac.CloneAssetsDuringStartup = config.GetValue("STARTUP_CLONE_ASSETS", true);
+                ac.AssetGitCommitUser = config.GetValue("ASSET_LOCAL_COMMIT_USER_NAME", "bot");
+                ac.AssetGitCommitEmail = config.GetValue("ASSET_LOCAL_COMMIT_USER_EMAIL", "bot@laobian.me");
+                ac.BlogPostHostingServiceInterval = config.GetValue("BLOG_POST_HOSTING_INTERVAL_IN_SECONDS",
+                    TimeSpan.FromHours(1).TotalSeconds);
             });
 
             services.AddSingleton<IMemoryCacheClient, MemoryCacheClient>();
             services.AddSingleton<ICommand, PowerShellCommand>();
             services.AddSingleton<IBlogService, BlogService>();
-            services.AddSingleton<IGitHubClient, GitHubClient2>();
+            services.AddSingleton<IGitClient, GitClient>();
             services.AddSingleton<IEmailClient, SendGridEmailClient>();
 
-            services.AddHostedService<BlogAssetHostedService>();
+            services.AddHostedService<PostHostedService>();
         }
     }
 }

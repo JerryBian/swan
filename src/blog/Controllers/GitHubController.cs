@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Laobian.Share.BlogEngine;
-using Laobian.Share.Infrastructure.GitHub;
+using Laobian.Share.Infrastructure.Git;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Laobian.Blog.Controllers
@@ -49,12 +49,12 @@ namespace Laobian.Blog.Controllers
             }
             //if(!string.Equals())
 
-            if (payload.Commits.Any(_ => GitHubMessageProvider.IsServerCommit(_.Message)))
-            {
-                return Ok("Server update, no need to update local.");
-            }
+            //if (payload.Commits.Any(_ => GitHubMessageProvider.IsServerCommit(_.Message)))
+            //{
+            //    return Ok("Server update, no need to update local.");
+            //}
 
-            await _blogService.UpdateLocalAssetsAsync();
+            await _blogService.UpdateMemoryAssetsAsync();
 
             var modifiedPosts = payload.Commits.SelectMany(c => c.Modified).ToList();
             if (modifiedPosts.Any())
@@ -71,6 +71,7 @@ namespace Laobian.Blog.Controllers
                 }
             }
 
+            await _blogService.UpdateCloudAssetsAsync();
             return Ok("Local updated.");
         }
     }
