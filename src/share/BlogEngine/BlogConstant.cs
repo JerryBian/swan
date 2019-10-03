@@ -6,6 +6,8 @@
 
         public const string PostGitHubPath = "blog/post/";
 
+        public const string TemplatePostGitHubPath = "blog/post/__template.md";
+
         public const string CategoryGitHubPath = "blog/category.txt";
 
         public const string TagGitHubPath = "blog/tag.txt";

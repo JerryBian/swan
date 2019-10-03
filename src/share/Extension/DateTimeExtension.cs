@@ -63,7 +63,8 @@ namespace Laobian.Share.Extension
         /// </remarks>
         public static DateTime ToChinaTime(this DateTime utcTime)
         {
-            return utcTime.AddHours(8);
+            var time = utcTime.AddHours(8);
+            return new DateTime(time.Ticks, DateTimeKind.Local);
         }
 
         /// <summary>

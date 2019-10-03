@@ -112,6 +112,7 @@ namespace Laobian.Share.BlogEngine
             if (cloneFirst)
             {
                 await _gitClient.CloneAsync(_gitConfig);
+                await UpdatePostTemplateAsync();
             }
             
             var tasks = new List<Task>
@@ -129,6 +130,27 @@ namespace Laobian.Share.BlogEngine
 
         #region Blog Post
 
+        private async Task UpdatePostTemplateAsync()
+        {
+            var templatePost = new BlogPost
+            {
+                CreationTimeUtc = new DateTime(2008, 9, 1),
+                LastUpdateTimeUtc = new DateTime(2019, 09, 01),
+                IsPublic = false,
+                Link = "Your-Post-Link-Here",
+                Title = "Your Post Title Here",
+                Visits = 10,
+                CategoryNames = new List<string> { "分类名称1", "分类名称2"},
+                TagNames = new List<string> { "标签名称1", "标签名称2"},
+                MarkdownContent = "Your Post Content Here in Markdown."
+            };
+
+            var templateMarkdown = await new BlogPostParser(_appConfig).ToTextAsync(templatePost);
+            var localTemplatePath = Path.Combine(_appConfig.AssetRepoLocalDir, BlogConstant.TemplatePostGitHubPath);
+            await File.WriteAllTextAsync(localTemplatePath, templateMarkdown, Encoding.UTF8);
+            await _gitClient.CommitAsync(_appConfig.AssetRepoLocalDir, GitHubMessageProvider.GetPostCommitMessage($"{_appConfig.AssetGitCommitUser} - update template post from server"));
+        }
+
         private async Task UpdateCloudPostsAsync()
         {
             var posts = GetPosts();
@@ -140,7 +162,7 @@ namespace Laobian.Share.BlogEngine
 
             await _gitClient.CommitAsync(_appConfig.AssetRepoLocalDir,
                 GitHubMessageProvider.GetPostCommitMessage(
-                    $":{_appConfig.AssetGitCommitUser}: update posts from server"));
+                    $"{_appConfig.AssetGitCommitUser} - update posts from server"));
         }
 
         private async Task UpdateMemoryPostsAsync()
@@ -150,6 +172,11 @@ namespace Laobian.Share.BlogEngine
             var posts = new List<BlogPost>();
             foreach (var filePost in filePosts)
             {
+                if (StringEqualsHelper.EqualsIgnoreCase(filePost.GitHubPath, BlogConstant.TemplatePostGitHubPath))
+                {
+                    continue;
+                }
+
                 var memPost = memPosts.FirstOrDefault(p =>
                     string.Equals(p.Link, filePost.Link, StringComparison.OrdinalIgnoreCase));
                 if (memPost != null)
