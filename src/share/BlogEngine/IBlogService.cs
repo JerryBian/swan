@@ -17,5 +17,7 @@ namespace Laobian.Share.BlogEngine
         Task UpdateCloudAssetsAsync();
 
         Task UpdateMemoryAssetsAsync(bool cloneFirst = true);
+
+        string GetAboutHtml(RequestLang lang = RequestLang.Chinese);
     }
 }

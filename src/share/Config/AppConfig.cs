@@ -21,5 +21,7 @@
         public string AssetGitCommitEmail { get; set; }
 
         public double BlogPostHostingServiceInterval { get; set; }
+
+        public string BlogAddress { get; set; }
     }
 }

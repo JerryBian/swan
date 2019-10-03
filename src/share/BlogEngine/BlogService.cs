@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 using Laobian.Share.BlogEngine.Model;
 using Laobian.Share.BlogEngine.Parser;
 using Laobian.Share.Config;
+using Laobian.Share.Helper;
 using Laobian.Share.Infrastructure.Cache;
 using Laobian.Share.Infrastructure.Git;
+using Markdig;
 using Microsoft.Extensions.Options;
 
 namespace Laobian.Share.BlogEngine
@@ -47,11 +49,24 @@ namespace Laobian.Share.BlogEngine
 
         #region Public Interface
 
+        public string GetAboutHtml(RequestLang lang = RequestLang.Chinese)
+        {
+            var cacheKey = CacheKeyBuilder.Build(SiteComponent.Blog, "about", lang);
+            if (!_memoryCacheClient.TryGet<string>(cacheKey, out var html))
+            {
+                html = string.Empty;
+            }
+
+            return html;
+        }
+
         public BlogPost GetPost(int year, int month, string link)
         {
             var posts = GetPosts();
             var post = posts.FirstOrDefault(p =>
-                string.Equals(p.FullUrl, BlogPost.GetFullUrl(year, month, link), StringComparison.OrdinalIgnoreCase));
+                p.CreationTimeUtc.Year == year &&
+                p.CreationTimeUtc.Month == month &&
+                StringEqualsHelper.EqualsIgnoreCase(p.Link, link));
             post?.AddVisit();
 
             return post;
@@ -59,7 +74,7 @@ namespace Laobian.Share.BlogEngine
 
         public List<BlogPost> GetPosts()
         {
-            if (!_memoryCacheClient.TryGet<List<BlogPost>>(BlogConstant.PostMemCacheKey, out var posts))
+            if (!_memoryCacheClient.TryGet<List<BlogPost>>(CacheKeyBuilder.Build(SiteComponent.Blog, "post", "all"), out var posts))
             {
                 posts = new List<BlogPost>();
             }
@@ -69,7 +84,7 @@ namespace Laobian.Share.BlogEngine
 
         public List<BlogCategory> GetCategories()
         {
-            if (!_memoryCacheClient.TryGet<List<BlogCategory>>(BlogConstant.CategoryMemCacheKey, out var categories))
+            if (!_memoryCacheClient.TryGet<List<BlogCategory>>(CacheKeyBuilder.Build(SiteComponent.Blog, "category", "all"), out var categories))
             {
                 categories = new List<BlogCategory>();
             }
@@ -79,7 +94,7 @@ namespace Laobian.Share.BlogEngine
 
         public List<BlogTag> GetTags()
         {
-            if (!_memoryCacheClient.TryGet<List<BlogTag>>(BlogConstant.TagMemCacheKey, out var tags))
+            if (!_memoryCacheClient.TryGet<List<BlogTag>>(CacheKeyBuilder.Build(SiteComponent.Blog, "tag", "all"), out var tags))
             {
                 tags = new List<BlogTag>();
             }
@@ -103,7 +118,8 @@ namespace Laobian.Share.BlogEngine
             {
                 UpdateMemoryCategoriesAsync(),
                 UpdateMemoryPostsAsync(),
-                UpdateMemoryTagsAsync()
+                UpdateMemoryTagsAsync(),
+                UpdateMemoryAboutAsync()
             };
 
             await Task.WhenAll(tasks);
@@ -144,7 +160,7 @@ namespace Laobian.Share.BlogEngine
                 posts.Add(filePost);
             }
 
-            _memoryCacheClient.Set(BlogConstant.PostMemCacheKey, posts, TimeSpan.FromDays(1));
+            _memoryCacheClient.Set(CacheKeyBuilder.Build(SiteComponent.Blog, "post", "all"), posts);
         }
 
         private async Task<List<BlogPost>> GetPostsFromFileAsync()
@@ -175,7 +191,7 @@ namespace Laobian.Share.BlogEngine
         private async Task UpdateMemoryCategoriesAsync()
         {
             var categories = await GetCategoriesFromFileAsync();
-            _memoryCacheClient.Set(BlogConstant.CategoryMemCacheKey, categories, TimeSpan.FromDays(1));
+            _memoryCacheClient.Set(CacheKeyBuilder.Build(SiteComponent.Blog, "category", "all"), categories);
         }
 
         private async Task<List<BlogCategory>> GetCategoriesFromFileAsync()
@@ -198,7 +214,7 @@ namespace Laobian.Share.BlogEngine
         private async Task UpdateMemoryTagsAsync()
         {
             var tags = await GetTagsFromFileAsync();
-            _memoryCacheClient.Set(BlogConstant.TagMemCacheKey, tags, TimeSpan.FromDays(1));
+            _memoryCacheClient.Set(CacheKeyBuilder.Build(SiteComponent.Blog, "tag", "all"), tags);
         }
 
         private async Task<List<BlogTag>> GetTagsFromFileAsync()
@@ -212,6 +228,32 @@ namespace Laobian.Share.BlogEngine
 
             var txt = await File.ReadAllTextAsync(tagPath);
             return await _tagParser.FromTextAsync(txt);
+        }
+
+        #endregion
+
+        #region Blog About
+
+        private async Task UpdateMemoryAboutAsync()
+        {
+            var zhAbout = await GetAboutFromFileAsync(RequestLang.Chinese);
+            _memoryCacheClient.Set(CacheKeyBuilder.Build(SiteComponent.Blog, "about", RequestLang.Chinese), zhAbout);
+
+            var enAbout = await GetAboutFromFileAsync(RequestLang.English);
+            _memoryCacheClient.Set(CacheKeyBuilder.Build(SiteComponent.Blog, "about", RequestLang.English), enAbout);
+        }
+
+        private async Task<string> GetAboutFromFileAsync(RequestLang lang)
+        {
+            var aboutPath = Path.Combine(_appConfig.AssetRepoLocalDir,
+                string.Format(BlogConstant.AboutGitHub, lang == RequestLang.Chinese ? "zh" : "en"));
+            if (!File.Exists(aboutPath))
+            {
+                return string.Empty;
+            }
+
+            var md = await File.ReadAllTextAsync(aboutPath);
+            return Markdown.ToHtml(md);
         }
 
         #endregion

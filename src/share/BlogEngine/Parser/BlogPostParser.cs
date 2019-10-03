@@ -73,6 +73,7 @@ namespace Laobian.Share.BlogEngine.Parser
                 }
             }
 
+            blogPost.Config = _appConfig;
             blogPost.Link = link;
             blogPost.MarkdownContent = parseResult.Item2;
             blogPost.LocalFullPath = Path.Combine(_appConfig.AssetRepoLocalDir, blogPost.GitHubPath);

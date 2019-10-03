@@ -7,16 +7,21 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using Laobian.Share.BlogEngine;
+using Laobian.Share.Config;
+using Laobian.Share.Helper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace Laobian.Blog.Controllers
 {
     public class SubscribeController : Controller
     {
+        private readonly AppConfig _appConfig;
         private readonly IBlogService _blogService;
 
-        public SubscribeController(IBlogService blogService)
+        public SubscribeController(IOptions<AppConfig> appConfig, IBlogService blogService)
         {
+            _appConfig = appConfig.Value;
             _blogService = blogService;
         }
 
@@ -28,7 +33,7 @@ namespace Laobian.Blog.Controllers
         [Route("/rss")]
         public async Task<IActionResult> Rss()
         {
-            var feed = await GetFeedAsync(BlogConstant.RssLink);
+            var feed = await GetFeedAsync(AddressHelper.GetAddress(_appConfig.BlogAddress, true, "rss"));
             var rssFormatter = new Rss20FeedFormatter(feed);
             using (var ms = new MemoryStream())
             {
@@ -44,7 +49,7 @@ namespace Laobian.Blog.Controllers
         [Route("/atom")]
         public async Task<IActionResult> Atom()
         {
-            var feed = await GetFeedAsync(BlogConstant.AtomLink);
+            var feed = await GetFeedAsync(AddressHelper.GetAddress(_appConfig.BlogAddress, true, "atom"));
             var atomFormatter = new Atom10FeedFormatter(feed);
             using (var ms = new MemoryStream())
             {
@@ -59,8 +64,8 @@ namespace Laobian.Blog.Controllers
 
         private async Task<SyndicationFeed> GetFeedAsync(string alterLink)
         {
-            var feed = new SyndicationFeed(BlogConstant.BlogName, BlogConstant.BlogDescription, new Uri(alterLink), BlogConstant.WebAddress, DateTimeOffset.UtcNow);
-            var sp = new SyndicationPerson(BlogConstant.AuthorEmail, BlogConstant.AuthorChineseName, BlogConstant.WebAddress);
+            var feed = new SyndicationFeed(BlogConstant.BlogName, BlogConstant.BlogDescription, new Uri(alterLink), _appConfig.BlogAddress, DateTimeOffset.UtcNow);
+            var sp = new SyndicationPerson(BlogConstant.AuthorEmail, BlogConstant.AuthorChineseName, _appConfig.BlogAddress);
             feed.Authors.Add(sp);
 
             feed.Contributors.Add(sp);

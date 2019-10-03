@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading;
 using HtmlAgilityPack;
 using Humanizer;
+using Laobian.Share.Config;
+using Laobian.Share.Helper;
 
 namespace Laobian.Share.BlogEngine.Model
 {
@@ -49,6 +51,9 @@ namespace Laobian.Share.BlogEngine.Model
         public bool IsPublic { get; set; }
 
         #endregion
+
+        public AppConfig Config { get; set; }
+
 
         public string MarkdownContent { get; set; }
 
@@ -142,6 +147,21 @@ namespace Laobian.Share.BlogEngine.Model
             }
         }
 
+        private string _fullUrlWithBaseAddress;
+
+        public string FullUrlWithBaseAddress
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_fullUrl) && CreationTimeUtc != default && !string.IsNullOrEmpty(Link))
+                {
+                    _fullUrlWithBaseAddress = GetFullUrl(CreationTimeUtc.Year, CreationTimeUtc.Month, Link);
+                }
+
+                return _fullUrlWithBaseAddress;
+            }
+        }
+
         private string _gitHubPath;
 
         public string GitHubPath
@@ -207,9 +227,16 @@ namespace Laobian.Share.BlogEngine.Model
             }
         }
 
-        public static string GetFullUrl(int year, int month, string link)
+        private string GetFullUrl(int year, int month, string link, bool appendBaseAddress = false)
         {
-            return $"https://blog.laobian.me/{year}/{month:D2}/{link}{BlogConstant.PostHtmlExtension}";
+            if (appendBaseAddress)
+            {
+                return AddressHelper.GetAddress(Config.BlogAddress, false, year.ToString(), month.ToString("D2"),
+                    $"{link}{BlogConstant.PostHtmlExtension}");
+            }
+
+            return AddressHelper.GetAddress(false, year.ToString(), month.ToString("D2"),
+                $"{link}{BlogConstant.PostHtmlExtension}");
         }
 
         private string GetHtmlContent()

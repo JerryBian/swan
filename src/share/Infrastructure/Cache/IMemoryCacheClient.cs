@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 
 namespace Laobian.Share.Infrastructure.Cache
 {
@@ -24,24 +23,6 @@ namespace Laobian.Share.Infrastructure.Cache
         /// <param name="key">The cache key</param>
         /// <param name="obj">The cache value</param>
         /// <param name="expireAfter">Automatically expire cache after time range</param>
-        void Set<T>(string key, T obj, TimeSpan expireAfter);
-
-        /// <summary>
-        /// Get cache value by key, if not exist will first set cache then return value
-        /// </summary>
-        /// <typeparam name="T">Type of cache value</typeparam>
-        /// <param name="key">The cache key</param>
-        /// <param name="addFunc">Func for adding new cache</param>
-        /// <param name="expireAfter">Automatically expire cache after time range</param>
-        /// <returns>The cache value</returns>
-        Task<T> GetOrAddAsync<T>(string key, Func<Task<T>> addFunc, TimeSpan expireAfter);
-
-        /// <summary>
-        /// Remove cache if exists
-        /// </summary>
-        /// <param name="key">The cache key</param>
-        void Remove(string key);
-
-        T GetOrAdd<T>(string key, Func<T> addFunc, TimeSpan expireAfter);
+        void Set<T>(string key, T obj, TimeSpan expireAfter = default);
     }
 }

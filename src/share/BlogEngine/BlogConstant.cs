@@ -10,7 +10,7 @@
 
         public const string TagGitHubPath = "blog/tag.txt";
 
-        public const string EnAboutGitHub = "blog/about.en.md";
+        public const string AboutGitHub = "blog/about.{0}.md";
 
         public const string FileGitHub = "blog/file/";
 
@@ -23,14 +23,6 @@
         public const string PeriodSplitter = ",";
 
         public const string PostHtmlExtension = ".html";
-
-        public const string PostMemCacheKey = "laobian.blog.posts";
-
-        public const string CategoryMemCacheKey = "laobian.blog.category";
-
-        public const string EnglishAboutMemCacheKey = "laobian.blog.about.en";
-
-        public const string TagMemCacheKey = "laobian.blog.tag";
 
         public const string DefaultCategoryName = "未分类";
 
@@ -46,14 +38,8 @@
 
         public const string BlogDescription = "";
 
-        public const string RssLink = "https://blog.laobian.me/rss";
-
-        public const string AtomLink = "https://blog.laobian.me/atom";
-
         public const string AuthorEnglishName = "Jerry Bian";
 
         public const string AuthorEmail = "JerryBian@outlook.com";
-
-        public const string WebAddress = "https://blog.laobian.me";
     }
 }
