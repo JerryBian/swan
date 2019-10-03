@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
-namespace Laobian.Share.Infrastructure.GitHub
+namespace Laobian.Share.Infrastructure.Git
 {
     public class GitHubCommit
     {

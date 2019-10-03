@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Humanizer;
 using Laobian.Share.BlogEngine.Model;
 
 namespace Laobian.Blog.Models
@@ -41,8 +40,8 @@ namespace Laobian.Blog.Models
         public string GetSimpleMetadataHtml()
         {
             var results = new List<string>();
-            results.Add($"发表于 {Post.CreationTimeUtc.Humanize()}");
-            results.Add($"{Post.Visits.ToMetric(decimals: 1)} 次访问");
+            results.Add($"发表于 {Post.CreateTimeString}");
+            results.Add($"{Post.VisitString} 次访问");
 
             return string.Join(" &middot; ", results);
         }

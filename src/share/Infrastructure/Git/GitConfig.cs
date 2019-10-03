@@ -1,4 +1,4 @@
-﻿namespace Laobian.Share.Infrastructure.GitHub
+﻿namespace Laobian.Share.Infrastructure.Git
 {
     public class GitConfig
     {
@@ -11,5 +11,9 @@
         public string GitHubRepositoryBranch { get; set; }
 
         public string GitCloneToDir { get; set; }
+
+        public string GitCommitUser { get; set; }
+
+        public string GitCommitEmail { get; set; }
     }
 }

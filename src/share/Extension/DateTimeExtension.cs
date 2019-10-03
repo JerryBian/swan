@@ -125,5 +125,11 @@ namespace Laobian.Share.Extension
         {
             return time.ToString("yyyyMM");
         }
+
+        public static string ToTimeZoneString(this DateTime time)
+        {
+            var zone = new DateTimeOffset(time);
+            return zone.ToString();
+        }
     }
 }

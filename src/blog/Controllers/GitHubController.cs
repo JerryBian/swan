@@ -25,6 +25,8 @@ namespace Laobian.Blog.Controllers
         [Route("hook")]
         public async Task<IActionResult> Hook(GitHubPayload payload)
         {
+            return Ok();
+
             if (!Request.Headers.ContainsKey("X-GitHub-Event"))
             {
                 return BadRequest();

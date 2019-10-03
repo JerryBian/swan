@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Laobian.Share.BlogEngine.Model;
 using Laobian.Share.BlogEngine.Parser;
 using Laobian.Share.Config;
 using Laobian.Share.Infrastructure.Cache;
-using Laobian.Share.Infrastructure.GitHub;
+using Laobian.Share.Infrastructure.Git;
 using Microsoft.Extensions.Options;
 
 namespace Laobian.Share.BlogEngine
@@ -18,21 +19,21 @@ namespace Laobian.Share.BlogEngine
         private readonly AppConfig _appConfig;
         private readonly BlogTagParser _tagParser;
         private readonly BlogPostParser _postParser;
-        private readonly IGitHubClient _gitHubClient;
+        private readonly IGitClient _gitClient;
         private readonly BlogCategoryParser _categoryParser;
         private readonly IMemoryCacheClient _memoryCacheClient;
 
         public BlogService(
             IOptions<AppConfig> appConfig,
-            IGitHubClient gitHubClient,
+            IGitClient gitClient,
             IMemoryCacheClient memoryCacheClient)
         {
             _appConfig = appConfig.Value;
-            _gitHubClient = gitHubClient;
+            _gitClient = gitClient;
             _memoryCacheClient = memoryCacheClient;
 
             _tagParser = new BlogTagParser();
-            _postParser = new BlogPostParser();
+            _postParser = new BlogPostParser(_appConfig);
             _categoryParser = new BlogCategoryParser();
             _gitConfig = new GitConfig
             {
@@ -91,19 +92,20 @@ namespace Laobian.Share.BlogEngine
             await UpdateCloudPostsAsync();
         }
 
-        public async Task UpdateLocalAssetsAsync(bool cloneFirst = true)
+        public async Task UpdateMemoryAssetsAsync(bool cloneFirst = true)
         {
             if (cloneFirst)
             {
-                await _gitHubClient.CloneAsync(_gitConfig);
+                await _gitClient.CloneAsync(_gitConfig);
             }
             
             var tasks = new List<Task>
             {
-                UpdateLocalCategoriesAsync(),
-                UpdateLocalPostsAsync(),
-                UpdateLocalTagsAsync()
+                UpdateMemoryCategoriesAsync(),
+                UpdateMemoryPostsAsync(),
+                UpdateMemoryTagsAsync()
             };
+
             await Task.WhenAll(tasks);
         }
 
@@ -116,15 +118,16 @@ namespace Laobian.Share.BlogEngine
             var posts = GetPosts();
             foreach (var post in posts)
             {
-                await _gitHubClient.CommitPlanTextAsync(
-                    _gitConfig,
-                    post.GitHubPath,
-                    await _postParser.ToTextAsync(post),
-                    GitHubMessageProvider.GetPostCommitMessage());
+                var postContent = await _postParser.ToTextAsync(post);
+                await File.WriteAllTextAsync(post.LocalFullPath, postContent, Encoding.UTF8);
             }
+
+            await _gitClient.CommitAsync(_appConfig.AssetRepoLocalDir,
+                GitHubMessageProvider.GetPostCommitMessage(
+                    $":{_appConfig.AssetGitCommitUser}: update posts from server"));
         }
 
-        private async Task UpdateLocalPostsAsync()
+        private async Task UpdateMemoryPostsAsync()
         {
             var memPosts = GetPosts();
             var filePosts = await GetPostsFromFileAsync();
@@ -169,7 +172,7 @@ namespace Laobian.Share.BlogEngine
 
         #region Blog Category
 
-        private async Task UpdateLocalCategoriesAsync()
+        private async Task UpdateMemoryCategoriesAsync()
         {
             var categories = await GetCategoriesFromFileAsync();
             _memoryCacheClient.Set(BlogConstant.CategoryMemCacheKey, categories, TimeSpan.FromDays(1));
@@ -192,7 +195,7 @@ namespace Laobian.Share.BlogEngine
 
         #region Blog Tag
 
-        private async Task UpdateLocalTagsAsync()
+        private async Task UpdateMemoryTagsAsync()
         {
             var tags = await GetTagsFromFileAsync();
             _memoryCacheClient.Set(BlogConstant.TagMemCacheKey, tags, TimeSpan.FromDays(1));

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using HtmlAgilityPack;
+using Humanizer;
 
 namespace Laobian.Share.BlogEngine.Model
 {
@@ -50,6 +51,51 @@ namespace Laobian.Share.BlogEngine.Model
         #endregion
 
         public string MarkdownContent { get; set; }
+
+        private string _createTimeString;
+
+        public string CreateTimeString
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_createTimeString) && CreationTimeUtc != default)
+                {
+                    _createTimeString = CreationTimeUtc.Humanize();
+                }
+
+                return _createTimeString;
+            }
+        }
+
+        private string _lastUpdateTimeString;
+
+        public string LastUpdateTimeString
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_lastUpdateTimeString) && LastUpdateTimeUtc != default)
+                {
+                    _lastUpdateTimeString = LastUpdateTimeUtc.Humanize();
+                }
+
+                return _lastUpdateTimeString;
+            }
+        }
+
+        private string _visitString;
+
+        public string VisitString
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_visitString))
+                {
+                    _visitString = Visits.ToMetric(decimals: 1);
+                }
+
+                return _visitString;
+            }
+        }
 
         private string _htmlContent;
 
@@ -110,6 +156,23 @@ namespace Laobian.Share.BlogEngine.Model
                 return _gitHubPath;
             }
         }
+
+        private string _localFullPath;
+
+        public string LocalFullPath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_localFullPath))
+                {
+                    throw new Exception("Local Full Path is not set.");
+                }
+
+                return _localFullPath;
+            }
+            set => _localFullPath = value;
+        }
+
 
         public void AddVisit()
         {
