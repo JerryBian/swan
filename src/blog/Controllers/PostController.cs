@@ -47,9 +47,10 @@ namespace Laobian.Blog.Controllers
                     postViewModel.Tags.Add(tag);
                 }
             }
-            ViewData["robots"] = "index,follow,archive";
-            ViewData["canonical"] = post.FullUrl;
+
+            ViewData["Canonical"] = post.FullUrl;
             ViewData["Title"] = post.Title;
+            ViewData["Description"] = post.ExcerptText;
 
             return View(postViewModel);
         }

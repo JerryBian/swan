@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.IO;
 using Laobian.Share.BlogEngine;
 using Laobian.Share.Config;
@@ -46,10 +47,18 @@ namespace Laobian.Blog
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime)
+        public void Configure(IApplicationBuilder app, IHostApplicationLifetime applicationLifetime)
         {
             CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("zh-cn");
             CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("zh-cn");
+
+            applicationLifetime.ApplicationStarted.Register(() =>
+            {
+                BlogState.StartAtUtc = DateTime.UtcNow;
+                BlogState.IsDevEnvironment = HostEnvironment.IsDevelopment();
+                BlogState.IsStageEnvironment = HostEnvironment.IsStaging();
+                BlogState.IsProdEnvironment = HostEnvironment.IsProduction();
+            });
 
             var appConfig = app.ApplicationServices.GetService<IOptions<AppConfig>>().Value;
 
@@ -58,7 +67,7 @@ namespace Laobian.Blog
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
 
-            if (env.IsDevelopment())
+            if (HostEnvironment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }

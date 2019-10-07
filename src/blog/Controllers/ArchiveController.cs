@@ -31,6 +31,8 @@ namespace Laobian.Blog.Controllers
             }
 
             ViewData["Title"] = "分类";
+            ViewData["Canonical"] = "/category/";
+            ViewData["Description"] = "所有文章以分类的形式展现";
             return View("Index", model);
         }
 
@@ -49,6 +51,8 @@ namespace Laobian.Blog.Controllers
             }
 
             ViewData["Title"] = "标签";
+            ViewData["Canonical"] = "/tag/";
+            ViewData["Description"] = "所有文章以标签归类的形式展现";
             return View("Index", model);
         }
 
@@ -67,6 +71,8 @@ namespace Laobian.Blog.Controllers
             }
 
             ViewData["Title"] = "存档";
+            ViewData["Canonical"] = "/archive/";
+            ViewData["Description"] = "所有文章以发表日期归类的形式展现";
             return View("Index", model.OrderByDescending(m => m.Name));
         }
     }

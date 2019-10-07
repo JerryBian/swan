@@ -18,6 +18,8 @@ namespace Laobian.Blog.Controllers
             var html = _blogService.GetAboutHtml(RequestLang.English);
 
             ViewData["Title"] = "关于";
+            ViewData["Canonical"] = "/about/";
+            ViewData["Description"] = "关于作者以及这个博客的一切";
             return View(model: html);
         }
     }

@@ -74,7 +74,7 @@ namespace Laobian.Blog.Controllers
             foreach (var blogPost in posts)
             {
                 var textContent = new TextSyndicationContent(blogPost.HtmlContent);
-                var item = new SyndicationItem(TitleHelper.GetTitle(blogPost.Title), textContent, new Uri(blogPost.FullUrl), blogPost.FullUrl, new DateTimeOffset(blogPost.LastUpdateTimeUtc, TimeSpan.Zero) );
+                var item = new SyndicationItem(blogPost.Title, textContent, new Uri(blogPost.FullUrl), blogPost.FullUrl, new DateTimeOffset(blogPost.LastUpdateTimeUtc, TimeSpan.Zero) );
                 items.Add(item);
             }
 

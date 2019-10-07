@@ -12,6 +12,8 @@ namespace Laobian.Share.BlogEngine.Model
 {
     public class BlogPost
     {
+        private bool _excerptLoaded;
+
         public BlogPost()
         {
             CategoryNames = new List<string>();
@@ -123,12 +125,19 @@ namespace Laobian.Share.BlogEngine.Model
         {
             get
             {
-                if (string.IsNullOrEmpty(_excerpt))
-                {
-                    _excerpt = GetExcerptHtml();
-                }
-
+                LoadExcerpt();
                 return _excerpt;
+            }
+        }
+
+        private string _excerptText;
+
+        public string ExcerptText
+        {
+            get
+            {
+                LoadExcerpt();
+                return _excerptText;
             }
         }
 
@@ -267,26 +276,36 @@ namespace Laobian.Share.BlogEngine.Model
             return htmlDoc.DocumentNode.OuterHtml;
         }
 
-        private string GetExcerptHtml()
+        private void LoadExcerpt()
         {
+            if (_excerptLoaded)
+            {
+                return;
+            }
+
             var htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(HtmlContent);
 
             var excerpt = string.Empty;
+            var excerptText = string.Empty;
             var paraNodes = 
                 htmlDoc.DocumentNode.Descendants().Where(_ => StringEqualsHelper.EqualsIgnoreCase(_.Name, "p")).Take(2).ToList();
             if (paraNodes.Count == 1)
             {
                 excerpt += paraNodes[0].OuterHtml;
+                excerptText += paraNodes[0].InnerText;
             }
 
             if(paraNodes.Count == 2)
             {
                 excerpt += $"{paraNodes[0].OuterHtml}{paraNodes[1].OuterHtml}";
+                excerptText += $"{paraNodes[0].InnerText}{paraNodes[1].InnerText}";
             }
 
+            _excerptText = excerptText;
             excerpt += "<p>...</p>";
-            return excerpt;
+            _excerpt = excerpt;
+            _excerptLoaded = true;
         }
     }
 }

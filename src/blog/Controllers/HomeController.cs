@@ -52,15 +52,13 @@ namespace Laobian.Blog.Controllers
                 postViewModels.Add(postViewModel);
             }
 
-            ViewData["robots"] = "index,follow,archive";
-            ViewData["canonical"] = "/";
-
             if (pagination.CurrentPage > 1)
             {
                 ViewData["Title"] = $"第{pagination.CurrentPage}页";
-                ViewData["robots"] = "noindex,nofollow";
+                ViewData["Robots"] = "noindex, nofollow";
             }
 
+            ViewData["Canonical"] = "/";
             return View(new PagedPostViewModel { Pagination = pagination, Posts = postViewModels, Url = Request.Path });
         }
     }

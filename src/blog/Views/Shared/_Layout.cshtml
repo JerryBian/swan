@@ -1,47 +1,31 @@
-﻿@using Laobian.Share.BlogEngine
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh">
 <head>
-    <meta charset="utf-8" />
-    <meta name="robots" content="@ViewData["robots"]">
-    @*<meta name="description" content="@AppSetting.Default.BlogDescription" />*@
+    <!--meta tags-->
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="theme-color" content="#4285f4">
+    <meta name="description" content="@HtmlHeaderHelper.BuildMetaDescription(ViewData["Description"])">
+    <meta name="robots" content="@HtmlHeaderHelper.BuildMetaRobots(ViewData["Robots"])">
+    <meta name="rating" content="General">
+    <meta name="format-detection" content="telephone=no">
 
-    <title>
-        @TitleHelper.GetTitle(ViewData["Title"])
-    </title>
-
-    @*<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-        <link rel="manifest" href="/site.webmanifest">
-        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
-        <meta name="msapplication-TileColor" content="#da532c">
-        <meta name="theme-color" content="#da532c">
-        <link rel="canonical" href="@ViewData["canonical"]">
-        <link rel="license" href="https://creativecommons.org/licenses/by/4.0">
-        <link rel="alternate" href="/rss" type="application/rss+xml" title="@BlogConstant.BlogName">
-        <link rel="dns-prefetch" href="//laobian.blob.core.windows.net">
-        <link rel="dns-prefetch" href="//www.googletagmanager.com">
-        <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
-        <link rel="dns-prefetch" href="//www.google-analytics.com">*@
-
-    @*<environment include="Staging,Production">
-            <link rel="stylesheet" href="~/style.min.css" asp-append-version ="true"
-                  asp-fallback-href="https://jerrybian.github.io/static/style/blog.min.css"
-                  asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
-        </environment>
-
-        <environment include="Development">
-            <link rel="stylesheet" href="~/lib/bootstrap/bootstrap.css"/>
-            <link rel="stylesheet" href="~/custom/style.css"/>
-        </environment>*@
-
+    <!--link tags-->
     @RenderSection("style", false)
+    <link rel="canonical" href="@ViewData["Canonical"]">
+    <link rel="author" content="@BlogConstant.AuthorChineseName">
+    <link rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh">
+    <link rel="alternate" href="/rss/" type="application/rss+xml" title="@BlogConstant.BlogName">
+    <link rel="alternate" href="/atom/" type="application/atom+xml" title="@BlogConstant.BlogName">
+    <link rel="me" href="mailto:@BlogConstant.AuthorEmail">
+    <link rel="archives" href="/archive/">
+    <link rel="index" href="/">
+    <link rel="dns-prefetch" href="https://jerrybian.github.io/">
+    <link rel="icon" sizes="" href="" />
+
+    <title>@HtmlHeaderHelper.BuildTitle(ViewData["Title"])</title>
+
     @RenderSection("script", false)
-
-    @*<script src="https://kit.fontawesome.com/d5577c2a22.js" crossorigin="anonymous"></script>*@
-
 </head>
 <body>
     <nav class="navbar">
@@ -61,14 +45,14 @@
                 @RenderBody()
             </main>
             <aside class="col-lg-3 d-none d-lg-block">
-                <partial name="_AsideAbout"/>
+                <partial name="_AsideAbout" />
 
                 @RenderSection("sidebar", false)
 
                 <div class="sticky-top">
                     @RenderSection("stickySidebar", false)
 
-                    <partial name="_AsideCopyright"/>
+                    <partial name="_AsideCopyright" />
                 </div>
 
             </aside>
@@ -88,9 +72,7 @@
         </div>
     </footer>
 
-    
-
-    @*<script async src="https://www.googletagmanager.com/gtag/js?id=UA-97849167-1"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-97849167-1"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
 
@@ -99,7 +81,6 @@
         gtag('js', new Date());
 
         gtag('config', 'UA-97849167-1');
-    </script>*@
-
+    </script>
 </body>
 </html>
