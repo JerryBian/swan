@@ -1,0 +1,22 @@
+﻿@model PostViewModel
+
+<div class="card mb-3">
+    <div class="card-body">
+        <div class="card-text">
+            <table>
+                <tr>
+                    <td>访问</td>
+                    <td>@Model.Post.Visits.ToThousandsPlace() 次</td>
+                </tr>
+                <tr>
+                    <td>创建</td>
+                    <td title="@Model.Post.CreationTimeUtc.ToChinaTime().ToDateAndTime()">@Model.Post.CreationTimeUtc.ToRelativeTime()</td>
+                </tr>
+                <tr>
+                    <td>更新</td>
+                    <td title="@Model.Post.LastUpdateTimeUtc.ToChinaTime().ToDateAndTime()">@Model.Post.LastUpdateTimeUtc.ToRelativeTime()</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

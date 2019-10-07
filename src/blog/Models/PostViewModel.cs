@@ -40,10 +40,22 @@ namespace Laobian.Blog.Models
         public string GetSimpleMetadataHtml()
         {
             var results = new List<string>();
-            results.Add($"发表于 {Post.CreateTimeString}");
-            results.Add($"{Post.VisitString} 次访问");
+            results.Add($"<i class=\"fas fa-calendar-alt\"></i> <span>发表于 {Post.CreateTimeString}</span>");
+            results.Add($"<i class=\"fas fa-eye\"></i> <span>{Post.VisitString} 次访问</span>");
 
             return string.Join(" &middot; ", results);
+        }
+
+        public string GetCategoryAndTagHtml()
+        {
+            var categoryHtml = GetCategoryHtml();
+            var tagHtml = GetTagHtml();
+            if (!string.IsNullOrEmpty(tagHtml))
+            {
+                return categoryHtml + " &middot; " + tagHtml;
+            }
+
+            return categoryHtml;
         }
 
         public string GetCategoryHtml()
@@ -60,7 +72,7 @@ namespace Laobian.Blog.Models
                 return string.Empty;
             }
 
-            return $"{string.Join(", ", results)}";
+            return $"<i class=\"fas fa-folder\"></i> <span>{string.Join(", ", results)}</span>";
         }
 
         public string GetTagHtml()
@@ -77,7 +89,7 @@ namespace Laobian.Blog.Models
                 return string.Empty;
             }
 
-            return $"{string.Join(", ", results)}";
+            return $"<i class=\"fas fa-tags\"></i> <span>{string.Join(", ", results)}</span>";
         }
     }
 }

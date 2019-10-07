@@ -1,5 +1,72 @@
 ﻿@import "_/_common.scss";
-
-
-
 @import "../lib/bootstrap/scss/bootstrap.scss";
+@import "shared.scss";
+
+.post-item {
+    padding-left: 0;
+    padding-right: 0;
+
+    &:first-of-type {
+        padding-top: 0;
+    }
+
+    .post-item-title {
+        font-size: $font-size-lg;
+
+        a {
+            color: $post-title-color;
+
+            @include hover-focus {
+                color: darken($post-title-color, 15%);
+                padding-bottom: 2px;
+                border-bottom: 1px double #567c73;
+            }
+        }
+    }
+
+    .post-item-excerpt {
+        p {
+            margin-left: 0;
+            margin-right: 0;
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+            padding: 0;
+            line-height: 1.6;
+
+            &:last-of-type {
+                margin-bottom: 0;
+            }
+        }
+    }
+
+    .post-item-meta {
+        font-size: $font-size-sm;
+
+        a {
+            color: $text-muted;
+
+            @include hover-focus {
+                color: darken($text-muted, 15%)
+            }
+        }
+    }
+}
+
+.pagination {
+    margin: 1.5rem auto
+}
+
+.pagination .page-item .page-link {
+    border-radius: 1px;
+    color: #515c6b;
+}
+
+.pagination .page-item .page-link, .pagination .page-item > span {
+    padding: .25rem .5rem
+}
+
+.pagination .page-item > span {
+    display: block
+}
+
+

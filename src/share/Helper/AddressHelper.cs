@@ -25,5 +25,10 @@ namespace Laobian.Share.Helper
 
             return sb.ToString();
         }
+
+        public static string GetRelativeAddress(string address)
+        {
+            return address.Trim('/', ' ');
+        }
     }
 }

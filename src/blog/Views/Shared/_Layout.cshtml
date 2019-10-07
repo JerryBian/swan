@@ -37,8 +37,10 @@
             <link rel="stylesheet" href="~/custom/style.css"/>
         </environment>*@
 
-    <link rel="stylesheet" href="~/style/index.min.css" asp-append-version="true" />
+    @RenderSection("style", false)
+    @RenderSection("script", false)
 
+    @*<script src="https://kit.fontawesome.com/d5577c2a22.js" crossorigin="anonymous"></script>*@
 
 </head>
 <body>
@@ -47,59 +49,48 @@
             <a class="navbar-brand" href="/">@BlogConstant.BlogName</a>
             <ul class="nav ml-auto">
                 <li><a class="nav-item nav-link" href="/archive/">存档</a></li>
-                <li><a class="nav-item nav-link" href="/subscribe/">订阅</a></li>
+                <li><a class="nav-item nav-link" href="/about/">关于</a></li>
             </ul>
         </div>
     </nav>
 
-    <div class="container body-content pl-3 pr-3 pt-5 mb-2">
+    <div class="container pl-3 pr-3 pt-5 mb-2">
 
         <div class="row">
             <main class="col-lg-9">
                 @RenderBody()
             </main>
             <aside class="col-lg-3 d-none d-lg-block">
-                <div class="card mb-3">
-                    <div class="card-header">关于</div>
-                    <div class="card-body">
-                        <p class="card-text">卞良忠，英文名: Jerry Bian。<br />软件工程师，热爱技术与写作。<br />居住在中国杭州。</p>
-                        <a href="/about" class="btn btn-light btn-block">更多 &rarr;</a>
-                    </div>
-                </div>
+                <partial name="_AsideAbout"/>
 
                 @RenderSection("sidebar", false)
 
                 <div class="sticky-top">
                     @RenderSection("stickySidebar", false)
 
-                    <div class="card mb-3">
-                        <div class="card-header">声明</div>
-                        <div class="card-body">
-                            <p class="card-text">本站点所有内容均为个人观点，不代表本人雇主或其他任何团体。</p>
-                        </div>
-                    </div>
+                    <partial name="_AsideCopyright"/>
                 </div>
 
             </aside>
         </div>
     </div>
 
-    <footer>
+    <footer class="mt-5">
 
-        <div class="container text-center pt-2 pb-2">
+        <div class="container pb-3 pt-3 text-center mt-3">
             <div>&copy; 2019 Jerry Bian</div>
             <div>
-                <a href="/about">关于</a> &middot;
-                <a href="/subscribe">订阅</a> &middot;
+                <a href="/archive/">存档</a> &middot;
+                <a href="/about/">关于</a> &middot;
                 <a href="/sitemap.xml">sitemap</a>
             </div>
             <div><small>Powered by @BlogState.NetCoreVersion, running for @BlogState.RunningInterval.</small></div>
         </div>
     </footer>
 
-    @RenderSection("Scripts", false)
+    
 
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-97849167-1"></script>
+    @*<script async src="https://www.googletagmanager.com/gtag/js?id=UA-97849167-1"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
 
@@ -108,7 +99,7 @@
         gtag('js', new Date());
 
         gtag('config', 'UA-97849167-1');
-    </script>
+    </script>*@
 
 </body>
 </html>

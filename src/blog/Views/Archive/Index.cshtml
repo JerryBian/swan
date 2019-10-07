@@ -4,7 +4,7 @@
     <div class="mb-4">
         @foreach (var item in Model)
         {
-            <a class="btn btn-light" href="#@item.Link">
+            <a class="btn btn-light archive-link" href="@AddressHelper.GetRelativeAddress($"#{item.Link}")">
                 @item.Name <span class="badge badge-light">@item.Posts.Count.ToMetric()</span>
             </a>
         }
@@ -13,13 +13,34 @@
     <div>
         @foreach (var item in Model)
         {
-            <h3 id="@item.Link">@item.Name (@item.Posts.Count.ToMetric())</h3>
-            <ul>
+            <h3 id="@item.Link">
+                <span>@item.Name (@item.Posts.Count.ToMetric())</span>
+                <a href="@AddressHelper.GetRelativeAddress($"#{item.Link}")">
+                    <i class="text-muted fas fa-link fa-xs"></i>
+                </a>
+            </h3>
+            <table>
                 @foreach (var post in item.Posts.OrderByDescending(p => p.CreationTimeUtc))
                 {
-                    <li><a href="@post.FullUrl">@post.Title</a></li>
+                    <tr>
+                        <td><span class="text-muted post-meta">@post.CreationTimeUtc.ToChinaTime().ToDate()</span></td>
+
+                        <td>
+                            <a href="@post.FullUrl">
+                                <span>@post.Title</span>
+                            </a>
+                        </td>
+                    </tr>
                 }
-            </ul>
+            </table>
         }
     </div>
 </div>
+
+@section style{
+    <link rel="stylesheet" href="~/style/archive.min.css" asp-append-version="true" />
+}
+
+@section script{
+    <script src="~/script/archive.min.js" defer asp-append-version="true"></script>
+}

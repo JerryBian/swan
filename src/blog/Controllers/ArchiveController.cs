@@ -25,7 +25,7 @@ namespace Laobian.Blog.Controllers
             foreach (var blogCategory in cats)
             {
                 var catModel = new ArchiveViewModel(blogCategory.Name, blogCategory.Link);
-                catModel.Posts.AddRange(posts.Where(p=>p.CategoryNames.Contains(blogCategory.Name, StringComparer.OrdinalIgnoreCase)));
+                catModel.Posts.AddRange(posts.Where(p => p.CategoryNames.Contains(blogCategory.Name, StringComparer.OrdinalIgnoreCase)));
 
                 model.Add(catModel);
             }
@@ -61,13 +61,13 @@ namespace Laobian.Blog.Controllers
             foreach (var date in dates)
             {
                 var catModel = new ArchiveViewModel($"{date} 年", date.ToString());
-                catModel.Posts.AddRange(posts.Where(p => p.CreationTimeUtc.Year == date));
+                catModel.Posts.AddRange(posts.Where(p => p.CreationTimeUtc.Year == date).OrderByDescending(p => p.CreationTimeUtc));
 
                 model.Add(catModel);
             }
 
             ViewData["Title"] = "存档";
-            return View("Index", model);
+            return View("Index", model.OrderByDescending(m => m.Name));
         }
     }
 }

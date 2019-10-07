@@ -272,8 +272,21 @@ namespace Laobian.Share.BlogEngine.Model
             var htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(HtmlContent);
 
-            var firstNode = htmlDoc.DocumentNode.ChildNodes.FirstOrDefault(_ => string.Equals(_.Name, "p", StringComparison.OrdinalIgnoreCase));
-            return firstNode == null ? "<p></p>" : firstNode.OuterHtml;
+            var excerpt = string.Empty;
+            var paraNodes = 
+                htmlDoc.DocumentNode.Descendants().Where(_ => StringEqualsHelper.EqualsIgnoreCase(_.Name, "p")).Take(2).ToList();
+            if (paraNodes.Count == 1)
+            {
+                excerpt += paraNodes[0].OuterHtml;
+            }
+
+            if(paraNodes.Count == 2)
+            {
+                excerpt += $"{paraNodes[0].OuterHtml}{paraNodes[1].OuterHtml}";
+            }
+
+            excerpt += "<p>...</p>";
+            return excerpt;
         }
     }
 }

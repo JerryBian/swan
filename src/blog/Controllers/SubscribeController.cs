@@ -25,11 +25,6 @@ namespace Laobian.Blog.Controllers
             _blogService = blogService;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
         [Route("/rss")]
         public async Task<IActionResult> Rss()
         {
