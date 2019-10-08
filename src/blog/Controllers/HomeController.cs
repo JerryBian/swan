@@ -25,10 +25,7 @@ namespace Laobian.Blog.Controllers
 
         public IActionResult Index([FromQuery] int p)
         {
-            const int pageSize = 8;
-            var publishedPosts = _blogService.GetPosts().Where(_ => _.IsPublic).OrderByDescending(_ => _.CreationTimeUtc).ToList();
-            var pagination = new Pagination(p, (int)Math.Ceiling(publishedPosts.Count() / (double)pageSize));
-            var posts = publishedPosts.ToPaged(pageSize, pagination.CurrentPage);
+            var posts = _blogService.GetPagedPublishedPosts(ref p, out var totalPages);
             var categories = _blogService.GetCategories();
             var tags = _blogService.GetTags();
             var postViewModels = new List<PostViewModel>();
@@ -38,7 +35,7 @@ namespace Laobian.Blog.Controllers
                 foreach (var blogPostCategoryName in blogPost.CategoryNames)
                 {
                     var cat = categories.FirstOrDefault(_ =>
-                        string.Equals(_.Name, blogPostCategoryName, StringComparison.OrdinalIgnoreCase));
+                        StringEqualsHelper.EqualsIgnoreCase(_.Name, blogPostCategoryName));
                     if (cat != null)
                     {
                         postViewModel.Categories.Add(cat);
@@ -48,7 +45,7 @@ namespace Laobian.Blog.Controllers
                 foreach (var blogPostTagName in blogPost.TagNames)
                 {
                     var tag = tags.FirstOrDefault(_ =>
-                        string.Equals(_.Name, blogPostTagName, StringComparison.OrdinalIgnoreCase));
+                        StringEqualsHelper.EqualsIgnoreCase(_.Name, blogPostTagName));
                     if (tag != null)
                     {
                         postViewModel.Tags.Add(tag);
@@ -58,22 +55,21 @@ namespace Laobian.Blog.Controllers
                 postViewModels.Add(postViewModel);
             }
 
-            if (pagination.CurrentPage > 1)
+            if (p > 1)
             {
-                ViewData["Title"] = $"第{pagination.CurrentPage}页";
+                ViewData["Title"] = $"第{p}页";
                 ViewData["Robots"] = "noindex, nofollow";
             }
 
             ViewData["Canonical"] = "/";
-            return View(new PagedPostViewModel { Pagination = pagination, Posts = postViewModels, Url = Request.Path });
+            return View(new PagedPostViewModel { CurrentPage = p, TotalPages = totalPages, Posts = postViewModels, Url = Request.Path });
         }
 
         [Route("/sitemap")]
         [Route("/sitemap.xml")]
         public IActionResult SiteMap()
         {
-            var publishedPosts = _blogService.GetPosts().Where(_ => _.IsPublic)
-                .OrderByDescending(_ => _.CreationTimeUtc).ToList();
+            var publishedPosts = _blogService.GetPublishedPosts();
             var urlSet = new SiteMapUrlSet();
             var urls = new List<SiteMapUrl>
             {

@@ -20,13 +20,21 @@ namespace Laobian.Blog.Controllers
         public IActionResult Category()
         {
             var model = new List<ArchiveViewModel>();
-            var posts = _blogService.GetPosts().Where(_ => _.IsPublic).ToList();
+            var posts = _blogService.GetPublishedPosts();
             var cats = _blogService.GetCategories();
             foreach (var blogCategory in cats)
             {
                 var catModel = new ArchiveViewModel(blogCategory.Name, blogCategory.Link);
                 catModel.Posts.AddRange(posts.Where(p => p.CategoryNames.Contains(blogCategory.Name, StringComparer.OrdinalIgnoreCase)));
 
+                model.Add(catModel);
+            }
+
+            var remainingPosts = posts.Except(model.SelectMany(_ => _.Posts).Distinct()).ToList();
+            if (remainingPosts.Any())
+            {
+                var catModel = new ArchiveViewModel(BlogConstant.DefaultCategoryName, BlogConstant.DefaultCategoryLink);
+                catModel.Posts.AddRange(remainingPosts);
                 model.Add(catModel);
             }
 
@@ -40,14 +48,22 @@ namespace Laobian.Blog.Controllers
         public IActionResult Tag()
         {
             var model = new List<ArchiveViewModel>();
-            var posts = _blogService.GetPosts().Where(_ => _.IsPublic).ToList();
+            var posts = _blogService.GetPublishedPosts();
             var tags = _blogService.GetTags();
             foreach (var tag in tags)
             {
-                var catModel = new ArchiveViewModel(tag.Name, tag.Link);
-                catModel.Posts.AddRange(posts.Where(p => p.TagNames.Contains(tag.Name, StringComparer.OrdinalIgnoreCase)));
+                var tagModel = new ArchiveViewModel(tag.Name, tag.Link);
+                tagModel.Posts.AddRange(posts.Where(p => p.TagNames.Contains(tag.Name, StringComparer.OrdinalIgnoreCase)));
 
-                model.Add(catModel);
+                model.Add(tagModel);
+            }
+
+            var remainingPosts = posts.Except(model.SelectMany(_ => _.Posts).Distinct()).ToList();
+            if (remainingPosts.Any())
+            {
+                var tagModel = new ArchiveViewModel(BlogConstant.DefaultTagName, BlogConstant.DefaultTagLink);
+                tagModel.Posts.AddRange(remainingPosts);
+                model.Add(tagModel);
             }
 
             ViewData["Title"] = "标签";
@@ -60,7 +76,7 @@ namespace Laobian.Blog.Controllers
         public IActionResult Date()
         {
             var model = new List<ArchiveViewModel>();
-            var posts = _blogService.GetPosts().Where(_ => _.IsPublic).ToList();
+            var posts = _blogService.GetPublishedPosts();
             var dates = posts.Select(_ => _.CreationTimeUtc.Year).Distinct();
             foreach (var date in dates)
             {

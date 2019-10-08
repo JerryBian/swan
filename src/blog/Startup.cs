@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
+using Laobian.Blog.Helpers;
 using Laobian.Share.BlogEngine;
 using Laobian.Share.Config;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -32,7 +34,8 @@ namespace Laobian.Blog
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            BlogServiceRegister.Register(services, Configuration);
+            services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
+            StartupHelper.RegisterService(services, Configuration);
 
             if (HostEnvironment.IsDevelopment())
             {
@@ -67,19 +70,19 @@ namespace Laobian.Blog
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
 
-            if (HostEnvironment.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
+            if (HostEnvironment.IsProduction())
             {
                 app.UseExceptionHandler(new ExceptionHandlerOptions
                 {
                     ExceptionHandler = async context =>
                     {
-                        await context.Response.WriteAsync($"Something was wrong! Please contact .");
+                        await context.Response.WriteAsync($"Something was wrong! Please contact {BlogConstant.AuthorEmail}.");
                     }
                 });
+            }
+            else
+            {
+                app.UseDeveloperExceptionPage();
             }
 
             app.UseStatusCodePages(async context =>
@@ -90,12 +93,8 @@ namespace Laobian.Blog
                     context.HttpContext.Response.StatusCode);
             });
 
-            var provider = new FileExtensionContentTypeProvider();
-            provider.Mappings[".webmanifest"] = "application/manifest+json";
-
             app.UseStaticFiles(new StaticFileOptions
             {
-                ContentTypeProvider = provider,
                 OnPrepareResponse = ctx =>
                 {
                     const int durationInSeconds = 60 * 60 * 24 * 30;

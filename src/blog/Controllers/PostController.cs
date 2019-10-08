@@ -2,6 +2,7 @@
 using System.Linq;
 using Laobian.Blog.Models;
 using Laobian.Share.BlogEngine;
+using Laobian.Share.Helper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Laobian.Blog.Controllers
@@ -31,7 +32,7 @@ namespace Laobian.Blog.Controllers
             foreach (var blogPostCategoryName in post.CategoryNames)
             {
                 var cat = categories.FirstOrDefault(_ =>
-                    string.Equals(_.Name, blogPostCategoryName, StringComparison.OrdinalIgnoreCase));
+                    StringEqualsHelper.EqualsIgnoreCase(_.Name, blogPostCategoryName));
                 if (cat != null)
                 {
                     postViewModel.Categories.Add(cat);
@@ -41,7 +42,7 @@ namespace Laobian.Blog.Controllers
             foreach (var blogPostTagName in post.TagNames)
             {
                 var tag = tags.FirstOrDefault(_ =>
-                    string.Equals(_.Name, blogPostTagName, StringComparison.OrdinalIgnoreCase));
+                    StringEqualsHelper.EqualsIgnoreCase(_.Name, blogPostTagName));
                 if (tag != null)
                 {
                     postViewModel.Tags.Add(tag);

@@ -16,7 +16,13 @@
 
 <div class="alert alert-info post-alert" role="alert">
     <ul>
-        <li>发表于 @Html.Raw(Model.GetCategoryAndTagHtml())</li>
+        @{
+            var meta = Model.GetCategoryAndTagHtml();
+            if (!string.IsNullOrEmpty(meta))
+            {
+                <li>发表于 @Html.Raw(meta)</li>
+            }
+        }
         <li>
             如果您有关于这篇文章的评论，请发送电子邮件至 <a href="mailto:@BlogConstant.AuthorEmail?subject=评论 - @Model.Post.Title&body=Good job！">@BlogConstant.AuthorEmail</a>。
         </li>

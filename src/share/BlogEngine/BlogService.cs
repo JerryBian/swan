@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Laobian.Share.BlogEngine.Model;
 using Laobian.Share.BlogEngine.Parser;
 using Laobian.Share.Config;
+using Laobian.Share.Extension;
 using Laobian.Share.Helper;
 using Laobian.Share.Infrastructure.Cache;
 using Laobian.Share.Infrastructure.Git;
@@ -72,6 +73,29 @@ namespace Laobian.Share.BlogEngine
             return post;
         }
 
+        public List<BlogPost> GetPagedPublishedPosts(ref int page, out int totalPages)
+        {
+            var publishedPosts = GetPublishedPosts();
+            totalPages = (int)Math.Ceiling(publishedPosts.Count / (double)BlogConstant.PostsPerPage);
+            if (page <= 0)
+            {
+                page = 1;
+            }
+
+            if (page > totalPages)
+            {
+                page = totalPages;
+            }
+
+            return publishedPosts.ToPaged(BlogConstant.PostsPerPage, page);
+        }
+
+        public List<BlogPost> GetPublishedPosts()
+        {
+            var posts = GetPosts();
+            return posts.Where(_ => _.IsPublic).OrderByDescending(_ => _.CreationTimeUtc).ToList();
+        }
+
         public List<BlogPost> GetPosts()
         {
             if (!_memoryCacheClient.TryGet<List<BlogPost>>(CacheKeyBuilder.Build(SiteComponent.Blog, "post", "all"), out var posts))
@@ -114,7 +138,7 @@ namespace Laobian.Share.BlogEngine
                 await _gitClient.CloneAsync(_gitConfig);
                 await UpdatePostTemplateAsync();
             }
-            
+
             var tasks = new List<Task>
             {
                 UpdateMemoryCategoriesAsync(),
@@ -140,8 +164,8 @@ namespace Laobian.Share.BlogEngine
                 Link = "Your-Post-Link-Here",
                 Title = "Your Post Title Here",
                 Visits = 10,
-                CategoryNames = new List<string> { "分类名称1", "分类名称2"},
-                TagNames = new List<string> { "标签名称1", "标签名称2"},
+                CategoryNames = new List<string> { "分类名称1", "分类名称2" },
+                TagNames = new List<string> { "标签名称1", "标签名称2" },
                 MarkdownContent = "Your Post Content Here in Markdown."
             };
 

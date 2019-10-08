@@ -43,5 +43,7 @@
         public const string AuthorEnglishName = "Jerry Bian";
 
         public const string AuthorEmail = "JerryBian@outlook.com";
+
+        public const int PostsPerPage = 8;
     }
 }
