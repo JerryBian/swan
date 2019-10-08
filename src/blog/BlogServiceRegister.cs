@@ -32,6 +32,7 @@ namespace Laobian.Blog
                 ac.BlogPostHostingServiceInterval = config.GetValue("BLOG_POST_HOSTING_INTERVAL_IN_SECONDS",
                     TimeSpan.FromHours(1).TotalSeconds);
                 ac.BlogAddress = config.GetValue("BLOG_ADDRESS", "https://blog.laobian.me/");
+                ac.AssetGitHubHookSecret = config.GetValue("ASSET_GITHUB_HOOK_SECRET", "test");
             });
 
             services.AddSingleton<IMemoryCacheClient, MemoryCacheClient>();
