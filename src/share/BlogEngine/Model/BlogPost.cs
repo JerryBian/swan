@@ -162,9 +162,9 @@ namespace Laobian.Share.BlogEngine.Model
         {
             get
             {
-                if (string.IsNullOrEmpty(_fullUrl) && CreationTimeUtc != default && !string.IsNullOrEmpty(Link))
+                if (string.IsNullOrEmpty(_fullUrlWithBaseAddress) && CreationTimeUtc != default && !string.IsNullOrEmpty(Link))
                 {
-                    _fullUrlWithBaseAddress = GetFullUrl(CreationTimeUtc.Year, CreationTimeUtc.Month, Link);
+                    _fullUrlWithBaseAddress = GetFullUrl(CreationTimeUtc.Year, CreationTimeUtc.Month, Link, true);
                 }
 
                 return _fullUrlWithBaseAddress;

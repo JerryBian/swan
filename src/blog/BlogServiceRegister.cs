@@ -31,6 +31,7 @@ namespace Laobian.Blog
                 ac.AssetGitCommitEmail = config.GetValue("ASSET_LOCAL_COMMIT_USER_EMAIL", "bot@laobian.me");
                 ac.BlogPostHostingServiceInterval = config.GetValue("BLOG_POST_HOSTING_INTERVAL_IN_SECONDS",
                     TimeSpan.FromHours(1).TotalSeconds);
+                ac.BlogAddress = config.GetValue("BLOG_ADDRESS", "https://blog.laobian.me/");
             });
 
             services.AddSingleton<IMemoryCacheClient, MemoryCacheClient>();
