@@ -202,7 +202,7 @@ namespace Laobian.Share.BlogEngine
                 }
 
                 var memPost = memPosts.FirstOrDefault(p =>
-                    string.Equals(p.Link, filePost.Link, StringComparison.OrdinalIgnoreCase));
+                    StringEqualsHelper.EqualsIgnoreCase(p.Link, filePost.Link));
                 if (memPost != null)
                 {
                     filePost.Visits = Math.Max(filePost.Visits, memPost.Visits);
@@ -225,8 +225,7 @@ namespace Laobian.Share.BlogEngine
 
             foreach (var postItem in Directory.EnumerateFiles(
                 postDirPath,
-                $"*{BlogConstant.PostMarkdownExtension}",
-                SearchOption.TopDirectoryOnly))
+                $"*{BlogConstant.PostMarkdownExtension}"))
             {
                 var post = await _postParser.FromTextAsync(await File.ReadAllTextAsync(postItem), Path.GetFileNameWithoutExtension(postItem));
                 result.Add(post);

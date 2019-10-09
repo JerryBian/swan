@@ -269,7 +269,9 @@ namespace Laobian.Share.BlogEngine.Model
 
                     if (!Path.IsPathRooted(src))
                     {
-                        imageNode.SetAttributeValue("src", $"{BlogConstant.FileRequestPath}/{Path.GetFileName(src)}");
+                        imageNode.SetAttributeValue("src",
+                            AddressHelper.GetAddress(Config.BlogAddress, false, BlogConstant.FileRequestPath,
+                                Path.GetFileName(src)));
                     }
                 }
             }
