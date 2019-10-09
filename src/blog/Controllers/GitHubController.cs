@@ -76,6 +76,7 @@ namespace Laobian.Blog.Controllers
                 var payload = SerializeHelper.FromJson<GitHubPayload>(body);
                 await _blogService.UpdateMemoryAssetsAsync();
 
+                bool requireCommit = false;
                 var modifiedPosts = payload.Commits.SelectMany(c => c.Modified).ToList();
                 if (modifiedPosts.Any())
                 {
@@ -86,12 +87,17 @@ namespace Laobian.Blog.Controllers
                             string.Equals(p, blogPost.GitHubPath, StringComparison.OrdinalIgnoreCase));
                         if (modifiedPost != null)
                         {
+                            requireCommit = true;
                             blogPost.LastUpdateTimeUtc = DateTime.UtcNow;
                         }
                     }
                 }
 
-                await _blogService.UpdateCloudAssetsAsync();
+                if (requireCommit || payload.Commits.SelectMany(c => c.Added).Any())
+                {
+                    await _blogService.UpdateCloudAssetsAsync();
+                }
+
                 return Ok("Local updated.");
             }
         }
