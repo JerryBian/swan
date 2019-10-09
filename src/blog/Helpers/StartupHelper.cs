@@ -1,5 +1,4 @@
-﻿using System;
-using Laobian.Blog.HostedService;
+﻿using Laobian.Blog.HostedService;
 using Laobian.Share.BlogEngine;
 using Laobian.Share.Config;
 using Laobian.Share.Infrastructure.Cache;
@@ -38,8 +37,6 @@ namespace Laobian.Blog.Helpers
             ac.CloneAssetsDuringStartup = config.GetValue("STARTUP_CLONE_ASSETS", true);
             ac.AssetGitCommitUser = config.GetValue("ASSET_LOCAL_COMMIT_USER_NAME", "bot");
             ac.AssetGitCommitEmail = config.GetValue("ASSET_LOCAL_COMMIT_USER_EMAIL", "bot@laobian.me");
-            ac.BlogPostHostingServiceInterval = config.GetValue("BLOG_POST_HOSTING_INTERVAL_IN_SECONDS",
-                TimeSpan.FromHours(1).TotalSeconds);
             ac.BlogAddress = config.GetValue("BLOG_ADDRESS", "https://blog.laobian.me/");
             ac.AssetGitHubHookSecret = config.GetValue("ASSET_GITHUB_HOOK_SECRET", "test");
         }

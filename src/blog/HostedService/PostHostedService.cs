@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Share.BlogEngine;
 using Laobian.Share.Config;
+using Laobian.Share.Extension;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
@@ -10,6 +11,7 @@ namespace Laobian.Blog.HostedService
 {
     public class PostHostedService : BackgroundService
     {
+        private DateTime _lastExecuted;
         private readonly AppConfig _appConfig;
         private readonly IBlogService _blogService;
 
@@ -23,15 +25,18 @@ namespace Laobian.Blog.HostedService
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                await Task.Delay(TimeSpan.FromSeconds(_appConfig.BlogPostHostingServiceInterval), stoppingToken);
                 try
                 {
-                    await _blogService.UpdateCloudAssetsAsync();
+                    var chinaTime = DateTime.UtcNow.ToChinaTime();
+                    if (chinaTime.Hour == 4 && _lastExecuted.Date < chinaTime.Date)
+                    {
+                        _lastExecuted = chinaTime;
+                        await _blogService.UpdateCloudAssetsAsync();
+                    }
+
+                    await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken);
                 }
-                catch (Exception ex)
-                {
-                    
-                }
+                catch { }
             }
         }
 
