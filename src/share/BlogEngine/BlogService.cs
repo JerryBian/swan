@@ -12,6 +12,7 @@ using Laobian.Share.Helper;
 using Laobian.Share.Infrastructure.Cache;
 using Laobian.Share.Infrastructure.Git;
 using Markdig;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Laobian.Share.BlogEngine
@@ -25,12 +26,15 @@ namespace Laobian.Share.BlogEngine
         private readonly IGitClient _gitClient;
         private readonly BlogCategoryParser _categoryParser;
         private readonly IMemoryCacheClient _memoryCacheClient;
+        private readonly ILogger<BlogService> _logger;
 
         public BlogService(
+            ILogger<BlogService> logger,
             IOptions<AppConfig> appConfig,
             IGitClient gitClient,
             IMemoryCacheClient memoryCacheClient)
         {
+            _logger = logger;
             _appConfig = appConfig.Value;
             _gitClient = gitClient;
             _memoryCacheClient = memoryCacheClient;
@@ -44,7 +48,9 @@ namespace Laobian.Share.BlogEngine
                 GitHubRepositoryBranch = _appConfig.AssetGitHubRepoBranch,
                 GitHubRepositoryOwner = _appConfig.AssetGitHubRepoOwner,
                 GitHubAccessToken = _appConfig.AssetGitHubRepoApiToken,
-                GitCloneToDir = _appConfig.AssetRepoLocalDir
+                GitCloneToDir = _appConfig.AssetRepoLocalDir,
+                GitCommitEmail = _appConfig.AssetGitCommitEmail,
+                GitCommitUser = _appConfig.AssetGitCommitUser
             };
         }
 
@@ -79,11 +85,13 @@ namespace Laobian.Share.BlogEngine
             totalPages = (int)Math.Ceiling(publishedPosts.Count / (double)BlogConstant.PostsPerPage);
             if (page <= 0)
             {
+                _logger.LogWarning("Request paged published posts with {Parameter}", page);
                 page = 1;
             }
 
             if (page > totalPages)
             {
+                _logger.LogWarning("Request paged published posts with {Parameter}", page);
                 page = totalPages;
             }
 

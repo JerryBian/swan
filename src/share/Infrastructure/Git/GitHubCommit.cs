@@ -12,5 +12,8 @@ namespace Laobian.Share.Infrastructure.Git
 
         [JsonPropertyName("modified")]
         public string[] Modified { get; set; }
+
+        [JsonPropertyName("author")]
+        public GitHubAuthor Author { get; set; }
     }
 }

@@ -25,7 +25,7 @@ namespace Laobian.Share.Infrastructure.Git
             _logger.LogInformation("Clean folder {0} completed.", localPath);
 
             var repoUrl = $"https://{gitConfig.GitHubAccessToken}@github.com/{gitConfig.GitHubRepositoryOwner}/{gitConfig.GitHubRepositoryName}.git";
-            var outputs = await _command.ExecuteAsync(
+            await _command.ExecuteAsync(
                 $"git clone -b {gitConfig.GitHubRepositoryBranch} --single-branch {repoUrl} {localPath}");
             _logger.LogInformation("Clone assets to local completed.");
 

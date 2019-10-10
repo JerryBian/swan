@@ -74,10 +74,16 @@ namespace Laobian.Blog.Controllers
                 }
 
                 var payload = SerializeHelper.FromJson<GitHubPayload>(body);
-                await _blogService.UpdateMemoryAssetsAsync();
+                if (payload.Commits.Any(c =>
+                    StringEqualsHelper.EqualsIgnoreCase(_appConfig.AssetGitCommitEmail, c.Author.Email)))
+                {
+                    return Ok("No need to refresh.");
+                }
 
-                bool requireCommit = false;
                 var modifiedPosts = payload.Commits.SelectMany(c => c.Modified).ToList();
+                await _blogService.UpdateMemoryAssetsAsync();
+                bool requireCommit = false;
+
                 if (modifiedPosts.Any())
                 {
                     var posts = _blogService.GetPosts();
