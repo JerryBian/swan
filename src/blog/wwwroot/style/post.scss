@@ -1,7 +1,8 @@
-﻿@import "_/_common.scss";
+﻿@use "lib/highlight/styles/tomorrow-night.css";
+
+@import "_/_common.scss";
 @import "../lib/bootstrap/scss/bootstrap.scss";
 @import "shared.scss";
-@import "../../lib/highlight/styles/tomorrow-night.css";
 
 .post {
     .post-title {

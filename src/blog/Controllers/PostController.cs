@@ -49,7 +49,7 @@ namespace Laobian.Blog.Controllers
                 }
             }
 
-            ViewData["Canonical"] = post.FullUrl;
+            ViewData["Canonical"] = post.FullUrlWithBaseAddress;
             ViewData["Title"] = post.Title;
             ViewData["Description"] = post.ExcerptText;
 

@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -93,8 +94,11 @@ namespace Laobian.Blog
                     context.HttpContext.Response.StatusCode);
             });
 
+            var provider = new FileExtensionContentTypeProvider();
+            provider.Mappings[".webmanifest"] = "application/manifest+json";
             app.UseStaticFiles(new StaticFileOptions
             {
+                ContentTypeProvider = provider,
                 OnPrepareResponse = ctx =>
                 {
                     const int durationInSeconds = 60 * 60 * 24 * 30;
