@@ -4,7 +4,7 @@ namespace Laobian.Share.Infrastructure.Git
 {
     public class GitHubAuthor
     {
-        [JsonPropertyName("user")]
+        [JsonPropertyName("name")]
         public string User { get; set; }
 
         [JsonPropertyName("email")]

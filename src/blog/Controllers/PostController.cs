@@ -19,7 +19,7 @@ namespace Laobian.Blog.Controllers
         }
 
         [Route("{year:int}/{month:int}/{url}.html")]
-        [ResponseCache(VaryByHeader = "Accept-Encoding", Duration = 60, Location = ResponseCacheLocation.Any)]
+        [ResponseCache(CacheProfileName = "Cache10Sec")]
         public IActionResult Index(int year, int month, string url)
         {
             var post = _blogService.GetPost(year, month, url);

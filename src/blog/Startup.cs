@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -38,17 +39,44 @@ namespace Laobian.Blog
             services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
             StartupHelper.RegisterService(services, Configuration);
 
-            services.AddResponseCaching();
             if (HostEnvironment.IsDevelopment())
             {
-                services.AddControllersWithViews().AddRazorRuntimeCompilation();
+                services.AddControllersWithViews(SetCacheProfile).AddRazorRuntimeCompilation();
             }
             else
             {
-                services.AddControllersWithViews();
+                services.AddControllersWithViews(SetCacheProfile);
             }
 
             services.AddDirectoryBrowser();
+        }
+
+        private static void SetCacheProfile(MvcOptions options)
+        {
+            options.CacheProfiles.Add(
+                "Cache10Sec",
+                new CacheProfile
+                {
+                    Duration = 10,
+                    Location = ResponseCacheLocation.Client,
+                    VaryByHeader = "Accept-Encoding"
+                });
+            options.CacheProfiles.Add(
+                "Cache1Hour",
+                new CacheProfile
+                {
+                    Duration = 60 * 60,
+                    Location = ResponseCacheLocation.Client,
+                    VaryByHeader = "Accept-Encoding"
+                });
+            options.CacheProfiles.Add(
+                "Cache1Day",
+                new CacheProfile
+                {
+                    Duration = 60 * 60 * 24,
+                    Location = ResponseCacheLocation.Client,
+                    VaryByHeader = "Accept-Encoding"
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -118,7 +146,6 @@ namespace Laobian.Blog
             });
 
             app.UseRouting();
-            app.UseResponseCaching();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute();

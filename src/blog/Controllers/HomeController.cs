@@ -23,7 +23,7 @@ namespace Laobian.Blog.Controllers
             _blogService = blogService;
         }
 
-        [ResponseCache(VaryByHeader = "Accept-Encoding", VaryByQueryKeys = new[] { "p" }, Duration = 60 * 5, Location = ResponseCacheLocation.Any)]
+        [ResponseCache(CacheProfileName = "Cache10Sec")]
         public IActionResult Index([FromQuery] int p)
         {
             var posts = _blogService.GetPagedPublishedPosts(ref p, out var totalPages);

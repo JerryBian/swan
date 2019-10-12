@@ -82,13 +82,14 @@ namespace Laobian.Blog.Controllers
 
                 var payload = SerializeHelper.FromJson<GitHubPayload>(body);
                 if (payload.Commits.Any(c =>
-                    StringEqualsHelper.IgnoreCase(_appConfig.AssetGitCommitEmail, c.Author.Email)))
+                    StringEqualsHelper.IgnoreCase(_appConfig.AssetGitCommitEmail, c.Author.Email) &&
+                    StringEqualsHelper.IgnoreCase(_appConfig.AssetGitCommitUser, c.Author.User)))
                 {
                     _logger.LogInformation("Got request from server, no need to refresh.");
                     return Ok("No need to refresh.");
                 }
 
-                var modifiedPosts = payload.Commits.SelectMany(c => c.Modified).ToList();
+                var modifiedPosts = payload.Commits.SelectMany(c => c.Modified).Distinct().ToList();
                 await _blogService.UpdateMemoryAssetsAsync();
                 _logger.LogInformation("Local assets refreshed.");
 

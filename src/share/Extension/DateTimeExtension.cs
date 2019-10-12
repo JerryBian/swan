@@ -127,9 +127,9 @@ namespace Laobian.Share.Extension
             return time.ToString("yyyyMM");
         }
 
-        public static string ToTimeZoneString(this DateTime time)
+        public static string ToTimeZoneString(this DateTime time, TimeSpan offset)
         {
-            var zone = new DateTimeOffset(time);
+            var zone = new DateTimeOffset(time, offset);
             return zone.ToString();
         }
     }

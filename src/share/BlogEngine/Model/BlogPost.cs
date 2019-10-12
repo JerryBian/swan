@@ -30,18 +30,18 @@ namespace Laobian.Share.BlogEngine.Model
         [BlogPostMetadata(BlogPostMetadataReturnType.DateTime, "UpdateAt", IsAssignable = false)]
         public DateTime LastUpdateTimeUtc { get; set; }
 
-        [BlogPostMetadata(BlogPostMetadataReturnType.ListOfString, "category", "分类")]
+        [BlogPostMetadata(BlogPostMetadataReturnType.ListOfString, "Category", "分类")]
         public List<string> CategoryNames { get; set; }
 
-        [BlogPostMetadata(BlogPostMetadataReturnType.ListOfString, "tag", "标签")]
+        [BlogPostMetadata(BlogPostMetadataReturnType.ListOfString, "Tag", "标签")]
         public List<string> TagNames { get; set; }
 
-        [BlogPostMetadata(BlogPostMetadataReturnType.String, "title", "标题")]
+        [BlogPostMetadata(BlogPostMetadataReturnType.String, "Title", "标题")]
         public string Title { get; set; }
 
         private int _visits;
 
-        [BlogPostMetadata(BlogPostMetadataReturnType.Int32, "visit")]
+        [BlogPostMetadata(BlogPostMetadataReturnType.Int32, "Visit")]
         public int Visits
         {
             get => _visits;
@@ -291,7 +291,11 @@ namespace Laobian.Share.BlogEngine.Model
             var excerpt = string.Empty;
             var excerptText = string.Empty;
             var paraNodes = 
-                htmlDoc.DocumentNode.Descendants().Where(_ => StringEqualsHelper.IgnoreCase(_.Name, "p")).Take(2).ToList();
+                htmlDoc.DocumentNode
+                    .Descendants()
+                    .Where(_ => 
+                        StringEqualsHelper.IgnoreCase(_.Name, "p") && 
+                        _.Descendants().FirstOrDefault(c => StringEqualsHelper.IgnoreCase(c.Name, "img")) == null).Take(2).ToList();
             if (paraNodes.Count == 1)
             {
                 excerpt += paraNodes[0].OuterHtml;

@@ -29,7 +29,7 @@ namespace Laobian.Share.Infrastructure.Git
                 $"git clone -b {gitConfig.GitHubRepositoryBranch} --single-branch {repoUrl} {localPath}");
             _logger.LogInformation("Clone assets to local completed.");
 
-            await _command.ExecuteAsync($"cd {gitConfig.GitCloneToDir}; git config set user.name \"{gitConfig.GitCommitUser}\"; git config user.email \"{gitConfig.GitCommitEmail}\"");
+            await _command.ExecuteAsync($"cd {gitConfig.GitCloneToDir}; git config user.name \"{gitConfig.GitCommitUser}\"; git config user.email \"{gitConfig.GitCommitEmail}\"");
             _logger.LogInformation("Set local commit user completed.");
         }
 

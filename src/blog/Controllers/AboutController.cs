@@ -13,7 +13,7 @@ namespace Laobian.Blog.Controllers
             _blogService = blogService;
         }
 
-        [ResponseCache(VaryByHeader = "Accept-Encoding", Duration = 60 * 60 * 24, Location = ResponseCacheLocation.Any)]
+        [ResponseCache(CacheProfileName = "Cache1Day")]
         public IActionResult Index()
         {
             var html = _blogService.GetAboutHtml(RequestLang.English);

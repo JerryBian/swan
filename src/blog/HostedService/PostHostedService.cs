@@ -47,7 +47,7 @@ namespace Laobian.Blog.HostedService
                     }
                     else
                     {
-                        await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
+                        await Task.Delay(TimeSpan.FromMinutes(10), stoppingToken);
                         await _blogService.UpdateCloudAssetsAsync();
                         _logger.LogInformation("Post hosted service executed completely, Non-Prod.");
                     }
