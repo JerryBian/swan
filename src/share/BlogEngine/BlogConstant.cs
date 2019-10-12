@@ -38,7 +38,7 @@
 
         public const string BlogName = "Jerry Bian's blog";
 
-        public const string BlogDescription = "";
+        public const string BlogDescription = "技术心得与生活感悟 - Jerry Bian(卞良忠)";
 
         public const string AuthorEnglishName = "Jerry Bian";
 

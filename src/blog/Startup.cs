@@ -38,6 +38,7 @@ namespace Laobian.Blog
             services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
             StartupHelper.RegisterService(services, Configuration);
 
+            services.AddResponseCaching();
             if (HostEnvironment.IsDevelopment())
             {
                 services.AddControllersWithViews().AddRazorRuntimeCompilation();
@@ -117,6 +118,7 @@ namespace Laobian.Blog
             });
 
             app.UseRouting();
+            app.UseResponseCaching();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute();

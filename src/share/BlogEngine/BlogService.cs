@@ -73,7 +73,7 @@ namespace Laobian.Share.BlogEngine
             var post = posts.FirstOrDefault(p =>
                 p.CreationTimeUtc.Year == year &&
                 p.CreationTimeUtc.Month == month &&
-                StringEqualsHelper.EqualsIgnoreCase(p.Link, link));
+                StringEqualsHelper.IgnoreCase(p.Link, link));
             post?.AddVisit();
 
             return post;
@@ -204,13 +204,13 @@ namespace Laobian.Share.BlogEngine
             var posts = new List<BlogPost>();
             foreach (var filePost in filePosts)
             {
-                if (StringEqualsHelper.EqualsIgnoreCase(filePost.GitHubPath, BlogConstant.TemplatePostGitHubPath))
+                if (StringEqualsHelper.IgnoreCase(filePost.GitHubPath, BlogConstant.TemplatePostGitHubPath))
                 {
                     continue;
                 }
 
                 var memPost = memPosts.FirstOrDefault(p =>
-                    StringEqualsHelper.EqualsIgnoreCase(p.Link, filePost.Link));
+                    StringEqualsHelper.IgnoreCase(p.Link, filePost.Link));
                 if (memPost != null)
                 {
                     filePost.Visits = Math.Max(filePost.Visits, memPost.Visits);

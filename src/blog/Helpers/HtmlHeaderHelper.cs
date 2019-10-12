@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using Laobian.Share.BlogEngine;
+﻿using Laobian.Share.BlogEngine;
 
 namespace Laobian.Blog.Helpers
 {

@@ -10,7 +10,7 @@ namespace Laobian.Share.BlogEngine.Model
 
         public string GetLink()
         {
-            return AddressHelper.GetAddress(true, "tag", $"#{Link}");
+            return AddressHelper.GetAddress(false, "tag", $"#{Link}");
         }
 
         public static BlogTag Default => new BlogTag

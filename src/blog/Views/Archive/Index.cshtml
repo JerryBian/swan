@@ -5,7 +5,7 @@
         @foreach (var item in Model)
         {
             <a class="btn btn-light archive-link" href="@AddressHelper.GetRelativeAddress($"#{item.Link}")">
-                @item.Name <span class="badge badge-light">@item.Posts.Count.ToMetric()</span>
+                @item.Name <span class="badge badge-light">@item.Posts.Count.ForHuman()</span>
             </a>
         }
     </div>
@@ -14,7 +14,7 @@
         @foreach (var item in Model)
         {
             <h3 id="@item.Link">
-                <span>@item.Name (@item.Posts.Count.ToMetric())</span>
+                <span>@item.Name (@item.Posts.Count)</span>
                 <a href="@AddressHelper.GetRelativeAddress($"#{item.Link}")">
                     <i class="text-muted fas fa-link fa-xs"></i>
                 </a>

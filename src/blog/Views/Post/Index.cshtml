@@ -6,7 +6,10 @@
         <i class="fas fa-angle-down"></i>
         @Model.Post.Title
     </div>
-    <div class="text-muted text-left d-block d-lg-none post-meta">@Html.Raw(Model.GetSimpleMetadataHtml())</div>
+    <div class="text-muted text-left d-block d-lg-none post-meta">
+        <time datetime="@Model.Post.CreationTimeUtc.ToChinaTime().ToDateAndTime()"></time>
+        @Html.Raw(Model.GetSimpleMetadataHtml())
+    </div>
     <div class="mt-2 mb-4 post-content">
         @Html.Raw(Model.Post.HtmlContent)
         
@@ -24,7 +27,7 @@
             }
         }
         <li>
-            如果您有关于这篇文章的评论，请发送电子邮件至 <a href="mailto:@BlogConstant.AuthorEmail?subject=评论 - @Model.Post.Title&body=Good job！">@BlogConstant.AuthorEmail</a>。
+            关于这篇文章的评论，请发送电子邮件至 <a href="mailto:@BlogConstant.AuthorEmail?subject=评论 - @Model.Post.Title&body=Good job！">@BlogConstant.AuthorEmail</a>。
         </li>
     </ul>
 </div>

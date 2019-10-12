@@ -1,28 +1,32 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Laobian.Blog.Models;
 using Laobian.Share.BlogEngine;
 using Laobian.Share.Helper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Laobian.Blog.Controllers
 {
     public class PostController : Controller
     {
         private readonly IBlogService _blogService;
+        private readonly ILogger<PostController> _logger;
 
-        public PostController(IBlogService blogService)
+        public PostController(IBlogService blogService, ILogger<PostController> logger)
         {
+            _logger = logger;
             _blogService = blogService;
         }
 
         [Route("{year:int}/{month:int}/{url}.html")]
+        [ResponseCache(VaryByHeader = "Accept-Encoding", Duration = 60, Location = ResponseCacheLocation.Any)]
         public IActionResult Index(int year, int month, string url)
         {
             var post = _blogService.GetPost(year, month, url);
 
             if (post == null)
             {
+                _logger.LogWarning("Request post not exists. {Year}, {Month}, {Link}", year, month, url);
                 return NotFound();
             }
 
@@ -32,7 +36,7 @@ namespace Laobian.Blog.Controllers
             foreach (var blogPostCategoryName in post.CategoryNames)
             {
                 var cat = categories.FirstOrDefault(_ =>
-                    StringEqualsHelper.EqualsIgnoreCase(_.Name, blogPostCategoryName));
+                    StringEqualsHelper.IgnoreCase(_.Name, blogPostCategoryName));
                 if (cat != null)
                 {
                     postViewModel.Categories.Add(cat);
@@ -42,7 +46,7 @@ namespace Laobian.Blog.Controllers
             foreach (var blogPostTagName in post.TagNames)
             {
                 var tag = tags.FirstOrDefault(_ =>
-                    StringEqualsHelper.EqualsIgnoreCase(_.Name, blogPostTagName));
+                    StringEqualsHelper.IgnoreCase(_.Name, blogPostTagName));
                 if (tag != null)
                 {
                     postViewModel.Tags.Add(tag);

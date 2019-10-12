@@ -10,7 +10,7 @@ namespace Laobian.Share.BlogEngine.Model
 
         public string GetLink()
         {
-            return AddressHelper.GetAddress(true, "category", $"#{Link}");
+            return AddressHelper.GetAddress(false, "category", $"#{Link}");
         }
 
         public static BlogCategory Default => new BlogCategory

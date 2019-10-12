@@ -6,15 +6,17 @@
             <table>
                 <tr>
                     <td>访问</td>
-                    <td>@Model.Post.Visits.ToThousandsPlace() 次</td>
+                    <td>@Model.Post.VisitString 次</td>
                 </tr>
                 <tr>
                     <td>创建</td>
-                    <td title="@Model.Post.CreationTimeUtc.ToChinaTime().ToDateAndTime()">@Model.Post.CreationTimeUtc.ToRelativeTime()</td>
+                    <td title="@Model.Post.CreationTimeUtc.ToChinaTime().ToDateAndTime()">
+                        <time datetime="@Model.Post.CreationTimeUtc.ToChinaTime().ToDateAndTime()"></time>@Model.Post.CreateTimeString
+                    </td>
                 </tr>
                 <tr>
                     <td>更新</td>
-                    <td title="@Model.Post.LastUpdateTimeUtc.ToChinaTime().ToDateAndTime()">@Model.Post.LastUpdateTimeUtc.ToRelativeTime()</td>
+                    <td title="@Model.Post.LastUpdateTimeUtc.ToChinaTime().ToDateAndTime()">@Model.Post.LastUpdateTimeString</td>
                 </tr>
             </table>
         </div>

@@ -24,6 +24,7 @@ namespace Laobian.Blog.Controllers
         }
 
         [Route("/rss")]
+        [ResponseCache(VaryByHeader = "Accept-Encoding", Duration = 60 * 5, Location = ResponseCacheLocation.Any)]
         public IActionResult Rss()
         {
             var feed = GetFeed();
@@ -40,6 +41,7 @@ namespace Laobian.Blog.Controllers
         }
 
         [Route("/atom")]
+        [ResponseCache(VaryByHeader = "Accept-Encoding", Duration = 60 * 5, Location = ResponseCacheLocation.Any)]
         public IActionResult Atom()
         {
             var feed = GetFeed();

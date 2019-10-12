@@ -23,6 +23,7 @@ namespace Laobian.Blog.Controllers
             _blogService = blogService;
         }
 
+        [ResponseCache(VaryByHeader = "Accept-Encoding", VaryByQueryKeys = new[] { "p" }, Duration = 60 * 5, Location = ResponseCacheLocation.Any)]
         public IActionResult Index([FromQuery] int p)
         {
             var posts = _blogService.GetPagedPublishedPosts(ref p, out var totalPages);
@@ -35,7 +36,7 @@ namespace Laobian.Blog.Controllers
                 foreach (var blogPostCategoryName in blogPost.CategoryNames)
                 {
                     var cat = categories.FirstOrDefault(_ =>
-                        StringEqualsHelper.EqualsIgnoreCase(_.Name, blogPostCategoryName));
+                        StringEqualsHelper.IgnoreCase(_.Name, blogPostCategoryName));
                     if (cat != null)
                     {
                         postViewModel.Categories.Add(cat);
@@ -45,7 +46,7 @@ namespace Laobian.Blog.Controllers
                 foreach (var blogPostTagName in blogPost.TagNames)
                 {
                     var tag = tags.FirstOrDefault(_ =>
-                        StringEqualsHelper.EqualsIgnoreCase(_.Name, blogPostTagName));
+                        StringEqualsHelper.IgnoreCase(_.Name, blogPostTagName));
                     if (tag != null)
                     {
                         postViewModel.Tags.Add(tag);
@@ -67,6 +68,7 @@ namespace Laobian.Blog.Controllers
 
         [Route("/sitemap")]
         [Route("/sitemap.xml")]
+        [ResponseCache(VaryByHeader = "Accept-Encoding", Duration = 60 * 60 * 24, Location = ResponseCacheLocation.Any)]
         public IActionResult SiteMap()
         {
             var publishedPosts = _blogService.GetPublishedPosts();

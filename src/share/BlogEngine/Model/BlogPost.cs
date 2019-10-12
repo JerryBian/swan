@@ -291,7 +291,7 @@ namespace Laobian.Share.BlogEngine.Model
             var excerpt = string.Empty;
             var excerptText = string.Empty;
             var paraNodes = 
-                htmlDoc.DocumentNode.Descendants().Where(_ => StringEqualsHelper.EqualsIgnoreCase(_.Name, "p")).Take(2).ToList();
+                htmlDoc.DocumentNode.Descendants().Where(_ => StringEqualsHelper.IgnoreCase(_.Name, "p")).Take(2).ToList();
             if (paraNodes.Count == 1)
             {
                 excerpt += paraNodes[0].OuterHtml;

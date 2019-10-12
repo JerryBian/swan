@@ -17,6 +17,7 @@ namespace Laobian.Blog.Controllers
         }
 
         [Route("/category")]
+        [ResponseCache(VaryByHeader = "Accept-Encoding", Duration = 60, Location = ResponseCacheLocation.Any)]
         public IActionResult Category()
         {
             var model = new List<ArchiveViewModel>();
@@ -45,6 +46,7 @@ namespace Laobian.Blog.Controllers
         }
 
         [Route("/tag")]
+        [ResponseCache(VaryByHeader = "Accept-Encoding", Duration = 60, Location = ResponseCacheLocation.Any)]
         public IActionResult Tag()
         {
             var model = new List<ArchiveViewModel>();
@@ -73,6 +75,7 @@ namespace Laobian.Blog.Controllers
         }
 
         [Route("/archive")]
+        [ResponseCache(VaryByHeader = "Accept-Encoding", Duration = 60, Location = ResponseCacheLocation.Any)]
         public IActionResult Date()
         {
             var model = new List<ArchiveViewModel>();

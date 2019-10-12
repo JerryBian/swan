@@ -1,4 +1,6 @@
-﻿namespace Laobian.Share.Extension
+﻿using Humanizer;
+
+namespace Laobian.Share.Extension
 {
     /// <summary>
     /// Extensions for <see cref="int"/>
@@ -13,6 +15,11 @@
         public static string ToThousandsPlace(this int number)
         {
             return number.ToString("N0");
+        }
+
+        public static string ForHuman(this int number)
+        {
+            return number.ToMetric(decimals: 1);
         }
     }
 }

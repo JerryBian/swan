@@ -36,7 +36,7 @@ namespace Laobian.Blog.HostedService
                     if (_env.IsProduction())
                     {
                         var chinaTime = DateTime.UtcNow.ToChinaTime();
-                        if (chinaTime.Hour == 4 && _lastExecuted.Date < chinaTime.Date)
+                        if (chinaTime.Hour == 3 && _lastExecuted.Date < chinaTime.Date)
                         {
                             _lastExecuted = chinaTime;
                             await _blogService.UpdateCloudAssetsAsync();
