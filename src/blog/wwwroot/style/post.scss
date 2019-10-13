@@ -1,0 +1,32 @@
+﻿@use "lib/highlight/styles/tomorrow-night.css";
+
+@import "_/_common.scss";
+@import "../lib/bootstrap/scss/bootstrap.scss";
+@import "shared.scss";
+
+.post {
+    .post-title {
+        background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAABCAYAAACsXeyTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAFUlEQVQIHWNIS0sr/v//PwMMDzY+ADqMahlW4J91AAAAAElFTkSuQmCC) bottom left repeat-x;
+        padding-bottom: 0.3rem;
+        font-size: $font-size-lg;
+        color: $post-title-color;
+    }
+
+    .post-content {
+        @import "_/_postContent";
+    }
+}
+
+.post-alert {
+    margin-top: 3rem;
+
+    ul {
+        padding-left: 1.25rem;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    li, ol {
+        margin-bottom: 0.25rem;
+    }
+}

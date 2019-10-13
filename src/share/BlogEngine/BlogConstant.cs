@@ -6,11 +6,13 @@
 
         public const string PostGitHubPath = "blog/post/";
 
+        public const string TemplatePostGitHubPath = "blog/post/__template.md";
+
         public const string CategoryGitHubPath = "blog/category.txt";
 
         public const string TagGitHubPath = "blog/tag.txt";
 
-        public const string EnAboutGitHub = "blog/about.en.md";
+        public const string AboutGitHub = "blog/about.{0}.md";
 
         public const string FileGitHub = "blog/file/";
 
@@ -24,14 +26,6 @@
 
         public const string PostHtmlExtension = ".html";
 
-        public const string PostMemCacheKey = "laobian.blog.posts";
-
-        public const string CategoryMemCacheKey = "laobian.blog.category";
-
-        public const string EnglishAboutMemCacheKey = "laobian.blog.about.en";
-
-        public const string TagMemCacheKey = "laobian.blog.tag";
-
         public const string DefaultCategoryName = "未分类";
 
         public const string DefaultCategoryLink = "untitled";
@@ -43,5 +37,13 @@
         public const string AuthorChineseName = "卞良忠";
 
         public const string BlogName = "Jerry Bian's blog";
+
+        public const string BlogDescription = "技术心得与生活感悟 - Jerry Bian(卞良忠)";
+
+        public const string AuthorEnglishName = "Jerry Bian";
+
+        public const string AuthorEmail = "JerryBian@outlook.com";
+
+        public const int PostsPerPage = 8;
     }
 }

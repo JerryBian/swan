@@ -1,4 +1,6 @@
-﻿namespace Laobian.Share.BlogEngine.Model
+﻿using Laobian.Share.Helper;
+
+namespace Laobian.Share.BlogEngine.Model
 {
     public class BlogCategory
     {
@@ -8,7 +10,7 @@
 
         public string GetLink()
         {
-            return $"/category/#{Link}";
+            return AddressHelper.GetAddress(false, "category", $"#{Link}");
         }
 
         public static BlogCategory Default => new BlogCategory

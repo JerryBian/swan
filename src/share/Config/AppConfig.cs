@@ -14,6 +14,20 @@
 
         public string AssetGitHubRepoName { get; set; }
 
+        public string AssetGitHubHookSecret { get; set; }
+
         public bool CloneAssetsDuringStartup { get; set; }
+        
+        public string AssetGitCommitUser { get; set; }
+
+        public string AssetGitCommitEmail { get; set; }
+
+        public string BlogAddress { get; set; }
+
+        public bool PostUpdateScheduled { get; set; }
+
+        public int PostUpdateAtHour { get; set; }
+
+        public int PostUpdateEverySeconds { get; set; }
     }
 }
