@@ -14,12 +14,7 @@
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="3.0.0" />
     <PackageReference Include="Microsoft.PowerShell.SDK" Version="6.2.3" />
-<<<<<<< HEAD
-    <PackageReference Include="Octokit" Version="0.34.0" />
-    <PackageReference Include="protobuf-net" Version="2.4.0" />
-=======
     <PackageReference Include="protobuf-net" Version="2.4.1" />
->>>>>>> dev
     <PackageReference Include="Sendgrid" Version="9.12.0" />
   </ItemGroup>
 </Project>
