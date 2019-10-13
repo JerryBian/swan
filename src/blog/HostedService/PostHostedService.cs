@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Laobian.Share.BlogEngine;
 using Laobian.Share.Config;
 using Laobian.Share.Extension;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -16,12 +15,10 @@ namespace Laobian.Blog.HostedService
         private DateTime _lastExecuted;
         private readonly AppConfig _appConfig;
         private readonly IBlogService _blogService;
-        private readonly IWebHostEnvironment _env;
         private readonly ILogger<PostHostedService> _logger;
 
-        public PostHostedService(IBlogService blogService, IOptions<AppConfig> appConfig, ILogger<PostHostedService> logger, IWebHostEnvironment env)
+        public PostHostedService(IBlogService blogService, IOptions<AppConfig> appConfig, ILogger<PostHostedService> logger)
         {
-            _env = env;
             _logger = logger;
             _blogService = blogService;
             _appConfig = appConfig.Value;
@@ -33,23 +30,26 @@ namespace Laobian.Blog.HostedService
             {
                 try
                 {
-                    if (_env.IsProduction())
+                    if (_appConfig.PostUpdateScheduled)
                     {
                         var chinaTime = DateTime.UtcNow.ToChinaTime();
-                        if (chinaTime.Hour == 3 && _lastExecuted.Date < chinaTime.Date)
+                        if (chinaTime.Hour == _appConfig.PostUpdateAtHour && _lastExecuted.Date < chinaTime.Date)
                         {
                             _lastExecuted = chinaTime;
                             await _blogService.UpdateCloudAssetsAsync();
-                            _logger.LogInformation("Post hosted service executed completely, {LastExecutedAt}", _lastExecuted.ToDateAndTime());
+                            _logger.LogInformation(
+                                "Post hosted service scheduled executed completely, last executed at = {LastExecutedAt}, scheduled at hour = {Hour}", 
+                                _lastExecuted.ToDateAndTime(),
+                                _appConfig.PostUpdateAtHour);
                         }
 
                         await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
                     }
                     else
                     {
-                        await Task.Delay(TimeSpan.FromMinutes(10), stoppingToken);
+                        await Task.Delay(TimeSpan.FromSeconds(_appConfig.PostUpdateEverySeconds), stoppingToken);
                         await _blogService.UpdateCloudAssetsAsync();
-                        _logger.LogInformation("Post hosted service executed completely, Non-Prod.");
+                        _logger.LogInformation("Post hosted service interval executed completely, interval = {Interval}.", _appConfig.PostUpdateEverySeconds);
                     }
                 }
                 catch (Exception ex)

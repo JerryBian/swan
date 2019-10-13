@@ -39,6 +39,9 @@ namespace Laobian.Blog.Helpers
             ac.AssetGitCommitEmail = config.GetValue("ASSET_LOCAL_COMMIT_USER_EMAIL", "bot@laobian.me");
             ac.BlogAddress = config.GetValue("BLOG_ADDRESS", "https://blog.laobian.me/");
             ac.AssetGitHubHookSecret = config.GetValue("ASSET_GITHUB_HOOK_SECRET", "test");
+            ac.PostUpdateScheduled = config.GetValue("POST_UPDATE_SCHEDULED", false);
+            ac.PostUpdateAtHour = config.GetValue("POST_UPDATE_AT_HOUR", 3);
+            ac.PostUpdateEverySeconds = config.GetValue("POST_UPDATE_EVERY_SECONDS", 5 * 60);
         }
     }
 }

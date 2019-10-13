@@ -89,20 +89,7 @@ namespace Laobian.Share.BlogEngine.Model
             }
         }
 
-        private string _visitString;
-
-        public string VisitString
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(_visitString))
-                {
-                    _visitString = Visits.ToMetric(decimals: 1);
-                }
-
-                return _visitString;
-            }
-        }
+        public string VisitString => Visits.ToMetric(decimals: 1);
 
         private string _htmlContent;
 

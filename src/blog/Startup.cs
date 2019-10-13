@@ -7,6 +7,7 @@ using Laobian.Blog.Helpers;
 using Laobian.Share.BlogEngine;
 using Laobian.Share.Config;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -16,6 +17,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 
@@ -85,6 +87,9 @@ namespace Laobian.Blog
             CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("zh-cn");
             CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("zh-cn");
 
+            var appConfig = app.ApplicationServices.GetService<IOptions<AppConfig>>().Value;
+            var logger = app.ApplicationServices.GetService<ILogger<Startup>>();
+
             applicationLifetime.ApplicationStarted.Register(() =>
             {
                 BlogState.StartAtUtc = DateTime.UtcNow;
@@ -93,11 +98,9 @@ namespace Laobian.Blog
                 BlogState.IsProdEnvironment = HostEnvironment.IsProduction();
             });
 
-            var appConfig = app.ApplicationServices.GetService<IOptions<AppConfig>>().Value;
-
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
-                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+                ForwardedHeaders = ForwardedHeaders.All
             });
 
             if (HostEnvironment.IsProduction())
@@ -106,6 +109,7 @@ namespace Laobian.Blog
                 {
                     ExceptionHandler = async context =>
                     {
+                        logger.LogWarning(context.Features.Get<IExceptionHandlerFeature>()?.Error, "Request error occurred.");
                         await context.Response.WriteAsync($"Something was wrong! Please contact {BlogConstant.AuthorEmail}.");
                     }
                 });
@@ -128,28 +132,32 @@ namespace Laobian.Blog
             app.UseStaticFiles(new StaticFileOptions
             {
                 ContentTypeProvider = provider,
-                OnPrepareResponse = ctx =>
-                {
-                    const int durationInSeconds = 60 * 60 * 24 * 30;
-                    ctx.Context.Response.Headers[HeaderNames.CacheControl] =
-                        "public,max-age=" + durationInSeconds;
-                }
+                OnPrepareResponse = SetStaticFileCache
             });
 
             var fileDirFullPath = Path.Combine(appConfig.AssetRepoLocalDir, BlogConstant.FileGitHub);
             Directory.CreateDirectory(fileDirFullPath);
-            app.UseFileServer(new FileServerOptions
+            var fileServerOptions = new FileServerOptions
             {
                 FileProvider = new PhysicalFileProvider(fileDirFullPath),
                 RequestPath = BlogConstant.FileRequestPath,
-                EnableDirectoryBrowsing = true
-            });
+                EnableDirectoryBrowsing = true,
+            };
+            fileServerOptions.StaticFileOptions.OnPrepareResponse = SetStaticFileCache;
+            app.UseFileServer(fileServerOptions);
 
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute();
             });
+        }
+
+        private static void SetStaticFileCache(StaticFileResponseContext ctx)
+        {
+            const int durationInSeconds = 60 * 60 * 24 * 30;
+            ctx.Context.Response.Headers[HeaderNames.CacheControl] =
+                "public,max-age=" + durationInSeconds;
         }
     }
 }
