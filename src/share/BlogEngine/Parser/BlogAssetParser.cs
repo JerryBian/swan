@@ -81,7 +81,7 @@ namespace Laobian.Share.BlogEngine.Parser
 
                 if (!string.IsNullOrEmpty(appendedContent))
                 {
-                    await sw.WriteLineAsync(appendedContent);
+                    await sw.WriteAsync(appendedContent);
                 }
 
                 return sw.ToString();

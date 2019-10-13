@@ -3,42 +3,18 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <AssemblyVersion>2.0.0</AssemblyVersion>
-    <FileVersion>2.0.0</FileVersion>
-    <VersionPrefix>2.0.0</VersionPrefix>
-    <VersionSuffix></VersionSuffix>
-    <Authors>Jerry Bian</Authors>
-    <Company>Laobian</Company>
-    <Product>Laobian</Product>
-    <Description>Laobian.Common is shared library for private usage only</Description>
-    <Copyright>Copyright © Jerry Bian</Copyright>
-    <Summary>Laobian.Common is shared library for private usage only</Summary>
-    <NeutralLanguage>en-US</NeutralLanguage>
-    <Title>Laobian.Common</Title>
-    <PackageId>Laobian.Common</PackageId>
-    <PackageTags>Laobian, Common</PackageTags>
-    <PackageIconUrl>https://jerrybian.github.io/static/img/attachment.png</PackageIconUrl>
-    <PackageProjectUrl>https://www.newtonsoft.com/json</PackageProjectUrl>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <RootNamespace>Laobian.Share</RootNamespace>
     <AssemblyName>Laobian.Share</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.12" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.16" />
+    <PackageReference Include="Humanizer.Core.zh-CN" Version="2.7.9" />
     <PackageReference Include="Markdig.Signed" Version="0.17.1" />
-    <!--<PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.4">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>-->
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="3.0.0" />
     <PackageReference Include="Microsoft.PowerShell.SDK" Version="6.2.3" />
-    <PackageReference Include="Octokit" Version="0.34.0" />
-    <PackageReference Include="protobuf-net" Version="2.4.0" />
+    <PackageReference Include="protobuf-net" Version="2.4.1" />
+    <PackageReference Include="Sendgrid" Version="9.12.0" />
   </ItemGroup>
 </Project>

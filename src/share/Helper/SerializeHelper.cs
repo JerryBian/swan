@@ -1,5 +1,7 @@
 ﻿using System.IO;
 using System.Text.Json;
+using System.Xml.Serialization;
+using Laobian.Share.Core;
 using ProtoBuf.Meta;
 
 namespace Laobian.Share.Helper
@@ -64,6 +66,18 @@ namespace Laobian.Share.Helper
         {
             stream.Seek(0, SeekOrigin.Begin);
             return (T)Serializer.Deserialize(stream, null, typeof(T));
+        }
+
+        public static string ToXml<T>(T obj, string nsPrefix = "", string ns = "")
+        {
+            using (var sw = new Utf8StringWriter())
+            {
+                var xmlNamespaces = new XmlSerializerNamespaces();
+                xmlNamespaces.Add(nsPrefix, ns);
+                var serializer = new XmlSerializer(obj.GetType());
+                serializer.Serialize(sw, obj, xmlNamespaces);
+                return sw.ToString();
+            }
         }
     }
 }

@@ -1,2 +1,2 @@
 ﻿User-agent: *
-Disallow: /rss
+Disallow: /static

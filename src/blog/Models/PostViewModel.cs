@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Humanizer;
 using Laobian.Share.BlogEngine.Model;
 
 namespace Laobian.Blog.Models
@@ -21,8 +20,7 @@ namespace Laobian.Blog.Models
         public string GetMetadataHtml()
         {
             var results = new List<string>();
-            results.Add($"发表于 {Post.CreationTimeUtc.Humanize()}");
-            results.Add($"{Post.Visits.ToMetric(decimals:1)} 访问");
+            results.Add(GetSimpleMetadataHtml());
 
             var catHtml = GetCategoryHtml();
             if (!string.IsNullOrEmpty(catHtml))
@@ -39,6 +37,27 @@ namespace Laobian.Blog.Models
             return string.Join(" &middot; ", results);
         }
 
+        public string GetSimpleMetadataHtml()
+        {
+            var results = new List<string>();
+            results.Add($"<i class=\"fas fa-calendar-alt\"></i> <span>发表于 {Post.CreateTimeString}</span>");
+            results.Add($"<i class=\"fas fa-eye\"></i> <span>{Post.VisitString} 次访问</span>");
+
+            return string.Join(" &middot; ", results);
+        }
+
+        public string GetCategoryAndTagHtml()
+        {
+            var categoryHtml = GetCategoryHtml();
+            var tagHtml = GetTagHtml();
+            if (!string.IsNullOrEmpty(tagHtml))
+            {
+                return categoryHtml + " &middot; " + tagHtml;
+            }
+
+            return categoryHtml;
+        }
+
         public string GetCategoryHtml()
         {
             var results = new List<string>();
@@ -53,7 +72,7 @@ namespace Laobian.Blog.Models
                 return string.Empty;
             }
 
-            return $"{string.Join(", ", results)}";
+            return $"<i class=\"fas fa-folder\"></i> <span>{string.Join(", ", results)}</span>";
         }
 
         public string GetTagHtml()
@@ -70,7 +89,7 @@ namespace Laobian.Blog.Models
                 return string.Empty;
             }
 
-            return $"{string.Join(", ", results)}";
+            return $"<i class=\"fas fa-tags\"></i> <span>{string.Join(", ", results)}</span>";
         }
     }
 }

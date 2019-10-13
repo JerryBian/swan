@@ -1,21 +1,11 @@
 {
-  "iisSettings": {
-    "windowsAuthentication": false,
-    "anonymousAuthentication": true,
-    "iisExpress": {
-      "applicationUrl": "http://localhost:61286",
-      "sslPort": 0
-    }
-  },
   "profiles": {
     "Laobian.Blog": {
       "commandName": "Project",
       "environmentVariables": {
-        "AzureStorageConnection": "UseDevelopmentStorage=true",
-        "SendGridKey": "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",
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "http://localhost:5000"
+      "applicationUrl": "http://0.0.0.0:5000"
     }
   }
 }

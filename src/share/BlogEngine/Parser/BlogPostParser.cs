@@ -1,18 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Laobian.Share.BlogEngine.Model;
+using Laobian.Share.Config;
 
 namespace Laobian.Share.BlogEngine.Parser
 {
     public class BlogPostParser : BlogAssetParser
     {
+        private readonly AppConfig _appConfig;
         private readonly Dictionary<string, Tuple<BlogPostMetadataAttribute, PropertyInfo>> _props;
 
-        public BlogPostParser()
+        public BlogPostParser(AppConfig appConfig)
         {
+            _appConfig = appConfig;
             _props = new Dictionary<string, Tuple<BlogPostMetadataAttribute, PropertyInfo>>(StringComparer.OrdinalIgnoreCase);
             foreach (var propertyInfo in typeof(BlogPost).GetProperties())
             {
@@ -69,8 +73,10 @@ namespace Laobian.Share.BlogEngine.Parser
                 }
             }
 
+            blogPost.Config = _appConfig;
             blogPost.Link = link;
             blogPost.MarkdownContent = parseResult.Item2;
+            blogPost.LocalFullPath = Path.Combine(_appConfig.AssetRepoLocalDir, blogPost.GitHubPath);
             blogPost.SetDefaults();
             return blogPost;
         }

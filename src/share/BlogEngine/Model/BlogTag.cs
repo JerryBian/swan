@@ -1,4 +1,6 @@
-﻿namespace Laobian.Share.BlogEngine.Model
+﻿using Laobian.Share.Helper;
+
+namespace Laobian.Share.BlogEngine.Model
 {
     public class BlogTag
     {
@@ -8,7 +10,7 @@
 
         public string GetLink()
         {
-            return $"/tag/#{Link}";
+            return AddressHelper.GetAddress(false, "tag", $"#{Link}");
         }
 
         public static BlogTag Default => new BlogTag

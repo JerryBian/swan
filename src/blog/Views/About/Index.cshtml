@@ -1,9 +1,14 @@
 ﻿@model string
-@{
-    ViewData["Title"] = "Index";
+<article class="post">
+    <div class="mt-2 mb-4 post-content">
+        @Html.Raw(Model)
+    </div>
+</article>
+
+@section style{
+    <link rel="stylesheet" href="~/style/post.min.css" asp-append-version="true" />
 }
 
-<div class="post">
-    @Html.Raw(Model)
-</div>
-
+@section script{
+    <script src="~/script/post.min.js" defer asp-append-version="true"></script>
+}

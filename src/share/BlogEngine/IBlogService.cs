@@ -8,6 +8,10 @@ namespace Laobian.Share.BlogEngine
     {
         BlogPost GetPost(int year, int month, string link);
 
+        List<BlogPost> GetPagedPublishedPosts(ref int page, out int totalPages);
+
+        List<BlogPost> GetPublishedPosts();
+
         List<BlogPost> GetPosts();
 
         List<BlogCategory> GetCategories();
@@ -16,6 +20,8 @@ namespace Laobian.Share.BlogEngine
 
         Task UpdateCloudAssetsAsync();
 
-        Task UpdateLocalAssetsAsync();
+        Task UpdateMemoryAssetsAsync(bool cloneFirst = true);
+
+        string GetAboutHtml(RequestLang lang = RequestLang.Chinese);
     }
 }

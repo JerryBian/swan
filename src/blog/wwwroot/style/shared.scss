@@ -1,0 +1,32 @@
+﻿.navbar,
+footer{
+    background-color: whitesmoke;
+}
+
+footer {
+    font-size: $font-size-sm;
+
+    a:hover {
+        padding-bottom: 2px;
+        border-bottom: 1px double #567c73;
+    }
+}
+
+.sticky-top {
+    @supports (position: sticky) {
+        top: $font-size-base * 1.1;
+    }
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    padding: .25rem;
+    padding-left: 0;
+    background-color: #fff;
+}
+
+aside table tr td:first-child {
+    padding-right: 0.75rem;
+    color: $text-muted;
+}

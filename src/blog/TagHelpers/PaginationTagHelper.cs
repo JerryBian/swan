@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text;
-using Laobian.Blog.Models;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
 namespace Laobian.Blog.TagHelpers
@@ -11,7 +10,9 @@ namespace Laobian.Blog.TagHelpers
         private const string PreviousLabel = "&larr;";
         private const string NextLabel = "&rarr;";
 
-        public Pagination Pagination { get; set; }
+        public int TotalPages { get; set; }
+
+        public int CurrentPage { get; set; }
 
         public string Url { get; set; }
 
@@ -21,29 +22,29 @@ namespace Laobian.Blog.TagHelpers
             output.Attributes.SetAttribute("id", "pagination");
 
             // No need to generate HTML markup as we only have one pagination
-            if (Pagination.TotalPages < 2)
+            if (TotalPages < 2)
             {
                 return;
             }
 
-            if (Pagination.CurrentPage < 1 || Pagination.CurrentPage > Pagination.TotalPages)
+            if (CurrentPage < 1 || CurrentPage > TotalPages)
             {
-                throw new ArgumentOutOfRangeException(nameof(Pagination.CurrentPage));
+                throw new ArgumentOutOfRangeException(nameof(CurrentPage));
             }
 
             var html = new StringBuilder();
             html.AppendLine("<ul class='pagination justify-content-center'>");
 
-            // Prev item only be visible if Pagination.CurrentPage is greater than one
-            if (Pagination.CurrentPage > 1)
+            // Prev item only be visible if CurrentPage is greater than one
+            if (CurrentPage > 1)
             {
-                html.AppendLine(GetLinkItem($"<span>{PreviousLabel}</span>", GetUrl(Pagination.CurrentPage - 1)));
+                html.AppendLine(GetLinkItem($"<span>{PreviousLabel}</span>", GetUrl(CurrentPage - 1)));
             }
 
-            for (var i = 1; i <= Pagination.TotalPages; i++)
+            for (var i = 1; i <= TotalPages; i++)
             {
-                // display Pagination.CurrentPage item as active
-                if (i == Pagination.CurrentPage)
+                // display CurrentPage item as active
+                if (i == CurrentPage)
                 {
                     html.AppendLine(GetActiveItem(i));
                     continue;
@@ -52,10 +53,10 @@ namespace Laobian.Blog.TagHelpers
                 html.AppendLine(GetLinkItem(i, GetUrl(i)));
             }
 
-            // Next item only be visible if Pagination.CurrentPage is less than Pagination.TotalPages
-            if (Pagination.CurrentPage < Pagination.TotalPages)
+            // Next item only be visible if CurrentPage is less than TotalPages
+            if (CurrentPage < TotalPages)
             {
-                html.AppendLine(GetLinkItem($"<span>{NextLabel}</span>", GetUrl(Pagination.CurrentPage + 1)));
+                html.AppendLine(GetLinkItem($"<span>{NextLabel}</span>", GetUrl(CurrentPage + 1)));
             }
 
             html.AppendLine("</ul>");

@@ -4,11 +4,16 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using HtmlAgilityPack;
+using Humanizer;
+using Laobian.Share.Config;
+using Laobian.Share.Helper;
 
 namespace Laobian.Share.BlogEngine.Model
 {
     public class BlogPost
     {
+        private bool _excerptLoaded;
+
         public BlogPost()
         {
             CategoryNames = new List<string>();
@@ -25,18 +30,18 @@ namespace Laobian.Share.BlogEngine.Model
         [BlogPostMetadata(BlogPostMetadataReturnType.DateTime, "UpdateAt", IsAssignable = false)]
         public DateTime LastUpdateTimeUtc { get; set; }
 
-        [BlogPostMetadata(BlogPostMetadataReturnType.ListOfString, "category", "分类")]
+        [BlogPostMetadata(BlogPostMetadataReturnType.ListOfString, "Category", "分类")]
         public List<string> CategoryNames { get; set; }
 
-        [BlogPostMetadata(BlogPostMetadataReturnType.ListOfString, "tag", "标签")]
+        [BlogPostMetadata(BlogPostMetadataReturnType.ListOfString, "Tag", "标签")]
         public List<string> TagNames { get; set; }
 
-        [BlogPostMetadata(BlogPostMetadataReturnType.String, "title", "标题")]
+        [BlogPostMetadata(BlogPostMetadataReturnType.String, "Title", "标题")]
         public string Title { get; set; }
 
         private int _visits;
 
-        [BlogPostMetadata(BlogPostMetadataReturnType.Int32, "visit")]
+        [BlogPostMetadata(BlogPostMetadataReturnType.Int32, "Visit")]
         public int Visits
         {
             get => _visits;
@@ -49,7 +54,42 @@ namespace Laobian.Share.BlogEngine.Model
 
         #endregion
 
+        public AppConfig Config { get; set; }
+
+
         public string MarkdownContent { get; set; }
+
+        private string _createTimeString;
+
+        public string CreateTimeString
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_createTimeString) && CreationTimeUtc != default)
+                {
+                    _createTimeString = CreationTimeUtc.Humanize();
+                }
+
+                return _createTimeString;
+            }
+        }
+
+        private string _lastUpdateTimeString;
+
+        public string LastUpdateTimeString
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_lastUpdateTimeString) && LastUpdateTimeUtc != default)
+                {
+                    _lastUpdateTimeString = LastUpdateTimeUtc.Humanize();
+                }
+
+                return _lastUpdateTimeString;
+            }
+        }
+
+        public string VisitString => Visits.ToMetric(decimals: 1);
 
         private string _htmlContent;
 
@@ -72,12 +112,19 @@ namespace Laobian.Share.BlogEngine.Model
         {
             get
             {
-                if (string.IsNullOrEmpty(_excerpt))
-                {
-                    _excerpt = GetExcerptHtml();
-                }
-
+                LoadExcerpt();
                 return _excerpt;
+            }
+        }
+
+        private string _excerptText;
+
+        public string ExcerptText
+        {
+            get
+            {
+                LoadExcerpt();
+                return _excerptText;
             }
         }
 
@@ -96,6 +143,21 @@ namespace Laobian.Share.BlogEngine.Model
             }
         }
 
+        private string _fullUrlWithBaseAddress;
+
+        public string FullUrlWithBaseAddress
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_fullUrlWithBaseAddress) && CreationTimeUtc != default && !string.IsNullOrEmpty(Link))
+                {
+                    _fullUrlWithBaseAddress = GetFullUrl(CreationTimeUtc.Year, CreationTimeUtc.Month, Link, true);
+                }
+
+                return _fullUrlWithBaseAddress;
+            }
+        }
+
         private string _gitHubPath;
 
         public string GitHubPath
@@ -110,6 +172,23 @@ namespace Laobian.Share.BlogEngine.Model
                 return _gitHubPath;
             }
         }
+
+        private string _localFullPath;
+
+        public string LocalFullPath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_localFullPath))
+                {
+                    throw new Exception("Local Full Path is not set.");
+                }
+
+                return _localFullPath;
+            }
+            set => _localFullPath = value;
+        }
+
 
         public void AddVisit()
         {
@@ -144,9 +223,16 @@ namespace Laobian.Share.BlogEngine.Model
             }
         }
 
-        public static string GetFullUrl(int year, int month, string link)
+        private string GetFullUrl(int year, int month, string link, bool appendBaseAddress = false)
         {
-            return $"/{year}/{month:D2}/{link}{BlogConstant.PostHtmlExtension}";
+            if (appendBaseAddress)
+            {
+                return AddressHelper.GetAddress(Config.BlogAddress, false, year.ToString(), month.ToString("D2"),
+                    $"{link}{BlogConstant.PostHtmlExtension}");
+            }
+
+            return AddressHelper.GetAddress(false, year.ToString(), month.ToString("D2"),
+                $"{link}{BlogConstant.PostHtmlExtension}");
         }
 
         private string GetHtmlContent()
@@ -170,20 +256,49 @@ namespace Laobian.Share.BlogEngine.Model
 
                     if (!Path.IsPathRooted(src))
                     {
-                        imageNode.SetAttributeValue("src", $"{BlogConstant.FileRequestPath}/{Path.GetFileName(src)}");
+                        imageNode.SetAttributeValue("src",
+                            AddressHelper.GetAddress(Config.BlogAddress, false, BlogConstant.FileRequestPath,
+                                Path.GetFileName(src)));
                     }
                 }
             }
             return htmlDoc.DocumentNode.OuterHtml;
         }
 
-        private string GetExcerptHtml()
+        private void LoadExcerpt()
         {
+            if (_excerptLoaded)
+            {
+                return;
+            }
+
             var htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(HtmlContent);
 
-            var firstNode = htmlDoc.DocumentNode.ChildNodes.FirstOrDefault(_ => string.Equals(_.Name, "p", StringComparison.OrdinalIgnoreCase));
-            return firstNode == null ? "<p></p>" : firstNode.OuterHtml;
+            var excerpt = string.Empty;
+            var excerptText = string.Empty;
+            var paraNodes = 
+                htmlDoc.DocumentNode
+                    .Descendants()
+                    .Where(_ => 
+                        StringEqualsHelper.IgnoreCase(_.Name, "p") && 
+                        _.Descendants().FirstOrDefault(c => StringEqualsHelper.IgnoreCase(c.Name, "img")) == null).Take(2).ToList();
+            if (paraNodes.Count == 1)
+            {
+                excerpt += paraNodes[0].OuterHtml;
+                excerptText += paraNodes[0].InnerText;
+            }
+
+            if(paraNodes.Count == 2)
+            {
+                excerpt += $"{paraNodes[0].OuterHtml}{paraNodes[1].OuterHtml}";
+                excerptText += $"{paraNodes[0].InnerText}{paraNodes[1].InnerText}";
+            }
+
+            _excerptText = excerptText;
+            excerpt += "<p>...</p>";
+            _excerpt = excerpt;
+            _excerptLoaded = true;
         }
     }
 }

@@ -1,9 +1,0 @@
-﻿[
-  {
-    "outputFileName": "wwwroot/style.min.css",
-    "inputFiles": [
-      "wwwroot/lib/bootstrap/bootstrap.css",
-      "wwwroot/custom/style.css"
-    ]
-  }
-]
