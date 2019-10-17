@@ -23,5 +23,11 @@
         public string AssetGitCommitEmail { get; set; }
 
         public string BlogAddress { get; set; }
+
+        public bool PostUpdateScheduled { get; set; }
+
+        public int PostUpdateAtHour { get; set; }
+
+        public int PostUpdateEverySeconds { get; set; }
     }
 }

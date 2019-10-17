@@ -8,7 +8,7 @@ namespace Laobian.Share.Infrastructure.Git
         public static string GetPostCommitMessage(string message)
         {
             message = string.IsNullOrEmpty(message) ? "Automatically Update" : message;
-            return $"{message}, @{DateTime.UtcNow.ToChinaTime().ToTimeZoneString(TimeSpan.FromHours(8))}";
+            return $"{message}, @{DateTime.UtcNow.ToChinaTime().ToDateAndTime()}";
         }
     }
 }
