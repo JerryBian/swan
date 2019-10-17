@@ -10,6 +10,7 @@ using Laobian.Share.Config;
 using Laobian.Share.Extension;
 using Laobian.Share.Helper;
 using Laobian.Share.Infrastructure.Cache;
+using Laobian.Share.Infrastructure.Email;
 using Laobian.Share.Infrastructure.Git;
 using Markdig;
 using Microsoft.Extensions.Logging;
@@ -27,16 +28,19 @@ namespace Laobian.Share.BlogEngine
         private readonly BlogCategoryParser _categoryParser;
         private readonly IMemoryCacheClient _memoryCacheClient;
         private readonly ILogger<BlogService> _logger;
+        private readonly IEmailClient _emailClient;
 
         public BlogService(
             ILogger<BlogService> logger,
             IOptions<AppConfig> appConfig,
             IGitClient gitClient,
-            IMemoryCacheClient memoryCacheClient)
+            IMemoryCacheClient memoryCacheClient,
+            IEmailClient emailClient)
         {
             _logger = logger;
             _appConfig = appConfig.Value;
             _gitClient = gitClient;
+            _emailClient = emailClient;
             _memoryCacheClient = memoryCacheClient;
 
             _tagParser = new BlogTagParser();
@@ -235,8 +239,22 @@ namespace Laobian.Share.BlogEngine
                 postDirPath,
                 $"*{BlogConstant.PostMarkdownExtension}"))
             {
-                var post = await _postParser.FromTextAsync(await File.ReadAllTextAsync(postItem), Path.GetFileNameWithoutExtension(postItem));
-                result.Add(post);
+                try
+                {
+                    var post = await _postParser.FromTextAsync(await File.ReadAllTextAsync(postItem), Path.GetFileNameWithoutExtension(postItem));
+                    result.Add(post);
+                }
+                catch(Exception ex)
+                {
+                    _logger.LogWarning(ex, "Parse post failed. Post full path = {PostPath}.", postItem);
+                    await _emailClient.SendAsync(
+                        "blog",
+                        "blog@laobian.me",
+                        BlogConstant.AuthorEnglishName,
+                        BlogConstant.AuthorEmail,
+                        "Post parse failed",
+                        $"<p>Parse post failed. Post full path = {postItem}.</p><div><pre>{ex}</pre></div>");
+                }
             }
 
             return result;
