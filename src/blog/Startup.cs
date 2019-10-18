@@ -89,6 +89,10 @@ namespace Laobian.Blog
 
             var appConfig = app.ApplicationServices.GetService<IOptions<AppConfig>>().Value;
             var logger = app.ApplicationServices.GetService<ILogger<Startup>>();
+            logger.LogCritical(new Exception(), "TEST CRITICAL");
+            logger.LogError(new Exception(), "TEST ERROR");
+            logger.LogError(new Exception(), "TEST ERROR");
+            logger.LogWarning(new Exception(), "TEST WARNING");
 
             applicationLifetime.ApplicationStarted.Register(() =>
             {

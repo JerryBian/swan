@@ -45,5 +45,9 @@
         public const string AuthorEmail = "JerryBian@outlook.com";
 
         public const int PostsPerPage = 8;
+
+        public const string LogSenderName = "blog";
+
+        public const string LogSenderEmail = "blog@laobian.me";
     }
 }

@@ -5,6 +5,7 @@ using Laobian.Share.Infrastructure.Cache;
 using Laobian.Share.Infrastructure.Command;
 using Laobian.Share.Infrastructure.Email;
 using Laobian.Share.Infrastructure.Git;
+using Laobian.Share.Log;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -22,8 +23,10 @@ namespace Laobian.Blog.Helpers
             services.AddSingleton<IBlogService, BlogService>();
             services.AddSingleton<IGitClient, GitClient>();
             services.AddSingleton<IEmailClient, SendGridEmailClient>();
+            services.AddSingleton<ILogStore, LogStore>();
 
             services.AddHostedService<PostHostedService>();
+            services.AddHostedService<LogHostedService>();
         }
 
         private static void MapConfig(IConfiguration config, AppConfig ac)
@@ -42,6 +45,8 @@ namespace Laobian.Blog.Helpers
             ac.PostUpdateScheduled = config.GetValue("POST_UPDATE_SCHEDULED", false);
             ac.PostUpdateAtHour = config.GetValue("POST_UPDATE_AT_HOUR", 3);
             ac.PostUpdateEverySeconds = config.GetValue("POST_UPDATE_EVERY_SECONDS", 5 * 60);
+            ac.ErrorLogsSendInterval = config.GetValue("ERROR_LOG_SEND_INTERVAL", 60);
+            ac.WarningLogsSendInterval = config.GetValue("WARNING_LOGS_SEND_INTERVAL", 60 * 5);
         }
     }
 }

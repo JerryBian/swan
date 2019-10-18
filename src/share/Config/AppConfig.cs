@@ -17,7 +17,7 @@
         public string AssetGitHubHookSecret { get; set; }
 
         public bool CloneAssetsDuringStartup { get; set; }
-        
+
         public string AssetGitCommitUser { get; set; }
 
         public string AssetGitCommitEmail { get; set; }
@@ -29,5 +29,9 @@
         public int PostUpdateAtHour { get; set; }
 
         public int PostUpdateEverySeconds { get; set; }
+
+        public int ErrorLogsSendInterval { get; set; }
+
+        public int WarningLogsSendInterval { get; set; }
     }
 }
