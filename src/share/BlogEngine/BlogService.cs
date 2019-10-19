@@ -248,13 +248,6 @@ namespace Laobian.Share.BlogEngine
                 catch(Exception ex)
                 {
                     _logger.LogCritical(ex, "Parse post failed. Post full path = {PostPath}.", postItem);
-                    await _emailClient.SendAsync(
-                        "blog",
-                        "blog@laobian.me",
-                        BlogConstant.AuthorEnglishName,
-                        BlogConstant.AuthorEmail,
-                        "Post parse failed",
-                        $"<p>Parse post failed. Post full path = {postItem}.</p><div><pre>{ex}</pre></div>");
                 }
             }
 
