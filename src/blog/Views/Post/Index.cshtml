@@ -37,6 +37,16 @@
 }
 
 @section script{
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
     <script src="~/script/post.min.js" defer asp-append-version="true"></script>
 }
 

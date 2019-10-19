@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Laobian.Share.Extension;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
 namespace Laobian.Blog
@@ -14,6 +15,7 @@ namespace Laobian.Blog
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    webBuilder.ConfigureLogging(builder => builder.AddEmail());
                     webBuilder.UseStartup<Startup>();
                 });
     }

@@ -18,8 +18,8 @@ namespace Laobian.Share.Infrastructure.Email
 
         public async Task<bool> SendAsync(string @from, string fromAddress, string to, string toAddress, string subject, string htmlContent)
         {
-            var fromEmailAddress = new EmailAddress(from, fromAddress);
-            var toEmailAddress = new EmailAddress(to, toAddress);
+            var fromEmailAddress = new EmailAddress(fromAddress, from);
+            var toEmailAddress = new EmailAddress(toAddress, to);
             var message =
                 MailHelper.CreateSingleEmail(fromEmailAddress, toEmailAddress, subject, htmlContent, htmlContent);
             var response = await _client.SendEmailAsync(message);

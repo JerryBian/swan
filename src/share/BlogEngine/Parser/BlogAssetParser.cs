@@ -61,31 +61,29 @@ namespace Laobian.Share.BlogEngine.Parser
             string lineSplitter = null, 
             string appendedContent = null)
         {
-            using (var sw = new StringWriter())
+            await using var sw = new StringWriter();
+            var hasLineSplitter = !string.IsNullOrEmpty(lineSplitter);
+            if (hasLineSplitter)
             {
-                var hasLineSplitter = !string.IsNullOrEmpty(lineSplitter);
-                if (hasLineSplitter)
-                {
-                    await sw.WriteLineAsync(lineSplitter);
-                }
-
-                foreach (var item in nameValues.OrderBy(_ => _.Key))
-                {
-                    await sw.WriteLineAsync($"{item.Key}{nameValueSplitter} {item.Value}");
-                }
-
-                if (hasLineSplitter)
-                {
-                    await sw.WriteLineAsync(lineSplitter);
-                }
-
-                if (!string.IsNullOrEmpty(appendedContent))
-                {
-                    await sw.WriteAsync(appendedContent);
-                }
-
-                return sw.ToString();
+                await sw.WriteLineAsync(lineSplitter);
             }
+
+            foreach (var item in nameValues.OrderBy(_ => _.Key))
+            {
+                await sw.WriteLineAsync($"{item.Key}{nameValueSplitter} {item.Value}");
+            }
+
+            if (hasLineSplitter)
+            {
+                await sw.WriteLineAsync(lineSplitter);
+            }
+
+            if (!string.IsNullOrEmpty(appendedContent))
+            {
+                await sw.WriteAsync(appendedContent);
+            }
+
+            return sw.ToString();
         }
     }
 }
