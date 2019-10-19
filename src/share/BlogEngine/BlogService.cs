@@ -87,11 +87,12 @@ namespace Laobian.Share.BlogEngine
         {
             var publishedPosts = GetPublishedPosts();
             totalPages = (int)Math.Ceiling(publishedPosts.Count / (double)BlogConstant.PostsPerPage);
-            if (page <= 0)
+            if (page < 0)
             {
                 _logger.LogWarning("Request paged published posts with {Parameter}", page);
-                page = 1;
             }
+
+            page = Math.Max(page, 1);
 
             if (page > totalPages)
             {
@@ -246,7 +247,7 @@ namespace Laobian.Share.BlogEngine
                 }
                 catch(Exception ex)
                 {
-                    _logger.LogWarning(ex, "Parse post failed. Post full path = {PostPath}.", postItem);
+                    _logger.LogCritical(ex, "Parse post failed. Post full path = {PostPath}.", postItem);
                     await _emailClient.SendAsync(
                         "blog",
                         "blog@laobian.me",

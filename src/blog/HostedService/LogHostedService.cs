@@ -93,7 +93,7 @@ namespace Laobian.Blog.HostedService
             var message = new StringBuilder();
             foreach (var log in logs)
             {
-                message.AppendLine($"<details>{log}</details>");
+                message.AppendLine($"<p><details>{log}</details></p>");
             }
 
             message.AppendLine($"<p><small>generated at {DateTime.UtcNow.ToChinaTime().ToDateAndTime()}.</small></p>");
@@ -124,7 +124,7 @@ namespace Laobian.Blog.HostedService
             var message = new StringBuilder();
             foreach (var log in logs)
             {
-                message.AppendLine($"<details>{log}</details>");
+                message.AppendLine($"<p><details>{log}</details></p>");
             }
 
             message.AppendLine($"<p><small>generated at {DateTime.UtcNow.ToChinaTime().ToDateAndTime()}.</small></p>");
@@ -150,7 +150,7 @@ namespace Laobian.Blog.HostedService
             var message = new StringBuilder();
             foreach(var log in logs)
             {
-                message.AppendLine($"<details>{log}</details>");
+                message.AppendLine($"<p><details>{log}</details></p>");
             }
 
             message.AppendLine($"<p><small>generated at {DateTime.UtcNow.ToChinaTime().ToDateAndTime()}.</small></p>");

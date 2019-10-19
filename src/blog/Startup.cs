@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text.Encodings.Web;
@@ -6,6 +7,8 @@ using System.Text.Unicode;
 using Laobian.Blog.Helpers;
 using Laobian.Share.BlogEngine;
 using Laobian.Share.Config;
+using Laobian.Share.Extension;
+using Laobian.Share.Infrastructure.Email;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
@@ -89,17 +92,39 @@ namespace Laobian.Blog
 
             var appConfig = app.ApplicationServices.GetService<IOptions<AppConfig>>().Value;
             var logger = app.ApplicationServices.GetService<ILogger<Startup>>();
-            logger.LogCritical(new Exception(), "TEST CRITICAL");
-            logger.LogError(new Exception(), "TEST ERROR");
-            logger.LogError(new Exception(), "TEST ERROR");
-            logger.LogWarning(new Exception(), "TEST WARNING");
+            var emailClient = app.ApplicationServices.GetService<IEmailClient>();
 
-            applicationLifetime.ApplicationStarted.Register(() =>
+            applicationLifetime.ApplicationStarted.Register(async () =>
             {
                 BlogState.StartAtUtc = DateTime.UtcNow;
                 BlogState.IsDevEnvironment = HostEnvironment.IsDevelopment();
                 BlogState.IsStageEnvironment = HostEnvironment.IsStaging();
                 BlogState.IsProdEnvironment = HostEnvironment.IsProduction();
+
+                if (!HostEnvironment.IsDevelopment())
+                {
+                    await emailClient.SendAsync(
+                        BlogConstant.LogSenderName,
+                        BlogConstant.LogSenderEmail,
+                        BlogConstant.AuthorEnglishName,
+                        BlogConstant.AuthorEmail,
+                        "Blog started.",
+                        $"<ul><li>Machine: {Environment.MachineName}</li><li>Time: {DateTime.UtcNow.ToChinaTime()}</li><li>Process: {Process.GetCurrentProcess().Id}</li></ul>");
+                }
+            });
+
+            applicationLifetime.ApplicationStopping.Register(async () =>
+            {
+                if (!HostEnvironment.IsDevelopment())
+                {
+                    await emailClient.SendAsync(
+                        BlogConstant.LogSenderName,
+                        BlogConstant.LogSenderEmail,
+                        BlogConstant.AuthorEnglishName,
+                        BlogConstant.AuthorEmail,
+                        "Blog stopped.",
+                        $"<ul><li>Machine: {Environment.MachineName}</li><li>Time: {DateTime.UtcNow.ToChinaTime()}</li><li>Process: {Process.GetCurrentProcess().Id}</li></ul>");
+                }
             });
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
