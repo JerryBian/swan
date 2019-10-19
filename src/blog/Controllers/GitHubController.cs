@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Laobian.Share.BlogEngine;
 using Laobian.Share.Config;
 using Laobian.Share.Helper;
+using Laobian.Share.Infrastructure.Email;
 using Laobian.Share.Infrastructure.Git;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -19,12 +20,14 @@ namespace Laobian.Blog.Controllers
     public class GitHubController : ControllerBase
     {
         private readonly AppConfig _appConfig;
+        private readonly IEmailClient _emailClient;
         private readonly IBlogService _blogService;
         private readonly ILogger<GitHubController> _logger;
 
-        public GitHubController(IBlogService blogService, IOptions<AppConfig> appConfig, ILogger<GitHubController> logger)
+        public GitHubController(IEmailClient emailClient, IBlogService blogService, IOptions<AppConfig> appConfig, ILogger<GitHubController> logger)
         {
             _logger = logger;
+            _emailClient = emailClient;
             _blogService = blogService;
             _appConfig = appConfig.Value;
         }
@@ -93,8 +96,6 @@ namespace Laobian.Blog.Controllers
                 await _blogService.UpdateMemoryAssetsAsync();
                 _logger.LogInformation("Local assets refreshed.");
 
-                bool requireCommit = false;
-
                 if (modifiedPosts.Any())
                 {
                     var posts = _blogService.GetPosts();
@@ -104,17 +105,36 @@ namespace Laobian.Blog.Controllers
                             string.Equals(p, blogPost.GitHubPath, StringComparison.OrdinalIgnoreCase));
                         if (modifiedPost != null)
                         {
-                            requireCommit = true;
                             blogPost.LastUpdateTimeUtc = DateTime.UtcNow;
                         }
                     }
                 }
 
-                if (requireCommit || payload.Commits.SelectMany(c => c.Added).Any())
+                await _blogService.UpdateCloudAssetsAsync();
+                _logger.LogInformation("Cloud assets updated.");
+
+                var email = new StringBuilder();
+                email.AppendLine($"<h3>ADDED POSTS</h3><ul>");
+                foreach (var post in payload.Commits.SelectMany(c => c.Added).Distinct())
                 {
-                    await _blogService.UpdateCloudAssetsAsync();
-                    _logger.LogInformation("Cloud assets updated.");
+                    email.AppendLine($"<li>{post}</li>");
                 }
+
+                email.AppendLine("</ul><h3>MODIFIED POSTS</h3><ul>");
+                foreach (var post in modifiedPosts)
+                {
+                    email.AppendLine($"<li>{post}</li>");
+                }
+
+                email.AppendLine("</ul>");
+
+                await _emailClient.SendAsync(
+                    BlogConstant.LogSenderName,
+                    BlogConstant.LogSenderEmail,
+                    BlogConstant.AuthorEnglishName,
+                    BlogConstant.AuthorEmail,
+                    "GITHUB HOOK COMPLETED",
+                    $"<p>GitHub hook executed completed.</p>{email}");
 
                 return Ok("Local updated.");
             }
