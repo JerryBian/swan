@@ -1,4 +1,5 @@
-﻿using Laobian.Blog.HostedService;
+﻿using System;
+using Laobian.Blog.HostedService;
 using Laobian.Share.BlogEngine;
 using Laobian.Share.Config;
 using Laobian.Share.Infrastructure.Cache;
@@ -6,6 +7,7 @@ using Laobian.Share.Infrastructure.Command;
 using Laobian.Share.Infrastructure.Email;
 using Laobian.Share.Infrastructure.Git;
 using Laobian.Share.Log;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -27,6 +29,16 @@ namespace Laobian.Blog.Helpers
 
             services.AddHostedService<PostHostedService>();
             services.AddHostedService<LogHostedService>();
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+                {
+                    options.LoginPath = "/login";
+                    options.LogoutPath = "/logout";
+                    options.ReturnUrlParameter = "r";
+                    options.Cookie.HttpOnly = true;
+                    options.ExpireTimeSpan = TimeSpan.FromDays(30);
+                });
         }
 
         private static void MapConfig(IConfiguration config, AppConfig ac)
@@ -47,6 +59,8 @@ namespace Laobian.Blog.Helpers
             ac.PostUpdateEverySeconds = config.GetValue("POST_UPDATE_EVERY_SECONDS", 5 * 60);
             ac.ErrorLogsSendInterval = config.GetValue("ERROR_LOG_SEND_INTERVAL", 60);
             ac.WarningLogsSendInterval = config.GetValue("WARNING_LOGS_SEND_INTERVAL", 60 * 5);
+            ac.AdminUserName = config.GetValue<string>("ADMIN_USER_NAME");
+            ac.AdminPassword = config.GetValue<string>("ADMIN_PASSWORD");
         }
     }
 }

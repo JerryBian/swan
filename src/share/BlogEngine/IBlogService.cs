@@ -8,7 +8,7 @@ namespace Laobian.Share.BlogEngine
     {
         BlogPost GetPost(int year, int month, string link);
 
-        List<BlogPost> GetPagedPublishedPosts(ref int page, out int totalPages);
+        List<BlogPost> GetPosts(bool filterPublish, ref int page, out int totalPages);
 
         List<BlogPost> GetPublishedPosts();
 

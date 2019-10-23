@@ -49,5 +49,7 @@
         public const string LogSenderName = "blog";
 
         public const string LogSenderEmail = "blog@laobian.me";
+
+        public const string AuthScheme = "sid";
     }
 }

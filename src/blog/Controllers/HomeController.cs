@@ -8,6 +8,7 @@ using Laobian.Share.BlogEngine;
 using Laobian.Share.Config;
 using Laobian.Share.Extension;
 using Laobian.Share.Helper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 
 namespace Laobian.Blog.Controllers
@@ -23,10 +24,11 @@ namespace Laobian.Blog.Controllers
             _blogService = blogService;
         }
 
-        [ResponseCache(CacheProfileName = "Cache10Sec")]
         public IActionResult Index([FromQuery] int p)
         {
-            var posts = _blogService.GetPagedPublishedPosts(ref p, out var totalPages);
+            var posts = User.Identity.IsAuthenticated?
+                _blogService.GetPosts(false, ref p, out var totalPages) :
+                _blogService.GetPosts(true, ref p, out totalPages);
             var categories = _blogService.GetCategories();
             var tags = _blogService.GetTags();
             var postViewModels = new List<PostViewModel>();

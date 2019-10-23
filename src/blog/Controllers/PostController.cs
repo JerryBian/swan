@@ -19,7 +19,6 @@ namespace Laobian.Blog.Controllers
         }
 
         [Route("{year:int}/{month:int}/{url}.html")]
-        [ResponseCache(CacheProfileName = "Cache10Sec")]
         public IActionResult Index(int year, int month, string url)
         {
             var post = _blogService.GetPost(year, month, url);
@@ -28,6 +27,17 @@ namespace Laobian.Blog.Controllers
             {
                 _logger.LogWarning("Request post not exists. {Year}, {Month}, {Link}", year, month, url);
                 return NotFound();
+            }
+
+            if (!post.IsPublic)
+            {
+                ViewData["Robots"] = "noindex, nofollow";
+
+                if (!User.Identity.IsAuthenticated)
+                {
+                    _logger.LogWarning("Trying to access private post failed. {Year}, {Month}, {Link}", year, month, url);
+                    return NotFound();
+                }
             }
 
             var categories = _blogService.GetCategories();

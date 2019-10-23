@@ -4,6 +4,12 @@
 <article class="post">
     <div class="post-title">
         <i class="fas fa-angle-down"></i>
+        @{
+            if (!Model.Post.IsPublic)
+            {
+                <span class="badge badge-secondary">Private</span> 
+            }
+        }
         @Model.Post.Title
     </div>
     <div class="text-muted text-left d-block d-lg-none post-meta">

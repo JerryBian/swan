@@ -83,10 +83,11 @@ namespace Laobian.Share.BlogEngine
             return post;
         }
 
-        public List<BlogPost> GetPagedPublishedPosts(ref int page, out int totalPages)
+        public List<BlogPost> GetPosts(bool filterPublish, ref int page, out int totalPages)
         {
-            var publishedPosts = GetPublishedPosts();
-            totalPages = (int)Math.Ceiling(publishedPosts.Count / (double)BlogConstant.PostsPerPage);
+            var posts = filterPublish ? GetPublishedPosts() : GetPosts();
+            posts = posts.OrderByDescending(p => p.CreationTimeUtc).ToList();
+            totalPages = (int)Math.Ceiling(posts.Count / (double)BlogConstant.PostsPerPage);
             if (page < 0)
             {
                 _logger.LogWarning("Request paged published posts with {Parameter}", page);
@@ -100,7 +101,7 @@ namespace Laobian.Share.BlogEngine
                 page = totalPages;
             }
 
-            return publishedPosts.ToPaged(BlogConstant.PostsPerPage, page);
+            return posts.ToPaged(BlogConstant.PostsPerPage, page);
         }
 
         public List<BlogPost> GetPublishedPosts()
