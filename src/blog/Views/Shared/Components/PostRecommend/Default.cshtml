@@ -1,0 +1,15 @@
+﻿@model IEnumerable<BlogPost>
+<div class="card mb-3">
+    <div class="card-header">推荐</div>
+    <div class="card-body">
+        <ul>
+            @foreach (var post in Model)
+            {
+                <li>
+                    <i class="fas fa-angle-right"></i>
+                    <a href="@post.FullUrl">@post.Title</a>
+                </li>
+            }
+        </ul>
+    </div>
+</div>

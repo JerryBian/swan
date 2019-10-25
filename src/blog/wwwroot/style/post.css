@@ -9761,6 +9761,16 @@ aside table tr td:first-child {
   padding-right: 0.75rem;
   color: #6c757d;
 }
+aside ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+aside ul li {
+  list-style: none;
+  border-bottom: 1px solid #EEE;
+  padding: 3px 0px;
+}
 
 .post .post-title {
   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAABCAYAAACsXeyTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAFUlEQVQIHWNIS0sr/v//PwMMDzY+ADqMahlW4J91AAAAAElFTkSuQmCC) bottom left repeat-x;

@@ -1,5 +1,5 @@
 ﻿.navbar,
-footer{
+footer {
     background-color: whitesmoke;
 }
 
@@ -26,7 +26,21 @@ img {
     background-color: #fff;
 }
 
-aside table tr td:first-child {
-    padding-right: 0.75rem;
-    color: $text-muted;
+aside {
+    table tr td:first-child {
+        padding-right: 0.75rem;
+        color: $text-muted;
+    }
+
+    ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+
+        li {
+            list-style: none;
+            border-bottom: 1px solid #EEE;
+            padding: 3px 0px;
+        }
+    }
 }

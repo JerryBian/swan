@@ -21,6 +21,7 @@ namespace Laobian.Blog.Controllers
             ViewData["Title"] = "关于";
             ViewData["Canonical"] = "/about/";
             ViewData["Description"] = "关于作者以及这个博客的一切";
+            ViewData["AdminView"] = HttpContext.User.Identity.IsAuthenticated;
             return View(model: html);
         }
     }
