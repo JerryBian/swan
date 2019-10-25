@@ -38,6 +38,10 @@
     </ul>
 </div>
 
+@section sidebar{
+    @await Component.InvokeAsync("PostRecommend", new{ adminView = ViewData["AdminView"], excludedLink = Model.Post.Link })
+}
+
 @section stickySidebar{
     <partial name="_AsidePostInfo" model="@Model"/>
 }

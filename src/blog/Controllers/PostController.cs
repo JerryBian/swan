@@ -66,6 +66,7 @@ namespace Laobian.Blog.Controllers
             ViewData["Canonical"] = post.FullUrlWithBaseAddress;
             ViewData["Title"] = post.Title;
             ViewData["Description"] = post.ExcerptText;
+            ViewData["AdminView"] = HttpContext.User.Identity.IsAuthenticated;
 
             return View(postViewModel);
         }
