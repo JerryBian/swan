@@ -9686,6 +9686,16 @@ aside table tr td:first-child {
   padding-right: 0.75rem;
   color: #6c757d;
 }
+aside ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+aside ul li {
+  list-style: none;
+  border-bottom: 1px solid #EEE;
+  padding: 3px 0px;
+}
 
 .post-item {
   padding-left: 0;
