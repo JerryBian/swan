@@ -13,6 +13,10 @@ namespace Laobian.Blog.Models
 
         public BlogPost Post { get; set; }
 
+        public BlogPost PrevPost { get; set; }
+
+        public BlogPost NextPost { get; set; }
+
         public List<BlogCategory> Categories { get; } = new List<BlogCategory>();
 
         public List<BlogTag> Tags { get; } = new List<BlogTag>();

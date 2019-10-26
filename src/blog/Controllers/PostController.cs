@@ -40,6 +40,9 @@ namespace Laobian.Blog.Controllers
                 }
             }
 
+
+
+
             var categories = _blogService.GetCategories();
             var tags = _blogService.GetTags();
             var postViewModel = new PostViewModel(post);
@@ -61,6 +64,20 @@ namespace Laobian.Blog.Controllers
                 {
                     postViewModel.Tags.Add(tag);
                 }
+            }
+
+            var posts = User.Identity.IsAuthenticated
+                ? _blogService.GetPosts().OrderByDescending(p => p.CreationTimeUtc).ToList()
+                : _blogService.GetPosts().Where(p => p.IsPublic).OrderByDescending(p => p.CreationTimeUtc).ToList();
+            var postIndex = posts.IndexOf(post);
+            if (postIndex > 0)
+            {
+                postViewModel.NextPost = posts[postIndex - 1];
+            }
+
+            if (postIndex < posts.Count - 1)
+            {
+                postViewModel.PrevPost = posts[postIndex + 1];
             }
 
             ViewData["Canonical"] = post.FullUrlWithBaseAddress;
