@@ -29,6 +29,16 @@ namespace Laobian.Blog.Controllers
             var posts = User.Identity.IsAuthenticated?
                 _blogService.GetPosts(false, ref p, out var totalPages) :
                 _blogService.GetPosts(true, ref p, out totalPages);
+
+            // very ugly
+            var putAtTopPosts = posts.Where(_ => _.PutAtTop).OrderByDescending(_ => _.CreationTimeUtc).ToList();
+            foreach (var post in putAtTopPosts)
+            {
+                posts.Remove(post);
+            }
+
+            posts.InsertRange(0, putAtTopPosts);
+
             var categories = _blogService.GetCategories();
             var tags = _blogService.GetTags();
             var postViewModels = new List<PostViewModel>();

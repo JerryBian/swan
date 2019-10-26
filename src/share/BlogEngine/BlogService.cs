@@ -107,7 +107,7 @@ namespace Laobian.Share.BlogEngine
         public List<BlogPost> GetPublishedPosts()
         {
             var posts = GetPosts();
-            return posts.Where(_ => _.IsPublic).OrderByDescending(_ => _.CreationTimeUtc).ToList();
+            return posts.Where(_ => _.IsReallyPublic).OrderByDescending(_ => _.CreationTimeUtc).ToList();
         }
 
         public List<BlogPost> GetPosts()
@@ -183,7 +183,7 @@ namespace Laobian.Share.BlogEngine
                 MarkdownContent = "Your Post Content Here in Markdown."
             };
 
-            var templateMarkdown = await new BlogPostParser(_appConfig).ToTextAsync(templatePost);
+            var templateMarkdown = await new BlogPostParser(_appConfig).ToTextAsync(templatePost, false);
             var localTemplatePath = Path.Combine(_appConfig.AssetRepoLocalDir, BlogConstant.TemplatePostGitHubPath);
             await File.WriteAllTextAsync(localTemplatePath, templateMarkdown, Encoding.UTF8);
             await _gitClient.CommitAsync(_appConfig.AssetRepoLocalDir, GitHubMessageProvider.GetPostCommitMessage($"{_appConfig.AssetGitCommitUser} - update template post from server"));
@@ -194,7 +194,7 @@ namespace Laobian.Share.BlogEngine
             var posts = GetPosts();
             foreach (var post in posts)
             {
-                var postContent = await _postParser.ToTextAsync(post);
+                var postContent = await _postParser.ToTextAsync(post, true);
                 await File.WriteAllTextAsync(post.LocalFullPath, postContent, Encoding.UTF8);
             }
 
