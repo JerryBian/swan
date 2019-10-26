@@ -31,6 +31,16 @@
             {
                 <li>发表于 @Html.Raw(meta)</li>
             }
+
+            if (Model.PrevPost != null)
+            {
+                <li>前一篇：<a href="@Model.PrevPost.FullUrl">@Model.PrevPost.Title</a></li>
+            }
+
+            if (Model.NextPost != null)
+            {
+                <li>后一篇：<a href="@Model.NextPost.FullUrl">@Model.NextPost.Title</a></li>
+            }
         }
         <li>
             关于这篇文章的评论，请发送电子邮件至 <a href="mailto:@BlogConstant.AuthorEmail?subject=评论 - @Model.Post.Title&body=Good job！">@BlogConstant.AuthorEmail</a>。
