@@ -5,7 +5,7 @@
     <div class="post-title">
         <i class="fas fa-angle-down"></i>
         @{
-            if (!Model.Post.IsPublic)
+            if (!Model.Post.IsReallyPublic)
             {
                 <span class="badge badge-secondary">Private</span> 
             }

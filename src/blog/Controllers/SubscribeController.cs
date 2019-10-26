@@ -80,7 +80,7 @@ namespace Laobian.Blog.Controllers
             feed.Contributors.Add(sp);
             
             var items = new List<SyndicationItem>();
-            var posts = _blogService.GetPosts().Where(p => p.IsPublic).OrderByDescending(p => p.CreationTimeUtc)
+            var posts = _blogService.GetPosts().Where(p => p.IsReallyPublic).OrderByDescending(p => p.CreationTimeUtc)
                 .ToList();
             foreach (var blogPost in posts)
             {

@@ -24,6 +24,9 @@ namespace Laobian.Share.BlogEngine.Model
 
         public string Link { get; set; }
 
+        [BlogPostMetadata(BlogPostMetadataReturnType.DateTime, "PublishAfter")]
+        public DateTime PublishAfter { get; set; }
+
         [BlogPostMetadata(BlogPostMetadataReturnType.DateTime, "CreateAt")]
         public DateTime CreationTimeUtc { get; set; }
 
@@ -52,9 +55,14 @@ namespace Laobian.Share.BlogEngine.Model
         [BlogPostMetadata(BlogPostMetadataReturnType.Bool, "Publish")]
         public bool IsPublic { get; set; }
 
+        [BlogPostMetadata(BlogPostMetadataReturnType.Bool, "PutAtTop")]
+        public bool PutAtTop { get; set; }
+
         #endregion
 
         public AppConfig Config { get; set; }
+
+        public bool IsReallyPublic => IsPublic && DateTime.UtcNow > PublishAfter;
 
 
         public string MarkdownContent { get; set; }

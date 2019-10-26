@@ -107,7 +107,7 @@ namespace Laobian.Share.BlogEngine
         public List<BlogPost> GetPublishedPosts()
         {
             var posts = GetPosts();
-            return posts.Where(_ => _.IsPublic).OrderByDescending(_ => _.CreationTimeUtc).ToList();
+            return posts.Where(_ => _.IsReallyPublic).OrderByDescending(_ => _.CreationTimeUtc).ToList();
         }
 
         public List<BlogPost> GetPosts()

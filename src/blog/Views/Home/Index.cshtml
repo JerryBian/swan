@@ -9,9 +9,14 @@
                 <div class="mb-1 post-item-title">
                     <i class="fas fa-angle-down"></i>
                     @{
-                        if (!item.Post.IsPublic)
+                        if (!item.Post.IsReallyPublic)
                         {
-                            <span class="badge badge-secondary">Private</span> 
+                            <span class="badge badge-secondary">Private</span>
+                        }
+
+                        if (item.Post.PutAtTop)
+                        {
+                            <span class="badge badge-success">Top</span>
                         }
                     }
                     <a href="@item.Post.FullUrl">@item.Post.Title</a>

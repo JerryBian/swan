@@ -29,7 +29,7 @@ namespace Laobian.Blog.ViewComponents
             if (adminView)
             {
                 posts = _blogService.GetPosts()
-                    .Where(p => p.IsPublic)
+                    .Where(p => p.IsReallyPublic)
                     .ToList();
             }
             else

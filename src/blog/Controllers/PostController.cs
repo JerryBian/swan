@@ -29,7 +29,7 @@ namespace Laobian.Blog.Controllers
                 return NotFound();
             }
 
-            if (!post.IsPublic)
+            if (!post.IsReallyPublic)
             {
                 ViewData["Robots"] = "noindex, nofollow";
 
@@ -68,7 +68,7 @@ namespace Laobian.Blog.Controllers
 
             var posts = User.Identity.IsAuthenticated
                 ? _blogService.GetPosts().OrderByDescending(p => p.CreationTimeUtc).ToList()
-                : _blogService.GetPosts().Where(p => p.IsPublic).OrderByDescending(p => p.CreationTimeUtc).ToList();
+                : _blogService.GetPosts().Where(p => p.IsReallyPublic).OrderByDescending(p => p.CreationTimeUtc).ToList();
             var postIndex = posts.IndexOf(post);
             if (postIndex > 0)
             {
