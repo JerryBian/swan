@@ -5,9 +5,9 @@
     <div class="post-title">
         <i class="fas fa-angle-down"></i>
         @{
-            if (!Model.Post.IsPublic)
+            if (!Model.Post.IsReallyPublic)
             {
-                <span class="badge badge-secondary">Private</span> 
+                <span class="badge badge-secondary">Private</span>
             }
         }
         @Model.Post.Title
@@ -18,7 +18,7 @@
     </div>
     <div class="mt-2 mb-4 post-content">
         @Html.Raw(Model.Post.HtmlContent)
-        
+
         <p class="text-muted">（本文完）</p>
     </div>
 </article>
@@ -49,25 +49,32 @@
 </div>
 
 @section sidebar{
-    @await Component.InvokeAsync("PostRecommend", new{ adminView = ViewData["AdminView"], excludedLink = Model.Post.Link })
+    @await Component.InvokeAsync("PostRecommend", new { adminView = ViewData["AdminView"], excludedLink = Model.Post.Link })
 }
 
 @section stickySidebar{
-    <partial name="_AsidePostInfo" model="@Model"/>
+    <partial name="_AsidePostInfo" model="@Model" />
 }
 
 @section script{
-    <script>
-        MathJax = {
-            tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']]
-            },
-            svg: {
-                fontCache: 'global'
-            }
-        };
-    </script>
-    <script src="~/script/post.min.js" defer asp-append-version="true"></script>
+    @if (Model.Post.IncludeMathJax)
+    {
+        <script>
+            MathJax = {
+                tex: {
+                    inlineMath: [['$', '$'], ['\\(', '\\)']]
+                },
+                svg: {
+                    fontCache: 'global'
+                }
+            };
+        </script>
+        <script src="~/script/post-mathjax.min.js" defer asp-append-version="true"></script>
+    }
+    else
+    {
+        <script src="~/script/post.min.js" defer asp-append-version="true"></script>
+    }
 }
 
 @section style{

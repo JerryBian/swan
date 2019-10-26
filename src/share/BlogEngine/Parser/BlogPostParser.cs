@@ -81,7 +81,7 @@ namespace Laobian.Share.BlogEngine.Parser
             return blogPost;
         }
 
-        public async Task<string> ToTextAsync(BlogPost post)
+        public async Task<string> ToTextAsync(BlogPost post, bool ignoreEmpty)
         {
             var nameValues = new List<KeyValuePair<string, string>>();
             foreach (var item in _props.Values)
@@ -113,6 +113,12 @@ namespace Laobian.Share.BlogEngine.Parser
                         default:
                             throw new NotSupportedException();
                     }
+
+                    if (string.IsNullOrEmpty(value) && ignoreEmpty)
+                    {
+                        continue;
+                    }
+
                     nameValues.Add(new KeyValuePair<string, string>(attr.Alias.First(), value));
                 }
             }
