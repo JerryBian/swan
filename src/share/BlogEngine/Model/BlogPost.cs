@@ -58,6 +58,9 @@ namespace Laobian.Share.BlogEngine.Model
         [BlogPostMetadata(BlogPostMetadataReturnType.Bool, "PutAtTop")]
         public bool PutAtTop { get; set; }
 
+        [BlogPostMetadata(BlogPostMetadataReturnType.Bool, "IncludeMathJax")]
+        public bool IncludeMathJax { get; set; }
+
         #endregion
 
         public AppConfig Config { get; set; }
