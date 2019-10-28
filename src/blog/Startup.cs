@@ -164,7 +164,7 @@ namespace Laobian.Blog
                 OnPrepareResponse = SetStaticFileCache
             });
 
-            var fileDirFullPath = Path.Combine(appConfig.AssetRepoLocalDir, BlogConstant.FileGitHub);
+            var fileDirFullPath = Path.Combine(appConfig.Blog.AssetRepoLocalDir, BlogConstant.FileGitHub);
             Directory.CreateDirectory(fileDirFullPath);
             var fileServerOptions = new FileServerOptions
             {

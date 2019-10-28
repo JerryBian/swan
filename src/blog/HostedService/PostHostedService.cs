@@ -30,26 +30,26 @@ namespace Laobian.Blog.HostedService
             {
                 try
                 {
-                    if (_appConfig.PostUpdateScheduled)
+                    if (_appConfig.Blog.PostUpdateScheduled)
                     {
                         var chinaTime = DateTime.UtcNow.ToChinaTime();
-                        if (chinaTime.Hour == _appConfig.PostUpdateAtHour && _lastExecuted.Date < chinaTime.Date)
+                        if (chinaTime.Hour == _appConfig.Blog.PostUpdateAtHour && _lastExecuted.Date < chinaTime.Date)
                         {
                             _lastExecuted = chinaTime;
                             await _blogService.UpdateCloudAssetsAsync();
                             _logger.LogInformation(
                                 "Post hosted service scheduled executed completely, last executed at = {LastExecutedAt}, scheduled at hour = {Hour}", 
                                 _lastExecuted.ToDateAndTime(),
-                                _appConfig.PostUpdateAtHour);
+                                _appConfig.Blog.PostUpdateAtHour);
                         }
 
                         await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
                     }
                     else
                     {
-                        await Task.Delay(TimeSpan.FromSeconds(_appConfig.PostUpdateEverySeconds), stoppingToken);
+                        await Task.Delay(TimeSpan.FromSeconds(_appConfig.Blog.PostUpdateEverySeconds), stoppingToken);
                         await _blogService.UpdateCloudAssetsAsync();
-                        _logger.LogInformation("Post hosted service interval executed completely, interval = {Interval}.", _appConfig.PostUpdateEverySeconds);
+                        _logger.LogInformation("Post hosted service interval executed completely, interval = {Interval}.", _appConfig.Blog.PostUpdateEverySeconds);
                     }
                 }
                 catch (Exception ex)
@@ -61,7 +61,7 @@ namespace Laobian.Blog.HostedService
 
         public override async Task StartAsync(CancellationToken cancellationToken)
         {
-            await _blogService.UpdateMemoryAssetsAsync(_appConfig.CloneAssetsDuringStartup);
+            await _blogService.UpdateMemoryAssetsAsync(_appConfig.Blog.CloneAssetsDuringStartup);
             await base.StartAsync(cancellationToken);
         }
 

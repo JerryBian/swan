@@ -89,35 +89,35 @@ namespace Laobian.Blog.Controllers
             {
                 new SiteMapUrl
                 {
-                    Loc = AddressHelper.GetAddress(_appConfig.BlogAddress),
+                    Loc = AddressHelper.GetAddress(_appConfig.Blog.BlogAddress),
                     ChangeFreq = "weekly",
                     LastMod = DateTime.UtcNow.ToChinaTime().ToDate(),
                     Priority = 1.0
                 },
                 new SiteMapUrl
                 {
-                    Loc = AddressHelper.GetAddress(_appConfig.BlogAddress, true, "about"),
+                    Loc = AddressHelper.GetAddress(_appConfig.Blog.BlogAddress, true, "about"),
                     ChangeFreq = "monthly",
                     LastMod = DateTime.UtcNow.ToChinaTime().ToDate(),
                     Priority = 0.9
                 },
                 new SiteMapUrl
                 {
-                    Loc = AddressHelper.GetAddress(_appConfig.BlogAddress, true, "archive"),
+                    Loc = AddressHelper.GetAddress(_appConfig.Blog.BlogAddress, true, "archive"),
                     ChangeFreq = "weekly",
                     LastMod = DateTime.UtcNow.ToChinaTime().ToDate(),
                     Priority = 0.8
                 },
                 new SiteMapUrl
                 {
-                    Loc = AddressHelper.GetAddress(_appConfig.BlogAddress, true, "category"),
+                    Loc = AddressHelper.GetAddress(_appConfig.Blog.BlogAddress, true, "category"),
                     ChangeFreq = "weekly",
                     LastMod = DateTime.UtcNow.ToChinaTime().ToDate(),
                     Priority = 0.7
                 },
                 new SiteMapUrl
                 {
-                    Loc = AddressHelper.GetAddress(_appConfig.BlogAddress, true, "tag"),
+                    Loc = AddressHelper.GetAddress(_appConfig.Blog.BlogAddress, true, "tag"),
                     ChangeFreq = "weekly",
                     LastMod = DateTime.UtcNow.ToChinaTime().ToDate(),
                     Priority = 0.6

@@ -238,7 +238,7 @@ namespace Laobian.Share.BlogEngine.Model
         {
             if (appendBaseAddress)
             {
-                return AddressHelper.GetAddress(Config.BlogAddress, false, year.ToString(), month.ToString("D2"),
+                return AddressHelper.GetAddress(Config.Blog.BlogAddress, false, year.ToString(), month.ToString("D2"),
                     $"{link}{BlogConstant.PostHtmlExtension}");
             }
 
@@ -268,7 +268,7 @@ namespace Laobian.Share.BlogEngine.Model
                     if (!Path.IsPathRooted(src))
                     {
                         imageNode.SetAttributeValue("src",
-                            AddressHelper.GetAddress(Config.BlogAddress, false, BlogConstant.FileRequestPath,
+                            AddressHelper.GetAddress(Config.Blog.BlogAddress, false, BlogConstant.FileRequestPath,
                                 Path.GetFileName(src)));
                     }
                 }

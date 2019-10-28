@@ -79,7 +79,7 @@ namespace Laobian.Blog.HostedService
 
         private async Task HandleWarningLogsAsync()
         {
-            if (DateTime.UtcNow - _warningLogsLastUpdatedAt < TimeSpan.FromSeconds(_appConfig.WarningLogsSendInterval))
+            if (DateTime.UtcNow - _warningLogsLastUpdatedAt < TimeSpan.FromSeconds(_appConfig.Common.WarningLogsSendInterval))
             {
                 return;
             }
@@ -110,7 +110,7 @@ namespace Laobian.Blog.HostedService
 
         private async Task HandleErrorLogsAsync()
         {
-            if (DateTime.UtcNow - _errorLogsLastUpdateAt < TimeSpan.FromSeconds(_appConfig.ErrorLogsSendInterval))
+            if (DateTime.UtcNow - _errorLogsLastUpdateAt < TimeSpan.FromSeconds(_appConfig.Common.ErrorLogsSendInterval))
             {
                 return;
             }

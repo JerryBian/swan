@@ -13,7 +13,7 @@ namespace Laobian.Share.Infrastructure.Email
 
         public SendGridEmailClient(IOptions<AppConfig> appConfig)
         {
-            _client = new SendGridClient(appConfig.Value.SendGridApiKey);
+            _client = new SendGridClient(appConfig.Value.Common.SendGridApiKey);
         }
 
         public async Task<bool> SendAsync(string @from, string fromAddress, string to, string toAddress, string subject, string htmlContent)
