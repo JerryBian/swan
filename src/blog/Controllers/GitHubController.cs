@@ -62,7 +62,7 @@ namespace Laobian.Blog.Controllers
             {
                 var body = await reader.ReadToEndAsync();
                 signature = signature.Substring("sha1=".Length);
-                var secret = Encoding.UTF8.GetBytes(_appConfig.AssetGitHubHookSecret);
+                var secret = Encoding.UTF8.GetBytes(_appConfig.Blog.AssetGitHubHookSecret);
                 var bodyBytes = Encoding.UTF8.GetBytes(body);
 
                 using (var hmacSha1 = new HMACSHA1(secret))
@@ -85,8 +85,8 @@ namespace Laobian.Blog.Controllers
 
                 var payload = SerializeHelper.FromJson<GitHubPayload>(body);
                 if (payload.Commits.Any(c =>
-                    StringEqualsHelper.IgnoreCase(_appConfig.AssetGitCommitEmail, c.Author.Email) &&
-                    StringEqualsHelper.IgnoreCase(_appConfig.AssetGitCommitUser, c.Author.User)))
+                    StringEqualsHelper.IgnoreCase(_appConfig.Blog.AssetGitCommitEmail, c.Author.Email) &&
+                    StringEqualsHelper.IgnoreCase(_appConfig.Blog.AssetGitCommitUser, c.Author.User)))
                 {
                     _logger.LogInformation("Got request from server, no need to refresh.");
                     return Ok("No need to refresh.");
