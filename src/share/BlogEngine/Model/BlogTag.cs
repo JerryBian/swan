@@ -2,7 +2,7 @@
 
 namespace Laobian.Share.BlogEngine.Model
 {
-    public class BlogTag
+    public class BlogTag : BlogAsset
     {
         public string Name { get; set; }
 
@@ -12,8 +12,5 @@ namespace Laobian.Share.BlogEngine.Model
         {
             return AddressHelper.GetAddress(false, "tag", $"#{Link}");
         }
-
-        public static BlogTag Default => new BlogTag
-            {Name = BlogConstant.DefaultTagName, Link = BlogConstant.DefaultTagLink};
     }
 }

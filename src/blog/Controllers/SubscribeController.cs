@@ -61,12 +61,12 @@ namespace Laobian.Blog.Controllers
         {
             var feed = new SyndicationFeed("", "", new Uri(_appConfig.Blog.BlogAddress))
             {
-                Title = new TextSyndicationContent(BlogConstant.BlogName, TextSyndicationContentKind.Plaintext),
+                Title = new TextSyndicationContent(_appConfig.Blog.Name, TextSyndicationContentKind.Plaintext),
                 Copyright = new TextSyndicationContent(
-                    $"Copyright {DateTime.UtcNow.Year} {BlogConstant.AuthorChineseName}",
+                    $"Copyright {DateTime.UtcNow.Year} {_appConfig.Common.AdminChineseName}",
                     TextSyndicationContentKind.Plaintext),
                 Description =
-                    new TextSyndicationContent(BlogConstant.BlogDescription, TextSyndicationContentKind.Plaintext),
+                    new TextSyndicationContent(_appConfig.Blog.Description, TextSyndicationContentKind.Plaintext),
                 Generator = "ASP.NET CORE",
                 BaseUri = new Uri(_appConfig.Blog.BlogAddress),
                 Id = _appConfig.Blog.BlogAddress,
@@ -75,7 +75,7 @@ namespace Laobian.Blog.Controllers
                 TimeToLive = TimeSpan.FromHours(1)
             };
 
-            var sp = new SyndicationPerson(BlogConstant.AuthorEmail, BlogConstant.AuthorChineseName, _appConfig.Blog.BlogAddress);
+            var sp = new SyndicationPerson(_appConfig.Common.AdminEmail, _appConfig.Common.AdminChineseName, _appConfig.Blog.BlogAddress);
             feed.Authors.Add(sp);
             feed.Contributors.Add(sp);
             

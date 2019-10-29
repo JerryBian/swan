@@ -129,10 +129,10 @@ namespace Laobian.Blog.Controllers
                 email.AppendLine("</ul>");
 
                 await _emailClient.SendAsync(
-                    BlogConstant.LogSenderName,
-                    BlogConstant.LogSenderEmail,
-                    BlogConstant.AuthorEnglishName,
-                    BlogConstant.AuthorEmail,
+                    _appConfig.Blog.ReportSenderName,
+                    _appConfig.Blog.ReportSenderEmail,
+                    _appConfig.Common.AdminEnglishName,
+                    _appConfig.Common.AdminEmail,
                     "GITHUB HOOK COMPLETED",
                     $"<p>GitHub hook executed completed.</p>{email}");
 

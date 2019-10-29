@@ -1,10 +1,11 @@
 ﻿using Laobian.Share.BlogEngine;
+using Laobian.Share.Config;
 
 namespace Laobian.Blog.Helpers
 {
     public class HtmlHeaderHelper
     {
-        public static string BuildMetaDescription(dynamic desc)
+        public static string BuildMetaDescription(AppConfig config, dynamic desc)
         {
             string str = desc?.ToString();
             if (string.IsNullOrEmpty(str))
@@ -16,15 +17,15 @@ namespace Laobian.Blog.Helpers
                 str += "... ";
             }
 
-            str += BlogConstant.BlogDescription;
+            str += config.Blog.Description;
 
             return str.Length >= 150 ? str.Substring(0, 150) : str;
         }
 
-        public static string BuildTitle(dynamic title)
+        public static string BuildTitle(AppConfig config, dynamic title)
         {
             string t = title?.ToString();
-            return string.IsNullOrEmpty(t) ? BlogConstant.BlogName : $"{title} - {BlogConstant.BlogName}";
+            return string.IsNullOrEmpty(t) ? config.Blog.Name : $"{title} - {config.Blog.Name}";
         }
 
         public static string BuildMetaRobots(dynamic robots)

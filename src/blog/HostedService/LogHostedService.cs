@@ -98,10 +98,10 @@ namespace Laobian.Blog.HostedService
 
             message.AppendLine($"<p><small>generated at {DateTime.UtcNow.ToChinaTime().ToDateAndTime()}.</small></p>");
             await _emailClient.SendAsync(
-                BlogConstant.LogSenderName,
-                BlogConstant.LogSenderEmail,
-                BlogConstant.AuthorEnglishName,
-                BlogConstant.AuthorEmail,
+                _appConfig.Blog.ReportSenderName,
+                _appConfig.Blog.ReportSenderEmail,
+                _appConfig.Common.AdminEnglishName,
+                _appConfig.Common.AdminEmail,
                 "WARNING LOGS!",
                 message.ToString());
 
@@ -129,10 +129,10 @@ namespace Laobian.Blog.HostedService
 
             message.AppendLine($"<p><small>generated at {DateTime.UtcNow.ToChinaTime().ToDateAndTime()}.</small></p>");
             await _emailClient.SendAsync(
-                BlogConstant.LogSenderName,
-                BlogConstant.LogSenderEmail,
-                BlogConstant.AuthorEnglishName,
-                BlogConstant.AuthorEmail,
+                _appConfig.Blog.ReportSenderName,
+                _appConfig.Blog.ReportSenderEmail,
+                _appConfig.Common.AdminEnglishName,
+                _appConfig.Common.AdminEmail,
                 "ERROR LOGS!",
                 message.ToString());
 
@@ -155,10 +155,10 @@ namespace Laobian.Blog.HostedService
 
             message.AppendLine($"<p><small>generated at {DateTime.UtcNow.ToChinaTime().ToDateAndTime()}.</small></p>");
             await _emailClient.SendAsync(
-                BlogConstant.LogSenderName, 
-                BlogConstant.LogSenderEmail,
-                BlogConstant.AuthorEnglishName,
-                BlogConstant.AuthorEmail,
+                _appConfig.Blog.ReportSenderName,
+                _appConfig.Blog.ReportSenderEmail,
+                _appConfig.Common.AdminEnglishName,
+                _appConfig.Common.AdminEmail,
                 "CRITICAL LOGS!",
                 message.ToString());
         }
