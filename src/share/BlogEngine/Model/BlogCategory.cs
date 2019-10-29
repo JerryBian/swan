@@ -2,7 +2,7 @@
 
 namespace Laobian.Share.BlogEngine.Model
 {
-    public class BlogCategory
+    public class BlogCategory : BlogAsset
     {
         public string Name { get; set; }
 
@@ -12,8 +12,5 @@ namespace Laobian.Share.BlogEngine.Model
         {
             return AddressHelper.GetAddress(false, "category", $"#{Link}");
         }
-
-        public static BlogCategory Default => new BlogCategory
-            {Name = BlogConstant.DefaultCategoryName, Link = BlogConstant.DefaultCategoryLink};
     }
 }

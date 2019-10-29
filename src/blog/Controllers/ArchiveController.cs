@@ -3,16 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using Laobian.Blog.Models;
 using Laobian.Share.BlogEngine;
+using Laobian.Share.Config;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace Laobian.Blog.Controllers
 {
     public class ArchiveController : Controller
     {
+        private readonly AppConfig _appConfig;
         private readonly IBlogService _blogService;
 
-        public ArchiveController(IBlogService blogService)
+        public ArchiveController(IOptions<AppConfig> appConfig, IBlogService blogService)
         {
+            _appConfig = appConfig.Value;
             _blogService = blogService;
         }
 
@@ -34,7 +38,7 @@ namespace Laobian.Blog.Controllers
             var remainingPosts = posts.Except(model.SelectMany(_ => _.Posts).Distinct()).ToList();
             if (remainingPosts.Any())
             {
-                var catModel = new ArchiveViewModel(BlogConstant.DefaultCategoryName, BlogConstant.DefaultCategoryLink);
+                var catModel = new ArchiveViewModel(_appConfig.Blog.DefaultCategoryName, _appConfig.Blog.DefaultCategoryLink);
                 catModel.Posts.AddRange(remainingPosts);
                 model.Add(catModel);
             }
@@ -63,7 +67,7 @@ namespace Laobian.Blog.Controllers
             var remainingPosts = posts.Except(model.SelectMany(_ => _.Posts).Distinct()).ToList();
             if (remainingPosts.Any())
             {
-                var tagModel = new ArchiveViewModel(BlogConstant.DefaultTagName, BlogConstant.DefaultTagLink);
+                var tagModel = new ArchiveViewModel(_appConfig.Blog.DefaultTagName, _appConfig.Blog.DefaultTagLink);
                 tagModel.Posts.AddRange(remainingPosts);
                 model.Add(tagModel);
             }

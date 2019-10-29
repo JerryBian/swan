@@ -10,7 +10,7 @@ using Laobian.Share.Helper;
 
 namespace Laobian.Share.BlogEngine.Model
 {
-    public class BlogPost
+    public class BlogPost : BlogAsset
     {
         private bool _excerptLoaded;
 
@@ -62,8 +62,6 @@ namespace Laobian.Share.BlogEngine.Model
         public bool IncludeMathJax { get; set; }
 
         #endregion
-
-        public AppConfig Config { get; set; }
 
         public bool IsReallyPublic => IsPublic && DateTime.UtcNow > PublishAfter;
 
@@ -177,7 +175,7 @@ namespace Laobian.Share.BlogEngine.Model
             {
                 if (string.IsNullOrEmpty(_gitHubPath))
                 {
-                    _gitHubPath = $"{BlogConstant.PostGitHubPath}{Link}{BlogConstant.PostMarkdownExtension}";
+                    _gitHubPath = $"{Config.Blog.PostGitPath}{Link}{Config.Common.MarkdownExtension}";
                 }
 
                 return _gitHubPath;
@@ -239,11 +237,11 @@ namespace Laobian.Share.BlogEngine.Model
             if (appendBaseAddress)
             {
                 return AddressHelper.GetAddress(Config.Blog.BlogAddress, false, year.ToString(), month.ToString("D2"),
-                    $"{link}{BlogConstant.PostHtmlExtension}");
+                    $"{link}{Config.Common.HtmlExtension}");
             }
 
             return AddressHelper.GetAddress(false, year.ToString(), month.ToString("D2"),
-                $"{link}{BlogConstant.PostHtmlExtension}");
+                $"{link}{Config.Common.HtmlExtension}");
         }
 
         private string GetHtmlContent()
@@ -268,7 +266,7 @@ namespace Laobian.Share.BlogEngine.Model
                     if (!Path.IsPathRooted(src))
                     {
                         imageNode.SetAttributeValue("src",
-                            AddressHelper.GetAddress(Config.Blog.BlogAddress, false, BlogConstant.FileRequestPath,
+                            AddressHelper.GetAddress(Config.Blog.BlogAddress, false, Config.Blog.FileRequestPath,
                                 Path.GetFileName(src)));
                     }
                 }

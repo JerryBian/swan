@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@inject IOptions<AppConfig> Config
+<!DOCTYPE html>
 <html lang="zh">
 <head>
     <!--meta tags-->
@@ -6,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="msapplication-TileColor" content="#0f8da2">
     <meta name="theme-color" content="#0f8da2">
-    <meta name="description" content="@HtmlHeaderHelper.BuildMetaDescription(ViewData["Description"])">
+    <meta name="description" content="@HtmlHeaderHelper.BuildMetaDescription(Config.Value, ViewData["Description"])">
     <meta name="robots" content="@HtmlHeaderHelper.BuildMetaRobots(ViewData["Robots"])">
     <meta name="rating" content="General">
     <meta name="format-detection" content="telephone=no">
@@ -14,11 +15,11 @@
     <!--link tags-->
     @RenderSection("style", false)
     <link rel="canonical" href="@ViewData["Canonical"]">
-    <link rel="author" content="@BlogConstant.AuthorChineseName" href="~/">
+    <link rel="author" content="@Config.Value.Common.AdminChineseName" href="~/">
     <link rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh">
-    <link rel="alternate" href="/rss/" type="application/rss+xml" title="@BlogConstant.BlogName">
-    <link rel="alternate" href="/atom/" type="application/atom+xml" title="@BlogConstant.BlogName">
-    <link rel="me" href="mailto:@BlogConstant.AuthorEmail">
+    <link rel="alternate" href="/rss/" type="application/rss+xml" title="@Config.Value.Blog.Name">
+    <link rel="alternate" href="/atom/" type="application/atom+xml" title="@Config.Value.Blog.Name">
+    <link rel="me" href="mailto:@Config.Value.Common.AdminEmail">
     <link rel="index" href="/">
     @*<link rel="dns-prefetch" href="https://laobian.blob.core.windows.net">*@
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -27,14 +28,14 @@
     <link rel="manifest" href="/site.webmanifest">
     <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#0f8da2">
 
-    <title>@HtmlHeaderHelper.BuildTitle(ViewData["Title"])</title>
+    <title>@HtmlHeaderHelper.BuildTitle(Config.Value, ViewData["Title"])</title>
 
     @RenderSection("script", false)
 </head>
 <body>
     <nav class="navbar">
         <div class="container">
-            <a class="navbar-brand" href="/">@BlogConstant.BlogName</a>
+            <a class="navbar-brand" href="/">@Config.Value.Blog.Name</a>
             <ul class="nav ml-auto">
                 <li><a class="nav-item nav-link" href="/archive/">存档</a></li>
                 <li><a class="nav-item nav-link" href="/about/">关于</a></li>

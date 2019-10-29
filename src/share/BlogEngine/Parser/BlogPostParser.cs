@@ -11,12 +11,10 @@ namespace Laobian.Share.BlogEngine.Parser
 {
     public class BlogPostParser : BlogAssetParser
     {
-        private readonly AppConfig _appConfig;
         private readonly Dictionary<string, Tuple<BlogPostMetadataAttribute, PropertyInfo>> _props;
 
-        public BlogPostParser(AppConfig appConfig)
+        public BlogPostParser(AppConfig appConfig) : base(appConfig)
         {
-            _appConfig = appConfig;
             _props = new Dictionary<string, Tuple<BlogPostMetadataAttribute, PropertyInfo>>(StringComparer.OrdinalIgnoreCase);
             foreach (var propertyInfo in typeof(BlogPost).GetProperties())
             {
@@ -33,7 +31,7 @@ namespace Laobian.Share.BlogEngine.Parser
 
         public async Task<BlogPost> FromTextAsync(string text, string link)
         {
-            var parseResult = await FromTextAsync(text, BlogConstant.ColonSplitter, BlogConstant.MetadataLine);
+            var parseResult = await FromTextAsync(text, Config.Common.ColonSplitter, Config.Blog.MetadataSplitter);
             var blogPost = new BlogPost();
             foreach (var item in parseResult.Item1)
             {
@@ -50,7 +48,7 @@ namespace Laobian.Share.BlogEngine.Parser
                             }
                             break;
                         case BlogPostMetadataReturnType.ListOfString:
-                            var rs = value.Split(BlogConstant.PeriodSplitter).Select(_ => _.Trim()).ToList();
+                            var rs = value.Split(Config.Common.PeriodSplitter).Select(_ => _.Trim()).ToList();
                             propValue.Item2.SetValue(blogPost, rs);
                             break;
                         case BlogPostMetadataReturnType.String:
@@ -73,10 +71,10 @@ namespace Laobian.Share.BlogEngine.Parser
                 }
             }
 
-            blogPost.Config = _appConfig;
+            blogPost.SetConfig(Config);
             blogPost.Link = link;
             blogPost.MarkdownContent = parseResult.Item2;
-            blogPost.LocalFullPath = Path.Combine(_appConfig.Blog.AssetRepoLocalDir, blogPost.GitHubPath);
+            blogPost.LocalFullPath = Path.Combine(Config.Blog.AssetRepoLocalDir, blogPost.GitHubPath);
             blogPost.SetDefaults();
             return blogPost;
         }
@@ -123,7 +121,7 @@ namespace Laobian.Share.BlogEngine.Parser
                 }
             }
 
-            return await ToTextAsync(nameValues, BlogConstant.ColonSplitter, BlogConstant.MetadataLine,
+            return await ToTextAsync(nameValues, Config.Common.ColonSplitter, Config.Blog.MetadataSplitter,
                 post.MarkdownContent);
         }
     }

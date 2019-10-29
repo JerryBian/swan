@@ -104,10 +104,10 @@ namespace Laobian.Blog
                 if (!HostEnvironment.IsDevelopment())
                 {
                     await emailClient.SendAsync(
-                        BlogConstant.LogSenderName,
-                        BlogConstant.LogSenderEmail,
-                        BlogConstant.AuthorEnglishName,
-                        BlogConstant.AuthorEmail,
+                        appConfig.Blog.ReportSenderName,
+                        appConfig.Blog.ReportSenderEmail,
+                        appConfig.Common.AdminEnglishName,
+                        appConfig.Common.AdminEmail,
                         "Blog started.",
                         $"<ul><li>Machine: {Environment.MachineName}</li><li>Time: {DateTime.UtcNow.ToChinaTime()}</li><li>Process: {Process.GetCurrentProcess().Id}</li></ul>");
                 }
@@ -118,10 +118,10 @@ namespace Laobian.Blog
                 if (!HostEnvironment.IsDevelopment())
                 {
                     await emailClient.SendAsync(
-                        BlogConstant.LogSenderName,
-                        BlogConstant.LogSenderEmail,
-                        BlogConstant.AuthorEnglishName,
-                        BlogConstant.AuthorEmail,
+                        appConfig.Blog.ReportSenderName,
+                        appConfig.Blog.ReportSenderEmail,
+                        appConfig.Common.AdminEnglishName,
+                        appConfig.Common.AdminEmail,
                         "Blog stopped.",
                         $"<ul><li>Machine: {Environment.MachineName}</li><li>Time: {DateTime.UtcNow.ToChinaTime()}</li><li>Process: {Process.GetCurrentProcess().Id}</li></ul>");
                 }
@@ -139,7 +139,7 @@ namespace Laobian.Blog
                     ExceptionHandler = async context =>
                     {
                         logger.LogWarning(context.Features.Get<IExceptionHandlerFeature>()?.Error, "Request error occurred.");
-                        await context.Response.WriteAsync($"Something was wrong! Please contact {BlogConstant.AuthorEmail}.");
+                        await context.Response.WriteAsync($"Something was wrong! Please contact {appConfig.Common.AdminEmail}.");
                     }
                 });
             }
@@ -164,12 +164,12 @@ namespace Laobian.Blog
                 OnPrepareResponse = SetStaticFileCache
             });
 
-            var fileDirFullPath = Path.Combine(appConfig.Blog.AssetRepoLocalDir, BlogConstant.FileGitHub);
+            var fileDirFullPath = Path.Combine(appConfig.Blog.AssetRepoLocalDir, appConfig.Blog.FileGitPath);
             Directory.CreateDirectory(fileDirFullPath);
             var fileServerOptions = new FileServerOptions
             {
                 FileProvider = new PhysicalFileProvider(fileDirFullPath),
-                RequestPath = BlogConstant.FileRequestPath,
+                RequestPath = appConfig.Blog.FileRequestPath,
                 EnableDirectoryBrowsing = true,
             };
             fileServerOptions.StaticFileOptions.OnPrepareResponse = SetStaticFileCache;

@@ -43,9 +43,9 @@ namespace Laobian.Share.BlogEngine
             _emailClient = emailClient;
             _memoryCacheClient = memoryCacheClient;
 
-            _tagParser = new BlogTagParser();
+            _tagParser = new BlogTagParser(_appConfig);
             _postParser = new BlogPostParser(_appConfig);
-            _categoryParser = new BlogCategoryParser();
+            _categoryParser = new BlogCategoryParser(_appConfig);
             _gitConfig = new GitConfig
             {
                 GitHubRepositoryName = _appConfig.Blog.AssetGitHubRepoName,
@@ -87,7 +87,7 @@ namespace Laobian.Share.BlogEngine
         {
             var posts = filterPublish ? GetPublishedPosts() : GetPosts();
             posts = posts.OrderByDescending(p => p.CreationTimeUtc).ToList();
-            totalPages = (int)Math.Ceiling(posts.Count / (double)BlogConstant.PostsPerPage);
+            totalPages = (int)Math.Ceiling(posts.Count / (double)_appConfig.Blog.PostsPerPage);
             if (page < 0)
             {
                 _logger.LogWarning("Request paged published posts with {Parameter}", page);
@@ -101,7 +101,7 @@ namespace Laobian.Share.BlogEngine
                 page = totalPages;
             }
 
-            return posts.ToPaged(BlogConstant.PostsPerPage, page);
+            return posts.ToPaged(_appConfig.Blog.PostsPerPage, page);
         }
 
         public List<BlogPost> GetPublishedPosts()
@@ -184,7 +184,7 @@ namespace Laobian.Share.BlogEngine
             };
 
             var templateMarkdown = await new BlogPostParser(_appConfig).ToTextAsync(templatePost, false);
-            var localTemplatePath = Path.Combine(_appConfig.Blog.AssetRepoLocalDir, BlogConstant.TemplatePostGitHubPath);
+            var localTemplatePath = Path.Combine(_appConfig.Blog.AssetRepoLocalDir, _appConfig.Blog.TemplatePostGitPath);
             await File.WriteAllTextAsync(localTemplatePath, templateMarkdown, Encoding.UTF8);
             await _gitClient.CommitAsync(_appConfig.Blog.AssetRepoLocalDir, GitHubMessageProvider.GetPostCommitMessage($"{_appConfig.Blog.AssetGitCommitUser} - update template post from server"));
         }
@@ -210,7 +210,7 @@ namespace Laobian.Share.BlogEngine
             var posts = new List<BlogPost>();
             foreach (var filePost in filePosts)
             {
-                if (StringEqualsHelper.IgnoreCase(filePost.GitHubPath, BlogConstant.TemplatePostGitHubPath))
+                if (StringEqualsHelper.IgnoreCase(filePost.GitHubPath, _appConfig.Blog.TemplatePostGitPath))
                 {
                     continue;
                 }
@@ -231,7 +231,7 @@ namespace Laobian.Share.BlogEngine
         private async Task<List<BlogPost>> GetPostsFromFileAsync()
         {
             var result = new List<BlogPost>();
-            var postDirPath = Path.Combine(_appConfig.Blog.AssetRepoLocalDir, BlogConstant.PostGitHubPath);
+            var postDirPath = Path.Combine(_appConfig.Blog.AssetRepoLocalDir, _appConfig.Blog.PostGitPath);
             if (!Directory.Exists(postDirPath))
             {
                 return result;
@@ -239,14 +239,14 @@ namespace Laobian.Share.BlogEngine
 
             foreach (var postItem in Directory.EnumerateFiles(
                 postDirPath,
-                $"*{BlogConstant.PostMarkdownExtension}"))
+                $"*{_appConfig.Common.MarkdownExtension}"))
             {
                 try
                 {
                     var post = await _postParser.FromTextAsync(await File.ReadAllTextAsync(postItem), Path.GetFileNameWithoutExtension(postItem));
                     result.Add(post);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     _logger.LogCritical(ex, "Parse post failed. Post full path = {PostPath}.", postItem);
                 }
@@ -268,7 +268,7 @@ namespace Laobian.Share.BlogEngine
         private async Task<List<BlogCategory>> GetCategoriesFromFileAsync()
         {
             var result = new List<BlogCategory>();
-            var categoryPath = Path.Combine(_appConfig.Blog.AssetRepoLocalDir, BlogConstant.CategoryGitHubPath);
+            var categoryPath = Path.Combine(_appConfig.Blog.AssetRepoLocalDir, _appConfig.Blog.CategoryGitPath);
             if (!File.Exists(categoryPath))
             {
                 return result;
@@ -291,7 +291,7 @@ namespace Laobian.Share.BlogEngine
         private async Task<List<BlogTag>> GetTagsFromFileAsync()
         {
             var result = new List<BlogTag>();
-            var tagPath = Path.Combine(_appConfig.Blog.AssetRepoLocalDir, BlogConstant.TagGitHubPath);
+            var tagPath = Path.Combine(_appConfig.Blog.AssetRepoLocalDir, _appConfig.Blog.TagGitPath);
             if (!File.Exists(tagPath))
             {
                 return result;
@@ -316,8 +316,7 @@ namespace Laobian.Share.BlogEngine
 
         private async Task<string> GetAboutFromFileAsync(RequestLang lang)
         {
-            var aboutPath = Path.Combine(_appConfig.Blog.AssetRepoLocalDir,
-                string.Format(BlogConstant.AboutGitHub, lang == RequestLang.Chinese ? "zh" : "en"));
+            var aboutPath = Path.Combine(_appConfig.Blog.AssetRepoLocalDir, _appConfig.Blog.AboutGitPath);
             if (!File.Exists(aboutPath))
             {
                 return string.Empty;

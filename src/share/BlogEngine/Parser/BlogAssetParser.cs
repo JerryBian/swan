@@ -3,11 +3,19 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Laobian.Share.Config;
 
 namespace Laobian.Share.BlogEngine.Parser
 {
     public abstract class BlogAssetParser
     {
+        protected BlogAssetParser(AppConfig appConfig)
+        {
+            Config = appConfig;
+        }
+
+        public AppConfig Config { get; }
+
         protected virtual async Task<Tuple<List<KeyValuePair<string, string>>, string>> FromTextAsync(
             string requestText, 
             string nameValueSplitter, 

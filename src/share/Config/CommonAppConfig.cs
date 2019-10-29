@@ -16,5 +16,26 @@
 
         [ConfigMeta(Name = "ADMIN_PASSWORD", Required = true)]
         public string AdminPassword { get; set; }
+
+        [ConfigMeta(Name = "MARKDOWN_EXTENSION", DefaultValue = ".md")]
+        public string MarkdownExtension { get; set; }
+
+        [ConfigMeta(Name = "COLON_SPLITTER", DefaultValue = ":")]
+        public string ColonSplitter { get; set; }
+
+        [ConfigMeta(Name = "PERIOD_SPLITTER", DefaultValue = ",")]
+        public string PeriodSplitter { get; set; }
+
+        [ConfigMeta(Name = "HTML_EXTENSION", DefaultValue = ".html")]
+        public string HtmlExtension { get; set; }
+
+        [ConfigMeta(Name = "ADMIN_CHINESE_NAME", DefaultValue = "卞良忠")]
+        public string AdminChineseName { get; set; }
+
+        [ConfigMeta(Name = "ADMIN_ENGLISH_NAME", DefaultValue = "Jerry Bian")]
+        public string AdminEnglishName { get; set; }
+
+        [ConfigMeta(Name = "ADMIN_EMAIL", DefaultValue = "JerryBian@outlook.com")]
+        public string AdminEmail { get; set; }
     }
 }
