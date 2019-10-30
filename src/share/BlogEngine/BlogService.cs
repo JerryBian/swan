@@ -12,6 +12,7 @@ using Laobian.Share.Helper;
 using Laobian.Share.Infrastructure.Cache;
 using Laobian.Share.Infrastructure.Email;
 using Laobian.Share.Infrastructure.Git;
+using Laobian.Share.Log;
 using Markdig;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -27,17 +28,17 @@ namespace Laobian.Share.BlogEngine
         private readonly IGitClient _gitClient;
         private readonly BlogCategoryParser _categoryParser;
         private readonly IMemoryCacheClient _memoryCacheClient;
-        private readonly ILogger<BlogService> _logger;
+        private readonly ILogService _logService;
         private readonly IEmailClient _emailClient;
 
         public BlogService(
-            ILogger<BlogService> logger,
+            ILogService logService,
             IOptions<AppConfig> appConfig,
             IGitClient gitClient,
             IMemoryCacheClient memoryCacheClient,
             IEmailClient emailClient)
         {
-            _logger = logger;
+            _logService = logService;
             _appConfig = appConfig.Value;
             _gitClient = gitClient;
             _emailClient = emailClient;
@@ -90,14 +91,14 @@ namespace Laobian.Share.BlogEngine
             totalPages = (int)Math.Ceiling(posts.Count / (double)_appConfig.Blog.PostsPerPage);
             if (page < 0)
             {
-                _logger.LogWarning("Request paged published posts with {Parameter}", page);
+                _logService.LogWarning($"Request paged published posts with {page}");
             }
 
             page = Math.Max(page, 1);
 
             if (page > totalPages)
             {
-                _logger.LogWarning("Request paged published posts with {Parameter}", page);
+                _logService.LogWarning($"Request paged published posts with {page}");
                 page = totalPages;
             }
 
@@ -248,7 +249,7 @@ namespace Laobian.Share.BlogEngine
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogCritical(ex, "Parse post failed. Post full path = {PostPath}.", postItem);
+                    _logService.LogError( $"Parse post failed. Post full path = {postItem}.", ex);
                 }
             }
 

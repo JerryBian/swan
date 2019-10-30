@@ -9,6 +9,7 @@ using Laobian.Share.Config;
 using Laobian.Share.Helper;
 using Laobian.Share.Infrastructure.Email;
 using Laobian.Share.Infrastructure.Git;
+using Laobian.Share.Log;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -22,11 +23,11 @@ namespace Laobian.Blog.Controllers
         private readonly AppConfig _appConfig;
         private readonly IEmailClient _emailClient;
         private readonly IBlogService _blogService;
-        private readonly ILogger<GitHubController> _logger;
+        private readonly ILogService _logService;
 
-        public GitHubController(IEmailClient emailClient, IBlogService blogService, IOptions<AppConfig> appConfig, ILogger<GitHubController> logger)
+        public GitHubController(IEmailClient emailClient, IBlogService blogService, IOptions<AppConfig> appConfig, ILogService logService)
         {
-            _logger = logger;
+            _logService = logService;
             _emailClient = emailClient;
             _blogService = blogService;
             _appConfig = appConfig.Value;
@@ -41,20 +42,20 @@ namespace Laobian.Blog.Controllers
                 !Request.Headers.ContainsKey("X-Hub-Signature") ||
                 !Request.Headers.ContainsKey("X-GitHub-Delivery"))
             {
-                _logger.LogWarning("Headers are not completed.");
+                await _logService.LogWarning("Headers are not completed.");
                 return BadRequest("Invalid Request.");
             }
 
             if (!StringEqualsHelper.IgnoreCase("push", Request.Headers["X-GitHub-Event"]))
             {
-                _logger.LogWarning("Invalid github event {Event}", Request.Headers["X-GitHub-Event"]);
+                await _logService.LogWarning($"Invalid github event {Request.Headers["X-GitHub-Event"]}");
                 return BadRequest("Only support push event.");
             }
 
             var signature = Request.Headers["X-Hub-Signature"].ToString();
             if (!signature.StartsWith("sha1=", StringComparison.OrdinalIgnoreCase))
             {
-                _logger.LogWarning("Invalid github signature {Signature}", signature);
+                await _logService.LogWarning($"Invalid github signature {signature}");
                 return BadRequest("Invalid signature.");
             }
 
@@ -78,7 +79,7 @@ namespace Laobian.Blog.Controllers
 
                     if (!hashStr.Equals(signature))
                     {
-                        _logger.LogWarning("Invalid github signature {Signature}, {HashString}", signature, hashStr);
+                        await _logService.LogWarning($"Invalid github signature {signature}, {hashStr}");
                         return BadRequest("Invalid signature.");
                     }
                 }
@@ -88,13 +89,13 @@ namespace Laobian.Blog.Controllers
                     StringEqualsHelper.IgnoreCase(_appConfig.Blog.AssetGitCommitEmail, c.Author.Email) &&
                     StringEqualsHelper.IgnoreCase(_appConfig.Blog.AssetGitCommitUser, c.Author.User)))
                 {
-                    _logger.LogInformation("Got request from server, no need to refresh.");
+                    await _logService.LogInformation("Got request from server, no need to refresh.");
                     return Ok("No need to refresh.");
                 }
 
                 var modifiedPosts = payload.Commits.SelectMany(c => c.Modified).Distinct().ToList();
                 await _blogService.UpdateMemoryAssetsAsync();
-                _logger.LogInformation("Local assets refreshed.");
+                await _logService.LogInformation("Local assets refreshed.");
 
                 if (modifiedPosts.Any())
                 {
@@ -111,7 +112,7 @@ namespace Laobian.Blog.Controllers
                 }
 
                 await _blogService.UpdateCloudAssetsAsync();
-                _logger.LogInformation("Cloud assets updated.");
+                await _logService.LogInformation("Cloud assets updated.");
 
                 var email = new StringBuilder();
                 email.AppendLine($"<h3>ADDED POSTS</h3><ul>");
@@ -129,8 +130,8 @@ namespace Laobian.Blog.Controllers
                 email.AppendLine("</ul>");
 
                 await _emailClient.SendAsync(
-                    _appConfig.Blog.ReportSenderName,
-                    _appConfig.Blog.ReportSenderEmail,
+                    _appConfig.Common.ReportSenderName,
+                    _appConfig.Common.ReportSenderEmail,
                     _appConfig.Common.AdminEnglishName,
                     _appConfig.Common.AdminEmail,
                     "GITHUB HOOK COMPLETED",

@@ -27,10 +27,9 @@ namespace Laobian.Blog.Helpers
             services.AddSingleton<IBlogService, BlogService>();
             services.AddSingleton<IGitClient, GitClient>();
             services.AddSingleton<IEmailClient, SendGridEmailClient>();
-            services.AddSingleton<ILogStore, LogStore>();
+            services.AddSingleton<ILogService, LogService>();
 
             services.AddHostedService<PostHostedService>();
-            services.AddHostedService<LogHostedService>();
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>

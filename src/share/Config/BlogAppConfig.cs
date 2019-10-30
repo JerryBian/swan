@@ -89,11 +89,5 @@ namespace Laobian.Share.Config
 
         [ConfigMeta(Name = "POSTS_PER_PAGE", DefaultValue = 8)]
         public int PostsPerPage { get; set; }
-
-        [ConfigMeta(Name = "BLOG_REPORT_SENDER_NAME", DefaultValue = "Blog Reporter")]
-        public string ReportSenderName { get; set; }
-
-        [ConfigMeta(Name = "BLOG_REPORT_SENDER_EMAIL", DefaultValue = "blog@laobian.me")]
-        public string ReportSenderEmail { get; set; }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using Laobian.Blog.Models;
 using Laobian.Share.BlogEngine;
 using Laobian.Share.Helper;
+using Laobian.Share.Log;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -10,22 +12,22 @@ namespace Laobian.Blog.Controllers
     public class PostController : Controller
     {
         private readonly IBlogService _blogService;
-        private readonly ILogger<PostController> _logger;
+        private readonly ILogService _logService;
 
-        public PostController(IBlogService blogService, ILogger<PostController> logger)
+        public PostController(IBlogService blogService, ILogService logService)
         {
-            _logger = logger;
+            _logService = logService;
             _blogService = blogService;
         }
 
         [Route("{year:int}/{month:int}/{url}.html")]
-        public IActionResult Index(int year, int month, string url)
+        public async Task<IActionResult> Index(int year, int month, string url)
         {
             var post = _blogService.GetPost(year, month, url);
 
             if (post == null)
             {
-                _logger.LogWarning("Request post not exists. {Year}, {Month}, {Link}", year, month, url);
+                await _logService.LogWarning($"Request post not exists. {year}, {month}, {url}");
                 return NotFound();
             }
 
@@ -35,7 +37,7 @@ namespace Laobian.Blog.Controllers
 
                 if (!User.Identity.IsAuthenticated)
                 {
-                    _logger.LogWarning("Trying to access private post failed. {Year}, {Month}, {Link}", year, month, url);
+                    await _logService.LogWarning($"Trying to access private post failed. {year}, {month}, {url}");
                     return NotFound();
                 }
             }
