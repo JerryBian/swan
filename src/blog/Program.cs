@@ -15,7 +15,6 @@ namespace Laobian.Blog
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.ConfigureLogging(builder => builder.AddEmail());
                     webBuilder.UseStartup<Startup>();
                 });
     }

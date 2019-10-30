@@ -11,5 +11,7 @@ namespace Laobian.Share.Infrastructure.Email
             string toAddress,
             string subject,
             string htmlContent);
+
+        Task<bool> SendAsync(EmailEntry entry);
     }
 }

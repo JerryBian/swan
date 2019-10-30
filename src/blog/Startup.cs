@@ -9,6 +9,7 @@ using Laobian.Share.BlogEngine;
 using Laobian.Share.Config;
 using Laobian.Share.Extension;
 using Laobian.Share.Infrastructure.Email;
+using Laobian.Share.Log;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
@@ -91,7 +92,7 @@ namespace Laobian.Blog
             CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("zh-cn");
 
             var appConfig = app.ApplicationServices.GetService<IOptions<AppConfig>>().Value;
-            var logger = app.ApplicationServices.GetService<ILogger<Startup>>();
+            var logService = app.ApplicationServices.GetService<ILogService>();
             var emailClient = app.ApplicationServices.GetService<IEmailClient>();
 
             applicationLifetime.ApplicationStarted.Register(async () =>
@@ -103,13 +104,13 @@ namespace Laobian.Blog
 
                 if (!HostEnvironment.IsDevelopment())
                 {
-                    await emailClient.SendAsync(
-                        appConfig.Blog.ReportSenderName,
-                        appConfig.Blog.ReportSenderEmail,
-                        appConfig.Common.AdminEnglishName,
-                        appConfig.Common.AdminEmail,
-                        "Blog started.",
-                        $"<ul><li>Machine: {Environment.MachineName}</li><li>Time: {DateTime.UtcNow.ToChinaTime()}</li><li>Process: {Process.GetCurrentProcess().Id}</li></ul>");
+                    //await emailClient.SendAsync(
+                    //    appConfig.Blog.ReportSenderName,
+                    //    appConfig.Blog.ReportSenderEmail,
+                    //    appConfig.Common.AdminEnglishName,
+                    //    appConfig.Common.AdminEmail,
+                    //    "Blog started.",
+                    //    $"<ul><li>Machine: {Environment.MachineName}</li><li>Time: {DateTime.UtcNow.ToChinaTime()}</li><li>Process: {Process.GetCurrentProcess().Id}</li></ul>");
                 }
             });
 
@@ -117,13 +118,13 @@ namespace Laobian.Blog
             {
                 if (!HostEnvironment.IsDevelopment())
                 {
-                    await emailClient.SendAsync(
-                        appConfig.Blog.ReportSenderName,
-                        appConfig.Blog.ReportSenderEmail,
-                        appConfig.Common.AdminEnglishName,
-                        appConfig.Common.AdminEmail,
-                        "Blog stopped.",
-                        $"<ul><li>Machine: {Environment.MachineName}</li><li>Time: {DateTime.UtcNow.ToChinaTime()}</li><li>Process: {Process.GetCurrentProcess().Id}</li></ul>");
+                    //await emailClient.SendAsync(
+                    //    appConfig.Blog.ReportSenderName,
+                    //    appConfig.Blog.ReportSenderEmail,
+                    //    appConfig.Common.AdminEnglishName,
+                    //    appConfig.Common.AdminEmail,
+                    //    "Blog stopped.",
+                    //    $"<ul><li>Machine: {Environment.MachineName}</li><li>Time: {DateTime.UtcNow.ToChinaTime()}</li><li>Process: {Process.GetCurrentProcess().Id}</li></ul>");
                 }
             });
 
@@ -138,7 +139,7 @@ namespace Laobian.Blog
                 {
                     ExceptionHandler = async context =>
                     {
-                        logger.LogWarning(context.Features.Get<IExceptionHandlerFeature>()?.Error, "Request error occurred.");
+                        await logService.LogWarning("Request error occurred.", context.Features.Get<IExceptionHandlerFeature>()?.Error);
                         await context.Response.WriteAsync($"Something was wrong! Please contact {appConfig.Common.AdminEmail}.");
                     }
                 });

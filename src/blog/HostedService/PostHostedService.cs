@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Laobian.Share.BlogEngine;
 using Laobian.Share.Config;
 using Laobian.Share.Extension;
+using Laobian.Share.Log;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -15,11 +16,11 @@ namespace Laobian.Blog.HostedService
         private DateTime _lastExecuted;
         private readonly AppConfig _appConfig;
         private readonly IBlogService _blogService;
-        private readonly ILogger<PostHostedService> _logger;
+        private readonly ILogService _logService;
 
-        public PostHostedService(IBlogService blogService, IOptions<AppConfig> appConfig, ILogger<PostHostedService> logger)
+        public PostHostedService(IBlogService blogService, IOptions<AppConfig> appConfig, ILogService logService)
         {
-            _logger = logger;
+            _logService = logService;
             _blogService = blogService;
             _appConfig = appConfig.Value;
         }
@@ -37,10 +38,8 @@ namespace Laobian.Blog.HostedService
                         {
                             _lastExecuted = chinaTime;
                             await _blogService.UpdateCloudAssetsAsync();
-                            _logger.LogInformation(
-                                "Post hosted service scheduled executed completely, last executed at = {LastExecutedAt}, scheduled at hour = {Hour}", 
-                                _lastExecuted.ToDateAndTime(),
-                                _appConfig.Blog.PostUpdateAtHour);
+                            await _logService.LogInformation(
+                                $"Post hosted service scheduled executed completely, last executed at = {_lastExecuted.ToDateAndTime()}, scheduled at hour = {_appConfig.Blog.PostUpdateAtHour}");
                         }
 
                         await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
@@ -49,12 +48,12 @@ namespace Laobian.Blog.HostedService
                     {
                         await Task.Delay(TimeSpan.FromSeconds(_appConfig.Blog.PostUpdateEverySeconds), stoppingToken);
                         await _blogService.UpdateCloudAssetsAsync();
-                        _logger.LogInformation("Post hosted service interval executed completely, interval = {Interval}.", _appConfig.Blog.PostUpdateEverySeconds);
+                        await _logService.LogInformation($"Post hosted service interval executed completely, interval = {_appConfig.Blog.PostUpdateEverySeconds}.");
                     }
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogWarning(ex, "Post hosted service execution failed");
+                    await _logService.LogWarning("Post hosted service execution failed", ex);
                 }
             }
         }
@@ -69,7 +68,7 @@ namespace Laobian.Blog.HostedService
         {
             await _blogService.UpdateCloudAssetsAsync();
             await base.StopAsync(cancellationToken);
-            _logger.LogInformation("Post hosted service stopped.");
+            _logService.LogInformation("Post hosted service stopped.");
         }
     }
 }
