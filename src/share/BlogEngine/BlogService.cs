@@ -6,10 +6,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Laobian.Share.BlogEngine.Model;
 using Laobian.Share.BlogEngine.Parser;
+using Laobian.Share.Cache;
 using Laobian.Share.Config;
 using Laobian.Share.Extension;
 using Laobian.Share.Helper;
-using Laobian.Share.Infrastructure.Cache;
 using Laobian.Share.Infrastructure.Email;
 using Laobian.Share.Infrastructure.Git;
 using Laobian.Share.Log;
@@ -27,7 +27,7 @@ namespace Laobian.Share.BlogEngine
         private readonly BlogPostParser _postParser;
         private readonly IGitClient _gitClient;
         private readonly BlogCategoryParser _categoryParser;
-        private readonly IMemoryCacheClient _memoryCacheClient;
+        private readonly ICacheClient _cacheClient;
         private readonly ILogService _logService;
         private readonly IEmailClient _emailClient;
 
@@ -35,14 +35,14 @@ namespace Laobian.Share.BlogEngine
             ILogService logService,
             IOptions<AppConfig> appConfig,
             IGitClient gitClient,
-            IMemoryCacheClient memoryCacheClient,
+            ICacheClient cacheClient,
             IEmailClient emailClient)
         {
             _logService = logService;
             _appConfig = appConfig.Value;
             _gitClient = gitClient;
             _emailClient = emailClient;
-            _memoryCacheClient = memoryCacheClient;
+            _cacheClient = cacheClient;
 
             _tagParser = new BlogTagParser(_appConfig);
             _postParser = new BlogPostParser(_appConfig);

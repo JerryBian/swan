@@ -1,0 +1,19 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Laobian.Share.Blog.Parser
+{
+    public enum BlogAssetMetaReturnType
+    {
+        String = 0,
+
+        ListOfString = 2,
+
+        DateTimeOffset = 4,
+
+        Int32 = 8,
+
+        Bool = 16
+    }
+}
