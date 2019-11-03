@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Laobian.Share.Blog.Parser;
 
 namespace Laobian.Share.Blog.Model
@@ -14,16 +13,13 @@ namespace Laobian.Share.Blog.Model
         public string Title { get; set; }
 
         [BlogAssetMeta(BlogAssetMetaReturnType.DateTimeOffset, "创建时间", "CreateTime")]
-        public DateTimeOffset? CreateTime { get; set; }
+        public DateTime? CreateTime { get; set; }
 
         [BlogAssetMeta(BlogAssetMetaReturnType.DateTimeOffset, "发表时间", "PublishTime")]
-        public DateTimeOffset? PublishTime { get; set; }
+        public DateTime? PublishTime { get; set; }
 
         [BlogAssetMeta(BlogAssetMetaReturnType.DateTimeOffset, "更新时间", "LastUpdateTime")]
-        public DateTimeOffset? LastUpdateTime { get; set; }
-
-        [BlogAssetMeta(BlogAssetMetaReturnType.Int32, "时区", "TimeZoneOffset")]
-        public int? TimeZoneOffset { get; set; }
+        public DateTime? LastUpdateTime { get; set; }
 
         [BlogAssetMeta(BlogAssetMetaReturnType.Bool, "草稿", "IsDraft")]
         public bool? IsDraft { get; set; }
@@ -46,8 +42,6 @@ namespace Laobian.Share.Blog.Model
         public bool IsDraftDefault => false;
 
         public bool IsToppingDefault => false;
-
-        public int TimeZoneOffsetDefault => 8;
 
         public string Markdown { get; set; }
     }

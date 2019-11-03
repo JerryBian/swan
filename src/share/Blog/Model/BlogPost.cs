@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using Humanizer;
 
@@ -25,11 +24,11 @@ namespace Laobian.Share.Blog.Model
 
         public string AccessCountString => _accessCount.ToMetric();
 
-        public bool IsPublic => DateTimeOffset.UtcNow > Raw.PublishTime?.UtcDateTime && 
+        public bool IsPublic => DateTime.Now > PublishTime && 
                                 Raw.IsDraft != null &&
                                 !Raw.IsDraft.Value;
 
-        public DateTimeOffset PublishTime => Raw.PublishTime ?? throw new InvalidBlogAssetException(nameof(PublishTime));
+        public DateTime PublishTime => Raw.PublishTime ?? throw new InvalidBlogAssetException(nameof(PublishTime));
 
         public bool IsTopping => Raw.IsTopping ?? Raw.IsToppingDefault;
 
@@ -51,6 +50,12 @@ namespace Laobian.Share.Blog.Model
 
         public string LocalPath { get; set; }
 
+        public string Link => Raw.Link;
+
+        public BlogPost PrevPost { get; set; }
+
+        public BlogPost NextPost { get; set; }
+
         #endregion
 
         #region Public Methods
@@ -58,12 +63,6 @@ namespace Laobian.Share.Blog.Model
         public void NewAccess()
         {
             Interlocked.Increment(ref _accessCount);
-        }
-
-        public void Update()
-        {
-            var timeZoneOffset = Raw.TimeZoneOffset ?? Raw.TimeZoneOffsetDefault;
-            Raw.LastUpdateTime = DateTimeOffset.UtcNow.AddHours(timeZoneOffset);
         }
 
         #endregion

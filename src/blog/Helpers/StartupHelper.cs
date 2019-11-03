@@ -4,10 +4,10 @@ using System.Reflection;
 using Laobian.Blog.HostedService;
 using Laobian.Share.BlogEngine;
 using Laobian.Share.Config;
+using Laobian.Share.Git;
 using Laobian.Share.Infrastructure.Cache;
 using Laobian.Share.Infrastructure.Command;
 using Laobian.Share.Infrastructure.Email;
-using Laobian.Share.Infrastructure.Git;
 using Laobian.Share.Log;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Configuration;
@@ -25,7 +25,7 @@ namespace Laobian.Blog.Helpers
             services.AddSingleton<IMemoryCacheClient, MemoryCacheClient>();
             services.AddSingleton<ICommand, PowerShellCommand>();
             services.AddSingleton<IBlogService, BlogService>();
-            services.AddSingleton<IGitClient, GitClient>();
+            services.AddSingleton<IGitClient, GitHubClient>();
             services.AddSingleton<IEmailClient, SendGridEmailClient>();
             services.AddSingleton<ILogService, LogService>();
 

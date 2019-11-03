@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Laobian.Share.Infrastructure.Git
+namespace Laobian.Share.Git
 {
     public class GitHubCommit
     {

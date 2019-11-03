@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Laobian.Share.Infrastructure.Git
+namespace Laobian.Share.Git
 {
     public interface IGitClient
     {
