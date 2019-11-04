@@ -136,13 +136,7 @@ namespace Laobian.Share.Blog
                 await _blogAssetManager.UpdateRemoteStoreTemplatePostAsync();
             }
 
-            await Task.WhenAll(new[]
-            {
-                _blogAssetManager.ReloadLocalMemoryAboutAsync(),
-                _blogAssetManager.ReloadLocalMemoryCategoryAsync(),
-                _blogAssetManager.ReloadLocalMemoryPostAsync(),
-                _blogAssetManager.ReloadLocalMemoryTagAsync()
-            });
+            await _blogAssetManager.UpdateMemoryStoreAsync();
         }
 
         public async Task UpdateRemoteStoreAsync()

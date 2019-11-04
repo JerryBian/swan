@@ -10,7 +10,7 @@ namespace Laobian.Share.Blog.Parser
 
         ListOfString = 2,
 
-        DateTimeOffset = 4,
+        DateTime = 4,
 
         Int32 = 8,
 

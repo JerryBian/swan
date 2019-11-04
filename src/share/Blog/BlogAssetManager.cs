@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Laobian.Share.Blog.Model;
 using Laobian.Share.Config;
 using Laobian.Share.Git;
 using Laobian.Share.Infrastructure.Email;
+using Markdig;
 
 namespace Laobian.Share.Blog
 {
@@ -17,6 +19,8 @@ namespace Laobian.Share.Blog
         private readonly AppConfig _appConfig;
         private readonly IGitClient _gitClient;
         private readonly IEmailClient _emailClient;
+
+        private string _aboutHtml;
 
         public BlogAssetManager()
         {
@@ -31,7 +35,7 @@ namespace Laobian.Share.Blog
 
         public List<BlogTag> AllTags => _allTags;
 
-        public string AboutHtml { get; }
+        public string AboutHtml => _aboutHtml;
 
         public Task CloneToLocalStoreAsync()
         {
@@ -43,24 +47,15 @@ namespace Laobian.Share.Blog
             throw new NotImplementedException();
         }
 
-        public Task ReloadLocalMemoryPostAsync()
+        public async Task UpdateMemoryStoreAsync()
         {
-            throw new NotImplementedException();
-        }
-
-        public Task ReloadLocalMemoryCategoryAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task ReloadLocalMemoryTagAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task ReloadLocalMemoryAboutAsync()
-        {
-            throw new NotImplementedException();
+            await Task.WhenAll(new[]
+            {
+                ReloadLocalMemoryAboutAsync(),
+                ReloadLocalMemoryCategoryAsync(),
+                ReloadLocalMemoryPostAsync(),
+                ReloadLocalMemoryTagAsync()
+            });
         }
 
         public Task UpdateLocalStoreAsync()
@@ -71,6 +66,33 @@ namespace Laobian.Share.Blog
         public Task UpdateRemoteStoreAsync()
         {
             throw new NotImplementedException();
+        }
+
+        private async Task ReloadLocalMemoryPostAsync()
+        {
+
+        }
+
+        private async Task ReloadLocalMemoryCategoryAsync()
+        {
+
+        }
+
+        private async Task ReloadLocalMemoryTagAsync()
+        {
+
+        }
+
+        private async Task ReloadLocalMemoryAboutAsync()
+        {
+            var aboutLocalPath = Path.Combine(_appConfig.Blog.AssetRepoLocalDir, _appConfig.Blog.AboutGitPath);
+            if (!File.Exists(aboutLocalPath))
+            {
+                _aboutHtml = "Not Exists.";
+            }
+
+            var md = await File.ReadAllTextAsync(aboutLocalPath);
+            _aboutHtml = Markdown.ToHtml(md);
         }
     }
 }

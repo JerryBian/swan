@@ -12,13 +12,13 @@ namespace Laobian.Share.Blog.Model
         [BlogAssetMeta(BlogAssetMetaReturnType.String, "标题", "Title")]
         public string Title { get; set; }
 
-        [BlogAssetMeta(BlogAssetMetaReturnType.DateTimeOffset, "创建时间", "CreateTime")]
+        [BlogAssetMeta(BlogAssetMetaReturnType.DateTime, "创建时间", "CreateTime")]
         public DateTime? CreateTime { get; set; }
 
-        [BlogAssetMeta(BlogAssetMetaReturnType.DateTimeOffset, "发表时间", "PublishTime")]
+        [BlogAssetMeta(BlogAssetMetaReturnType.DateTime, "发表时间", "PublishTime")]
         public DateTime? PublishTime { get; set; }
 
-        [BlogAssetMeta(BlogAssetMetaReturnType.DateTimeOffset, "更新时间", "LastUpdateTime")]
+        [BlogAssetMeta(BlogAssetMetaReturnType.DateTime, "更新时间", "LastUpdateTime")]
         public DateTime? LastUpdateTime { get; set; }
 
         [BlogAssetMeta(BlogAssetMetaReturnType.Bool, "草稿", "IsDraft")]

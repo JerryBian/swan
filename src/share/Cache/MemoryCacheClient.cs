@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Laobian.Share.Log;
 using Microsoft.Extensions.Caching.Memory;
@@ -19,49 +17,30 @@ namespace Laobian.Share.Cache
             _memoryCache = new MemoryCache(new MemoryCacheOptions());
         }
 
-        public async Task<T> GetOrCreateAsync<T>(string cacheKey, ICachePolicy cachePolicy, Func<Task<T>> func)
+        public async Task<T> GetOrCreateAsync<T>(string cacheKey, IChangeToken changeToken, Func<Task<T>> func)
         {
-            if (cachePolicy.NeedExpire())
-            {
-                await RemoveCacheAsync(cacheKey);
-            }
-
             return await _memoryCache.GetOrCreateAsync(cacheKey, async cacheEntry =>
             {
                 var value = await func();
                 cacheEntry.Value = value;
-                cacheEntry.AbsoluteExpirationRelativeToNow = cachePolicy.ExpirationRelativeToNow;
+                cacheEntry.ExpirationTokens.Add(changeToken);
 
-                cachePolicy.Cache();
                 await _logService.LogInformation($"Cache created. Key: {cacheKey}");
-
                 return value;
             });
         }
 
-        public async Task<T> GetOrCreateAsync<T>(string cacheKey, ICachePolicy cachePolicy, Func<T> func)
+        public async Task<T> GetOrCreateAsync<T>(string cacheKey, IChangeToken changeToken, Func<T> func)
         {
-            if (cachePolicy.NeedExpire())
-            {
-                await RemoveCacheAsync(cacheKey);
-            }
-
             return await _memoryCache.GetOrCreateAsync(cacheKey, async cacheEntry =>
             {
                 var value = func();
                 cacheEntry.Value = value;
-                cacheEntry.AbsoluteExpirationRelativeToNow = cachePolicy.ExpirationRelativeToNow;
+                cacheEntry.ExpirationTokens.Add(changeToken);
 
-                cachePolicy.Cache();
                 await _logService.LogInformation($"Cache created. Key: {cacheKey}");
-
                 return value;
             });
-        }
-
-        public void ExpireCache(ICachePolicy cachePolicy)
-        {
-            cachePolicy.Expire();
         }
 
         private async Task RemoveCacheAsync(string cacheKey)

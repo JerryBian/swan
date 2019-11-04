@@ -20,13 +20,7 @@ namespace Laobian.Share.Blog
 
         Task UpdateRemoteStoreTemplatePostAsync();
 
-        Task ReloadLocalMemoryPostAsync();
-
-        Task ReloadLocalMemoryCategoryAsync();
-
-        Task ReloadLocalMemoryTagAsync();
-
-        Task ReloadLocalMemoryAboutAsync();
+        Task UpdateMemoryStoreAsync();
 
         Task UpdateLocalStoreAsync();
 
