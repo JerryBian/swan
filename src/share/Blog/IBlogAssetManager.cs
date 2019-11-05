@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Laobian.Share.Blog.Model;
 
@@ -8,13 +6,13 @@ namespace Laobian.Share.Blog
 {
     public interface IBlogAssetManager
     {
-        List<BlogPost> AllPosts { get; }
+        Task<List<BlogPost>> GetAllPostsAsync();
 
-        List<BlogCategory> AllCategories { get; }
+        Task<List<BlogCategory>> GetAllCategoriesAsync();
 
-        List<BlogTag> AllTags { get; }
+        Task<List<BlogTag>> GetAllTagsAsync();
 
-        string AboutHtml { get; }
+        Task<string> GetAboutHtmlAsync();
 
         Task CloneToLocalStoreAsync();
 

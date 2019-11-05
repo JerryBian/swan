@@ -7,7 +7,12 @@ namespace Laobian.Share.Blog.Model
 {
     public class BlogPost
     {
-        internal BlogPostRaw Raw { get; set; }
+        public BlogPost()
+        {
+            Raw = new BlogPostRaw();
+        }
+
+        internal BlogPostRaw Raw { get; }
 
         #region Public Property
 
@@ -55,6 +60,8 @@ namespace Laobian.Share.Blog.Model
         public BlogPost PrevPost { get; set; }
 
         public BlogPost NextPost { get; set; }
+
+        public string ContentMarkdown { get; set; }
 
         #endregion
 

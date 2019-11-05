@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using Laobian.Share.Blog.Model;
 using Laobian.Share.Config;
@@ -33,8 +32,8 @@ namespace Laobian.Share.Blog.Parser
         {
             var parseResult =
                 await FromTextAsync(text, _appConfig.Common.ColonSplitter, _appConfig.Blog.MetadataSplitter);
-            var result = new BlogAssetParseResult<BlogPost>(parseResult);
-            var blogPostRaw = new BlogPostRaw();
+            var result = new BlogAssetParseResult<BlogPost>(parseResult) { Instance = new BlogPost() };
+
             foreach (var nameValue in result.NameValues)
             {
                 var propMeta = _metaProperties.Keys.FirstOrDefault(k =>
@@ -53,28 +52,28 @@ namespace Laobian.Share.Blog.Parser
                             boolVal = false;
                         }
 
-                        prop.SetValue(blogPostRaw, boolVal);
+                        prop.SetValue(result.Instance.Raw, boolVal);
                         break;
                     case BlogAssetMetaReturnType.DateTime:
                         if (DateTime.TryParse(nameValue.Value, out var timeVal))
                         {
-                            prop.SetValue(blogPostRaw, timeVal);
+                            prop.SetValue(result.Instance.Raw, timeVal);
                         }
 
                         break;
                     case BlogAssetMetaReturnType.Int32:
                         if (int.TryParse(nameValue.Value, out var intVal))
                         {
-                            prop.SetValue(blogPostRaw, intVal);
+                            prop.SetValue(result.Instance.Raw, intVal);
                         }
 
                         break;
                     case BlogAssetMetaReturnType.String:
-                        prop.SetValue(blogPostRaw, nameValue.Value);
+                        prop.SetValue(result.Instance.Raw, nameValue.Value);
                         break;
                     case BlogAssetMetaReturnType.ListOfString:
                         var parts = nameValue.Value.Split(_appConfig.Common.PeriodSplitter);
-                        prop.SetValue(blogPostRaw, parts.ToList());
+                        prop.SetValue(result.Instance.Raw, parts.ToList());
                         break;
                     default:
                         result.Success = false;
@@ -83,8 +82,42 @@ namespace Laobian.Share.Blog.Parser
                 }
             }
 
-            result.Instance = new BlogPost { Raw = blogPostRaw };
             return result;
         }
+
+        public async Task<string> ToTextAsync(BlogPost post, bool excludeNonValue = true)
+        {
+            var nameValues = new Dictionary<string, string>();
+            foreach (var item in _metaProperties)
+            {
+                string value;
+                switch (item.Key.ReturnType)
+                {
+                    case BlogAssetMetaReturnType.Bool:
+                    case BlogAssetMetaReturnType.Int32:
+                    case BlogAssetMetaReturnType.String:
+                        value = Convert.ToString(item.Value.GetValue(post.Raw));
+                        break;
+                    case BlogAssetMetaReturnType.DateTime:
+                        value = Convert.ToDateTime(item.Value.GetValue(post.Raw)).ToString("yyyy-MM-dd hh:mm:ss");
+                        break;
+                    case BlogAssetMetaReturnType.ListOfString:
+                        value = string.Join(_appConfig.Common.PeriodSplitter, (List<string>)item.Value.GetValue(post.Raw));
+                        break;
+                    default:
+                        value = string.Empty;
+                        break;
+                }
+
+                if (!excludeNonValue || !string.IsNullOrEmpty(value))
+                {
+                    nameValues[item.Key.Alias.First()] = value;
+                }
+            }
+
+            return await ToTextAsync(nameValues, _appConfig.Common.ColonSplitter, _appConfig.Blog.MetadataSplitter,
+                post.ContentMarkdown);
+        }
+
     }
 }
