@@ -6,8 +6,8 @@ namespace Laobian.Share.Cache
 {
     public interface ICacheClient
     {
-        Task<T> GetOrCreateAsync<T>(string cacheKey, IChangeToken changeToken, Func<Task<T>> func);
+        Task<T> GetOrCreateAsync<T>(string cacheKey, Func<Task<T>> func, IChangeToken changeToken = null);
 
-        Task<T> GetOrCreateAsync<T>(string cacheKey, IChangeToken changeToken, Func<T> func);
+        T GetOrCreate<T>(string cacheKey, Func<T> func, IChangeToken changeToken = null);
     }
 }

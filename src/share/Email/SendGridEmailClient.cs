@@ -1,12 +1,11 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Threading.Tasks;
 using Laobian.Share.Config;
 using Microsoft.Extensions.Options;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 
-namespace Laobian.Share.Infrastructure.Email
+namespace Laobian.Share.Email
 {
     public class SendGridEmailClient : IEmailClient
     {
@@ -16,17 +15,6 @@ namespace Laobian.Share.Infrastructure.Email
         {
             _client = new SendGridClient(appConfig.Value.Common.SendGridApiKey);
         }
-
-        public async Task<bool> SendAsync(string @from, string fromAddress, string to, string toAddress, string subject, string htmlContent)
-        {
-            var fromEmailAddress = new EmailAddress(fromAddress, from);
-            var toEmailAddress = new EmailAddress(toAddress, to);
-            var message =
-                MailHelper.CreateSingleEmail(fromEmailAddress, toEmailAddress, subject, htmlContent, htmlContent);
-            var response = await _client.SendEmailAsync(message);
-            return response.StatusCode == HttpStatusCode.OK;
-        }
-
 
         public async Task<bool> SendAsync(EmailEntry entry)
         {

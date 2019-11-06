@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Laobian.Share.Config;
-
-namespace Laobian.Share.Infrastructure.Email
+﻿namespace Laobian.Share.Email
 {
     public class EmailEntry
     {

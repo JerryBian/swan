@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Laobian.Share.Blog
+﻿namespace Laobian.Share.Blog.Asset
 {
     public class BlogAssetReloadResult<T>
     {

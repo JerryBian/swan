@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Laobian.Share.Infrastructure.Command
+namespace Laobian.Share.Command
 {
     public interface ICommand
     {

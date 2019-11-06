@@ -85,7 +85,7 @@ namespace Laobian.Share.Blog.Parser
             return result;
         }
 
-        public async Task<string> ToTextAsync(BlogPost post, bool excludeNonValue = true)
+        public async Task<string> ToTextAsync(BlogPost post)
         {
             var nameValues = new Dictionary<string, string>();
             foreach (var item in _metaProperties)
@@ -109,7 +109,7 @@ namespace Laobian.Share.Blog.Parser
                         break;
                 }
 
-                if (!excludeNonValue || !string.IsNullOrEmpty(value))
+                if (!string.IsNullOrEmpty(value))
                 {
                     nameValues[item.Key.Alias.First()] = value;
                 }

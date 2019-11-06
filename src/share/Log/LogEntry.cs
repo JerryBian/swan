@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Extensions.Logging;
 
 namespace Laobian.Share.Log
@@ -11,7 +9,7 @@ namespace Laobian.Share.Log
 
         public Exception Exception { get; set; }
 
-        public DateTimeOffset When { get; set; }
+        public DateTime When { get; set; }
 
         public LogLevel Level { get; set; }
     }

@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.Primitives;
 
-namespace Laobian.Share.Blog
+namespace Laobian.Share.Blog.Asset
 {
     public class BlogAssetChangeToken : IChangeToken
     {

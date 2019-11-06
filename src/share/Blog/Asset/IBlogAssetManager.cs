@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Laobian.Share.Blog.Model;
 
-namespace Laobian.Share.Blog
+namespace Laobian.Share.Blog.Asset
 {
     public interface IBlogAssetManager
     {
@@ -14,7 +14,7 @@ namespace Laobian.Share.Blog
 
         Task<string> GetAboutHtmlAsync();
 
-        Task CloneToLocalStoreAsync();
+        Task ReloadLocalFileStoreAsync();
 
         Task UpdateRemoteStoreTemplatePostAsync();
 

@@ -2,33 +2,33 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Laobian.Share.Blog.Alert;
 using Laobian.Share.Blog.Model;
 using Laobian.Share.Blog.Parser;
 using Laobian.Share.Config;
 using Laobian.Share.Git;
-using Laobian.Share.Infrastructure.Email;
-using Laobian.Share.Log;
 using Markdig;
 using Microsoft.Extensions.Options;
 
-namespace Laobian.Share.Blog
+namespace Laobian.Share.Blog.Asset
 {
     public class BlogAssetManager : IBlogAssetManager
     {
         private readonly List<BlogPost> _allPosts;
         private readonly List<BlogCategory> _allCategories;
         private readonly List<BlogTag> _allTags;
+        private readonly GitConfig _gitConfig;
         private readonly AppConfig _appConfig;
         private readonly IGitClient _gitClient;
-        private readonly IEmailClient _emailClient;
         private readonly BlogPostParser _postParser;
         private readonly BlogCategoryParser _categoryParser;
         private readonly BlogTagParser _tagParser;
         private readonly ManualResetEventSlim _manualReset;
         private readonly SemaphoreSlim _semaphore;
-        private readonly ILogService _logService;
+        private readonly IBlogAlertService _blogAlertService;
 
         private string _aboutHtml;
 
@@ -38,19 +38,29 @@ namespace Laobian.Share.Blog
             BlogCategoryParser categoryParser,
             BlogTagParser tagParser,
             IGitClient gitClient,
-            IEmailClient emailClient)
+            IBlogAlertService blogAlertService)
         {
             _allTags = new List<BlogTag>();
             _allPosts = new List<BlogPost>();
             _allCategories = new List<BlogCategory>();
             _appConfig = appConfig.Value;
             _gitClient = gitClient;
-            _emailClient = emailClient;
             _postParser = postParser;
             _categoryParser = categoryParser;
             _tagParser = tagParser;
+            _blogAlertService = blogAlertService;
             _semaphore = new SemaphoreSlim(1, 1);
             _manualReset = new ManualResetEventSlim(true);
+            _gitConfig = new GitConfig
+            {
+                GitHubRepositoryName = _appConfig.Blog.AssetGitHubRepoName,
+                GitHubRepositoryBranch = _appConfig.Blog.AssetGitHubRepoBranch,
+                GitHubRepositoryOwner = _appConfig.Blog.AssetGitHubRepoOwner,
+                GitHubAccessToken = _appConfig.Blog.AssetGitHubRepoApiToken,
+                GitCloneToDir = _appConfig.Blog.AssetRepoLocalDir,
+                GitCommitEmail = _appConfig.Blog.AssetGitCommitEmail,
+                GitCommitUser = _appConfig.Blog.AssetGitCommitUser
+            };
         }
 
         public async Task<List<BlogPost>> GetAllPostsAsync()
@@ -77,14 +87,32 @@ namespace Laobian.Share.Blog
             return _aboutHtml;
         }
 
-        public Task CloneToLocalStoreAsync()
+        public async Task ReloadLocalFileStoreAsync()
         {
-            throw new NotImplementedException();
+            await _gitClient.CloneAsync(_gitConfig);
         }
 
-        public Task UpdateRemoteStoreTemplatePostAsync()
+        public async Task UpdateRemoteStoreTemplatePostAsync()
         {
-            throw new NotImplementedException();
+            var templatePost = new BlogPost();
+            templatePost.Raw.AccessCount = 10;
+            templatePost.Raw.IsDraft = false;
+            templatePost.Raw.PublishTime = DateTime.Now.AddHours(8);
+            templatePost.Raw.Category = new List<string> { "分类名称1", "分类名称2" };
+            templatePost.Raw.Tag = new List<string>{"标签名称1","标签名称2"};
+            templatePost.Raw.CreateTime = DateTime.Now;
+            templatePost.Raw.IncludeMath = false;
+            templatePost.Raw.IsTopping = false;
+            templatePost.Raw.LastUpdateTime = DateTime.Now;
+            templatePost.Raw.Link = "Your-Post-Unique-Link";
+            templatePost.Raw.Title = "Your Post Title";
+            templatePost.Raw.Markdown = "Your Post Content in Markdown.";
+
+            var text = await _postParser.ToTextAsync(templatePost);
+            var templatePostLocalPath =
+                Path.Combine(_appConfig.Blog.AssetRepoLocalDir, _appConfig.Blog.TemplatePostGitPath);
+            await File.WriteAllTextAsync(templatePostLocalPath, text, Encoding.UTF8);
+            await _gitClient.CommitAsync(_appConfig.Blog.AssetRepoLocalDir, "Update template post");
         }
 
         public async Task UpdateMemoryStoreAsync()
@@ -124,18 +152,22 @@ namespace Laobian.Share.Blog
                 subject = "Reload assets failed";
             }
 
-            await AlertAsync(subject, warning, error);
+            await _blogAlertService.AlertAssetReloadResultAsync(subject, warning, error);
             _semaphore.Release();
         }
 
-        public Task UpdateLocalStoreAsync()
+        public async Task UpdateLocalStoreAsync()
         {
-            throw new NotImplementedException();
+            foreach (var blogPost in _allPosts)
+            {
+                var text = await _postParser.ToTextAsync(blogPost);
+                await File.WriteAllTextAsync(blogPost.LocalPath, text, Encoding.UTF8);
+            }
         }
 
-        public Task UpdateRemoteStoreAsync()
+        public async Task UpdateRemoteStoreAsync()
         {
-            throw new NotImplementedException();
+            await _gitClient.CommitAsync(_appConfig.Blog.AssetRepoLocalDir, "Update assets");
         }
 
         private async Task<BlogAssetReloadResult<List<BlogPost>>> ReloadLocalMemoryPostAsync()
@@ -252,39 +284,6 @@ namespace Laobian.Share.Blog
             var md = await File.ReadAllTextAsync(aboutLocalPath);
             result.Result = Markdown.ToHtml(md);
             return result;
-        }
-
-        private async Task AlertAsync(string subject, string warning, string error)
-        {
-            try
-            {
-                // send alert email out. 
-                var emailEntry = new EmailEntry(_appConfig.Common.AdminEnglishName, _appConfig.Common.AdminEmail)
-                {
-                    FromName = _appConfig.Common.ReportSenderName,
-                    FromAddress = _appConfig.Common.ReportSenderEmail,
-                    Subject = subject,
-                    HtmlContent = $"<p>Reload assets finished, please check.</p>"
-                };
-
-                if (!string.IsNullOrEmpty(warning))
-                {
-                    emailEntry.HtmlContent += $"<p><strong>Warnings: </strong></p><p><pre><code>{warning}</code></pre></p>";
-                }
-
-                if (!string.IsNullOrEmpty(error))
-                {
-                    emailEntry.HtmlContent += $"<p><strong>Errors: </strong></p><p><pre><code>{error}</code></pre></p>";
-                }
-
-                await _emailClient.SendAsync(emailEntry);
-            }
-            catch(Exception ex)
-            {
-                await _logService.LogError(
-                    $"Alert assets reloading failed, subject = {subject}, warning = {warning}, error = {error}.", ex,
-                    true);
-            }
         }
     }
 }

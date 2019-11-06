@@ -2,18 +2,17 @@
 using System.Linq;
 using System.Management.Automation;
 using System.Threading.Tasks;
-using Laobian.Share.Log;
 using Microsoft.Extensions.Logging;
 
-namespace Laobian.Share.Infrastructure.Command
+namespace Laobian.Share.Command
 {
     public class PowerShellCommand : ICommand
     {
-        private readonly ILogService _logService;
+        private readonly ILogger<PowerShellCommand> _logger;
 
-        public PowerShellCommand(ILogService logService)
+        public PowerShellCommand(ILogger<PowerShellCommand> logger)
         {
-            _logService = logService;
+            _logger = logger;
         }
 
         public async Task ExecuteAsync(string command)
@@ -26,7 +25,7 @@ namespace Laobian.Share.Infrastructure.Command
                 var result = await ps.InvokeAsync();
                 if (result.Any())
                 {
-                    await _logService.LogInformation($"Executed command {command}, the output is:{Environment.NewLine}{string.Join(Environment.NewLine, result)}");
+                    _logger.LogInformation($"Executed command {command}, the output is:{Environment.NewLine}{string.Join(Environment.NewLine, result)}");
                 }
             }
         }
