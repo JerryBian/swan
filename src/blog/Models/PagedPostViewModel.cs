@@ -4,11 +4,33 @@ namespace Laobian.Blog.Models
 {
     public class PagedPostViewModel
     {
-        public int TotalPages { get; set; }
+        public PagedPostViewModel(int currentPage, int totalPage)
+        {
+            if (currentPage <= 0)
+            {
+                currentPage = 1;
+            }
 
-        public int CurrentPage { get; set; }
+            if (totalPage <= 0)
+            {
+                totalPage = 1;
+            }
 
-        public IEnumerable<PostViewModel> Posts { get; set; }
+            if (currentPage > totalPage)
+            {
+                currentPage = totalPage;
+            }
+
+            TotalPages = totalPage;
+            CurrentPage = currentPage;
+            Posts = new List<PostViewModel>();
+        }
+
+        public int TotalPages { get; }
+
+        public int CurrentPage { get; }
+
+        public List<PostViewModel> Posts { get; }
 
         public string Url { get; set; }
     }

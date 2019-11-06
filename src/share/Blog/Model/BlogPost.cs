@@ -33,7 +33,12 @@ namespace Laobian.Share.Blog.Model
                                 Raw.IsDraft != null &&
                                 !Raw.IsDraft.Value;
 
-        public DateTime PublishTime => Raw.PublishTime ?? throw new InvalidBlogAssetException(nameof(PublishTime));
+        public DateTime CreateTime => Raw.CreateTime ?? throw new InvalidBlogAssetException(nameof(CreateTime));
+
+        public DateTime PublishTime => Raw.PublishTime ?? CreateTime;
+
+        public DateTime LastUpdateTime =>
+            Raw.LastUpdateTime ?? throw new InvalidBlogAssetException(nameof(PublishTime));
 
         public bool IsTopping => Raw.IsTopping ?? Raw.IsToppingDefault;
 
