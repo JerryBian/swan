@@ -1,11 +1,11 @@
-﻿@model IEnumerable<BlogArchive>
+﻿@model IEnumerable<BlogTag>
 
 <div class="archive">
     <div class="mb-4">
         @foreach (var item in Model)
         {
             <a class="btn btn-light archive-link" href="@item.GetRelativeLink()">
-                @item.Title <span class="badge badge-light">@item.Posts.Count.ForHuman()</span>
+                @item.Name <span class="badge badge-light">@item.Posts.Count.ForHuman()</span>
             </a>
         }
     </div>
@@ -13,8 +13,8 @@
     <div>
         @foreach (var item in Model)
         {
-            <h3 id="@item.Year">
-                <span>@item.Title (@item.Posts.Count)</span>
+            <h3 id="@item.Link">
+                <span>@item.Name (@item.Posts.Count)</span>
                 <a href="@item.GetRelativeLink()">
                     <i class="text-muted fas fa-link fa-xs"></i>
                 </a>

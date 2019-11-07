@@ -1,5 +1,4 @@
-﻿using Laobian.Share.BlogEngine;
-using Laobian.Share.Config;
+﻿using Laobian.Share.Config;
 
 namespace Laobian.Blog.Helpers
 {
@@ -36,10 +35,10 @@ namespace Laobian.Blog.Helpers
                 return r;
             }
 
-            if (!BlogState.IsProdEnvironment)
-            {
-                return "noindex, nofollow";
-            }
+            //if (!BlogState.IsProdEnvironment)
+            //{
+            //    return "noindex, nofollow";
+            //}
 
             return "index, follow, archive";
         }

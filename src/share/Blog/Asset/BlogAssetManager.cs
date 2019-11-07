@@ -11,6 +11,7 @@ using Laobian.Share.Blog.Parser;
 using Laobian.Share.Config;
 using Laobian.Share.Git;
 using Markdig;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Laobian.Share.Blog.Asset
@@ -29,6 +30,7 @@ namespace Laobian.Share.Blog.Asset
         private readonly ManualResetEventSlim _manualReset;
         private readonly SemaphoreSlim _semaphore;
         private readonly IBlogAlertService _blogAlertService;
+        private readonly ILogger<BlogAssetManager> _logger;
 
         private string _aboutHtml;
 
@@ -38,8 +40,10 @@ namespace Laobian.Share.Blog.Asset
             BlogCategoryParser categoryParser,
             BlogTagParser tagParser,
             IGitClient gitClient,
-            IBlogAlertService blogAlertService)
+            IBlogAlertService blogAlertService,
+            ILogger<BlogAssetManager> logger)
         {
+            _logger = logger;
             _allTags = new List<BlogTag>();
             _allPosts = new List<BlogPost>();
             _allCategories = new List<BlogCategory>();
@@ -63,27 +67,27 @@ namespace Laobian.Share.Blog.Asset
             };
         }
 
-        public async Task<List<BlogPost>> GetAllPostsAsync()
+        public List<BlogPost> GetAllPosts()
         {
-            await _semaphore.WaitAsync();
+            _manualReset.Wait();
             return _allPosts;
         }
 
-        public async Task<List<BlogCategory>> GetAllCategoriesAsync()
+        public List<BlogCategory> GetAllCategories()
         {
-            await _semaphore.WaitAsync();
+            _manualReset.Wait();
             return _allCategories;
         }
 
-        public async Task<List<BlogTag>> GetAllTagsAsync()
+        public List<BlogTag> GetAllTags()
         {
-            await _semaphore.WaitAsync();
+            _manualReset.Wait();
             return _allTags;
         }
 
-        public async Task<string> GetAboutHtmlAsync()
+        public string GetAboutHtml()
         {
-            await _semaphore.WaitAsync();
+            _manualReset.Wait();
             return _aboutHtml;
         }
 
@@ -101,7 +105,7 @@ namespace Laobian.Share.Blog.Asset
             templatePost.Raw.Category = new List<string> { "分类名称1", "分类名称2" };
             templatePost.Raw.Tag = new List<string>{"标签名称1","标签名称2"};
             templatePost.Raw.CreateTime = DateTime.Now;
-            templatePost.Raw.IncludeMath = false;
+            templatePost.Raw.ContainsMath = false;
             templatePost.Raw.IsTopping = false;
             templatePost.Raw.LastUpdateTime = DateTime.Now;
             templatePost.Raw.Link = "Your-Post-Unique-Link";
@@ -117,43 +121,52 @@ namespace Laobian.Share.Blog.Asset
 
         public async Task UpdateMemoryStoreAsync()
         {
-            await _semaphore.WaitAsync();
-
-            var postReloadResult = await ReloadLocalMemoryPostAsync();
-            var categoryReloadResult = await ReloadLocalMemoryCategoryAsync();
-            var tagReloadResult = await ReloadLocalMemoryTagAsync();
-            var aboutReloadResult = await ReloadLocalMemoryAboutAsync();
-
-            var warning = string.Join(Environment.NewLine, postReloadResult.Warning, categoryReloadResult.Warning,
-                tagReloadResult.Warning, aboutReloadResult.Warning);
-            var error = string.Join(Environment.NewLine, postReloadResult.Error, categoryReloadResult.Error,
-                tagReloadResult.Error, aboutReloadResult.Error);
-            var subject = "Reload assets successfully";
-
-            if (postReloadResult.Success && categoryReloadResult.Success && tagReloadResult.Success &&
-                aboutReloadResult.Success)
+            try
             {
-                _manualReset.Reset();
-                _allPosts.Clear();
-                _allPosts.AddRange(postReloadResult.Result);
+                await _semaphore.WaitAsync();
+                var postReloadResult = await ReloadLocalMemoryPostAsync();
+                var categoryReloadResult = await ReloadLocalMemoryCategoryAsync();
+                var tagReloadResult = await ReloadLocalMemoryTagAsync();
+                var aboutReloadResult = await ReloadLocalMemoryAboutAsync();
 
-                _allCategories.Clear();
-                _allCategories.AddRange(categoryReloadResult.Result);
+                var warning = string.Join(Environment.NewLine, postReloadResult.Warning, categoryReloadResult.Warning,
+                    tagReloadResult.Warning, aboutReloadResult.Warning);
+                var error = string.Join(Environment.NewLine, postReloadResult.Error, categoryReloadResult.Error,
+                    tagReloadResult.Error, aboutReloadResult.Error);
+                var subject = "Reload assets successfully";
 
-                _allTags.Clear();
-                _allTags.AddRange(tagReloadResult.Result);
+                if (postReloadResult.Success && categoryReloadResult.Success && tagReloadResult.Success &&
+                    aboutReloadResult.Success)
+                {
+                    _manualReset.Reset();
+                    _allPosts.Clear();
+                    _allPosts.AddRange(postReloadResult.Result);
 
-                _aboutHtml = aboutReloadResult.Result;
+                    _allCategories.Clear();
+                    _allCategories.AddRange(categoryReloadResult.Result);
 
-                _manualReset.Set();
+                    _allTags.Clear();
+                    _allTags.AddRange(tagReloadResult.Result);
+
+                    _aboutHtml = aboutReloadResult.Result;
+
+                    _manualReset.Set();
+                }
+                else
+                {
+                    subject = "Reload assets failed";
+                }
+
+                await _blogAlertService.AlertAssetReloadResultAsync(subject, warning, error);
             }
-            else
+            catch (Exception ex)
             {
-                subject = "Reload assets failed";
+                _logger.LogCritical(ex, $"Reload asset failed.");
             }
-
-            await _blogAlertService.AlertAssetReloadResultAsync(subject, warning, error);
-            _semaphore.Release();
+            finally
+            {
+                _semaphore.Release();
+            }
         }
 
         public async Task UpdateLocalStoreAsync()

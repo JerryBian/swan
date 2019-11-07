@@ -1,4 +1,4 @@
-﻿using Laobian.Share.BlogEngine.Model;
+﻿using Laobian.Share.Blog.Model;
 
 namespace Laobian.Blog.Models
 {

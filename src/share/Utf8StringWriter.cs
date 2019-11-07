@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Text;
 
-namespace Laobian.Share.Core
+namespace Laobian.Share
 {
     public class Utf8StringWriter : StringWriter
     {

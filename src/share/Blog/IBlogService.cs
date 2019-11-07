@@ -8,23 +8,21 @@ namespace Laobian.Share.Blog
 {
     public interface IBlogService
     {
-        Task<List<BlogPost>> GetPostsAsync(bool onlyPublic = true, bool publishTimeDesc = true,
+        List<BlogPost> GetPosts(bool onlyPublic = true, bool publishTimeDesc = true, bool toppingPostsFirst = true);
+
+        BlogPost GetPost(int year, int month, string link, bool onlyPublic = true);
+
+        List<BlogCategory> GetCategories(bool onlyPublic = true, bool publishTimeDesc = true,
             bool toppingPostsFirst = true);
 
-        Task<BlogPost> GetPostAsync(int year, int month, string link, bool onlyPublic = true);
+        List<BlogTag> GetTags(bool onlyPublic = true, bool publishTimeDesc = true, bool toppingPostsFirst = true);
 
-        Task<List<BlogCategory>> GetCategoriesAsync(bool onlyPublic = true, bool publishTimeDesc = true,
+        string GetAboutHtml();
+
+        List<BlogArchive> GetArchives(bool onlyPublic = true, bool publishTimeDesc = true,
             bool toppingPostsFirst = true);
 
-        Task<List<BlogTag>> GetTagsAsync(bool onlyPublic = true, bool publishTimeDesc = true,
-            bool toppingPostsFirst = true);
-
-        Task<string> GetAboutHtmlAsync();
-
-        Task<List<BlogArchive>> GetArchivesAsync(bool onlyPublic = true, bool publishTimeDesc = true,
-            bool toppingPostsFirst = true);
-
-        Task ReloadLocalAssetsAsync(bool clone = true, bool updateTemplate = true);
+        Task ReloadLocalAssetsAsync(bool clone = true, bool updateTemplate = true, List<string> addedPosts = null, List<string> modifiedPosts = null);
 
         Task UpdateRemoteStoreAsync();
     }

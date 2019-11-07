@@ -1,18 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Laobian.Share.Blog.Model
 {
     public class BlogArchive
     {
-        public BlogArchive(string title)
+        public BlogArchive(int year)
         {
-            Title = title;
+            Title = $"{year} 年";
             Posts = new List<BlogPost>();
         }
 
         public string Title { get; set; }
+
+        public int Year { get; set; }
 
         public List<BlogPost> Posts { get; set; }
     }

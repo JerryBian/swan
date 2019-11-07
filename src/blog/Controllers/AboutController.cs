@@ -1,5 +1,4 @@
-﻿using Laobian.Share.BlogEngine;
-using Laobian.Share.BlogEngine.Model;
+﻿using Laobian.Share.Blog;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Laobian.Blog.Controllers
@@ -13,10 +12,9 @@ namespace Laobian.Blog.Controllers
             _blogService = blogService;
         }
 
-        [ResponseCache(CacheProfileName = "Cache1Day")]
         public IActionResult Index()
         {
-            var html = _blogService.GetAboutHtml(RequestLang.English);
+            var html = _blogService.GetAboutHtml();
 
             ViewData["Title"] = "关于";
             ViewData["Canonical"] = "/about/";

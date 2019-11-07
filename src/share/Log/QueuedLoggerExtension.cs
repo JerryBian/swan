@@ -4,10 +4,10 @@ namespace Laobian.Share.Log
 {
     public static class QueuedLoggerExtension
     {
-        public static ILoggerFactory AddQueuedLogger(this ILoggerFactory loggerFactory)
+        public static ILoggingBuilder AddQueuedLogger(this ILoggingBuilder loggingBuilder)
         {
-            loggerFactory.AddProvider(new QueuedLoggerProvider());
-            return loggerFactory;
+            loggingBuilder.AddProvider(new QueuedLoggerProvider());
+            return loggingBuilder;
         }
     }
 }

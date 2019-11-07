@@ -6,13 +6,13 @@ namespace Laobian.Share.Blog.Asset
 {
     public interface IBlogAssetManager
     {
-        Task<List<BlogPost>> GetAllPostsAsync();
+        List<BlogPost> GetAllPosts();
 
-        Task<List<BlogCategory>> GetAllCategoriesAsync();
+        List<BlogCategory> GetAllCategories();
 
-        Task<List<BlogTag>> GetAllTagsAsync();
+        List<BlogTag> GetAllTags();
 
-        Task<string> GetAboutHtmlAsync();
+        string GetAboutHtml();
 
         Task ReloadLocalFileStoreAsync();
 

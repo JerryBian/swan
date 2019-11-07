@@ -16,9 +16,9 @@ namespace Laobian.Share.Blog
             _blogAssetManager = blogAssetManager;
         }
 
-        public async Task<List<BlogPost>> GetPostsAsync(bool onlyPublic = true, bool publishTimeDesc = true, bool toppingPostsFirst = true)
+        public List<BlogPost> GetPosts(bool onlyPublic = true, bool publishTimeDesc = true, bool toppingPostsFirst = true)
         {
-            IEnumerable<BlogPost> posts = await _blogAssetManager.GetAllPostsAsync();
+            IEnumerable<BlogPost> posts = _blogAssetManager.GetAllPosts();
             posts = onlyPublic ? posts.Where(p => p.IsPublic) : posts;
             posts = publishTimeDesc
                 ? posts.OrderByDescending(p => p.PublishTime)
@@ -27,9 +27,9 @@ namespace Laobian.Share.Blog
             return posts.ToList();
         }
 
-        public async Task<BlogPost> GetPostAsync(int year, int month, string link, bool onlyPublic = true)
+        public BlogPost GetPost(int year, int month, string link, bool onlyPublic = true)
         {
-            IEnumerable<BlogPost> posts = await _blogAssetManager.GetAllPostsAsync();
+            IEnumerable<BlogPost> posts = _blogAssetManager.GetAllPosts();
             var post = onlyPublic
                 ? posts.FirstOrDefault(p =>
                     p.IsPublic && p.PublishTime.Year == year && p.PublishTime.Month == month &&
@@ -40,10 +40,10 @@ namespace Laobian.Share.Blog
             return post;
         }
 
-        public async Task<List<BlogCategory>> GetCategoriesAsync(bool onlyPublic = true, bool publishTimeDesc = true, bool toppingPostsFirst = true)
+        public List<BlogCategory> GetCategories(bool onlyPublic = true, bool publishTimeDesc = true, bool toppingPostsFirst = true)
         {
             var categories = new List<BlogCategory>();
-            foreach (var blogCategory in await _blogAssetManager.GetAllCategoriesAsync())
+            foreach (var blogCategory in _blogAssetManager.GetAllCategories())
             {
                 var category = new BlogCategory
                 {
@@ -69,10 +69,10 @@ namespace Laobian.Share.Blog
             return categories;
         }
 
-        public async Task<List<BlogTag>> GetTagsAsync(bool onlyPublic = true, bool publishTimeDesc = true, bool toppingPostsFirst = true)
+        public List<BlogTag> GetTags(bool onlyPublic = true, bool publishTimeDesc = true, bool toppingPostsFirst = true)
         {
             var tags = new List<BlogTag>();
-            foreach (var blogTag in await _blogAssetManager.GetAllTagsAsync())
+            foreach (var blogTag in _blogAssetManager.GetAllTags())
             {
                 var tag = new BlogTag
                 {
@@ -98,17 +98,17 @@ namespace Laobian.Share.Blog
             return tags;
         }
 
-        public async Task<string> GetAboutHtmlAsync()
+        public string GetAboutHtml()
         {
-            return await _blogAssetManager.GetAboutHtmlAsync();
+            return _blogAssetManager.GetAboutHtml();
         }
 
-        public async Task<List<BlogArchive>> GetArchivesAsync(bool onlyPublic = true, bool publishTimeDesc = true, bool toppingPostsFirst = true)
+        public List<BlogArchive> GetArchives(bool onlyPublic = true, bool publishTimeDesc = true, bool toppingPostsFirst = true)
         {
             var archives = new List<BlogArchive>();
-            foreach (var item in (await _blogAssetManager.GetAllPostsAsync()).ToLookup(p => p.PublishTime.Year))
+            foreach (var item in _blogAssetManager.GetAllPosts().ToLookup(p => p.PublishTime.Year))
             {
-                var archive = new BlogArchive($"{item.Key} 年");
+                var archive = new BlogArchive(item.Key);
                 IEnumerable<BlogPost> posts = new List<BlogPost>(item);
                 if (onlyPublic)
                 {
@@ -127,7 +127,7 @@ namespace Laobian.Share.Blog
             return archives;
         }
 
-        public async Task ReloadLocalAssetsAsync(bool clone = true, bool updateTemplate = true)
+        public async Task ReloadLocalAssetsAsync(bool clone = true, bool updateTemplate = true, List<string> addedPosts = null, List<string> modifiedPosts = null)
         {
             if (clone)
             {
@@ -146,6 +146,11 @@ namespace Laobian.Share.Blog
         {
             await _blogAssetManager.UpdateLocalStoreAsync();
             await _blogAssetManager.UpdateRemoteStoreAsync();
+        }
+
+        public async Task MemoryToLocalStoreAsync()
+        {
+            await _blogAssetManager.UpdateLocalStoreAsync();
         }
     }
 }

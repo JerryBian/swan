@@ -3,7 +3,6 @@ using Laobian.Blog.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 using Laobian.Share.Blog;
 using Laobian.Share.Blog.Asset;
 using Laobian.Share.Blog.Model;
@@ -28,20 +27,20 @@ namespace Laobian.Blog.Controllers
             _cacheClient = cacheClient;
         }
 
-        public async Task<IActionResult> Index([FromQuery] int p)
+        public IActionResult Index([FromQuery] int p)
         {
-            var viewModel = await _cacheClient.GetOrCreateAsync(
-                $"{nameof(HomeController)}:{nameof(Index)}:{p}:{User.Identity.IsAuthenticated}",
-                async () =>
+            var viewModel = _cacheClient.GetOrCreate(
+                $"{BlogCacheKey.Build(nameof(HomeController), nameof(Index), p, User.Identity.IsAuthenticated)}",
+                () =>
                 {
                     List<BlogPost> posts;
                     if (User.Identity.IsAuthenticated)
                     {
-                        posts = await _blogService.GetPostsAsync(false);
+                        posts = _blogService.GetPosts(false);
                     }
                     else
                     {
-                        posts = await _blogService.GetPostsAsync();
+                        posts = _blogService.GetPosts();
                     }
 
                     var model = new PagedPostViewModel(p, posts.Count)
@@ -71,13 +70,13 @@ namespace Laobian.Blog.Controllers
 
         [Route("/sitemap")]
         [Route("/sitemap.xml")]
-        public async Task<IActionResult> SiteMap()
+        public IActionResult SiteMap()
         {
-            var xml = await _cacheClient.GetOrCreateAsync(
-                $"{nameof(HomeController)}:{nameof(SiteMap)}",
-                async () =>
+            var xml = _cacheClient.GetOrCreate(
+                $"{BlogCacheKey.Build(nameof(HomeController), nameof(SiteMap))}",
+                () =>
                 {
-                    var posts = await _blogService.GetPostsAsync();
+                    var posts = _blogService.GetPosts();
                     var urlSet = new SiteMapUrlSet();
                     var urls = new List<SiteMapUrl>
                     {

@@ -27,6 +27,8 @@ namespace Laobian.Share.Blog.Model
             }
         }
 
+        public string Title => Raw.Title ?? throw new InvalidBlogAssetException(nameof(Title));
+
         public string AccessCountString => _accessCount.ToMetric();
 
         public bool IsPublic => DateTime.Now > PublishTime && 
@@ -40,9 +42,9 @@ namespace Laobian.Share.Blog.Model
         public DateTime LastUpdateTime =>
             Raw.LastUpdateTime ?? throw new InvalidBlogAssetException(nameof(PublishTime));
 
-        public bool IsTopping => Raw.IsTopping ?? Raw.IsToppingDefault;
-
         public List<BlogCategory> Categories { get; set; }
+
+        public List<BlogCategory> Tags { get; set; }
 
         public string PublishTimeString => PublishTime.Humanize();
 
@@ -67,6 +69,10 @@ namespace Laobian.Share.Blog.Model
         public BlogPost NextPost { get; set; }
 
         public string ContentMarkdown { get; set; }
+
+        public bool IsTopping => Raw.IsTopping ?? false;
+
+        public bool ContainsMath => Raw.ContainsMath ?? false;
 
         #endregion
 

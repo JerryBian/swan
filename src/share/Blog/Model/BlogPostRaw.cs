@@ -27,8 +27,8 @@ namespace Laobian.Share.Blog.Model
         [BlogAssetMeta(BlogAssetMetaReturnType.Bool, "置顶", "IsTopping")]
         public bool? IsTopping { get; set; }
 
-        [BlogAssetMeta(BlogAssetMetaReturnType.Bool, "数学文章", "IncludeMath")]
-        public bool? IncludeMath { get; set; }
+        [BlogAssetMeta(BlogAssetMetaReturnType.Bool, "数学文章", "ContainsMath")]
+        public bool? ContainsMath { get; set; }
 
         [BlogAssetMeta(BlogAssetMetaReturnType.Int32, "访问数量", "AccessCount")]
         public int? AccessCount { get; set; }
@@ -38,10 +38,6 @@ namespace Laobian.Share.Blog.Model
 
         [BlogAssetMeta(BlogAssetMetaReturnType.ListOfString, "文章标签", "Tag")]
         public List<string> Tag { get; set; }
-
-        public bool IsDraftDefault => false;
-
-        public bool IsToppingDefault => false;
 
         public string Markdown { get; set; }
     }

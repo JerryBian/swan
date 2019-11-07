@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.ServiceModel.Syndication;
 using System.Text;
 using System.Xml;
-using Laobian.Share.BlogEngine;
+using Laobian.Share.Blog;
 using Laobian.Share.Config;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -24,7 +23,6 @@ namespace Laobian.Blog.Controllers
         }
 
         [Route("/rss")]
-        [ResponseCache(CacheProfileName = "Cache1Hour")]
         public IActionResult Rss()
         {
             var feed = GetFeed();
@@ -41,7 +39,6 @@ namespace Laobian.Blog.Controllers
         }
 
         [Route("/atom")]
-        [ResponseCache(CacheProfileName = "Cache1Hour")]
         public IActionResult Atom()
         {
             var feed = GetFeed();
@@ -80,28 +77,27 @@ namespace Laobian.Blog.Controllers
             feed.Contributors.Add(sp);
             
             var items = new List<SyndicationItem>();
-            var posts = _blogService.GetPosts().Where(p => p.IsReallyPublic).OrderByDescending(p => p.CreationTimeUtc)
-                .ToList();
+            var posts = _blogService.GetPosts();
             foreach (var blogPost in posts)
             {
                 var item = new SyndicationItem
                 {
                     Title = new TextSyndicationContent(blogPost.Title, TextSyndicationContentKind.Plaintext),
                     Copyright = feed.Copyright,
-                    Id = blogPost.FullUrlWithBaseAddress,
-                    PublishDate = new DateTimeOffset(blogPost.CreationTimeUtc, TimeSpan.Zero),
-                    Summary = new TextSyndicationContent(blogPost.Excerpt, TextSyndicationContentKind.Html),
-                    Content = new TextSyndicationContent(blogPost.HtmlContent, TextSyndicationContentKind.Html),
-                    LastUpdatedTime = new DateTimeOffset(blogPost.LastUpdateTimeUtc, TimeSpan.Zero)
+                    Id = blogPost.FullUrlWithBase,
+                    PublishDate = new DateTimeOffset(blogPost.PublishTime, TimeSpan.FromHours(8)),
+                    Summary = new TextSyndicationContent(blogPost.ExcerptHtml, TextSyndicationContentKind.Html),
+                    Content = new TextSyndicationContent(blogPost.ContentHtml, TextSyndicationContentKind.Html),
+                    LastUpdatedTime = new DateTimeOffset(blogPost.LastUpdateTime, TimeSpan.FromHours(8))
                 };
 
-                item.AddPermalink(new Uri(blogPost.FullUrlWithBaseAddress));
+                item.AddPermalink(new Uri(blogPost.FullUrlWithBase));
                 item.Authors.Add(sp);
                 item.Contributors.Add(sp);
 
-                foreach (var cat in blogPost.CategoryNames)
+                foreach (var cat in blogPost.Categories)
                 {
-                    item.Categories.Add(new SyndicationCategory(cat));
+                    item.Categories.Add(new SyndicationCategory(cat.Name));
                 }
 
                 items.Add(item);
