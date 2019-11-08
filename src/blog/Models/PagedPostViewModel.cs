@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Laobian.Share.Blog.Model;
 
 namespace Laobian.Blog.Models
 {
@@ -23,14 +24,14 @@ namespace Laobian.Blog.Models
 
             TotalPages = totalPage;
             CurrentPage = currentPage;
-            Posts = new List<PostViewModel>();
+            Posts = new List<BlogPost>();
         }
 
         public int TotalPages { get; }
 
         public int CurrentPage { get; }
 
-        public List<PostViewModel> Posts { get; }
+        public List<BlogPost> Posts { get; }
 
         public string Url { get; set; }
     }

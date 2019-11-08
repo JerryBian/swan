@@ -18,7 +18,7 @@ namespace Laobian.Share.Blog.Asset
 
         Task UpdateRemoteStoreTemplatePostAsync();
 
-        Task UpdateMemoryStoreAsync();
+        Task<BlogAssetReloadResult<object>> UpdateMemoryStoreAsync();
 
         Task UpdateLocalStoreAsync();
 

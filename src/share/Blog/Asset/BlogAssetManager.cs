@@ -5,13 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Laobian.Share.Blog.Alert;
 using Laobian.Share.Blog.Model;
 using Laobian.Share.Blog.Parser;
 using Laobian.Share.Config;
 using Laobian.Share.Git;
-using Markdig;
-using Microsoft.Extensions.Logging;
+using Laobian.Share.Helper;
 using Microsoft.Extensions.Options;
 
 namespace Laobian.Share.Blog.Asset
@@ -29,8 +27,6 @@ namespace Laobian.Share.Blog.Asset
         private readonly BlogTagParser _tagParser;
         private readonly ManualResetEventSlim _manualReset;
         private readonly SemaphoreSlim _semaphore;
-        private readonly IBlogAlertService _blogAlertService;
-        private readonly ILogger<BlogAssetManager> _logger;
 
         private string _aboutHtml;
 
@@ -39,11 +35,8 @@ namespace Laobian.Share.Blog.Asset
             BlogPostParser postParser,
             BlogCategoryParser categoryParser,
             BlogTagParser tagParser,
-            IGitClient gitClient,
-            IBlogAlertService blogAlertService,
-            ILogger<BlogAssetManager> logger)
+            IGitClient gitClient)
         {
-            _logger = logger;
             _allTags = new List<BlogTag>();
             _allPosts = new List<BlogPost>();
             _allCategories = new List<BlogCategory>();
@@ -52,7 +45,6 @@ namespace Laobian.Share.Blog.Asset
             _postParser = postParser;
             _categoryParser = categoryParser;
             _tagParser = tagParser;
-            _blogAlertService = blogAlertService;
             _semaphore = new SemaphoreSlim(1, 1);
             _manualReset = new ManualResetEventSlim(true);
             _gitConfig = new GitConfig
@@ -119,7 +111,7 @@ namespace Laobian.Share.Blog.Asset
             await _gitClient.CommitAsync(_appConfig.Blog.AssetRepoLocalDir, "Update template post");
         }
 
-        public async Task UpdateMemoryStoreAsync()
+        public async Task<BlogAssetReloadResult<object>> UpdateMemoryStoreAsync()
         {
             try
             {
@@ -129,11 +121,57 @@ namespace Laobian.Share.Blog.Asset
                 var tagReloadResult = await ReloadLocalMemoryTagAsync();
                 var aboutReloadResult = await ReloadLocalMemoryAboutAsync();
 
-                var warning = string.Join(Environment.NewLine, postReloadResult.Warning, categoryReloadResult.Warning,
-                    tagReloadResult.Warning, aboutReloadResult.Warning);
-                var error = string.Join(Environment.NewLine, postReloadResult.Error, categoryReloadResult.Error,
-                    tagReloadResult.Error, aboutReloadResult.Error);
-                var subject = "Reload assets successfully";
+                var warnings = new List<string>();
+                if (!string.IsNullOrEmpty(postReloadResult.Warning))
+                {
+                    warnings.Add(postReloadResult.Warning);
+                }
+
+                if (!string.IsNullOrEmpty(categoryReloadResult.Warning))
+                {
+                    warnings.Add(categoryReloadResult.Warning);
+                }
+
+                if (!string.IsNullOrEmpty(tagReloadResult.Warning))
+                {
+                    warnings.Add(tagReloadResult.Warning);
+                }
+
+                if (!string.IsNullOrEmpty(aboutReloadResult.Warning))
+                {
+                    warnings.Add(aboutReloadResult.Warning);
+                }
+
+                var warning = warnings.Any() ? string.Join(Environment.NewLine, warnings) : string.Empty;
+
+                var errors = new List<string>();
+                if (!string.IsNullOrEmpty(postReloadResult.Error))
+                {
+                    errors.Add(postReloadResult.Error);
+                }
+
+                if (!string.IsNullOrEmpty(categoryReloadResult.Error))
+                {
+                    errors.Add(categoryReloadResult.Error);
+                }
+
+                if (!string.IsNullOrEmpty(tagReloadResult.Error))
+                {
+                    errors.Add(tagReloadResult.Error);
+                }
+
+                if (!string.IsNullOrEmpty(aboutReloadResult.Error))
+                {
+                    errors.Add(aboutReloadResult.Error);
+                }
+
+                var error = errors.Any() ? string.Join(Environment.NewLine, errors) : string.Empty;
+
+                var result = new BlogAssetReloadResult<object>
+                {
+                    Warning = warning,
+                    Error = error
+                };
 
                 if (postReloadResult.Success && categoryReloadResult.Success && tagReloadResult.Success &&
                     aboutReloadResult.Success)
@@ -150,18 +188,63 @@ namespace Laobian.Share.Blog.Asset
 
                     _aboutHtml = aboutReloadResult.Result;
 
+                    foreach (var blogPost in _allPosts)
+                    {
+                        if (blogPost.Raw.CreateTime == null)
+                        {
+                            blogPost.Raw.CreateTime = DateTime.Now;
+                        }
+
+                        if (blogPost.Raw.LastUpdateTime == null)
+                        {
+                            blogPost.Raw.LastUpdateTime = DateTime.Now;
+                        }
+
+                        if (string.IsNullOrEmpty(blogPost.Raw.Title))
+                        {
+                            blogPost.Raw.Title = Guid.NewGuid().ToString("N");
+                        }
+
+                        if (string.IsNullOrEmpty(blogPost.Raw.Link))
+                        {
+                            blogPost.Raw.Link = Guid.NewGuid().ToString("N");
+                        }
+
+                        foreach (var categoryName in blogPost.Raw.Category)
+                        {
+                            var category =
+                                _allCategories.FirstOrDefault(c => CompareHelper.IgnoreCase(c.Name, categoryName));
+                            if (category != null)
+                            {
+                                blogPost.Categories.Add(category);
+                            }
+                        }
+
+                        foreach (var tagName in blogPost.Raw.Tag)
+                        {
+                            var tag =
+                                _allTags.FirstOrDefault(c => CompareHelper.IgnoreCase(c.Name, tagName));
+                            if (tag != null)
+                            {
+                                blogPost.Tags.Add(tag);
+                            }
+                        }
+
+                        blogPost.FullUrl =
+                            $"/{blogPost.PublishTime.Year}/{blogPost.PublishTime.Month:D2}/{blogPost.Link}{_appConfig.Common.HtmlExtension}";
+                        blogPost.FullUrlWithBase = $"{_appConfig.Blog.BlogAddress}{blogPost.FullUrl}";
+
+                        
+                    }
+
                     _manualReset.Set();
                 }
                 else
                 {
-                    subject = "Reload assets failed";
+                    result.Success = false;
                 }
 
-                await _blogAlertService.AlertAssetReloadResultAsync(subject, warning, error);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogCritical(ex, $"Reload asset failed.");
+                return result;
             }
             finally
             {
@@ -213,6 +296,9 @@ namespace Laobian.Share.Blog.Asset
 
                     if (parseResult.Success)
                     {
+                        parseResult.Instance.GitPath =
+                            file.Substring(file.IndexOf(_appConfig.Blog.AssetRepoLocalDir, StringComparison.CurrentCulture) + 1);
+                        parseResult.Instance.LocalPath = file;
                         result.Result.Add(parseResult.Instance);
                     }
                 }
@@ -290,12 +376,13 @@ namespace Laobian.Share.Blog.Asset
             var aboutLocalPath = Path.Combine(_appConfig.Blog.AssetRepoLocalDir, _appConfig.Blog.AboutGitPath);
             if (!File.Exists(aboutLocalPath))
             {
+                result.Success = false;
                 result.Warning = $"No about asset found under \"{aboutLocalPath}\".";
-                _aboutHtml = "Not Exists.";
+                return result;
             }
 
             var md = await File.ReadAllTextAsync(aboutLocalPath);
-            result.Result = Markdown.ToHtml(md);
+            result.Result = MarkdownHelper.ToHtml(md);
             return result;
         }
     }

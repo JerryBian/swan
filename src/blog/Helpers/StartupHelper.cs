@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using Laobian.Blog.HostedService;
 //using Laobian.Blog.HostedService;
 using Laobian.Share.Blog;
+using Laobian.Share.Blog.Alert;
+using Laobian.Share.Blog.Asset;
+using Laobian.Share.Blog.Parser;
 using Laobian.Share.Cache;
 using Laobian.Share.Command;
 using Laobian.Share.Config;
@@ -26,8 +30,14 @@ namespace Laobian.Blog.Helpers
             services.AddSingleton<IBlogService, BlogService>();
             services.AddSingleton<IGitClient, GitHubClient>();
             services.AddSingleton<IEmailClient, SendGridEmailClient>();
+            services.AddSingleton<IBlogAssetManager, BlogAssetManager>();
+            services.AddSingleton<IBlogAlertService, BlogAlertService>();
 
-            //services.AddHostedService<PostHostedService>();
+            services.AddSingleton<BlogPostParser>();
+            services.AddSingleton<BlogCategoryParser>();
+            services.AddSingleton<BlogTagParser>();
+
+            services.AddHostedService<AssetHostedService>();
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>

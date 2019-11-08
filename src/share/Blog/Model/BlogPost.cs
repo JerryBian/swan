@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using Humanizer;
+using Laobian.Share.Extension;
 
 namespace Laobian.Share.Blog.Model
 {
@@ -10,6 +10,8 @@ namespace Laobian.Share.Blog.Model
         public BlogPost()
         {
             Raw = new BlogPostRaw();
+            Categories = new List<BlogCategory>();
+            Tags = new List<BlogTag>();
         }
 
         internal BlogPostRaw Raw { get; }
@@ -29,7 +31,7 @@ namespace Laobian.Share.Blog.Model
 
         public string Title => Raw.Title ?? throw new InvalidBlogAssetException(nameof(Title));
 
-        public string AccessCountString => _accessCount.ToMetric();
+        public string AccessCountString => _accessCount.Human();
 
         public bool IsPublic => DateTime.Now > PublishTime && 
                                 Raw.IsDraft != null &&
@@ -42,11 +44,13 @@ namespace Laobian.Share.Blog.Model
         public DateTime LastUpdateTime =>
             Raw.LastUpdateTime ?? throw new InvalidBlogAssetException(nameof(PublishTime));
 
-        public List<BlogCategory> Categories { get; set; }
+        public string LastUpdateTimeString => LastUpdateTime.Human();
 
-        public List<BlogCategory> Tags { get; set; }
+        public List<BlogCategory> Categories { get; }
 
-        public string PublishTimeString => PublishTime.Humanize();
+        public List<BlogTag> Tags { get; }
+
+        public string PublishTimeString => PublishTime.Human();
 
         public string ContentHtml { get; set; }
 
@@ -67,8 +71,6 @@ namespace Laobian.Share.Blog.Model
         public BlogPost PrevPost { get; set; }
 
         public BlogPost NextPost { get; set; }
-
-        public string ContentMarkdown { get; set; }
 
         public bool IsTopping => Raw.IsTopping ?? false;
 

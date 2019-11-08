@@ -1,19 +1,26 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Laobian.Share.Blog.Alert;
 using Laobian.Share.Blog.Asset;
 using Laobian.Share.Blog.Model;
 using Laobian.Share.Helper;
+using Microsoft.Extensions.Logging;
 
 namespace Laobian.Share.Blog
 {
     public class BlogService : IBlogService
     {
+        private readonly ILogger<BlogService> _logger;
+        private readonly IBlogAlertService _blogAlertService;
         private readonly IBlogAssetManager _blogAssetManager;
 
-        public BlogService(IBlogAssetManager blogAssetManager)
+        public BlogService(ILogger<BlogService> logger, IBlogAssetManager blogAssetManager, IBlogAlertService blogAlertService)
         {
+            _logger = logger;
             _blogAssetManager = blogAssetManager;
+            _blogAlertService = blogAlertService;
         }
 
         public List<BlogPost> GetPosts(bool onlyPublic = true, bool publishTimeDesc = true, bool toppingPostsFirst = true)
@@ -127,19 +134,35 @@ namespace Laobian.Share.Blog
             return archives;
         }
 
-        public async Task ReloadLocalAssetsAsync(bool clone = true, bool updateTemplate = true, List<string> addedPosts = null, List<string> modifiedPosts = null)
+        public async Task ReloadLocalAndMemoryAssetsAsync(
+            bool clone = true, 
+            bool updateTemplate = true, 
+            List<string> addedPosts = null, 
+            List<string> modifiedPosts = null)
         {
-            if (clone)
+            try
             {
-                await _blogAssetManager.ReloadLocalFileStoreAsync();
-            }
+                if (clone)
+                {
+                    await _blogAssetManager.ReloadLocalFileStoreAsync();
+                }
 
-            if (updateTemplate)
+                if (updateTemplate)
+                {
+                    await _blogAssetManager.UpdateRemoteStoreTemplatePostAsync();
+                }
+
+                var reloadResult = await _blogAssetManager.UpdateMemoryStoreAsync();
+                var reloadResultText = reloadResult.Success ? "SUCCESS!" : "FAIL!";
+                var subject = $"Local and memory assets reload: {reloadResultText}";
+                await _blogAlertService.AlertAssetReloadResultAsync(subject, reloadResult.Warning, reloadResult.Error,
+                    addedPosts, modifiedPosts);
+            }
+            catch (Exception ex)
             {
-                await _blogAssetManager.UpdateRemoteStoreTemplatePostAsync();
+                _logger.LogError(ex, "Reload local and memory assets throws error.");
+                await _blogAlertService.AlertEventAsync("Reload local and memory assets throws error.", ex);
             }
-
-            await _blogAssetManager.UpdateMemoryStoreAsync();
         }
 
         public async Task UpdateRemoteStoreAsync()

@@ -50,7 +50,7 @@ namespace Laobian.Blog.Controllers
 
                     foreach (var blogPost in posts.ToPaged(_appConfig.Blog.PostsPerPage, model.CurrentPage))
                     {
-                        model.Posts.Add(new PostViewModel(blogPost));
+                        model.Posts.Add(blogPost);
                     }
 
                     if (model.CurrentPage > 1)
@@ -84,35 +84,35 @@ namespace Laobian.Blog.Controllers
                         {
                             Loc = AddressHelper.GetAddress(_appConfig.Blog.BlogAddress),
                             ChangeFreq = "weekly",
-                            LastMod = DateTime.UtcNow.ToChinaTime().ToDate(),
+                            LastMod = DateTime.Now.ToDate(),
                             Priority = 1.0
                         },
                         new SiteMapUrl
                         {
                             Loc = AddressHelper.GetAddress(_appConfig.Blog.BlogAddress, true, "about"),
                             ChangeFreq = "monthly",
-                            LastMod = DateTime.UtcNow.ToChinaTime().ToDate(),
+                            LastMod = DateTime.Now.ToDate(),
                             Priority = 0.9
                         },
                         new SiteMapUrl
                         {
                             Loc = AddressHelper.GetAddress(_appConfig.Blog.BlogAddress, true, "archive"),
                             ChangeFreq = "weekly",
-                            LastMod = DateTime.UtcNow.ToChinaTime().ToDate(),
+                            LastMod = DateTime.Now.ToDate(),
                             Priority = 0.8
                         },
                         new SiteMapUrl
                         {
                             Loc = AddressHelper.GetAddress(_appConfig.Blog.BlogAddress, true, "category"),
                             ChangeFreq = "weekly",
-                            LastMod = DateTime.UtcNow.ToChinaTime().ToDate(),
+                            LastMod = DateTime.Now.ToDate(),
                             Priority = 0.7
                         },
                         new SiteMapUrl
                         {
                             Loc = AddressHelper.GetAddress(_appConfig.Blog.BlogAddress, true, "tag"),
                             ChangeFreq = "weekly",
-                            LastMod = DateTime.UtcNow.ToChinaTime().ToDate(),
+                            LastMod = DateTime.Now.ToDate(),
                             Priority = 0.6
                         }
                     };

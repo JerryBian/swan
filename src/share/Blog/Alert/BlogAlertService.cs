@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Laobian.Share.Config;
 using Laobian.Share.Email;
@@ -7,7 +9,7 @@ using Microsoft.Extensions.Options;
 
 namespace Laobian.Share.Blog.Alert
 {
-    public class BlogAlertService
+    public class BlogAlertService : IBlogAlertService
     {
         private readonly AppConfig _appConfig;
         private readonly IEmailClient _emailClient;
@@ -49,7 +51,7 @@ namespace Laobian.Share.Blog.Alert
             }
         }
 
-        public async Task AlertAssetReloadResultAsync(string subject, string warning, string error)
+        public async Task AlertAssetReloadResultAsync(string subject, string warning, string error, List<string> addedPosts = null, List<string> modifiedPosts = null)
         {
             try
             {
@@ -61,6 +63,28 @@ namespace Laobian.Share.Blog.Alert
                     Subject = subject,
                     HtmlContent = $"<p>Reload assets finished, please check.</p>"
                 };
+
+                if (addedPosts != null && addedPosts.Any())
+                {
+                    emailEntry.HtmlContent += "<p><strong>Added posts: </strong></p><ul>";
+                    foreach (var addedPost in addedPosts)
+                    {
+                        emailEntry.HtmlContent += $"<li>{addedPost}</li>";
+                    }
+
+                    emailEntry.HtmlContent += "</ul>";
+                }
+
+                if (modifiedPosts != null && modifiedPosts.Any())
+                {
+                    emailEntry.HtmlContent += "<p><strong>Modified posts: </strong></p><ul>";
+                    foreach (var modifiedPost in modifiedPosts)
+                    {
+                        emailEntry.HtmlContent += $"<li>{modifiedPost}</li>";
+                    }
+
+                    emailEntry.HtmlContent += "</ul>";
+                }
 
                 if (!string.IsNullOrEmpty(warning))
                 {

@@ -116,7 +116,7 @@ namespace Laobian.Share.Blog.Parser
             }
 
             return await ToTextAsync(nameValues, _appConfig.Common.ColonSplitter, _appConfig.Blog.MetadataSplitter,
-                post.ContentMarkdown);
+                post.Raw.Markdown);
         }
 
     }

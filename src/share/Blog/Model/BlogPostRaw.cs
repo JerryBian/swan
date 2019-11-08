@@ -6,6 +6,12 @@ namespace Laobian.Share.Blog.Model
 {
     internal class BlogPostRaw
     {
+        public BlogPostRaw()
+        {
+            Category = new List<string>();
+            Tag = new List<string>();
+        }
+
         [BlogAssetMeta(BlogAssetMetaReturnType.String, "链接", "Link", "Url")]
         public string Link { get; set; }
 
