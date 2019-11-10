@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Laobian.Share.Blog.Extension;
 using Laobian.Share.Blog.Model;
 using Laobian.Share.Blog.Parser;
 using Laobian.Share.Config;
@@ -92,14 +93,14 @@ namespace Laobian.Share.Blog.Asset
         {
             var templatePost = new BlogPost();
             templatePost.Raw.AccessCount = 10;
-            templatePost.Raw.IsDraft = false;
-            templatePost.Raw.PublishTime = DateTime.Now.AddHours(8);
+            templatePost.Raw.IsDraft = true;
+            templatePost.Raw.PublishTime = new DateTime(2017, 08, 31, 16, 06, 05);
             templatePost.Raw.Category = new List<string> { "分类名称1", "分类名称2" };
-            templatePost.Raw.Tag = new List<string>{"标签名称1","标签名称2"};
-            templatePost.Raw.CreateTime = DateTime.Now;
+            templatePost.Raw.Tag = new List<string> { "标签名称1", "标签名称2" };
+            templatePost.Raw.CreateTime = new DateTime(2012, 10, 16, 02, 21, 01);
             templatePost.Raw.ContainsMath = false;
             templatePost.Raw.IsTopping = false;
-            templatePost.Raw.LastUpdateTime = DateTime.Now;
+            templatePost.Raw.LastUpdateTime = new DateTime(2019, 01, 01, 08, 08, 08);
             templatePost.Raw.Link = "Your-Post-Unique-Link";
             templatePost.Raw.Title = "Your Post Title";
             templatePost.Raw.Markdown = "Your Post Content in Markdown.";
@@ -121,122 +122,21 @@ namespace Laobian.Share.Blog.Asset
                 var tagReloadResult = await ReloadLocalMemoryTagAsync();
                 var aboutReloadResult = await ReloadLocalMemoryAboutAsync();
 
-                var warnings = new List<string>();
-                if (!string.IsNullOrEmpty(postReloadResult.Warning))
-                {
-                    warnings.Add(postReloadResult.Warning);
-                }
-
-                if (!string.IsNullOrEmpty(categoryReloadResult.Warning))
-                {
-                    warnings.Add(categoryReloadResult.Warning);
-                }
-
-                if (!string.IsNullOrEmpty(tagReloadResult.Warning))
-                {
-                    warnings.Add(tagReloadResult.Warning);
-                }
-
-                if (!string.IsNullOrEmpty(aboutReloadResult.Warning))
-                {
-                    warnings.Add(aboutReloadResult.Warning);
-                }
-
-                var warning = warnings.Any() ? string.Join(Environment.NewLine, warnings) : string.Empty;
-
-                var errors = new List<string>();
-                if (!string.IsNullOrEmpty(postReloadResult.Error))
-                {
-                    errors.Add(postReloadResult.Error);
-                }
-
-                if (!string.IsNullOrEmpty(categoryReloadResult.Error))
-                {
-                    errors.Add(categoryReloadResult.Error);
-                }
-
-                if (!string.IsNullOrEmpty(tagReloadResult.Error))
-                {
-                    errors.Add(tagReloadResult.Error);
-                }
-
-                if (!string.IsNullOrEmpty(aboutReloadResult.Error))
-                {
-                    errors.Add(aboutReloadResult.Error);
-                }
-
-                var error = errors.Any() ? string.Join(Environment.NewLine, errors) : string.Empty;
-
+                var warning = GetWarning(postReloadResult, categoryReloadResult, tagReloadResult, aboutReloadResult);
+                var error = GetError(postReloadResult, categoryReloadResult, tagReloadResult, aboutReloadResult);
                 var result = new BlogAssetReloadResult<object>
                 {
                     Warning = warning,
                     Error = error
                 };
 
-                if (postReloadResult.Success && categoryReloadResult.Success && tagReloadResult.Success &&
+                if (postReloadResult.Success &&
+                    categoryReloadResult.Success &&
+                    tagReloadResult.Success &&
                     aboutReloadResult.Success)
                 {
                     _manualReset.Reset();
-                    _allPosts.Clear();
-                    _allPosts.AddRange(postReloadResult.Result);
-
-                    _allCategories.Clear();
-                    _allCategories.AddRange(categoryReloadResult.Result);
-
-                    _allTags.Clear();
-                    _allTags.AddRange(tagReloadResult.Result);
-
-                    _aboutHtml = aboutReloadResult.Result;
-
-                    foreach (var blogPost in _allPosts)
-                    {
-                        if (blogPost.Raw.CreateTime == null)
-                        {
-                            blogPost.Raw.CreateTime = DateTime.Now;
-                        }
-
-                        if (blogPost.Raw.LastUpdateTime == null)
-                        {
-                            blogPost.Raw.LastUpdateTime = DateTime.Now;
-                        }
-
-                        if (string.IsNullOrEmpty(blogPost.Raw.Title))
-                        {
-                            blogPost.Raw.Title = Guid.NewGuid().ToString("N");
-                        }
-
-                        if (string.IsNullOrEmpty(blogPost.Raw.Link))
-                        {
-                            blogPost.Raw.Link = Guid.NewGuid().ToString("N");
-                        }
-
-                        foreach (var categoryName in blogPost.Raw.Category)
-                        {
-                            var category =
-                                _allCategories.FirstOrDefault(c => CompareHelper.IgnoreCase(c.Name, categoryName));
-                            if (category != null)
-                            {
-                                blogPost.Categories.Add(category);
-                            }
-                        }
-
-                        foreach (var tagName in blogPost.Raw.Tag)
-                        {
-                            var tag =
-                                _allTags.FirstOrDefault(c => CompareHelper.IgnoreCase(c.Name, tagName));
-                            if (tag != null)
-                            {
-                                blogPost.Tags.Add(tag);
-                            }
-                        }
-
-                        blogPost.FullUrl =
-                            $"/{blogPost.PublishTime.Year}/{blogPost.PublishTime.Month:D2}/{blogPost.Link}{_appConfig.Common.HtmlExtension}";
-                        blogPost.FullUrlWithBase = $"{_appConfig.Blog.BlogAddress}{blogPost.FullUrl}";
-
-                        
-                    }
-
+                    RefreshMemoryAsset(postReloadResult, categoryReloadResult, tagReloadResult, aboutReloadResult);
                     _manualReset.Set();
                 }
                 else
@@ -249,6 +149,101 @@ namespace Laobian.Share.Blog.Asset
             finally
             {
                 _semaphore.Release();
+            }
+        }
+
+        private static string GetError(
+            BlogAssetReloadResult<List<BlogPost>> postReloadResult,
+            BlogAssetReloadResult<List<BlogCategory>> categoryReloadResult,
+            BlogAssetReloadResult<List<BlogTag>> tagReloadResult,
+            BlogAssetReloadResult<string> aboutReloadResult)
+        {
+            var errors = new List<string>();
+            if (!string.IsNullOrEmpty(postReloadResult.Error))
+            {
+                errors.Add(postReloadResult.Error);
+            }
+
+            if (!string.IsNullOrEmpty(categoryReloadResult.Error))
+            {
+                errors.Add(categoryReloadResult.Error);
+            }
+
+            if (!string.IsNullOrEmpty(tagReloadResult.Error))
+            {
+                errors.Add(tagReloadResult.Error);
+            }
+
+            if (!string.IsNullOrEmpty(aboutReloadResult.Error))
+            {
+                errors.Add(aboutReloadResult.Error);
+            }
+
+            var error = errors.Any() ? string.Join(Environment.NewLine, errors) : string.Empty;
+            return error;
+        }
+
+        private static string GetWarning(
+            BlogAssetReloadResult<List<BlogPost>> postReloadResult,
+            BlogAssetReloadResult<List<BlogCategory>> categoryReloadResult,
+            BlogAssetReloadResult<List<BlogTag>> tagReloadResult,
+            BlogAssetReloadResult<string> aboutReloadResult)
+        {
+            var warnings = new List<string>();
+            if (!string.IsNullOrEmpty(postReloadResult.Warning))
+            {
+                warnings.Add(postReloadResult.Warning);
+            }
+
+            if (!string.IsNullOrEmpty(categoryReloadResult.Warning))
+            {
+                warnings.Add(categoryReloadResult.Warning);
+            }
+
+            if (!string.IsNullOrEmpty(tagReloadResult.Warning))
+            {
+                warnings.Add(tagReloadResult.Warning);
+            }
+
+            if (!string.IsNullOrEmpty(aboutReloadResult.Warning))
+            {
+                warnings.Add(aboutReloadResult.Warning);
+            }
+
+            var warning = warnings.Any() ? string.Join(Environment.NewLine, warnings) : string.Empty;
+            return warning;
+        }
+
+        private void RefreshMemoryAsset(
+            BlogAssetReloadResult<List<BlogPost>> postReloadResult,
+            BlogAssetReloadResult<List<BlogCategory>> categoryReloadResult,
+            BlogAssetReloadResult<List<BlogTag>> tagReloadResult,
+            BlogAssetReloadResult<string> aboutReloadResult)
+        {
+            _allPosts.Clear();
+            _allPosts.AddRange(postReloadResult.Result);
+
+            _allCategories.Clear();
+            _allCategories.AddRange(categoryReloadResult.Result);
+
+            _allTags.Clear();
+            _allTags.AddRange(tagReloadResult.Result);
+
+            _aboutHtml = aboutReloadResult.Result;
+
+            foreach (var blogPost in _allPosts)
+            {
+                blogPost.Resolve(_appConfig, _allPosts, _allCategories, _allTags);
+            }
+
+            foreach (var blogCategory in _allCategories)
+            {
+                blogCategory.Resolve(_allPosts);
+            }
+
+            foreach (var blogTag in _allTags)
+            {
+                blogTag.Resolve(_allPosts);
             }
         }
 
@@ -276,10 +271,17 @@ namespace Laobian.Share.Blog.Asset
                 return result;
             }
 
+            var templatePostLocalPath =
+                Path.Combine(_appConfig.Blog.AssetRepoLocalDir, _appConfig.Blog.TemplatePostGitPath);
             foreach (var file in Directory.EnumerateFiles(postLocalPath, $"*{_appConfig.Common.MarkdownExtension}"))
             {
                 try
                 {
+                    if (CompareHelper.IgnoreCase(templatePostLocalPath, file))
+                    {
+                        continue; // skip template post
+                    }
+
                     var text = await File.ReadAllTextAsync(file);
                     var parseResult = await _postParser.FromTextAsync(text);
                     if (parseResult.WarningMessages.Any())
@@ -297,7 +299,7 @@ namespace Laobian.Share.Blog.Asset
                     if (parseResult.Success)
                     {
                         parseResult.Instance.GitPath =
-                            file.Substring(file.IndexOf(_appConfig.Blog.AssetRepoLocalDir, StringComparison.CurrentCulture) + 1);
+                            file.Substring(file.IndexOf(_appConfig.Blog.AssetRepoLocalDir, StringComparison.CurrentCulture) + _appConfig.Blog.AssetRepoLocalDir.Length + 1);
                         parseResult.Instance.LocalPath = file;
                         result.Result.Add(parseResult.Instance);
                     }
@@ -376,7 +378,7 @@ namespace Laobian.Share.Blog.Asset
             var aboutLocalPath = Path.Combine(_appConfig.Blog.AssetRepoLocalDir, _appConfig.Blog.AboutGitPath);
             if (!File.Exists(aboutLocalPath))
             {
-                result.Success = false;
+                result.Success = true;
                 result.Warning = $"No about asset found under \"{aboutLocalPath}\".";
                 return result;
             }

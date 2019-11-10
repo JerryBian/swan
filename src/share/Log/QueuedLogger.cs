@@ -23,7 +23,7 @@ namespace Laobian.Share.Log
 
         public IDisposable BeginScope<TState>(TState state)
         {
-            throw new NotSupportedException();
+            return null;
         }
     }
 }

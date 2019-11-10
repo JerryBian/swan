@@ -30,7 +30,7 @@ namespace Laobian.Blog.Controllers
         public IActionResult Index([FromQuery] int p)
         {
             var viewModel = _cacheClient.GetOrCreate(
-                $"{BlogCacheKey.Build(nameof(HomeController), nameof(Index), p, User.Identity.IsAuthenticated)}",
+                $"{CacheKey.Build(nameof(HomeController), nameof(Index), p, User.Identity.IsAuthenticated)}",
                 () =>
                 {
                     List<BlogPost> posts;
@@ -73,7 +73,7 @@ namespace Laobian.Blog.Controllers
         public IActionResult SiteMap()
         {
             var xml = _cacheClient.GetOrCreate(
-                $"{BlogCacheKey.Build(nameof(HomeController), nameof(SiteMap))}",
+                $"{CacheKey.Build(nameof(HomeController), nameof(SiteMap))}",
                 () =>
                 {
                     var posts = _blogService.GetPosts();

@@ -23,6 +23,43 @@ namespace Laobian.Share.Blog
             _blogAlertService = blogAlertService;
         }
 
+        private void SetPrevAndNextPosts(BlogPost post, List<BlogPost> posts, bool onlyPublic)
+        {
+            if (!post.IsPublic && onlyPublic)
+            {
+                _logger.LogWarning(
+                    $"Try to set post's Next and Prev. However this post is not public while requesting only public, we need to fix this. Post = {post.Link}, Call stack = {Environment.StackTrace}");
+                return;
+            }
+
+            var postIndex = posts.IndexOf(post);
+            var prevPostIndex = postIndex - 1;
+            while (prevPostIndex >= 0)
+            {
+                var prevPost = posts[prevPostIndex];
+                if (!onlyPublic || prevPost.IsPublic)
+                {
+                    post.PrevPost = prevPost;
+                    break;
+                }
+
+                prevPostIndex--;
+            }
+
+            var nextPostIndex = postIndex + 1;
+            while (nextPostIndex < posts.Count)
+            {
+                var nextPost = posts[nextPostIndex];
+                if (!onlyPublic || nextPost.IsPublic)
+                {
+                    post.NextPost = nextPost;
+                    break;
+                }
+
+                nextPostIndex++;
+            }
+        }
+
         public List<BlogPost> GetPosts(bool onlyPublic = true, bool publishTimeDesc = true, bool toppingPostsFirst = true)
         {
             IEnumerable<BlogPost> posts = _blogAssetManager.GetAllPosts();
@@ -44,6 +81,7 @@ namespace Laobian.Share.Blog
                 : posts.FirstOrDefault(p =>
                     p.PublishTime.Year == year && p.PublishTime.Month == month &&
                     CompareHelper.IgnoreCase(p.Link, link));
+            SetPrevAndNextPosts(post, posts.ToList(), onlyPublic);
             return post;
         }
 
@@ -70,7 +108,11 @@ namespace Laobian.Share.Blog
 
                 posts = toppingPostsFirst ? posts.OrderBy(p => p.IsTopping ? 0 : 1) : posts;
                 category.Posts.AddRange(posts);
-                categories.Add(category);
+
+                if (category.Posts.Any())
+                {
+                    categories.Add(category);
+                }
             }
 
             return categories;
@@ -99,7 +141,11 @@ namespace Laobian.Share.Blog
 
                 posts = toppingPostsFirst ? posts.OrderBy(p => p.IsTopping ? 0 : 1) : posts;
                 tag.Posts.AddRange(posts);
-                tags.Add(tag);
+
+                if (tag.Posts.Any())
+                {
+                    tags.Add(tag);
+                }
             }
 
             return tags;
@@ -128,16 +174,20 @@ namespace Laobian.Share.Blog
 
                 posts = toppingPostsFirst ? posts.OrderBy(p => p.IsTopping ? 0 : 1) : posts;
                 archive.Posts.AddRange(posts);
-                archives.Add(archive);
+
+                if (archive.Posts.Any())
+                {
+                    archives.Add(archive);
+                }
             }
 
             return archives;
         }
 
         public async Task ReloadLocalAndMemoryAssetsAsync(
-            bool clone = true, 
-            bool updateTemplate = true, 
-            List<string> addedPosts = null, 
+            bool clone = true,
+            bool updateTemplate = true,
+            List<string> addedPosts = null,
             List<string> modifiedPosts = null)
         {
             try
@@ -157,6 +207,21 @@ namespace Laobian.Share.Blog
                 var subject = $"Local and memory assets reload: {reloadResultText}";
                 await _blogAlertService.AlertAssetReloadResultAsync(subject, reloadResult.Warning, reloadResult.Error,
                     addedPosts, modifiedPosts);
+
+                if (addedPosts != null && addedPosts.Any() || modifiedPosts != null && modifiedPosts.Any())
+                {
+                    if (modifiedPosts != null)
+                    {
+                        var posts = _blogAssetManager.GetAllPosts().Where(p =>
+                            modifiedPosts.FirstOrDefault(mp => CompareHelper.IgnoreCase(mp, p.GitPath)) != null);
+                        foreach (var blogPost in posts)
+                        {
+                            blogPost.Raw.LastUpdateTime = DateTime.Now;
+                        }
+                    }
+
+                    await UpdateRemoteStoreAsync();
+                }
             }
             catch (Exception ex)
             {

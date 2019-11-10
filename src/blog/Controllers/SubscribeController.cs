@@ -5,6 +5,7 @@ using System.ServiceModel.Syndication;
 using System.Text;
 using System.Xml;
 using Laobian.Share.Blog;
+using Laobian.Share.Cache;
 using Laobian.Share.Config;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -14,44 +15,56 @@ namespace Laobian.Blog.Controllers
     public class SubscribeController : Controller
     {
         private readonly AppConfig _appConfig;
+        private readonly ICacheClient _cacheClient;
         private readonly IBlogService _blogService;
 
-        public SubscribeController(IOptions<AppConfig> appConfig, IBlogService blogService)
+        public SubscribeController(IOptions<AppConfig> appConfig, ICacheClient cacheClient, IBlogService blogService)
         {
             _appConfig = appConfig.Value;
             _blogService = blogService;
+            _cacheClient = cacheClient;
         }
 
         [Route("/rss")]
         public IActionResult Rss()
         {
-            var feed = GetFeed();
-            var rssFormatter = new Rss20FeedFormatter(feed) { SerializeExtensionsAsAtom = false };
-            using (var ms = new MemoryStream())
+            var rss = _cacheClient.GetOrCreate(CacheKey.Build(nameof(SubscribeController), nameof(Rss)), () =>
             {
-                using (var xmlWriter = XmlWriter.Create(ms, new XmlWriterSettings { Async = true, Encoding = Encoding.UTF8 }))
+                var feed = GetFeed();
+                var rssFormatter = new Rss20FeedFormatter(feed) { SerializeExtensionsAsAtom = false };
+                using (var ms = new MemoryStream())
                 {
-                    rssFormatter.WriteTo(xmlWriter);
-                }
+                    using (var xmlWriter = XmlWriter.Create(ms, new XmlWriterSettings { Async = true, Encoding = Encoding.UTF8 }))
+                    {
+                        rssFormatter.WriteTo(xmlWriter);
+                    }
 
-                return Content(Encoding.UTF8.GetString(ms.ToArray()), "application/rss+xml", Encoding.UTF8);
-            }
+                    return Encoding.UTF8.GetString(ms.ToArray());
+                }
+            });
+
+            return Content(rss, "application/rss+xml", Encoding.UTF8);
         }
 
         [Route("/atom")]
         public IActionResult Atom()
         {
-            var feed = GetFeed();
-            var atomFormatter = new Atom10FeedFormatter(feed);
-            using (var ms = new MemoryStream())
+            var atom = _cacheClient.GetOrCreate(CacheKey.Build(nameof(SubscribeController), nameof(Atom)), () =>
             {
-                using (var xmlWriter = XmlWriter.Create(ms, new XmlWriterSettings { Async = true, Encoding = Encoding.UTF8 }))
+                var feed = GetFeed();
+                var atomFormatter = new Atom10FeedFormatter(feed);
+                using (var ms = new MemoryStream())
                 {
-                    atomFormatter.WriteTo(xmlWriter);
-                }
+                    using (var xmlWriter = XmlWriter.Create(ms, new XmlWriterSettings { Async = true, Encoding = Encoding.UTF8 }))
+                    {
+                        atomFormatter.WriteTo(xmlWriter);
+                    }
 
-                return Content(Encoding.UTF8.GetString(ms.ToArray()), "application/atom+xml", Encoding.UTF8);
-            }
+                    return Encoding.UTF8.GetString(ms.ToArray());
+                }
+            });
+
+            return Content(atom, "application/atom+xml", Encoding.UTF8);
         }
 
         private SyndicationFeed GetFeed()

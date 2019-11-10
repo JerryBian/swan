@@ -1,6 +1,6 @@
-﻿namespace Laobian.Share.Blog
+﻿namespace Laobian.Blog
 {
-    public class BlogCacheKey
+    public class CacheKey
     {
         public static string Build(params object[] parts)
         {

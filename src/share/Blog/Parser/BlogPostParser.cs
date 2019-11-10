@@ -82,6 +82,7 @@ namespace Laobian.Share.Blog.Parser
                 }
             }
 
+            result.Instance.Raw.Markdown = parseResult.UnParsedContent;
             return result;
         }
 
