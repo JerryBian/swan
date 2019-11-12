@@ -84,12 +84,12 @@ namespace Laobian.Share.Blog.Asset
             return _aboutHtml;
         }
 
-        public async Task ReloadLocalFileStoreAsync()
+        public async Task RemoteGitToLocalFileAsync()
         {
             await _gitClient.CloneAsync(_gitConfig);
         }
 
-        public async Task UpdateRemoteStoreTemplatePostAsync()
+        public async Task UpdateRemoteGitTemplatePostAsync()
         {
             var templatePost = new BlogPost();
             templatePost.Raw.AccessCount = 10;
@@ -112,7 +112,7 @@ namespace Laobian.Share.Blog.Asset
             await _gitClient.CommitAsync(_appConfig.Blog.AssetRepoLocalDir, "Update template post");
         }
 
-        public async Task<BlogAssetReloadResult<object>> UpdateMemoryStoreAsync()
+        public async Task<BlogAssetReloadResult<object>> LocalFileToLocalMemoryAsync()
         {
             try
             {
@@ -255,7 +255,7 @@ namespace Laobian.Share.Blog.Asset
             }
         }
 
-        public async Task UpdateLocalStoreAsync()
+        public async Task LocalMemoryToLocalFileAsync()
         {
             foreach (var blogPost in _allPosts)
             {
@@ -264,7 +264,7 @@ namespace Laobian.Share.Blog.Asset
             }
         }
 
-        public async Task UpdateRemoteStoreAsync()
+        public async Task LocalFileToRemoteGitAsync()
         {
             await _gitClient.CommitAsync(_appConfig.Blog.AssetRepoLocalDir, "Update assets");
         }

@@ -14,14 +14,14 @@ namespace Laobian.Share.Blog.Asset
 
         string GetAboutHtml();
 
-        Task ReloadLocalFileStoreAsync();
+        Task RemoteGitToLocalFileAsync();
 
-        Task UpdateRemoteStoreTemplatePostAsync();
+        Task UpdateRemoteGitTemplatePostAsync();
 
-        Task<BlogAssetReloadResult<object>> UpdateMemoryStoreAsync();
+        Task<BlogAssetReloadResult<object>> LocalFileToLocalMemoryAsync();
 
-        Task UpdateLocalStoreAsync();
+        Task LocalMemoryToLocalFileAsync();
 
-        Task UpdateRemoteStoreAsync();
+        Task LocalFileToRemoteGitAsync();
     }
 }

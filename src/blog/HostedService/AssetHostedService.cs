@@ -28,7 +28,7 @@ namespace Laobian.Blog.HostedService
 
         public override async Task StartAsync(CancellationToken cancellationToken)
         {
-            await _blogService.ReloadLocalAndMemoryAssetsAsync(_appConfig.Blog.CloneAssetsDuringStartup,
+            await _blogService.ReloadAssetsAsync(_appConfig.Blog.CloneAssetsDuringStartup,
                 _appConfig.Blog.CloneAssetsDuringStartup);
             await base.StartAsync(cancellationToken);
         }

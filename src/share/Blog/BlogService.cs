@@ -184,7 +184,7 @@ namespace Laobian.Share.Blog
             return archives;
         }
 
-        public async Task ReloadLocalAndMemoryAssetsAsync(
+        public async Task ReloadAssetsAsync(
             bool clone = true,
             bool updateTemplate = true,
             List<string> addedPosts = null,
@@ -194,15 +194,15 @@ namespace Laobian.Share.Blog
             {
                 if (clone)
                 {
-                    await _blogAssetManager.ReloadLocalFileStoreAsync();
+                    await _blogAssetManager.RemoteGitToLocalFileAsync();
                 }
 
                 if (updateTemplate)
                 {
-                    await _blogAssetManager.UpdateRemoteStoreTemplatePostAsync();
+                    await _blogAssetManager.UpdateRemoteGitTemplatePostAsync();
                 }
 
-                var reloadResult = await _blogAssetManager.UpdateMemoryStoreAsync();
+                var reloadResult = await _blogAssetManager.LocalFileToLocalMemoryAsync();
                 var reloadResultText = reloadResult.Success ? "SUCCESS!" : "FAIL!";
                 var subject = $"Local and memory assets reload: {reloadResultText}";
                 await _blogAlertService.AlertAssetReloadResultAsync(subject, reloadResult.Warning, reloadResult.Error,
@@ -220,10 +220,11 @@ namespace Laobian.Share.Blog
                         }
                     }
 
-                    await UpdateRemoteStoreAsync();
+                    await UpdateAssetsAsync();
                 }
 
-                _logger.LogInformation("Reload local and memory assets successfully.");            }
+                _logger.LogInformation("Reload local and memory assets successfully.");
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Reload local and memory assets throws error.");
@@ -231,16 +232,11 @@ namespace Laobian.Share.Blog
             }
         }
 
-        public async Task UpdateRemoteStoreAsync()
+        public async Task UpdateAssetsAsync()
         {
-            await _blogAssetManager.UpdateLocalStoreAsync();
-            await _blogAssetManager.UpdateRemoteStoreAsync();
+            await _blogAssetManager.LocalMemoryToLocalFileAsync();
+            await _blogAssetManager.LocalFileToRemoteGitAsync();
             _logger.LogInformation("Update remote store successfully.");
-        }
-
-        public async Task MemoryToLocalStoreAsync()
-        {
-            await _blogAssetManager.UpdateLocalStoreAsync();
         }
     }
 }
