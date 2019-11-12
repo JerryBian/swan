@@ -1,28 +1,30 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Laobian.Share.Blog.Model;
 
 namespace Laobian.Blog.Models
 {
     public class PagedPostViewModel
     {
-        public PagedPostViewModel(int currentPage, int totalPage)
+        public PagedPostViewModel(int currentPage, int postCount)
         {
+            if (postCount < 0)
+            {
+                postCount = 0;
+            }
+
+            TotalPages = Convert.ToInt32(Math.Ceiling(postCount / (double)8));
+
             if (currentPage <= 0)
             {
                 currentPage = 1;
             }
 
-            if (totalPage <= 0)
+            if (currentPage > TotalPages)
             {
-                totalPage = 1;
+                currentPage = TotalPages;
             }
 
-            if (currentPage > totalPage)
-            {
-                currentPage = totalPage;
-            }
-
-            TotalPages = totalPage;
             CurrentPage = currentPage;
             Posts = new List<BlogPost>();
         }

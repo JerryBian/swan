@@ -37,7 +37,7 @@ namespace Laobian.Share.Git
                 return;
             }
 
-            await _command.ExecuteAsync($"cd {workingDir}; git add .; git commit -m \"{message}\"; git push -u origin");
+            await _command.ExecuteAsync($"cd {workingDir}; git add .; git commit -m \"{message}\"; git push");
             _logger.LogInformation($"Commit completed, message = {message}.");
         }
     }

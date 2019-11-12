@@ -222,7 +222,8 @@ namespace Laobian.Share.Blog
 
                     await UpdateRemoteStoreAsync();
                 }
-            }
+
+                _logger.LogInformation("Reload local and memory assets successfully.");            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Reload local and memory assets throws error.");
@@ -234,6 +235,7 @@ namespace Laobian.Share.Blog
         {
             await _blogAssetManager.UpdateLocalStoreAsync();
             await _blogAssetManager.UpdateRemoteStoreAsync();
+            _logger.LogInformation("Update remote store successfully.");
         }
 
         public async Task MemoryToLocalStoreAsync()

@@ -6,6 +6,7 @@ namespace Laobian.Share.Blog.Model
     {
         public BlogArchive(int year)
         {
+            Year = year;
             Title = $"{year} 年";
             Posts = new List<BlogPost>();
         }

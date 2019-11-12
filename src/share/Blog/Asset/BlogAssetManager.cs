@@ -135,9 +135,17 @@ namespace Laobian.Share.Blog.Asset
                     tagReloadResult.Success &&
                     aboutReloadResult.Success)
                 {
-                    _manualReset.Reset();
-                    RefreshMemoryAsset(postReloadResult, categoryReloadResult, tagReloadResult, aboutReloadResult);
-                    _manualReset.Set();
+
+                    try
+                    {
+                        _manualReset.Reset();
+                        RefreshMemoryAsset(postReloadResult, categoryReloadResult, tagReloadResult, aboutReloadResult);
+                        BlogState.AssetLastUpdate = DateTime.Now;
+                    }
+                    finally
+                    {
+                        _manualReset.Set();
+                    }
                 }
                 else
                 {
