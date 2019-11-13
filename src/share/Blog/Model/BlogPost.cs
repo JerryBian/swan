@@ -83,6 +83,7 @@ namespace Laobian.Share.Blog.Model
         public void NewAccess()
         {
             Interlocked.Increment(ref _accessCount);
+            Raw.AccessCount = _accessCount;
         }
 
         #endregion

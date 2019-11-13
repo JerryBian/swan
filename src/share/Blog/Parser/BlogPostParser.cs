@@ -59,6 +59,10 @@ namespace Laobian.Share.Blog.Parser
                         {
                             prop.SetValue(result.Instance.Raw, timeVal);
                         }
+                        else
+                        {
+                            
+                        }
 
                         break;
                     case BlogAssetMetaReturnType.Int32:

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Share.Blog.Alert;
 using Laobian.Share.Blog.Asset;
@@ -15,12 +16,14 @@ namespace Laobian.Share.Blog
         private readonly ILogger<BlogService> _logger;
         private readonly IBlogAlertService _blogAlertService;
         private readonly IBlogAssetManager _blogAssetManager;
+        private readonly SemaphoreSlim _semaphoreSlim;
 
         public BlogService(ILogger<BlogService> logger, IBlogAssetManager blogAssetManager, IBlogAlertService blogAlertService)
         {
             _logger = logger;
             _blogAssetManager = blogAssetManager;
             _blogAlertService = blogAlertService;
+            _semaphoreSlim = new SemaphoreSlim(1, 1);
         }
 
         private void SetPrevAndNextPosts(BlogPost post, List<BlogPost> posts, bool onlyPublic)
@@ -184,7 +187,7 @@ namespace Laobian.Share.Blog
             return archives;
         }
 
-        public async Task ReloadAssetsAsync(
+        public async Task ReloadLocalAssetsAsync(
             bool clone = true,
             bool updateTemplate = true,
             List<string> addedPosts = null,
@@ -192,6 +195,7 @@ namespace Laobian.Share.Blog
         {
             try
             {
+                await _semaphoreSlim.WaitAsync();
                 if (clone)
                 {
                     await _blogAssetManager.RemoteGitToLocalFileAsync();
@@ -202,11 +206,26 @@ namespace Laobian.Share.Blog
                     await _blogAssetManager.UpdateRemoteGitTemplatePostAsync();
                 }
 
+                var oldPosts = new List<BlogPost>(_blogAssetManager.GetAllPosts());
                 var reloadResult = await _blogAssetManager.LocalFileToLocalMemoryAsync();
+                if (reloadResult.Success)
+                {
+                    BlogState.AssetLastUpdate = DateTime.Now;
+                }
+
                 var reloadResultText = reloadResult.Success ? "SUCCESS!" : "FAIL!";
                 var subject = $"Local and memory assets reload: {reloadResultText}";
                 await _blogAlertService.AlertAssetReloadResultAsync(subject, reloadResult.Warning, reloadResult.Error,
                     addedPosts, modifiedPosts);
+
+                foreach (var blogPost in _blogAssetManager.GetAllPosts())
+                {
+                    var oldPost = oldPosts.FirstOrDefault(p => CompareHelper.IgnoreCase(p.GitPath, blogPost.GitPath));
+                    if (oldPost != null)
+                    {
+                        blogPost.AccessCount = Math.Max(oldPost.AccessCount, blogPost.AccessCount);
+                    }
+                }
 
                 if (addedPosts != null && addedPosts.Any() || modifiedPosts != null && modifiedPosts.Any())
                 {
@@ -220,7 +239,7 @@ namespace Laobian.Share.Blog
                         }
                     }
 
-                    await UpdateAssetsAsync();
+                    await UpdateRemoteAssetsAsync();
                 }
 
                 _logger.LogInformation("Reload local and memory assets successfully.");
@@ -230,13 +249,25 @@ namespace Laobian.Share.Blog
                 _logger.LogError(ex, "Reload local and memory assets throws error.");
                 await _blogAlertService.AlertEventAsync("Reload local and memory assets throws error.", ex);
             }
+            finally
+            {
+                _semaphoreSlim.Release();
+            }
         }
 
-        public async Task UpdateAssetsAsync()
+        public async Task UpdateRemoteAssetsAsync()
         {
-            await _blogAssetManager.LocalMemoryToLocalFileAsync();
-            await _blogAssetManager.LocalFileToRemoteGitAsync();
-            _logger.LogInformation("Update remote store successfully.");
+            try
+            {
+                await _semaphoreSlim.WaitAsync();
+                await _blogAssetManager.LocalMemoryToLocalFileAsync();
+                await _blogAssetManager.LocalFileToRemoteGitAsync();
+                _logger.LogInformation("Update remote store successfully.");
+            }
+            finally
+            {
+                _semaphoreSlim.Release();
+            }
         }
     }
 }

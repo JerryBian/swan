@@ -140,7 +140,6 @@ namespace Laobian.Share.Blog.Asset
                     {
                         _manualReset.Reset();
                         RefreshMemoryAsset(postReloadResult, categoryReloadResult, tagReloadResult, aboutReloadResult);
-                        BlogState.AssetLastUpdate = DateTime.Now;
                     }
                     finally
                     {

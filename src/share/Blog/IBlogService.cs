@@ -22,8 +22,8 @@ namespace Laobian.Share.Blog
         List<BlogArchive> GetArchives(bool onlyPublic = true, bool publishTimeDesc = true,
             bool toppingPostsFirst = true);
 
-        Task ReloadAssetsAsync(bool clone = true, bool updateTemplate = true, List<string> addedPosts = null, List<string> modifiedPosts = null);
+        Task ReloadLocalAssetsAsync(bool clone = true, bool updateTemplate = true, List<string> addedPosts = null, List<string> modifiedPosts = null);
 
-        Task UpdateAssetsAsync();
+        Task UpdateRemoteAssetsAsync();
     }
 }
