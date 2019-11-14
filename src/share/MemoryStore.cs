@@ -7,7 +7,11 @@ namespace Laobian.Share
 {
     public static class MemoryStore
     {
-        public static ConcurrentQueue<LogEntry> LogQueue = new ConcurrentQueue<LogEntry>();
+        public static ConcurrentQueue<LogEntry> WarningLogQueue = new ConcurrentQueue<LogEntry>();
+
+        public static ConcurrentQueue<LogEntry> ErrorLogQueue = new ConcurrentQueue<LogEntry>();
+
+        public static ConcurrentQueue<LogEntry> CriticalLogQueue = new ConcurrentQueue<LogEntry>();
 
         public static DateTime StartTime;
 
