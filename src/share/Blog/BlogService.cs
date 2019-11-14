@@ -16,14 +16,16 @@ namespace Laobian.Share.Blog
         private readonly ILogger<BlogService> _logger;
         private readonly IBlogAlertService _blogAlertService;
         private readonly IBlogAssetManager _blogAssetManager;
-        private readonly SemaphoreSlim _semaphoreSlim;
+        private readonly SemaphoreSlim _semaphoreSlim1;
+        private readonly SemaphoreSlim _semaphoreSlim2;
 
         public BlogService(ILogger<BlogService> logger, IBlogAssetManager blogAssetManager, IBlogAlertService blogAlertService)
         {
             _logger = logger;
             _blogAssetManager = blogAssetManager;
             _blogAlertService = blogAlertService;
-            _semaphoreSlim = new SemaphoreSlim(1, 1);
+            _semaphoreSlim1 = new SemaphoreSlim(1, 1);
+            _semaphoreSlim2 = new SemaphoreSlim(1, 1);
         }
 
         private void SetPrevAndNextPosts(BlogPost post, List<BlogPost> posts, bool onlyPublic)
@@ -195,7 +197,7 @@ namespace Laobian.Share.Blog
         {
             try
             {
-                await _semaphoreSlim.WaitAsync();
+                await _semaphoreSlim1.WaitAsync();
                 if (clone)
                 {
                     await _blogAssetManager.RemoteGitToLocalFileAsync();
@@ -251,7 +253,7 @@ namespace Laobian.Share.Blog
             }
             finally
             {
-                _semaphoreSlim.Release();
+                _semaphoreSlim1.Release();
             }
         }
 
@@ -259,14 +261,14 @@ namespace Laobian.Share.Blog
         {
             try
             {
-                await _semaphoreSlim.WaitAsync();
+                await _semaphoreSlim2.WaitAsync();
                 await _blogAssetManager.LocalMemoryToLocalFileAsync();
                 await _blogAssetManager.LocalFileToRemoteGitAsync();
                 _logger.LogInformation("Update remote store successfully.");
             }
             finally
             {
-                _semaphoreSlim.Release();
+                _semaphoreSlim2.Release();
             }
         }
     }

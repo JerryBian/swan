@@ -59,10 +59,6 @@ namespace Laobian.Share.Blog.Parser
                         {
                             prop.SetValue(result.Instance.Raw, timeVal);
                         }
-                        else
-                        {
-                            
-                        }
 
                         break;
                     case BlogAssetMetaReturnType.Int32:
@@ -95,25 +91,29 @@ namespace Laobian.Share.Blog.Parser
             var nameValues = new Dictionary<string, string>();
             foreach (var item in _metaProperties)
             {
-                string value;
-                switch (item.Key.ReturnType)
+                var value = string.Empty;
+                var obj = item.Value.GetValue(post.Raw);
+                if (obj != null)
                 {
-                    case BlogAssetMetaReturnType.Bool:
-                    case BlogAssetMetaReturnType.Int32:
-                    case BlogAssetMetaReturnType.String:
-                        value = Convert.ToString(item.Value.GetValue(post.Raw));
-                        break;
-                    case BlogAssetMetaReturnType.DateTime:
-                        value = Convert.ToDateTime(item.Value.GetValue(post.Raw)).ToString("yyyy-MM-dd hh:mm:ss");
-                        break;
-                    case BlogAssetMetaReturnType.ListOfString:
-                        value = string.Join(_appConfig.Common.PeriodSplitter, (List<string>)item.Value.GetValue(post.Raw));
-                        break;
-                    default:
-                        value = string.Empty;
-                        break;
+                    switch (item.Key.ReturnType)
+                    {
+                        case BlogAssetMetaReturnType.Bool:
+                        case BlogAssetMetaReturnType.Int32:
+                        case BlogAssetMetaReturnType.String:
+                            value = Convert.ToString(obj);
+                            break;
+                        case BlogAssetMetaReturnType.DateTime:
+                            value = Convert.ToDateTime(obj).ToString("yyyy-MM-dd hh:mm:ss");
+                            break;
+                        case BlogAssetMetaReturnType.ListOfString:
+                            value = string.Join(_appConfig.Common.PeriodSplitter, (List<string>)obj);
+                            break;
+                        default:
+                            value = string.Empty;
+                            break;
+                    }
                 }
-
+                
                 if (!string.IsNullOrEmpty(value))
                 {
                     nameValues[item.Key.Alias.First()] = value;
