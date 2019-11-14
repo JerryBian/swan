@@ -1,23 +1,23 @@
-﻿@model PostViewModel
+﻿@model BlogPost
 @inject IOptions<AppConfig> Config
 
 <article class="post">
     <div class="post-title">
         <i class="fas fa-angle-down"></i>
         @{
-            if (!Model.Post.IsReallyPublic)
+            if (!Model.IsPublic)
             {
                 <span class="badge badge-secondary">Private</span>
             }
         }
-        @Model.Post.Title
+        @Model.Title
     </div>
     <div class="text-muted text-left d-block d-lg-none post-meta">
-        <time datetime="@Model.Post.CreationTimeUtc.ToChinaTime().ToDateAndTime()"></time>
+        <time datetime="@Model.PublishTime.ToDateAndTime()"></time>
         @Html.Raw(Model.GetSimpleMetadataHtml())
     </div>
     <div class="mt-2 mb-4 post-content">
-        @Html.Raw(Model.Post.HtmlContent)
+        @Html.Raw(Model.ContentHtml)
 
         <p class="text-muted">（本文完）</p>
     </div>
@@ -43,13 +43,13 @@
             }
         }
         <li>
-            关于这篇文章的评论，请发送电子邮件至 <a href="mailto:@Config.Value.Common.AdminEmail?subject=评论 - @Model.Post.Title&body=Good job！">@Config.Value.Common.AdminEmail</a>。
+            关于这篇文章的评论，请发送电子邮件至 <a href="mailto:@Config.Value.Common.AdminEmail?subject=评论 - @Model.Title&body=Good job！">@Config.Value.Common.AdminEmail</a>。
         </li>
     </ul>
 </div>
 
 @section sidebar{
-    @await Component.InvokeAsync("PostRecommend", new { adminView = ViewData["AdminView"], excludedLink = Model.Post.Link })
+    @await Component.InvokeAsync("PostRecommend", new { adminView = ViewData["AdminView"], excludedLink = Model.Link })
 }
 
 @section stickySidebar{
@@ -57,7 +57,7 @@
 }
 
 @section script{
-    @if (Model.Post.IncludeMathJax)
+    @if (Model.ContainsMath)
     {
         <script>
             MathJax = {

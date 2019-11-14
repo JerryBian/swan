@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Laobian.Share.Config;
-using Laobian.Share.Log;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
@@ -16,11 +13,11 @@ namespace Laobian.Blog.Controllers
     public class AccountController : Controller
     {
         private readonly AppConfig _appConfig;
-        private readonly ILogService _logService;
+        private readonly ILogger<AccountController> _logger;
 
-        public AccountController(ILogService logService, IOptions<AppConfig> appConfig)
+        public AccountController(ILogger<AccountController> logger, IOptions<AppConfig> appConfig)
         {
-            _logService = logService;
+            _logger = logger;
             _appConfig = appConfig.Value;
         }
 
@@ -53,11 +50,11 @@ namespace Laobian.Blog.Controllers
                     r = "/";
                 }
 
-                await _logService.LogInformation("Login successfully.");
+                _logger.LogInformation("Login successfully.");
                 return Redirect(r);
             }
 
-            await _logService.LogWarning($"Login failed. User Name = {userName}, Password = {password}");
+            _logger.LogWarning($"Login failed. User Name = {userName}, Password = {password}");
             return Redirect("/");
         }
 
@@ -66,7 +63,7 @@ namespace Laobian.Blog.Controllers
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-            await _logService.LogInformation("Logout successfully.");
+            _logger.LogInformation("Logout successfully.");
             return Redirect("/");
         }
     }

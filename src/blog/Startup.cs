@@ -1,17 +1,11 @@
-﻿using System;
-using System.Diagnostics;
-using System.Globalization;
+﻿using System.Globalization;
 using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using Laobian.Blog.Helpers;
-using Laobian.Share.BlogEngine;
 using Laobian.Share.Config;
-using Laobian.Share.Extension;
-using Laobian.Share.Infrastructure.Email;
-using Laobian.Share.Log;
+using Laobian.Share.Email;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -21,7 +15,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 
@@ -92,15 +85,15 @@ namespace Laobian.Blog
             CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("zh-cn");
 
             var appConfig = app.ApplicationServices.GetService<IOptions<AppConfig>>().Value;
-            var logService = app.ApplicationServices.GetService<ILogService>();
+            //var logService = app.ApplicationServices.GetService<ILogService>();
             var emailClient = app.ApplicationServices.GetService<IEmailClient>();
 
             applicationLifetime.ApplicationStarted.Register(async () =>
             {
-                BlogState.StartAtUtc = DateTime.UtcNow;
-                BlogState.IsDevEnvironment = HostEnvironment.IsDevelopment();
-                BlogState.IsStageEnvironment = HostEnvironment.IsStaging();
-                BlogState.IsProdEnvironment = HostEnvironment.IsProduction();
+                //BlogState.StartAtUtc = DateTime.UtcNow;
+                //BlogState.IsDevEnvironment = HostEnvironment.IsDevelopment();
+                //BlogState.IsStageEnvironment = HostEnvironment.IsStaging();
+                //BlogState.IsProdEnvironment = HostEnvironment.IsProduction();
 
                 if (!HostEnvironment.IsDevelopment())
                 {
@@ -139,7 +132,7 @@ namespace Laobian.Blog
                 {
                     ExceptionHandler = async context =>
                     {
-                        await logService.LogWarning("Request error occurred.", context.Features.Get<IExceptionHandlerFeature>()?.Error);
+                        //await logService.LogWarning("Request error occurred.", context.Features.Get<IExceptionHandlerFeature>()?.Error);
                         await context.Response.WriteAsync($"Something was wrong! Please contact {appConfig.Common.AdminEmail}.");
                     }
                 });

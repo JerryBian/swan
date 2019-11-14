@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using Laobian.Share.Log;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 
 namespace Laobian.Share.Cache
@@ -11,63 +9,48 @@ namespace Laobian.Share.Cache
     public class MemoryCacheClient : ICacheClient
     {
         private readonly IMemoryCache _memoryCache;
-        private readonly ILogService _logService;
+        private readonly ILogger<MemoryCacheClient> _logger;
 
-        public MemoryCacheClient(ILogService logService)
+        public MemoryCacheClient(ILogger<MemoryCacheClient> logger)
         {
-            _logService = logService;
+            _logger = logger;
             _memoryCache = new MemoryCache(new MemoryCacheOptions());
         }
 
-        public async Task<T> GetOrCreateAsync<T>(string cacheKey, ICachePolicy cachePolicy, Func<Task<T>> func)
+        public async Task<T> GetOrCreateAsync<T>(string cacheKey, Func<Task<T>> func, IChangeToken changeToken = null)
         {
-            if (cachePolicy.NeedExpire())
-            {
-                await RemoveCacheAsync(cacheKey);
-            }
-
             return await _memoryCache.GetOrCreateAsync(cacheKey, async cacheEntry =>
             {
+                if (changeToken == null)
+                {
+                    changeToken = NeverExpireChangeToken.Instance;
+                }
+
                 var value = await func();
                 cacheEntry.Value = value;
-                cacheEntry.AbsoluteExpirationRelativeToNow = cachePolicy.ExpirationRelativeToNow;
+                cacheEntry.ExpirationTokens.Add(changeToken);
 
-                cachePolicy.Cache();
-                await _logService.LogInformation($"Cache created. Key: {cacheKey}");
-
+                _logger.LogInformation($"Cache created. Key: {cacheKey}");
                 return value;
             });
         }
 
-        public async Task<T> GetOrCreateAsync<T>(string cacheKey, ICachePolicy cachePolicy, Func<T> func)
+        public T GetOrCreate<T>(string cacheKey, Func<T> func, IChangeToken changeToken = null)
         {
-            if (cachePolicy.NeedExpire())
+            return _memoryCache.GetOrCreate(cacheKey, cacheEntry =>
             {
-                await RemoveCacheAsync(cacheKey);
-            }
+                if (changeToken == null)
+                {
+                    changeToken = NeverExpireChangeToken.Instance;
+                }
 
-            return await _memoryCache.GetOrCreateAsync(cacheKey, async cacheEntry =>
-            {
                 var value = func();
                 cacheEntry.Value = value;
-                cacheEntry.AbsoluteExpirationRelativeToNow = cachePolicy.ExpirationRelativeToNow;
+                cacheEntry.ExpirationTokens.Add(changeToken);
 
-                cachePolicy.Cache();
-                await _logService.LogInformation($"Cache created. Key: {cacheKey}");
-
+                _logger.LogInformation($"Cache created. Key: {cacheKey}");
                 return value;
             });
-        }
-
-        public void ExpireCache(ICachePolicy cachePolicy)
-        {
-            cachePolicy.Expire();
-        }
-
-        private async Task RemoveCacheAsync(string cacheKey)
-        {
-            _memoryCache.Remove(cacheKey);
-            await _logService.LogInformation($"Cache removed. Key: {cacheKey}");
         }
     }
 }

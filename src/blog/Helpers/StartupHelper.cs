@@ -2,13 +2,16 @@
 using System.Linq;
 using System.Reflection;
 using Laobian.Blog.HostedService;
-using Laobian.Share.BlogEngine;
+//using Laobian.Blog.HostedService;
+using Laobian.Share.Blog;
+using Laobian.Share.Blog.Alert;
+using Laobian.Share.Blog.Asset;
+using Laobian.Share.Blog.Parser;
+using Laobian.Share.Cache;
+using Laobian.Share.Command;
 using Laobian.Share.Config;
-using Laobian.Share.Infrastructure.Cache;
-using Laobian.Share.Infrastructure.Command;
-using Laobian.Share.Infrastructure.Email;
-using Laobian.Share.Infrastructure.Git;
-using Laobian.Share.Log;
+using Laobian.Share.Email;
+using Laobian.Share.Git;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,14 +25,19 @@ namespace Laobian.Blog.Helpers
             
             services.Configure<AppConfig>(ac => MapConfig(config, ac));
 
-            services.AddSingleton<IMemoryCacheClient, MemoryCacheClient>();
+            services.AddSingleton<ICacheClient, MemoryCacheClient>();
             services.AddSingleton<ICommand, PowerShellCommand>();
             services.AddSingleton<IBlogService, BlogService>();
-            services.AddSingleton<IGitClient, GitClient>();
+            services.AddSingleton<IGitClient, GitHubClient>();
             services.AddSingleton<IEmailClient, SendGridEmailClient>();
-            services.AddSingleton<ILogService, LogService>();
+            services.AddSingleton<IBlogAssetManager, BlogAssetManager>();
+            services.AddSingleton<IBlogAlertService, BlogAlertService>();
 
-            services.AddHostedService<PostHostedService>();
+            services.AddSingleton<BlogPostParser>();
+            services.AddSingleton<BlogCategoryParser>();
+            services.AddSingleton<BlogTagParser>();
+
+            services.AddHostedService<AssetHostedService>();
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>

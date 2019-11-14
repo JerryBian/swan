@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using System.Text.Json;
 using System.Xml.Serialization;
-using Laobian.Share.Core;
 using ProtoBuf.Meta;
 
 namespace Laobian.Share.Helper

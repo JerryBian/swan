@@ -1,4 +1,4 @@
-﻿@model PostViewModel
+﻿@model BlogPost
 
 <div class="card mb-3">
     <div class="card-body">
@@ -6,17 +6,17 @@
             <table>
                 <tr>
                     <td>访问</td>
-                    <td>@Model.Post.VisitString 次</td>
+                    <td>@Model.AccessCountString 次</td>
                 </tr>
                 <tr>
                     <td>创建</td>
-                    <td title="@Model.Post.CreationTimeUtc.ToChinaTime().ToDateAndTime()">
-                        <time datetime="@Model.Post.CreationTimeUtc.ToChinaTime().ToDateAndTime()"></time>@Model.Post.CreateTimeString
+                    <td title="@Model.PublishTime.ToDateAndTime()">
+                        <time datetime="@Model.PublishTime.ToDateAndTime()"></time>@Model.PublishTimeString
                     </td>
                 </tr>
                 <tr>
                     <td>更新</td>
-                    <td title="@Model.Post.LastUpdateTimeUtc.ToChinaTime().ToDateAndTime()">@Model.Post.LastUpdateTimeString</td>
+                    <td title="@Model.LastUpdateTime.ToDateAndTime()">@Model.LastUpdateTimeString</td>
                 </tr>
             </table>
         </div>

@@ -1,4 +1,4 @@
-﻿using Laobian.Share.Extension;
+﻿using Laobian.Share.Log;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
@@ -15,6 +15,7 @@ namespace Laobian.Blog
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    webBuilder.ConfigureLogging(builder => builder.AddQueuedLogger());
                     webBuilder.UseStartup<Startup>();
                 });
     }

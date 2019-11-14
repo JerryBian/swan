@@ -2,35 +2,35 @@
 
 <div>
     <div class="list-group list-group-flush">
-        @foreach (var item in Model.Posts)
+        @foreach (var post in Model.Posts)
         {
         <div class="list-group-item flex-column align-items-start post-item">
             <div>
                 <div class="mb-1 post-item-title">
                     <i class="fas fa-angle-down"></i>
                     @{
-                        if (!item.Post.IsReallyPublic)
+                        if (!post.IsPublic)
                         {
                             <span class="badge badge-secondary">Private</span>
                         }
 
-                        if (item.Post.PutAtTop)
+                        if (post.IsTopping)
                         {
                             <span class="badge badge-success">Top</span>
                         }
                     }
-                    <a href="@item.Post.FullUrl">@item.Post.Title</a>
+                    <a href="@post.FullUrl">@post.Title</a>
                 </div>
             </div>
             <div class="container-fluid mt-1 mb-1">
                 <div class="row">
                     <div class="mb-2 mt-1 post-item-excerpt">
-                        @Html.Raw(item.Post.Excerpt)
+                        @Html.Raw(post.ExcerptHtml)
                     </div>
                 </div>
             </div>
-            <div class="text-muted d-none d-sm-block post-item-meta">@Html.Raw(item.GetMetadataHtml())</div>
-            <div class="text-muted d-sm-none post-item-meta">@Html.Raw(item.GetSimpleMetadataHtml())</div>
+            <div class="text-muted d-none d-sm-block post-item-meta">@Html.Raw(post.GetMetadataHtml())</div>
+            <div class="text-muted d-sm-none post-item-meta">@Html.Raw(post.GetSimpleMetadataHtml())</div>
         </div>
         }
     </div>

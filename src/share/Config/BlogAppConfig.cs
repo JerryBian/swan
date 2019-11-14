@@ -33,7 +33,7 @@ namespace Laobian.Share.Config
         [ConfigMeta(Name = "ASSET_LOCAL_COMMIT_USER_EMAIL", DefaultValue = "bot@laobian.me")]
         public string AssetGitCommitEmail { get; set; }
 
-        [ConfigMeta(Name = "BLOG_ADDRESS", DefaultValue = "https://blog.laobian.me/")]
+        [ConfigMeta(Name = "BLOG_ADDRESS", DefaultValue = "https://blog.laobian.me")]
         public string BlogAddress { get; set; }
 
         [ConfigMeta(Name = "POST_UPDATE_SCHEDULED", DefaultValue = false)]
