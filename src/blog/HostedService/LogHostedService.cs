@@ -1,166 +1,138 @@
-﻿//using Laobian.Share.BlogEngine;
-//using Laobian.Share.Config;
-//using Laobian.Share.Extension;
-//using Laobian.Share.Infrastructure.Email;
-//using Laobian.Share.Log;
-//using Microsoft.Extensions.Hosting;
-//using Microsoft.Extensions.Logging;
-//using Microsoft.Extensions.Options;
-//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-//using System.Threading;
-//using System.Threading.Tasks;
+﻿using Laobian.Share.Config;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Laobian.Share;
+using Laobian.Share.Blog.Alert;
+using Laobian.Share.Log;
 
-//namespace Laobian.Blog.HostedService
-//{
-//    public class LogHostedService : BackgroundService
-//    {
-//        private readonly AppConfig _appConfig;
-//        private readonly ILogStore _logStore;
-//        private readonly IEmailClient _emailClient;
-//        private readonly ILogger<LogHostedService> _logger;
+namespace Laobian.Blog.HostedService
+{
+    public class LogHostedService : BackgroundService
+    {
+        private readonly AppConfig _appConfig;
+        private readonly IBlogAlertService _alertService;
+        private readonly ILogger<LogHostedService> _logger;
 
-//        private DateTime _warningLogsLastUpdatedAt;
-//        private DateTime _errorLogsLastUpdateAt;
+        private DateTime _warningLogsLastUpdatedAt;
+        private DateTime _errorLogsLastUpdateAt;
+        private DateTime _criticalLogsLastFlushAt;
 
-//        public LogHostedService(
-//            ILogStore logStore, 
-//            ILogger<LogHostedService> logger, 
-//            IEmailClient emailClient,
-//            IOptions<AppConfig> appConfig)
-//        {
-//            _logStore = logStore;
-//            _emailClient = emailClient;
-//            _logger = logger;
-//            _appConfig = appConfig.Value;
-//        }
+        public LogHostedService(
+            IBlogAlertService alertService,
+            ILogger<LogHostedService> logger,
+            IOptions<AppConfig> appConfig)
+        {
+            _alertService = alertService;
+            _logger = logger;
+            _appConfig = appConfig.Value;
+        }
 
-//        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-//        {
-//            while(!stoppingToken.IsCancellationRequested)
-//            {
-//                await Task.Delay(TimeSpan.FromMilliseconds(300), stoppingToken);
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        {
+            while (!stoppingToken.IsCancellationRequested)
+            {
+                await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
 
-//                try
-//                {
-//                    await HandleLogsAsync();
-//                }
-//                catch(Exception ex)
-//                {
-//                    _logger.LogCritical(ex, "Log hosted service failed.");
-//                }
-//            }
-//        }
+                try
+                {
+                    await HandleLogsAsync();
+                    _logger.LogInformation("Logs flushed completely.");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogCritical(ex, "Log hosted service failed.");
+                }
+            }
+        }
 
-//        public override async Task StopAsync(CancellationToken cancellationToken)
-//        {
-//            await HandleLogsAsync();
-//            await base.StopAsync(cancellationToken);
-//        }
+        public override async Task StopAsync(CancellationToken cancellationToken)
+        {
+            await HandleLogsAsync();
+            await base.StopAsync(cancellationToken);
+        }
 
-//        public override Task StartAsync(CancellationToken cancellationToken)
-//        {
-//            return base.StartAsync(cancellationToken);
-//        }
+        private async Task HandleLogsAsync()
+        {
+            var tasks = new List<Task>
+            {
+                HandleCriticalLogsAsync(),
+                HandleErrorLogsAsync(),
+                HandleWarningLogsAsync()
+            };
 
-//        private async Task HandleLogsAsync()
-//        {
-//            var tasks = new List<Task>
-//            {
-//                HandleCriticalLogsAsync(),
-//                HandleErrorLogsAsync(),
-//                HandleWarningLogsAsync()
-//            };
+            await Task.WhenAll(tasks);
+        }
 
-//            await Task.WhenAll(tasks);
-//        }
+        private async Task HandleWarningLogsAsync()
+        {
+            if (MemoryStore.WarningLogQueue.Count >= _appConfig.Blog.WarningLogsThreshold ||
+                DateTime.Now.Hour == _appConfig.Blog.LogFlushAtHour &&
+                DateTime.Now.Date > _warningLogsLastUpdatedAt.Date)
+            {
+                var logs = new List<LogEntry>();
+                while (MemoryStore.WarningLogQueue.TryDequeue(out var log))
+                {
+                    logs.Add(log);
+                }
 
-//        private async Task HandleWarningLogsAsync()
-//        {
-//            if (DateTime.UtcNow - _warningLogsLastUpdatedAt < TimeSpan.FromSeconds(_appConfig.Common.WarningLogsSendInterval))
-//            {
-//                return;
-//            }
+                if (logs.Any())
+                {
+                    // send alert
+                    await _alertService.AlertWarningsAsync("WARNINGS - blog", logs);
+                }
 
-//            var logs = _logStore.GetLevel(LogLevel.Warning);
-//            if (!logs.Any())
-//            {
-//                return;
-//            }
+                _warningLogsLastUpdatedAt = DateTime.Now;
+            }
+        }
 
-//            var message = new StringBuilder();
-//            foreach (var log in logs)
-//            {
-//                message.AppendLine($"<p><details>{log}</details></p>");
-//            }
+        private async Task HandleErrorLogsAsync()
+        {
+            if (MemoryStore.ErrorLogQueue.Count >= _appConfig.Blog.ErrorLogsThreshold ||
+                DateTime.Now.Hour == _appConfig.Blog.LogFlushAtHour &&
+                DateTime.Now.Date > _errorLogsLastUpdateAt.Date)
+            {
+                var logs = new List<LogEntry>();
+                while (MemoryStore.ErrorLogQueue.TryDequeue(out var log))
+                {
+                    logs.Add(log);
+                }
 
-//            message.AppendLine($"<p><small>generated at {DateTime.UtcNow.ToChinaTime().ToDateAndTime()}.</small></p>");
-//            await _emailClient.SendAsync(
-//                _appConfig.Blog.ReportSenderName,
-//                _appConfig.Blog.ReportSenderEmail,
-//                _appConfig.Common.AdminEnglishName,
-//                _appConfig.Common.AdminEmail,
-//                "WARNING LOGS!",
-//                message.ToString());
+                if (logs.Any())
+                {
+                    // send alert
+                    await _alertService.AlertWarningsAsync("ERRORS - blog", logs);
+                }
 
-//            _warningLogsLastUpdatedAt = DateTime.UtcNow;
-//        }
+                _errorLogsLastUpdateAt = DateTime.Now;
+            }
+        }
 
-//        private async Task HandleErrorLogsAsync()
-//        {
-//            if (DateTime.UtcNow - _errorLogsLastUpdateAt < TimeSpan.FromSeconds(_appConfig.Common.ErrorLogsSendInterval))
-//            {
-//                return;
-//            }
+        private async Task HandleCriticalLogsAsync()
+        {
+            if (MemoryStore.CriticalLogQueue.Count >= _appConfig.Blog.CriticalLogsThreshold ||
+                DateTime.Now.Hour == _appConfig.Blog.LogFlushAtHour &&
+                DateTime.Now.Date > _criticalLogsLastFlushAt.Date)
+            {
+                var logs = new List<LogEntry>();
+                while (MemoryStore.CriticalLogQueue.TryDequeue(out var log))
+                {
+                    logs.Add(log);
+                }
 
-//            var logs = _logStore.GetLevel(LogLevel.Error);
-//            if (!logs.Any())
-//            {
-//                return;
-//            }
+                if (logs.Any())
+                {
+                    // send alert
+                    await _alertService.AlertWarningsAsync("CRITICAL - blog", logs);
+                }
 
-//            var message = new StringBuilder();
-//            foreach (var log in logs)
-//            {
-//                message.AppendLine($"<p><details>{log}</details></p>");
-//            }
-
-//            message.AppendLine($"<p><small>generated at {DateTime.UtcNow.ToChinaTime().ToDateAndTime()}.</small></p>");
-//            await _emailClient.SendAsync(
-//                _appConfig.Blog.ReportSenderName,
-//                _appConfig.Blog.ReportSenderEmail,
-//                _appConfig.Common.AdminEnglishName,
-//                _appConfig.Common.AdminEmail,
-//                "ERROR LOGS!",
-//                message.ToString());
-
-//            _errorLogsLastUpdateAt = DateTime.UtcNow;
-//        }
-
-//        private async Task HandleCriticalLogsAsync()
-//        {
-//            var logs = _logStore.GetLevel(LogLevel.Critical);
-//            if (!logs.Any())
-//            {
-//                return;
-//            }
-
-//            var message = new StringBuilder();
-//            foreach(var log in logs)
-//            {
-//                message.AppendLine($"<p><details>{log}</details></p>");
-//            }
-
-//            message.AppendLine($"<p><small>generated at {DateTime.UtcNow.ToChinaTime().ToDateAndTime()}.</small></p>");
-//            await _emailClient.SendAsync(
-//                _appConfig.Blog.ReportSenderName,
-//                _appConfig.Blog.ReportSenderEmail,
-//                _appConfig.Common.AdminEnglishName,
-//                _appConfig.Common.AdminEmail,
-//                "CRITICAL LOGS!",
-//                message.ToString());
-//        }
-//    }
-//}
+                _criticalLogsLastFlushAt = DateTime.Now;
+            }
+        }
+    }
+}
