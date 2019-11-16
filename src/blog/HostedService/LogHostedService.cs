@@ -3,9 +3,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Share;
@@ -58,11 +57,6 @@ namespace Laobian.Blog.HostedService
             await base.StopAsync(cancellationToken);
         }
 
-        public override Task StartAsync(CancellationToken cancellationToken)
-        {
-            return base.StartAsync(cancellationToken);
-        }
-
         private async Task HandleLogsAsync()
         {
             var tasks = new List<Task>
@@ -87,7 +81,11 @@ namespace Laobian.Blog.HostedService
                     logs.Add(log);
                 }
 
-                // send alert
+                if (logs.Any())
+                {
+                    // send alert
+                    await _alertService.AlertWarningsAsync("WARNINGS - blog", logs);
+                }
 
                 _warningLogsLastUpdatedAt = DateTime.Now;
             }
@@ -105,7 +103,11 @@ namespace Laobian.Blog.HostedService
                     logs.Add(log);
                 }
 
-                // send alert
+                if (logs.Any())
+                {
+                    // send alert
+                    await _alertService.AlertWarningsAsync("ERRORS - blog", logs);
+                }
 
                 _errorLogsLastUpdateAt = DateTime.Now;
             }
@@ -123,7 +125,11 @@ namespace Laobian.Blog.HostedService
                     logs.Add(log);
                 }
 
-                // send alert
+                if (logs.Any())
+                {
+                    // send alert
+                    await _alertService.AlertWarningsAsync("CRITICAL - blog", logs);
+                }
 
                 _criticalLogsLastFlushAt = DateTime.Now;
             }

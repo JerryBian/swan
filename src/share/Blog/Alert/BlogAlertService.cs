@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Laobian.Share.Config;
 using Laobian.Share.Email;
+using Laobian.Share.Log;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -16,7 +17,7 @@ namespace Laobian.Share.Blog.Alert
         private readonly ILogger<BlogAlertService> _logger;
 
         public BlogAlertService(
-            IOptions<AppConfig> appConfig, 
+            IOptions<AppConfig> appConfig,
             IEmailClient emailClient,
             ILogger<BlogAlertService> logger)
         {
@@ -24,6 +25,87 @@ namespace Laobian.Share.Blog.Alert
             _appConfig = appConfig.Value;
             _emailClient = emailClient;
         }
+
+        public async Task AlertWarningsAsync(string subject, List<LogEntry> entries)
+        {
+            try
+            {
+                var emailEntry = new EmailEntry(_appConfig.Common.AdminEnglishName, _appConfig.Common.AdminEmail)
+                {
+                    FromName = _appConfig.Common.ReportSenderName,
+                    FromAddress = _appConfig.Common.ReportSenderEmail,
+                    Subject = subject,
+                    HtmlContent = $"<p>Warnings you need to pay attention: </p><ol>"
+                };
+
+                foreach (var logEntry in entries)
+                {
+                    emailEntry.HtmlContent +=
+                        $"<li>{logEntry.Message}<br/><pre><code>{logEntry.Exception}</code></pre></li>";
+                }
+
+                emailEntry.HtmlContent += "</ol>";
+                await _emailClient.SendAsync(emailEntry);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex, "Alert warnings failed.");
+            }
+        }
+        public async Task AlertCriticalAsync(string subject, List<LogEntry> entries)
+        {
+            try
+            {
+                var emailEntry = new EmailEntry(_appConfig.Common.AdminEnglishName, _appConfig.Common.AdminEmail)
+                {
+                    FromName = _appConfig.Common.ReportSenderName,
+                    FromAddress = _appConfig.Common.ReportSenderEmail,
+                    Subject = subject,
+                    HtmlContent = $"<p>Critical logs you need to pay attention: </p><ol>"
+                };
+
+                foreach (var logEntry in entries)
+                {
+                    emailEntry.HtmlContent +=
+                        $"<li>{logEntry.Message}<br/><pre><code>{logEntry.Exception}</code></pre></li>";
+                }
+
+                emailEntry.HtmlContent += "</ol>";
+                await _emailClient.SendAsync(emailEntry);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex, "Alert critical failed."); // Email error will be recorded as information
+            }
+        }
+
+        public async Task AlertErrorsAsync(string subject, List<LogEntry> entries)
+        {
+            try
+            {
+                var emailEntry = new EmailEntry(_appConfig.Common.AdminEnglishName, _appConfig.Common.AdminEmail)
+                {
+                    FromName = _appConfig.Common.ReportSenderName,
+                    FromAddress = _appConfig.Common.ReportSenderEmail,
+                    Subject = subject,
+                    HtmlContent = $"<p>Error logs you need to pay attention: </p><ol>"
+                };
+
+                foreach (var logEntry in entries)
+                {
+                    emailEntry.HtmlContent +=
+                        $"<li>{logEntry.Message}<br/><pre><code>{logEntry.Exception}</code></pre></li>";
+                }
+
+                emailEntry.HtmlContent += "</ol>";
+                await _emailClient.SendAsync(emailEntry);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex, "Alert errors failed."); // Email error will be recorded as information
+            }
+        }
+
 
         public async Task AlertEventAsync(string message, Exception error = null)
         {
@@ -47,7 +129,7 @@ namespace Laobian.Share.Blog.Alert
             }
             catch (Exception ex)
             {
-                _logger.LogCritical(ex, $"Alert accident failed. Original Message = {message}, Original Exception = {error}. Current exception = {ex}.");
+                _logger.LogInformation(ex, $"Alert accident failed. Original Message = {message}, Original Exception = {error}. Current exception = {ex}.");
             }
         }
 
@@ -100,7 +182,7 @@ namespace Laobian.Share.Blog.Alert
             }
             catch (Exception ex)
             {
-                _logger.LogCritical(
+                _logger.LogInformation(
                     $"Alert assets reloading failed, subject = {subject}, warning = {warning}, error = {error}.", ex,
                     true);
             }

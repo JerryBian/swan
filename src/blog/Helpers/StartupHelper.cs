@@ -38,6 +38,7 @@ namespace Laobian.Blog.Helpers
             services.AddSingleton<BlogTagParser>();
 
             services.AddHostedService<AssetHostedService>();
+            services.AddHostedService<LogHostedService>();
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
