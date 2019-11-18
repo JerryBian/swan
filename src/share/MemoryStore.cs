@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Reflection;
+using Laobian.Share.Extension;
 using Laobian.Share.Log;
 
 namespace Laobian.Share
@@ -15,7 +16,7 @@ namespace Laobian.Share
 
         public static DateTime StartTime;
 
-        public static string RunTime => (DateTime.Now - StartTime).ToString();
+        public static string RunTime => (DateTime.Now - StartTime).Human();
 
         public static string Version = Assembly.GetEntryAssembly()?.GetName().Version.ToString();
 

@@ -24,6 +24,7 @@ namespace Laobian.Blog.Controllers
             ViewData["Title"] = "分类";
             ViewData["Canonical"] = "/category/";
             ViewData["Description"] = "所有文章以分类的形式展现";
+            ViewData["AdminView"] = HttpContext.User.Identity.IsAuthenticated;
             return View("Category", model);
         }
 
@@ -36,6 +37,7 @@ namespace Laobian.Blog.Controllers
             ViewData["Title"] = "标签";
             ViewData["Canonical"] = "/tag/";
             ViewData["Description"] = "所有文章以标签归类的形式展现";
+            ViewData["AdminView"] = HttpContext.User.Identity.IsAuthenticated;
             return View("Tag", model);
         }
 
@@ -48,6 +50,7 @@ namespace Laobian.Blog.Controllers
             ViewData["Title"] = "存档";
             ViewData["Canonical"] = "/archive/";
             ViewData["Description"] = "所有文章以发表日期归类的形式展现";
+            ViewData["AdminView"] = HttpContext.User.Identity.IsAuthenticated;
             return View("Index", model);
         }
     }

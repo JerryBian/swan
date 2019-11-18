@@ -1,8 +1,11 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using Laobian.Blog.Helpers;
+using Laobian.Share;
+using Laobian.Share.Blog;
 using Laobian.Share.Config;
 using Laobian.Share.Email;
 using Microsoft.AspNetCore.Builder;
@@ -90,10 +93,7 @@ namespace Laobian.Blog
 
             applicationLifetime.ApplicationStarted.Register(async () =>
             {
-                //BlogState.StartAtUtc = DateTime.UtcNow;
-                //BlogState.IsDevEnvironment = HostEnvironment.IsDevelopment();
-                //BlogState.IsStageEnvironment = HostEnvironment.IsStaging();
-                //BlogState.IsProdEnvironment = HostEnvironment.IsProduction();
+                MemoryStore.StartTime = DateTime.Now;
 
                 if (!HostEnvironment.IsDevelopment())
                 {
