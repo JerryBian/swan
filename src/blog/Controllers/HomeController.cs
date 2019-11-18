@@ -33,16 +33,7 @@ namespace Laobian.Blog.Controllers
                 $"{CacheKey.Build(nameof(HomeController), nameof(Index), p, User.Identity.IsAuthenticated)}",
                 () =>
                 {
-                    List<BlogPost> posts;
-                    if (User.Identity.IsAuthenticated)
-                    {
-                        posts = _blogService.GetPosts(false);
-                    }
-                    else
-                    {
-                        posts = _blogService.GetPosts();
-                    }
-
+                    var posts = User.Identity.IsAuthenticated ? _blogService.GetPosts(false) : _blogService.GetPosts();
                     var model = new PagedPostViewModel(p, posts.Count)
                     {
                         Url = Request.Path
@@ -53,18 +44,19 @@ namespace Laobian.Blog.Controllers
                         model.Posts.Add(blogPost);
                     }
 
-                    if (model.CurrentPage > 1)
-                    {
-                        ViewData["Title"] = $"第{model.CurrentPage}页";
-                        ViewData["Robots"] = "noindex, nofollow";
-                    }
-
-                    ViewData["Canonical"] = "/";
+                    
 
                     return model;
                 }, new BlogAssetChangeToken());
 
+            if (viewModel.CurrentPage > 1)
+            {
+                ViewData["Title"] = $"第{viewModel.CurrentPage}页";
+                ViewData["Robots"] = "noindex, nofollow";
+            }
 
+            ViewData["Canonical"] = "/";
+            ViewData["AdminView"] = HttpContext.User.Identity.IsAuthenticated;
             return View(viewModel);
         }
 

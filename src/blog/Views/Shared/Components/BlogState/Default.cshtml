@@ -1,0 +1,28 @@
+﻿<div class="card mb-3">
+    <div class="card-body">
+        <div class="card-text">
+            <table>
+                <tr>
+                    <td>版本</td>
+                    <td>@ViewData["Version"]</td>
+                </tr>
+                <tr>
+                    <td>文章</td>
+                    <td>
+                        @ViewData["Posts"]
+                    </td>
+                </tr>
+                <tr>
+                    <td>访问</td>
+                    <td>
+                        @ViewData["PostsAccessCount"] 次
+                    </td>
+                </tr>
+                <tr>
+                    <td>运行</td>
+                    <td>@ViewData["RunTime"]</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

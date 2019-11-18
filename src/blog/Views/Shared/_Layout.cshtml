@@ -59,6 +59,8 @@
                     @RenderSection("stickySidebar", false)
 
                     <partial name="_AsideCopyright" />
+
+                    @await Component.InvokeAsync("BlogState", new { adminView = ViewData["AdminView"] })
                 </div>
 
             </aside>
