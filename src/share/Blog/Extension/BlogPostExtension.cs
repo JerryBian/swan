@@ -131,7 +131,7 @@ namespace Laobian.Share.Blog.Extension
             htmlDoc.LoadHtml(html);
 
             // all images nodes
-            var imageNodes = htmlDoc.DocumentNode.Descendants("img");
+            var imageNodes = htmlDoc.DocumentNode.Descendants("img").ToList();
             foreach (var imageNode in imageNodes)
             {
                 if (imageNode.Attributes.Contains("src"))

@@ -18,6 +18,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 
@@ -90,6 +91,7 @@ namespace Laobian.Blog
             var appConfig = app.ApplicationServices.GetService<IOptions<AppConfig>>().Value;
             //var logService = app.ApplicationServices.GetService<ILogService>();
             var emailClient = app.ApplicationServices.GetService<IEmailClient>();
+            var logger = app.ApplicationServices.GetService<ILogger<Startup>>();
 
             applicationLifetime.ApplicationStarted.Register(async () =>
             {
@@ -105,6 +107,8 @@ namespace Laobian.Blog
                     //    "Blog started.",
                     //    $"<ul><li>Machine: {Environment.MachineName}</li><li>Time: {DateTime.UtcNow.ToChinaTime()}</li><li>Process: {Process.GetCurrentProcess().Id}</li></ul>");
                 }
+
+                logger.LogInformation("Application started.");
             });
 
             applicationLifetime.ApplicationStopping.Register(async () =>

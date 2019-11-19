@@ -51,6 +51,13 @@ namespace Laobian.Blog.HostedService
             }
         }
 
+        public override async Task StartAsync(CancellationToken cancellationToken)
+        {
+            _logger.LogInformation("LogHostedService is starting.");
+            await base.StartAsync(cancellationToken);
+            _logger.LogInformation("LogHostedService started.");
+        }
+
         public override async Task StopAsync(CancellationToken cancellationToken)
         {
             await HandleLogsAsync();
