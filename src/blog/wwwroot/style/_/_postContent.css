@@ -45,3 +45,12 @@ a {
     padding-bottom: 2px;
     border-bottom-style: dashed;
 }
+
+img {
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+    img:hover {
+        opacity: 0.8;
+    }

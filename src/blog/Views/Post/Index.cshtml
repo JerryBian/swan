@@ -83,31 +83,6 @@
     {
         <script src="~/script/post.min.js" defer asp-append-version="true"></script>
     }
-    
-    <script>
-        try {
-            document.addEventListener("DOMContentLoaded", function () {
-                let modal = document.querySelector("#imgModal");
-                let images = document.querySelectorAll(".post img");
-                let modalImg = document.querySelector("#modal-content");
-                let caption = document.querySelector("#modal-caption");
-                images.forEach(img => {
-                    img.onclick = function() {
-                        modal.style.display = "block";
-                        modalImg.src = this.src;
-                        caption.innerHTML = this.alt;
-                    };
-                });
-
-                document.querySelector("#modal-close").onclick = function() {
-                    modal.style.display = "none";
-                };
-            }, false);
-
-        } catch (e) {
-            console.log(e);
-        }
-    </script>
 }
 
 @section style{
