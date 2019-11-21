@@ -12,7 +12,3 @@
 @section script{
     <script src="~/script/post.min.js" defer asp-append-version="true"></script>
 }
-
-@section sidebar{
-    @await Component.InvokeAsync("PostRecommend", new { adminView = ViewData["AdminView"] })
-}

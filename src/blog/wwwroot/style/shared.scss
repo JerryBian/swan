@@ -1,6 +1,14 @@
 ﻿.navbar,
-footer {
+footer,
+.progress-container {
     background-color: whitesmoke;
+}
+
+.progress-container {
+    height: 3px;
+    position: fixed;
+    z-index: 1;
+    width: 100%;
 }
 
 footer {

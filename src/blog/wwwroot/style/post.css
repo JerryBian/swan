@@ -1,69 +1,93 @@
 @charset "UTF-8";
-/* Tomorrow Night Theme */
-/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
-/* Original theme - https://github.com/chriskempson/tomorrow-theme */
-/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
-/* Tomorrow Comment */
-.hljs-comment,
-.hljs-quote {
-  color: #969896;
-}
+/*
 
-/* Tomorrow Red */
-.hljs-variable,
-.hljs-template-variable,
-.hljs-tag,
-.hljs-name,
-.hljs-selector-id,
-.hljs-selector-class,
-.hljs-regexp,
-.hljs-deletion {
-  color: #cc6666;
-}
+github.com style (c) Vasily Polovnyov <vast@whiteants.net>
 
-/* Tomorrow Orange */
-.hljs-number,
-.hljs-built_in,
-.hljs-builtin-name,
-.hljs-literal,
-.hljs-type,
-.hljs-params,
-.hljs-meta,
-.hljs-link {
-  color: #de935f;
-}
-
-/* Tomorrow Yellow */
-.hljs-attribute {
-  color: #f0c674;
-}
-
-/* Tomorrow Green */
-.hljs-string,
-.hljs-symbol,
-.hljs-bullet,
-.hljs-addition {
-  color: #b5bd68;
-}
-
-/* Tomorrow Blue */
-.hljs-title,
-.hljs-section {
-  color: #81a2be;
-}
-
-/* Tomorrow Purple */
-.hljs-keyword,
-.hljs-selector-tag {
-  color: #b294bb;
-}
-
+*/
 .hljs {
   display: block;
   overflow-x: auto;
-  background: #1d1f21;
-  color: #c5c8c6;
   padding: 0.5em;
+  color: #333;
+  background: #f8f8f8;
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: #998;
+  font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-subst {
+  color: #333;
+  font-weight: bold;
+}
+
+.hljs-number,
+.hljs-literal,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag .hljs-attr {
+  color: #008080;
+}
+
+.hljs-string,
+.hljs-doctag {
+  color: #d14;
+}
+
+.hljs-title,
+.hljs-section,
+.hljs-selector-id {
+  color: #900;
+  font-weight: bold;
+}
+
+.hljs-subst {
+  font-weight: normal;
+}
+
+.hljs-type,
+.hljs-class .hljs-title {
+  color: #458;
+  font-weight: bold;
+}
+
+.hljs-tag,
+.hljs-name,
+.hljs-attribute {
+  color: #000080;
+  font-weight: normal;
+}
+
+.hljs-regexp,
+.hljs-link {
+  color: #009926;
+}
+
+.hljs-symbol,
+.hljs-bullet {
+  color: #990073;
+}
+
+.hljs-built_in,
+.hljs-builtin-name {
+  color: #0086b3;
+}
+
+.hljs-meta {
+  color: #999;
+  font-weight: bold;
+}
+
+.hljs-deletion {
+  background: #fdd;
+}
+
+.hljs-addition {
+  background: #dfd;
 }
 
 .hljs-emphasis {
@@ -575,7 +599,7 @@ mark,
 
 code {
   font-size: 87.5%;
-  color: #d35400;
+  color: #B33771;
   word-break: break-word;
 }
 a > code {
@@ -9731,8 +9755,16 @@ h3 {
   }
 }
 .navbar,
-footer {
+footer,
+.progress-container {
   background-color: whitesmoke;
+}
+
+.progress-container {
+  height: 3px;
+  position: fixed;
+  z-index: 1;
+  width: 100%;
 }
 
 footer {
@@ -9818,16 +9850,21 @@ aside ul li {
   padding-bottom: 2px;
   border-bottom-style: dashed;
 }
+.post .post-content pre {
+  font-size: 92%;
+}
 .post .post-content img {
   cursor: pointer;
   transition: 0.3s;
 }
 .post .post-content img:hover {
-  opacity: 0.7;
+  opacity: 0.9;
 }
 
 .post-alert {
   margin-top: 3rem;
+  font-size: 92%;
+  color: unset;
 }
 .post-alert ul {
   padding-left: 1.25rem;
@@ -9846,7 +9883,7 @@ aside ul li {
   /* Stay in place */
   z-index: 1050;
   /* Sit on top */
-  padding-top: 100px;
+  padding-top: 60px;
   /* Location of the box */
   left: 0;
   top: 0;
@@ -9899,10 +9936,10 @@ aside ul li {
 /* The Close Button */
 #modal-close {
   position: absolute;
-  top: 15px;
+  top: 5px;
   right: 35px;
   color: #f1f1f1;
-  font-size: 40px;
+  font-size: 35px;
   font-weight: bold;
   transition: 0.3s;
 }

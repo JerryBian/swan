@@ -1,4 +1,4 @@
-﻿@use "lib/highlight/styles/tomorrow-night.css";
+﻿@use "lib/highlight/styles/github.css";
 
 @import "_/_common.scss";
 @import "../lib/bootstrap/scss/bootstrap.scss";
@@ -19,6 +19,8 @@
 
 .post-alert {
     margin-top: 3rem;
+    font-size: 92%;
+    color: unset;
 
     ul {
         padding-left: 1.25rem;
@@ -36,7 +38,7 @@
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
     z-index: 1050; /* Sit on top */
-    padding-top: 100px; /* Location of the box */
+    padding-top: 60px; /* Location of the box */
     left: 0;
     top: 0;
     width: 100%; /* Full width */
@@ -85,10 +87,10 @@
 /* The Close Button */
 #modal-close {
     position: absolute;
-    top: 15px;
+    top: 5px;
     right: 35px;
     color: #f1f1f1;
-    font-size: 40px;
+    font-size: 35px;
     font-weight: bold;
     transition: 0.3s;
 

@@ -18,8 +18,9 @@ namespace Laobian.Blog.ViewComponents
             _blogService = blogService;
         }
 
-        public IViewComponentResult Invoke(bool adminView)
+        public IViewComponentResult Invoke()
         {
+            var adminView = !HttpContext.User.Identity.IsAuthenticated;
             var posts = _cacheClient.GetOrCreate(
                 CacheKey.Build(nameof(BlogStateViewComponent), nameof(Invoke), adminView, "POSTS"),
                 () => _blogService.GetPosts(!adminView).Count,

@@ -6,18 +6,14 @@
         {
         <div class="list-group-item flex-column align-items-start post-item">
             <div>
+                @if (!post.IsPublic)
+                {
+                    <div class="text-warning font-italic"><i class="fas fa-info-circle"></i> 这篇文章尚未发布，仅供管理员预览。</div>
+                }
                 <div class="mb-1 post-item-title">
-                    <i class="fas fa-angle-down"></i>
-                    @{
-                        if (!post.IsPublic)
-                        {
-                            <span class="badge badge-secondary">Private</span>
-                        }
-
-                        if (post.IsTopping)
-                        {
-                            <span class="badge badge-success">Top</span>
-                        }
+                    @if (post.IsTopping)
+                    {
+                        <i class="fas fa-fire-alt"></i>
                     }
                     <a href="@post.FullUrl">@post.Title</a>
                 </div>

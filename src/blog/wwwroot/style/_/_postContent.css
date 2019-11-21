@@ -46,11 +46,15 @@ a {
     border-bottom-style: dashed;
 }
 
+pre {
+    font-size: 92%;
+}
+
 img {
     cursor: pointer;
     transition: 0.3s;
 }
 
     img:hover {
-        opacity: 0.8;
+        opacity: 0.9;
     }

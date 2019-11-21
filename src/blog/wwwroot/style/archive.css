@@ -500,7 +500,7 @@ mark,
 
 code {
   font-size: 87.5%;
-  color: #d35400;
+  color: #B33771;
   word-break: break-word;
 }
 a > code {
@@ -9656,8 +9656,16 @@ h3 {
   }
 }
 .navbar,
-footer {
+footer,
+.progress-container {
   background-color: whitesmoke;
+}
+
+.progress-container {
+  height: 3px;
+  position: fixed;
+  z-index: 1;
+  width: 100%;
 }
 
 footer {

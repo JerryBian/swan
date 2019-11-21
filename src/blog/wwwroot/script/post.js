@@ -20,9 +20,11 @@ try {
             };
         });
 
-        document.querySelector("#modal-close").onclick = function () {
+        function closeModal() {
             modal.style.display = "none";
-        };
+        }
+
+        document.querySelector("#modal-close").onclick = closeModal;
     }, false);
 
 } catch (e) {

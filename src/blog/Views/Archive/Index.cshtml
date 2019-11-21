@@ -15,9 +15,6 @@
         {
             <h3 id="@item.Year">
                 <span>@item.Title (@item.Posts.Count)</span>
-                <a href="@item.GetRelativeLink()">
-                    <i class="text-muted fas fa-link fa-xs"></i>
-                </a>
             </h3>
             <table>
                 @foreach (var post in item.Posts)

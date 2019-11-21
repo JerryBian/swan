@@ -2,14 +2,11 @@
 @inject IOptions<AppConfig> Config
 
 <article class="post">
+    @if (!Model.IsPublic)
+    {
+        <div class="text-warning font-italic"><i class="fas fa-info-circle"></i> 这篇文章尚未发布，仅供管理员预览。</div>
+    }
     <div class="post-title">
-        <i class="fas fa-angle-down"></i>
-        @{
-            if (!Model.IsPublic)
-            {
-                <span class="badge badge-secondary">Private</span>
-            }
-        }
         @Model.Title
     </div>
     <div class="text-muted text-left d-block d-lg-none post-meta">
@@ -21,32 +18,35 @@
 
         <p class="text-muted">（本文完）</p>
     </div>
-    
-    
+
+
 </article>
 
-<div class="alert alert-info post-alert" role="alert">
+<div class="alert alert-warning post-alert" role="alert">
     <ul>
-        @{
-            var meta = Model.GetCategoryAndTagHtml();
-            if (!string.IsNullOrEmpty(meta))
-            {
-                <li>发表于 @Html.Raw(meta)</li>
-            }
 
-            if (Model.PrevPost != null)
-            {
-                <li>前一篇：<a href="@Model.PrevPost.FullUrl">@Model.PrevPost.Title</a></li>
-            }
-
-            if (Model.NextPost != null)
-            {
-                <li>后一篇：<a href="@Model.NextPost.FullUrl">@Model.NextPost.Title</a></li>
-            }
-        }
         <li>
-            关于这篇文章的评论，请发送电子邮件至 <a href="mailto:@Config.Value.Common.AdminEmail?subject=评论 - @Model.Title&body=Good job！">@Config.Value.Common.AdminEmail</a>。
+            @{
+                var meta = Model.GetCategoryAndTagHtml();
+                if (!string.IsNullOrEmpty(meta))
+                {
+                    <text>发表于 @Html.Raw(meta)</text>
+                }
+            }
         </li>
+        <li>
+            这篇文章的留言，请发送电子邮件至 <a href="mailto:@Config.Value.Common.AdminEmail?subject=评论 - @Model.Title&body=Good job！">@Config.Value.Common.AdminEmail</a>
+        </li>
+
+        @if (Model.PrevPost != null)
+        {
+            <li>前一篇：<a href="@Model.PrevPost.FullUrl">@Model.PrevPost.Title</a></li>
+        }
+
+        @if (Model.NextPost != null)
+        {
+            <li>后一篇：<a href="@Model.NextPost.FullUrl">@Model.NextPost.Title</a></li>
+        }
     </ul>
 </div>
 
@@ -55,10 +55,6 @@
     <img id="modal-content">
     <div id="modal-caption"></div>
 </div>
-
-@section sidebar{
-    @await Component.InvokeAsync("PostRecommend", new { adminView = ViewData["AdminView"], excludedLink = Model.Link })
-}
 
 @section stickySidebar{
     <partial name="_AsidePostInfo" model="@Model" />

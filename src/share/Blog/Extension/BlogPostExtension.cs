@@ -35,7 +35,7 @@ namespace Laobian.Share.Blog.Extension
         {
             var results = new List<string>();
             results.Add($"<i class=\"fas fa-calendar-alt\"></i> <span>发表于 {post.PublishTimeString}</span>");
-            results.Add($"<i class=\"fas fa-eye\"></i> <span>{post.AccessCountString} 次访问</span>");
+            results.Add($"<i class=\"fas fa-eye\"></i> <span>{post.AccessCountString} 次阅读</span>");
 
             return string.Join(" &middot; ", results);
         }
