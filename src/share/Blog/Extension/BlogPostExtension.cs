@@ -5,6 +5,7 @@ using System.Linq;
 using HtmlAgilityPack;
 using Laobian.Share.Blog.Model;
 using Laobian.Share.Config;
+using Laobian.Share.Extension;
 using Laobian.Share.Helper;
 
 namespace Laobian.Share.Blog.Extension
@@ -34,8 +35,8 @@ namespace Laobian.Share.Blog.Extension
         public static string GetSimpleMetadataHtml(this BlogPost post)
         {
             var results = new List<string>();
-            results.Add($"<i class=\"fas fa-calendar-alt\"></i> <span>发表于 {post.PublishTimeString}</span>");
-            results.Add($"<i class=\"fas fa-eye\"></i> <span>{post.AccessCountString} 次阅读</span>");
+            results.Add($"<i class=\"fas fa-calendar-alt\"></i> <span title=\"{post.PublishTime.ToDateAndTime()}\">发表于 {post.PublishTimeString}</span>");
+            results.Add($"<i class=\"fas fa-eye\"></i> <span title=\"{post.AccessCount}\">{post.AccessCountString} 次阅读</span>");
 
             return string.Join(" &middot; ", results);
         }

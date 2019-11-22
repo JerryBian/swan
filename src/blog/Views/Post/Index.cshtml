@@ -7,6 +7,10 @@
         <div class="text-warning font-italic"><i class="fas fa-info-circle"></i> 这篇文章尚未发布，仅供管理员预览。</div>
     }
     <div class="post-title">
+        @if (Model.IsTopping)
+        {
+            <i class="fas fa-flag fa-sm text-info"></i>
+        }
         @Model.Title
     </div>
     <div class="text-muted text-left d-block d-lg-none post-meta">

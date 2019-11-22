@@ -9726,8 +9726,8 @@ aside ul li {
   margin-bottom: 0.25rem;
 }
 .archive table tr td:first-child {
-  padding-right: 1rem;
-  min-width: 120px;
+  padding-right: 0.8rem;
+  min-width: 100px;
 }
 
 /*# sourceMappingURL=archive.css.map */

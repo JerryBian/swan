@@ -15,13 +15,13 @@
                 </tr>
                 <tr>
                     <td>文章阅读</td>
-                    <td>
+                    <td title="@ViewData["PostsAccessCountString"]">
                         @ViewData["PostsAccessCount"] 次
                     </td>
                 </tr>
                 <tr>
                     <td>系统运行</td>
-                    <td>@ViewData["RunTime"]</td>
+                    <td title="@ViewData["RunTimeTitle"]">@ViewData["RunTimeString"]</td>
                 </tr>
             </table>
         </div>

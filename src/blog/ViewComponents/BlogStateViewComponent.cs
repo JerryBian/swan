@@ -3,6 +3,7 @@ using Laobian.Share;
 using Laobian.Share.Blog;
 using Laobian.Share.Blog.Asset;
 using Laobian.Share.Cache;
+using Laobian.Share.Extension;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Laobian.Blog.ViewComponents
@@ -31,8 +32,10 @@ namespace Laobian.Blog.ViewComponents
                 new BlogAssetChangeToken());
             ViewData["Posts"] = posts;
             ViewData["PostsAccessCount"] = postsAccessCount;
+            ViewData["PostsAccessCountString"] = postsAccessCount.Human();
             ViewData["Version"] = MemoryStore.Version;
-            ViewData["RunTime"] = MemoryStore.RunTime;
+            ViewData["RunTimeString"] = MemoryStore.RuntimeString;
+            ViewData["RunTimeTitle"] = $"系统启动于 {MemoryStore.StartTime.ToDateAndTime()}，运行时长 {MemoryStore.Runtime}。";
             return View();
         }
     }

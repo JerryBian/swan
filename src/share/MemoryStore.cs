@@ -16,7 +16,9 @@ namespace Laobian.Share
 
         public static DateTime StartTime;
 
-        public static string RunTime => (DateTime.Now - StartTime).Human();
+        public static string RuntimeString => (DateTime.Now - StartTime).Human();
+
+        public static TimeSpan Runtime => DateTime.Now - StartTime;
 
         public static string Version = Assembly.GetEntryAssembly()?.GetName().Version.ToString();
 

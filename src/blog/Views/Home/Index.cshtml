@@ -8,12 +8,12 @@
             <div>
                 @if (!post.IsPublic)
                 {
-                    <div class="text-warning font-italic"><i class="fas fa-info-circle"></i> 这篇文章尚未发布，仅供管理员预览。</div>
+                    <div class="text-warning font-italic"><i class="fas fa-info-circle" title="置顶"></i> 这篇文章尚未发布，仅供管理员预览。</div>
                 }
                 <div class="mb-1 post-item-title">
                     @if (post.IsTopping)
                     {
-                        <i class="fas fa-fire-alt"></i>
+                        <i class="fas fa-flag fa-sm text-info"></i>
                     }
                     <a href="@post.FullUrl">@post.Title</a>
                 </div>
