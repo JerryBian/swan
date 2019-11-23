@@ -1,32 +1,30 @@
 ﻿using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Laobian.Share.Config;
+using Laobian.Blog.Models;
+using Laobian.Share;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Laobian.Blog.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly AppConfig _appConfig;
         private readonly ILogger<AccountController> _logger;
 
-        public AccountController(ILogger<AccountController> logger, IOptions<AppConfig> appConfig)
+        public AccountController(ILogger<AccountController> logger)
         {
             _logger = logger;
-            _appConfig = appConfig.Value;
         }
 
         [Route("/login")]
         public IActionResult Login(string r = null)
         {
-            ViewData["ReturnUrl"] = r;
-            ViewData["Title"] = "登录";
-            ViewData["Robots"] = "noindex, nofollow";
+            ViewData[ViewDataConstant.ReturnUrl] = r;
+            ViewData[ViewDataConstant.Title] = "登录";
+            ViewData[ViewDataConstant.VisibleToSearchEngine] = false;
             return View();
         }
 
@@ -34,7 +32,7 @@ namespace Laobian.Blog.Controllers
         [Route("/login")]
         public async Task<IActionResult> Login(string userName, string password, string r = null)
         {
-            if (userName == _appConfig.Common.AdminUserName && password == _appConfig.Common.AdminPassword)
+            if (userName == Global.Config.Common.AdminUserName && password == Global.Config.Common.AdminPassword)
             {
                 var claims = new List<Claim>
                 {
@@ -43,7 +41,8 @@ namespace Laobian.Blog.Controllers
                 };
 
                 await HttpContext.SignInAsync(
-                    new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme, "user", "role")));
+                    new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme,
+                        "user", "role")));
 
                 if (string.IsNullOrEmpty(r))
                 {

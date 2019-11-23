@@ -32,10 +32,12 @@
         [ConfigMeta(Name = "ADMIN_EMAIL", DefaultValue = "JerryBian@outlook.com")]
         public string AdminEmail { get; set; }
 
-        [ConfigMeta(Name = "REPORT_SENDER_NAME", DefaultValue = "Report Bot")]
-        public string ReportSenderName { get; set; }
+        [ConfigMeta(Name = "ALERT_SENDER_NAME", DefaultValue = "Alert Cat")]
+        public string AlertSenderName { get; set; }
 
-        [ConfigMeta(Name = "REPORT_SENDER_EMAIL", DefaultValue = "report@laobian.me")]
-        public string ReportSenderEmail { get; set; }
+        [ConfigMeta(Name = "ALERT_SENDER_EMAIL", DefaultValue = "alert-cat@laobian.me")]
+        public string AlertSenderEmail { get; set; }
+
+        [ConfigMeta(Name = "VERSION")] public string Version { get; set; }
     }
 }

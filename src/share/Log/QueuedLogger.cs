@@ -5,7 +5,8 @@ namespace Laobian.Share.Log
 {
     public class QueuedLogger : ILogger
     {
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception,
+            Func<TState, Exception, string> formatter)
         {
             if (!IsEnabled(logLevel))
             {
@@ -15,24 +16,23 @@ namespace Laobian.Share.Log
             var log = new LogEntry
             {
                 Exception = exception,
-                Level = logLevel,
                 Message = formatter(state, exception),
                 When = DateTime.Now
             };
 
             if (logLevel == LogLevel.Critical)
             {
-                MemoryStore.CriticalLogQueue.Enqueue(log);
+                Global.CriticalLogQueue.Enqueue(log);
             }
 
             if (logLevel == LogLevel.Warning)
             {
-                MemoryStore.WarningLogQueue.Enqueue(log);
+                Global.WarningLogQueue.Enqueue(log);
             }
 
             if (logLevel == LogLevel.Error)
             {
-                MemoryStore.ErrorLogQueue.Enqueue(log);
+                Global.ErrorLogQueue.Enqueue(log);
             }
         }
 

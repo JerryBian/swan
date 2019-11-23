@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Laobian.Share;
 using Laobian.Share.Blog.Model;
 
 namespace Laobian.Blog.Models
@@ -13,7 +14,7 @@ namespace Laobian.Blog.Models
                 postCount = 0;
             }
 
-            TotalPages = Convert.ToInt32(Math.Ceiling(postCount / (double)8));
+            TotalPages = Convert.ToInt32(Math.Ceiling(postCount / (double) Global.Config.Blog.PostsPerPage));
 
             if (currentPage <= 0)
             {

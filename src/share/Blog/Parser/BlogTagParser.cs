@@ -1,24 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Laobian.Share.Blog.Model;
-using Laobian.Share.Config;
-using Microsoft.Extensions.Options;
 
 namespace Laobian.Share.Blog.Parser
 {
     public class BlogTagParser : BlogAssetParser
     {
-        private readonly AppConfig _appConfig;
-
-        public BlogTagParser(IOptions<AppConfig> appConfig)
-        {
-            _appConfig = appConfig.Value;
-        }
-
         public async Task<BlogAssetParseResult<List<BlogTag>>> FromTextAsync(string text)
         {
-            var parseResult = await base.FromTextAsync(text, _appConfig.Common.ColonSplitter);
-            var result = new BlogAssetParseResult<List<BlogTag>>(parseResult) { Instance = new List<BlogTag>() };
+            var parseResult = await base.FromTextAsync(text, Global.Config.Common.ColonSplitter);
+            var result = new BlogAssetParseResult<List<BlogTag>>(parseResult) {Instance = new List<BlogTag>()};
 
             if (!result.Success)
             {

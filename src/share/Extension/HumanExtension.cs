@@ -1,5 +1,6 @@
 ﻿using System;
 using Humanizer;
+using Humanizer.Localisation;
 
 namespace Laobian.Share.Extension
 {
@@ -12,7 +13,7 @@ namespace Laobian.Share.Extension
 
         public static string Human(this TimeSpan interval)
         {
-            return interval.Humanize(maxUnit: Humanizer.Localisation.TimeUnit.Year);
+            return interval.Humanize(maxUnit: TimeUnit.Year);
         }
 
         public static string Human(this DateTime time)

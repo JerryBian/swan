@@ -1,5 +1,4 @@
-﻿@inject IOptions<AppConfig> Config
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh">
 <head>
     <!--meta tags-->
@@ -7,87 +6,77 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="msapplication-TileColor" content="#0f8da2">
     <meta name="theme-color" content="#0f8da2">
-    <meta name="description" content="@HtmlHeaderHelper.BuildMetaDescription(Config.Value, ViewData["Description"])">
-    <meta name="robots" content="@HtmlHeaderHelper.BuildMetaRobots(ViewData["Robots"])">
+    <meta name="description" content="@ViewDataHelper.GetDescription(ViewData)">
+    <meta name="robots" content="@ViewDataHelper.GetRobots(ViewData)">
     <meta name="rating" content="General">
     <meta name="format-detection" content="telephone=no">
 
     <!--link tags-->
     @RenderSection("style", false)
-    <link rel="canonical" href="@ViewData["Canonical"]">
-    <link rel="author" content="@Config.Value.Common.AdminChineseName" href="~/">
+    <link rel="canonical" href="@ViewDataHelper.GetCanonical(ViewData)">
+    <link rel="author" content="@Global.Config.Common.AdminChineseName" href="~/">
     <link rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh">
-    <link rel="alternate" href="/rss/" type="application/rss+xml" title="@Config.Value.Blog.Name">
-    <link rel="alternate" href="/atom/" type="application/atom+xml" title="@Config.Value.Blog.Name">
-    <link rel="me" href="mailto:@Config.Value.Common.AdminEmail">
+    <link rel="alternate" href="/rss/" type="application/rss+xml" title="@Global.Config.Blog.Name">
+    <link rel="alternate" href="/atom/" type="application/atom+xml" title="@Global.Config.Blog.Name">
+    <link rel="me" href="mailto:@Global.Config.Common.AdminEmail">
     <link rel="index" href="/">
-    @*<link rel="dns-prefetch" href="https://laobian.blob.core.windows.net">*@
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="manifest" href="/site.webmanifest">
-    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#0f8da2">
 
-    <title>@HtmlHeaderHelper.BuildTitle(Config.Value, ViewData["Title"])</title>
+    <title>@ViewDataHelper.GetTitle(ViewData)</title>
 
     @RenderSection("script", false)
 </head>
 <body>
-    <div class="progress progress-container">
-        <div id="pbar" class="progress-bar bg-info" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+<div class="progress progress-container">
+    <div id="pbar" class="progress-bar bg-info" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+</div>
+
+<nav class="navbar">
+    <div class="container">
+        <a class="navbar-brand" href="/">@Global.Config.Blog.Name</a>
+        <ul class="nav ml-auto">
+            <li>
+                <a class="nav-item nav-link" href="/archive/">存档</a>
+            </li>
+            <li>
+                <a class="nav-item nav-link" href="/rss/">订阅</a>
+            </li>
+        </ul>
     </div>
+</nav>
 
-    <script>
+<div class="container pl-3 pr-3 pt-5 mb-2">
+    <div class="row">
+        <main class="col-lg-9">
+            @RenderBody()
+        </main>
+        <aside class="col-lg-3 d-none d-lg-block">
+            <partial name="_AsideAbout"/>
+            <partial name="_AsideDeclaration"/>
+            @RenderSection("sidebar", false)
 
-    </script>
-    <nav class="navbar">
-        <div class="container">
-            <a class="navbar-brand" href="/">@Config.Value.Blog.Name</a>
-            <ul class="nav ml-auto">
-                <li><a class="nav-item nav-link" href="/archive/">存档</a></li>
-                <li><a class="nav-item nav-link" href="/rss/">订阅</a></li>
-            </ul>
-        </div>
-    </nav>
-
-
-
-    <div class="container pl-3 pr-3 pt-5 mb-2">
-
-        <div class="row">
-            <main class="col-lg-9">
-                @RenderBody()
-            </main>
-            <aside class="col-lg-3 d-none d-lg-block">
-                <partial name="_AsideAbout" />
-                <partial name="_AsideDeclaration" />
-                @RenderSection("sidebar", false)
-
-                <div class="sticky-top">
-                    @RenderSection("stickySidebar", false)
-
-                    <partial name="_AsideCopyright" />
-
-                    @await Component.InvokeAsync("BlogState", new { adminView = ViewData["AdminView"] })
-                </div>
-
-            </aside>
-        </div>
-    </div>
-
-    <footer class="mt-5">
-
-        <div class="container pb-3 pt-3 text-center mt-3">
-            <div>&copy; 2019 @Config.Value.Common.AdminChineseName</div>
-            <div>
-                <a href="/archive/">存档</a> &middot;
-                <a href="/about/">关于</a> &middot;
-                <a href="/sitemap.xml">sitemap</a>
+            <div class="sticky-top">
+                @RenderSection("stickySidebar", false)
+                <partial name="_AsideCopyright"/>
+                @await Component.InvokeAsync("BlogInfo")
             </div>
+        </aside>
+    </div>
+</div>
 
+<footer class="mt-5">
+    <div class="container pb-3 pt-3 text-center mt-3">
+        <div>&copy; 2019 @Global.Config.Common.AdminChineseName</div>
+        <div>
+            <a href="/archive/">存档</a> &middot;
+            <a href="/about/">关于</a> &middot;
+            <a href="/sitemap.xml">sitemap</a>
         </div>
-    </footer>
+    </div>
+</footer>
 
-    <!--Page generated at @DateTime.Now.ToDateAndTime()-->
+<!--Page generated at @DateTime.Now.ToDateAndTime().-->
 </body>
 </html>

@@ -1,28 +1,24 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Laobian.Blog.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Laobian.Blog.Models;
+using Laobian.Share;
 using Laobian.Share.Blog;
 using Laobian.Share.Blog.Asset;
-using Laobian.Share.Blog.Model;
 using Laobian.Share.Cache;
-using Laobian.Share.Config;
 using Laobian.Share.Extension;
 using Laobian.Share.Helper;
-using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Laobian.Blog.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly AppConfig _appConfig;
-        private readonly ICacheClient _cacheClient;
         private readonly IBlogService _blogService;
+        private readonly ICacheClient _cacheClient;
 
-        public HomeController(IBlogService blogService, ICacheClient cacheClient, IOptions<AppConfig> appConfig)
+        public HomeController(IBlogService blogService, ICacheClient cacheClient)
         {
-            _appConfig = appConfig.Value;
             _blogService = blogService;
             _cacheClient = cacheClient;
         }
@@ -30,33 +26,30 @@ namespace Laobian.Blog.Controllers
         public IActionResult Index([FromQuery] int p)
         {
             var viewModel = _cacheClient.GetOrCreate(
-                $"{CacheKey.Build(nameof(HomeController), nameof(Index), p, User.Identity.IsAuthenticated)}",
+                $"{CacheKey.Build(nameof(HomeController), nameof(Index), p, !User.Identity.IsAuthenticated)}",
                 () =>
                 {
-                    var posts = User.Identity.IsAuthenticated ? _blogService.GetPosts(false) : _blogService.GetPosts();
+                    var posts = _blogService.GetPosts(!User.Identity.IsAuthenticated);
                     var model = new PagedPostViewModel(p, posts.Count)
                     {
                         Url = Request.Path
                     };
 
-                    foreach (var blogPost in posts.ToPaged(_appConfig.Blog.PostsPerPage, model.CurrentPage))
+                    foreach (var blogPost in posts.ToPaged(Global.Config.Blog.PostsPerPage, model.CurrentPage))
                     {
                         model.Posts.Add(blogPost);
                     }
-
-                    
 
                     return model;
                 }, new BlogAssetChangeToken());
 
             if (viewModel.CurrentPage > 1)
             {
-                ViewData["Title"] = $"第{viewModel.CurrentPage}页";
-                ViewData["Robots"] = "noindex, nofollow";
+                ViewData[ViewDataConstant.Title] = $"第{viewModel.CurrentPage}页";
+                ViewData[ViewDataConstant.VisibleToSearchEngine] = false;
             }
 
-            ViewData["Canonical"] = "/";
-            ViewData["AdminView"] = HttpContext.User.Identity.IsAuthenticated;
+            ViewData[ViewDataConstant.Canonical] = "/";
             return View(viewModel);
         }
 
@@ -74,35 +67,35 @@ namespace Laobian.Blog.Controllers
                     {
                         new SiteMapUrl
                         {
-                            Loc = AddressHelper.GetAddress(_appConfig.Blog.BlogAddress),
+                            Loc = Global.Config.Blog.BlogAddress,
                             ChangeFreq = "weekly",
                             LastMod = DateTime.Now.ToDate(),
                             Priority = 1.0
                         },
                         new SiteMapUrl
                         {
-                            Loc = AddressHelper.GetAddress(_appConfig.Blog.BlogAddress, true, "about"),
+                            Loc = UrlHelper.Combine(Global.Config.Blog.BlogAddress, "about/"),
                             ChangeFreq = "monthly",
                             LastMod = DateTime.Now.ToDate(),
                             Priority = 0.9
                         },
                         new SiteMapUrl
                         {
-                            Loc = AddressHelper.GetAddress(_appConfig.Blog.BlogAddress, true, "archive"),
+                            Loc = UrlHelper.Combine(Global.Config.Blog.BlogAddress, "archive/"),
                             ChangeFreq = "weekly",
                             LastMod = DateTime.Now.ToDate(),
                             Priority = 0.8
                         },
                         new SiteMapUrl
                         {
-                            Loc = AddressHelper.GetAddress(_appConfig.Blog.BlogAddress, true, "category"),
+                            Loc = UrlHelper.Combine(Global.Config.Blog.BlogAddress, "category/"),
                             ChangeFreq = "weekly",
                             LastMod = DateTime.Now.ToDate(),
                             Priority = 0.7
                         },
                         new SiteMapUrl
                         {
-                            Loc = AddressHelper.GetAddress(_appConfig.Blog.BlogAddress, true, "tag"),
+                            Loc = UrlHelper.Combine(Global.Config.Blog.BlogAddress, "tag/"),
                             ChangeFreq = "weekly",
                             LastMod = DateTime.Now.ToDate(),
                             Priority = 0.6

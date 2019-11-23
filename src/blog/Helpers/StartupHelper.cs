@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
 using Laobian.Blog.HostedService;
-//using Laobian.Blog.HostedService;
+using Laobian.Share;
 using Laobian.Share.Blog;
 using Laobian.Share.Blog.Alert;
 using Laobian.Share.Blog.Asset;
@@ -22,9 +24,8 @@ namespace Laobian.Blog.Helpers
     {
         public static void RegisterService(IServiceCollection services, IConfiguration config)
         {
-            
-            services.Configure<AppConfig>(ac => MapConfig(config, ac));
-
+            MapConfig(config);
+            services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
             services.AddSingleton<ICacheClient, MemoryCacheClient>();
             services.AddSingleton<ICommand, PowerShellCommand>();
             services.AddSingleton<IBlogService, BlogService>();
@@ -32,10 +33,6 @@ namespace Laobian.Blog.Helpers
             services.AddSingleton<IEmailClient, SendGridEmailClient>();
             services.AddSingleton<IBlogAssetManager, BlogAssetManager>();
             services.AddSingleton<IBlogAlertService, BlogAlertService>();
-
-            services.AddSingleton<BlogPostParser>();
-            services.AddSingleton<BlogCategoryParser>();
-            services.AddSingleton<BlogTagParser>();
 
             services.AddHostedService<AssetHostedService>();
             services.AddHostedService<LogHostedService>();
@@ -47,13 +44,15 @@ namespace Laobian.Blog.Helpers
                     options.LogoutPath = "/logout";
                     options.ReturnUrlParameter = "r";
                     options.Cookie.HttpOnly = true;
-                    options.ExpireTimeSpan = TimeSpan.FromDays(30);
+                    options.ExpireTimeSpan = TimeSpan.FromDays(7);
                 });
         }
 
-        private static void MapConfig(IConfiguration config, AppConfig ac)
+        private static void MapConfig(IConfiguration config)
         {
-            foreach (var domainProp in typeof(AppConfig).GetProperties().Where(p=>typeof(IConfig).IsAssignableFrom(p.PropertyType)))
+            var ac = new AppConfig();
+            foreach (var domainProp in typeof(AppConfig).GetProperties()
+                .Where(p => typeof(IConfig).IsAssignableFrom(p.PropertyType)))
             {
                 var obj = Activator.CreateInstance(domainProp.PropertyType);
                 foreach (var propertyInfo in domainProp.PropertyType.GetProperties())
@@ -66,7 +65,8 @@ namespace Laobian.Blog.Helpers
                         {
                             if (attr.Required)
                             {
-                                throw new AppConfigException($"Missing AppConfig. Domain: {domainProp.Name}, config: {propertyInfo.Name}.");
+                                throw new AppConfigException(
+                                    $"Missing AppConfig. Domain: {domainProp.Name}, config: {propertyInfo.Name}.");
                             }
 
                             configValue = Convert.ChangeType(attr.DefaultValue, propertyInfo.PropertyType);
@@ -78,6 +78,8 @@ namespace Laobian.Blog.Helpers
 
                 domainProp.SetValue(ac, obj);
             }
+
+            Global.Config = ac;
         }
     }
 }

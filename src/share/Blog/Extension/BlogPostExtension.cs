@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using HtmlAgilityPack;
 using Laobian.Share.Blog.Model;
-using Laobian.Share.Config;
 using Laobian.Share.Extension;
 using Laobian.Share.Helper;
 
@@ -35,8 +34,10 @@ namespace Laobian.Share.Blog.Extension
         public static string GetSimpleMetadataHtml(this BlogPost post)
         {
             var results = new List<string>();
-            results.Add($"<i class=\"fas fa-calendar-alt\"></i> <span title=\"{post.PublishTime.ToDateAndTime()}\">发表于 {post.PublishTimeString}</span>");
-            results.Add($"<i class=\"fas fa-eye\"></i> <span title=\"{post.AccessCount}\">{post.AccessCountString} 次阅读</span>");
+            results.Add(
+                $"<i class=\"fas fa-calendar-alt\"></i> <span title=\"{post.PublishTime.ToDateAndTime()}\">发表于 {post.PublishTimeString}</span>");
+            results.Add(
+                $"<i class=\"fas fa-eye\"></i> <span title=\"{post.AccessCount}\">{post.AccessCountString} 次阅读</span>");
 
             return string.Join(" &middot; ", results);
         }
@@ -87,16 +88,19 @@ namespace Laobian.Share.Blog.Extension
             return $"<i class=\"fas fa-tags\"></i> <span>{string.Join(", ", results)}</span>";
         }
 
-        public static void Resolve(this BlogPost post, AppConfig appConfig, List<BlogPost> allPosts, List<BlogCategory> allCategories, List<BlogTag> allTags)
+        public static void Resolve(
+            this BlogPost post,
+            List<BlogCategory> allCategories,
+            List<BlogTag> allTags)
         {
             SetDefault(post);
-            HandleContent(post, appConfig);
+            HandleContent(post);
             HandleCategory(post, allCategories);
             HandleTag(post, allTags);
 
             post.FullUrl =
-                $"/{post.PublishTime.Year}/{post.PublishTime.Month:D2}/{post.Link}{appConfig.Common.HtmlExtension}";
-            post.FullUrlWithBase = $"{appConfig.Blog.BlogAddress}{post.FullUrl}";
+                $"/{post.PublishTime.Year}/{post.PublishTime.Month:D2}/{post.Link}{Global.Config.Common.HtmlExtension}";
+            post.FullUrlWithBase = $"{Global.Config.Blog.BlogAddress}{post.FullUrl}";
         }
 
         private static void HandleCategory(BlogPost post, List<BlogCategory> allCategories)
@@ -125,7 +129,7 @@ namespace Laobian.Share.Blog.Extension
             }
         }
 
-        private static void HandleContent(BlogPost post, AppConfig config)
+        private static void HandleContent(BlogPost post)
         {
             var html = MarkdownHelper.ToHtml(post.Raw.Markdown);
             var htmlDoc = new HtmlDocument();
@@ -147,7 +151,9 @@ namespace Laobian.Share.Blog.Extension
 
                     if (!Path.IsPathRooted(src))
                     {
-                        imageNode.SetAttributeValue("src", $"{config.Blog.BlogAddress}{config.Blog.FileRequestPath}/{Path.GetFileName(src)}");
+                        imageNode.SetAttributeValue("src",
+                            UrlHelper.Combine(Global.Config.Blog.BlogAddress, Global.Config.Blog.FileRequestPath,
+                                Path.GetFileName(src)));
                     }
                 }
             }
@@ -162,7 +168,8 @@ namespace Laobian.Share.Blog.Extension
                     .Descendants()
                     .Where(_ =>
                         CompareHelper.IgnoreCase(_.Name, "p") &&
-                        _.Descendants().FirstOrDefault(c => CompareHelper.IgnoreCase(c.Name, "img")) == null).Take(2).ToList();
+                        _.Descendants().FirstOrDefault(c => CompareHelper.IgnoreCase(c.Name, "img")) == null).Take(2)
+                    .ToList();
             if (paraNodes.Count == 1)
             {
                 excerpt += paraNodes[0].OuterHtml;

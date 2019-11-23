@@ -8,55 +8,46 @@ using System.Threading.Tasks;
 using Laobian.Share.Blog.Extension;
 using Laobian.Share.Blog.Model;
 using Laobian.Share.Blog.Parser;
-using Laobian.Share.Config;
 using Laobian.Share.Git;
 using Laobian.Share.Helper;
-using Microsoft.Extensions.Options;
 
 namespace Laobian.Share.Blog.Asset
 {
     public class BlogAssetManager : IBlogAssetManager
     {
-        private readonly List<BlogPost> _allPosts;
         private readonly List<BlogCategory> _allCategories;
+        private readonly List<BlogPost> _allPosts;
         private readonly List<BlogTag> _allTags;
-        private readonly GitConfig _gitConfig;
-        private readonly AppConfig _appConfig;
-        private readonly IGitClient _gitClient;
-        private readonly BlogPostParser _postParser;
         private readonly BlogCategoryParser _categoryParser;
-        private readonly BlogTagParser _tagParser;
+        private readonly IGitClient _gitClient;
+        private readonly GitConfig _gitConfig;
         private readonly ManualResetEventSlim _manualReset;
+        private readonly BlogPostParser _postParser;
         private readonly SemaphoreSlim _semaphore;
+        private readonly BlogTagParser _tagParser;
 
         private string _aboutHtml;
 
-        public BlogAssetManager(
-            IOptions<AppConfig> appConfig,
-            BlogPostParser postParser,
-            BlogCategoryParser categoryParser,
-            BlogTagParser tagParser,
-            IGitClient gitClient)
+        public BlogAssetManager(IGitClient gitClient)
         {
             _allTags = new List<BlogTag>();
             _allPosts = new List<BlogPost>();
             _allCategories = new List<BlogCategory>();
-            _appConfig = appConfig.Value;
             _gitClient = gitClient;
-            _postParser = postParser;
-            _categoryParser = categoryParser;
-            _tagParser = tagParser;
+            _postParser = new BlogPostParser();
+            _categoryParser = new BlogCategoryParser();
+            _tagParser = new BlogTagParser();
             _semaphore = new SemaphoreSlim(1, 1);
             _manualReset = new ManualResetEventSlim(true);
             _gitConfig = new GitConfig
             {
-                GitHubRepositoryName = _appConfig.Blog.AssetGitHubRepoName,
-                GitHubRepositoryBranch = _appConfig.Blog.AssetGitHubRepoBranch,
-                GitHubRepositoryOwner = _appConfig.Blog.AssetGitHubRepoOwner,
-                GitHubAccessToken = _appConfig.Blog.AssetGitHubRepoApiToken,
-                GitCloneToDir = _appConfig.Blog.AssetRepoLocalDir,
-                GitCommitEmail = _appConfig.Blog.AssetGitCommitEmail,
-                GitCommitUser = _appConfig.Blog.AssetGitCommitUser
+                GitHubRepositoryName = Global.Config.Blog.AssetGitHubRepoName,
+                GitHubRepositoryBranch = Global.Config.Blog.AssetGitHubRepoBranch,
+                GitHubRepositoryOwner = Global.Config.Blog.AssetGitHubRepoOwner,
+                GitHubAccessToken = Global.Config.Blog.AssetGitHubRepoApiToken,
+                GitCloneToDir = Global.Config.Blog.AssetRepoLocalDir,
+                GitCommitEmail = Global.Config.Blog.AssetGitCommitEmail,
+                GitCommitUser = Global.Config.Blog.AssetGitCommitUser
             };
         }
 
@@ -86,7 +77,7 @@ namespace Laobian.Share.Blog.Asset
 
         public async Task RemoteGitToLocalFileAsync()
         {
-            await _gitClient.CloneAsync(_gitConfig);
+            await _gitClient.CloneToLocalAsync(_gitConfig);
         }
 
         public async Task UpdateRemoteGitTemplatePostAsync()
@@ -95,8 +86,8 @@ namespace Laobian.Share.Blog.Asset
             templatePost.Raw.AccessCount = 10;
             templatePost.Raw.IsDraft = true;
             templatePost.Raw.PublishTime = new DateTime(2017, 08, 31, 16, 06, 05);
-            templatePost.Raw.Category = new List<string> { "分类名称1", "分类名称2" };
-            templatePost.Raw.Tag = new List<string> { "标签名称1", "标签名称2" };
+            templatePost.Raw.Category = new List<string> {"分类名称1", "分类名称2"};
+            templatePost.Raw.Tag = new List<string> {"标签名称1", "标签名称2"};
             templatePost.Raw.CreateTime = new DateTime(2012, 10, 16, 02, 21, 01);
             templatePost.Raw.ContainsMath = false;
             templatePost.Raw.IsTopping = false;
@@ -107,9 +98,9 @@ namespace Laobian.Share.Blog.Asset
 
             var text = await _postParser.ToTextAsync(templatePost);
             var templatePostLocalPath =
-                Path.Combine(_appConfig.Blog.AssetRepoLocalDir, _appConfig.Blog.TemplatePostGitPath);
+                Path.Combine(Global.Config.Blog.AssetRepoLocalDir, Global.Config.Blog.TemplatePostGitPath);
             await File.WriteAllTextAsync(templatePostLocalPath, text, Encoding.UTF8);
-            await _gitClient.CommitAsync(_appConfig.Blog.AssetRepoLocalDir, "Update template post");
+            await _gitClient.CommitAsync(Global.Config.Blog.AssetRepoLocalDir, "Update template post");
         }
 
         public async Task<BlogAssetReloadResult<object>> LocalFileToLocalMemoryAsync()
@@ -135,7 +126,6 @@ namespace Laobian.Share.Blog.Asset
                     tagReloadResult.Success &&
                     aboutReloadResult.Success)
                 {
-
                     try
                     {
                         _manualReset.Reset();
@@ -157,6 +147,20 @@ namespace Laobian.Share.Blog.Asset
             {
                 _semaphore.Release();
             }
+        }
+
+        public async Task LocalMemoryToLocalFileAsync()
+        {
+            foreach (var blogPost in _allPosts)
+            {
+                var text = await _postParser.ToTextAsync(blogPost);
+                await File.WriteAllTextAsync(blogPost.LocalPath, text, Encoding.UTF8);
+            }
+        }
+
+        public async Task LocalFileToRemoteGitAsync()
+        {
+            await _gitClient.CommitAsync(Global.Config.Blog.AssetRepoLocalDir, "Update assets");
         }
 
         private static string GetError(
@@ -240,7 +244,7 @@ namespace Laobian.Share.Blog.Asset
 
             foreach (var blogPost in _allPosts)
             {
-                blogPost.Resolve(_appConfig, _allPosts, _allCategories, _allTags);
+                blogPost.Resolve(_allCategories, _allTags);
             }
 
             foreach (var blogCategory in _allCategories)
@@ -254,24 +258,10 @@ namespace Laobian.Share.Blog.Asset
             }
         }
 
-        public async Task LocalMemoryToLocalFileAsync()
-        {
-            foreach (var blogPost in _allPosts)
-            {
-                var text = await _postParser.ToTextAsync(blogPost);
-                await File.WriteAllTextAsync(blogPost.LocalPath, text, Encoding.UTF8);
-            }
-        }
-
-        public async Task LocalFileToRemoteGitAsync()
-        {
-            await _gitClient.CommitAsync(_appConfig.Blog.AssetRepoLocalDir, "Update assets");
-        }
-
         private async Task<BlogAssetReloadResult<List<BlogPost>>> ReloadLocalMemoryPostAsync()
         {
-            var result = new BlogAssetReloadResult<List<BlogPost>> { Result = new List<BlogPost>() };
-            var postLocalPath = Path.Combine(_appConfig.Blog.AssetRepoLocalDir, _appConfig.Blog.PostGitPath);
+            var result = new BlogAssetReloadResult<List<BlogPost>> {Result = new List<BlogPost>()};
+            var postLocalPath = Path.Combine(Global.Config.Blog.AssetRepoLocalDir, Global.Config.Blog.PostGitPath);
             if (!Directory.Exists(postLocalPath))
             {
                 result.Warning = $"No post folder found under \"{postLocalPath}\".";
@@ -279,8 +269,8 @@ namespace Laobian.Share.Blog.Asset
             }
 
             var templatePostLocalPath =
-                Path.Combine(_appConfig.Blog.AssetRepoLocalDir, _appConfig.Blog.TemplatePostGitPath);
-            foreach (var file in Directory.EnumerateFiles(postLocalPath, $"*{_appConfig.Common.MarkdownExtension}"))
+                Path.Combine(Global.Config.Blog.AssetRepoLocalDir, Global.Config.Blog.TemplatePostGitPath);
+            foreach (var file in Directory.EnumerateFiles(postLocalPath, $"*{Global.Config.Common.MarkdownExtension}"))
             {
                 try
                 {
@@ -306,7 +296,9 @@ namespace Laobian.Share.Blog.Asset
                     if (parseResult.Success)
                     {
                         parseResult.Instance.GitPath =
-                            file.Substring(file.IndexOf(_appConfig.Blog.AssetRepoLocalDir, StringComparison.CurrentCulture) + _appConfig.Blog.AssetRepoLocalDir.Length + 1);
+                            file.Substring(
+                                file.IndexOf(Global.Config.Blog.AssetRepoLocalDir, StringComparison.CurrentCulture) +
+                                Global.Config.Blog.AssetRepoLocalDir.Length + 1);
                         parseResult.Instance.LocalPath = file;
                         result.Result.Add(parseResult.Instance);
                     }
@@ -324,7 +316,8 @@ namespace Laobian.Share.Blog.Asset
         private async Task<BlogAssetReloadResult<List<BlogCategory>>> ReloadLocalMemoryCategoryAsync()
         {
             var result = new BlogAssetReloadResult<List<BlogCategory>>();
-            var categoryLocalPath = Path.Combine(_appConfig.Blog.AssetRepoLocalDir, _appConfig.Blog.CategoryGitPath);
+            var categoryLocalPath =
+                Path.Combine(Global.Config.Blog.AssetRepoLocalDir, Global.Config.Blog.CategoryGitPath);
             if (!File.Exists(categoryLocalPath))
             {
                 result.Warning = $"No category asset found under \"{categoryLocalPath}\".";
@@ -353,7 +346,7 @@ namespace Laobian.Share.Blog.Asset
         private async Task<BlogAssetReloadResult<List<BlogTag>>> ReloadLocalMemoryTagAsync()
         {
             var result = new BlogAssetReloadResult<List<BlogTag>>();
-            var tagLocalPath = Path.Combine(_appConfig.Blog.AssetRepoLocalDir, _appConfig.Blog.TagGitPath);
+            var tagLocalPath = Path.Combine(Global.Config.Blog.AssetRepoLocalDir, Global.Config.Blog.TagGitPath);
             if (!File.Exists(tagLocalPath))
             {
                 result.Warning = $"No tag asset found under \"{tagLocalPath}\".";
@@ -382,7 +375,7 @@ namespace Laobian.Share.Blog.Asset
         private async Task<BlogAssetReloadResult<string>> ReloadLocalMemoryAboutAsync()
         {
             var result = new BlogAssetReloadResult<string>();
-            var aboutLocalPath = Path.Combine(_appConfig.Blog.AssetRepoLocalDir, _appConfig.Blog.AboutGitPath);
+            var aboutLocalPath = Path.Combine(Global.Config.Blog.AssetRepoLocalDir, Global.Config.Blog.AboutGitPath);
             if (!File.Exists(aboutLocalPath))
             {
                 result.Success = true;

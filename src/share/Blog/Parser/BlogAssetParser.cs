@@ -62,9 +62,9 @@ namespace Laobian.Share.Blog.Parser
         }
 
         public virtual async Task<string> ToTextAsync(
-            Dictionary<string, string> nameValues, 
+            Dictionary<string, string> nameValues,
             string nameValueSplitter,
-            string lineSplitter = null, 
+            string lineSplitter = null,
             string unParsedContent = null)
         {
             using (var sw = new StringWriter())

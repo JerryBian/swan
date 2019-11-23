@@ -5,10 +5,8 @@ namespace Laobian.Share.Git
 {
     public class GitHubPayload
     {
-        [JsonPropertyName("ref")]
-        public string Ref { get; set; }
+        [JsonPropertyName("ref")] public string Ref { get; set; }
 
-        [JsonPropertyName("commits")]
-        public IEnumerable<GitHubCommit> Commits { get; set; }
+        [JsonPropertyName("commits")] public IEnumerable<GitHubCommit> Commits { get; set; }
     }
 }

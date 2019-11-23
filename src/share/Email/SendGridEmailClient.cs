@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
-using Laobian.Share.Config;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Hosting;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 
@@ -11,13 +10,18 @@ namespace Laobian.Share.Email
     {
         private readonly SendGridClient _client;
 
-        public SendGridEmailClient(IOptions<AppConfig> appConfig)
+        public SendGridEmailClient()
         {
-            _client = new SendGridClient(appConfig.Value.Common.SendGridApiKey);
+            _client = new SendGridClient(Global.Config.Common.SendGridApiKey);
         }
 
         public async Task<bool> SendAsync(EmailEntry entry)
         {
+            if (!Global.Environment.IsProduction())
+            {
+                entry.Subject = $"[{Global.Environment.EnvironmentName}]: {entry.Subject}";
+            }
+
             if (string.IsNullOrEmpty(entry.PlainContent) && !string.IsNullOrEmpty(entry.HtmlContent))
             {
                 entry.PlainContent = entry.HtmlContent;

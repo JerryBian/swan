@@ -3,13 +3,12 @@
 namespace Laobian.Share.Extension
 {
     /// <summary>
-    /// Extensions for <see cref="DateTime"/>
+    ///     Extensions for <see cref="DateTime" />
     /// </summary>
     public static class DateTimeExtension
     {
-
         /// <summary>
-        /// Display time as date and time combination
+        ///     Display time as date and time combination
         /// </summary>
         /// <param name="time">The given time</param>
         /// <returns>Combination of date and time part</returns>
@@ -19,7 +18,7 @@ namespace Laobian.Share.Extension
         }
 
         /// <summary>
-        /// Display time as date part
+        ///     Display time as date part
         /// </summary>
         /// <param name="time">The given time</param>
         /// <returns>Date part format</returns>

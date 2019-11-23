@@ -1,5 +1,4 @@
 ﻿@model BlogPost
-@inject IOptions<AppConfig> Config
 
 <article class="post">
     @if (!Model.IsPublic)
@@ -19,27 +18,24 @@
     </div>
     <div class="mt-2 mb-4 post-content">
         @Html.Raw(Model.ContentHtml)
-
         <p class="text-muted">（本文完）</p>
     </div>
-
-
 </article>
 
 <div class="alert alert-warning post-alert" role="alert">
     <ul>
-
-        <li>
-            @{
-                var meta = Model.GetCategoryAndTagHtml();
-                if (!string.IsNullOrEmpty(meta))
-                {
-                    <text>发表于 @Html.Raw(meta)</text>
-                }
+        @{
+            var meta = Model.GetCategoryAndTagHtml();
+            if (!string.IsNullOrEmpty(meta))
+            {
+                <li>发表于 @Html.Raw(meta)</li>
             }
-        </li>
+        }
         <li>
-            这篇文章的留言，请发送电子邮件至 <a href="mailto:@Config.Value.Common.AdminEmail?subject=评论 - @Model.Title&body=Good job！">@Config.Value.Common.AdminEmail</a>
+            这篇文章的留言，请发送电子邮件至
+            <a href="mailto:@Global.Config.Common.AdminEmail?subject=留言 - @Model.Title&body=Good job！">
+                @Global.Config.Common.AdminEmail
+            </a>
         </li>
 
         @if (Model.PrevPost != null)
@@ -61,7 +57,7 @@
 </div>
 
 @section stickySidebar{
-    <partial name="_AsidePostInfo" model="@Model" />
+    <partial name="_AsidePostInfo" model="@Model"/>
 }
 
 @section script{
@@ -86,5 +82,5 @@
 }
 
 @section style{
-    <link rel="stylesheet" href="~/style/post.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/style/post.min.css" asp-append-version="true"/>
 }

@@ -13,13 +13,14 @@ namespace Laobian.Share.Blog
 {
     public class BlogService : IBlogService
     {
-        private readonly ILogger<BlogService> _logger;
         private readonly IBlogAlertService _blogAlertService;
         private readonly IBlogAssetManager _blogAssetManager;
+        private readonly ILogger<BlogService> _logger;
         private readonly SemaphoreSlim _semaphoreSlim1;
         private readonly SemaphoreSlim _semaphoreSlim2;
 
-        public BlogService(ILogger<BlogService> logger, IBlogAssetManager blogAssetManager, IBlogAlertService blogAlertService)
+        public BlogService(ILogger<BlogService> logger, IBlogAssetManager blogAssetManager,
+            IBlogAlertService blogAlertService)
         {
             _logger = logger;
             _blogAssetManager = blogAssetManager;
@@ -28,44 +29,8 @@ namespace Laobian.Share.Blog
             _semaphoreSlim2 = new SemaphoreSlim(1, 1);
         }
 
-        private void SetPrevAndNextPosts(BlogPost post, List<BlogPost> posts, bool onlyPublic)
-        {
-            if (!post.IsPublic && onlyPublic)
-            {
-                _logger.LogWarning(
-                    $"Try to set post's Next and Prev. However this post is not public while requesting only public, we need to fix this. Post = {post.Link}, Call stack = {Environment.StackTrace}");
-                return;
-            }
-
-            var postIndex = posts.IndexOf(post);
-            var prevPostIndex = postIndex - 1;
-            while (prevPostIndex >= 0)
-            {
-                var prevPost = posts[prevPostIndex];
-                if (!onlyPublic || prevPost.IsPublic)
-                {
-                    post.PrevPost = prevPost;
-                    break;
-                }
-
-                prevPostIndex--;
-            }
-
-            var nextPostIndex = postIndex + 1;
-            while (nextPostIndex < posts.Count)
-            {
-                var nextPost = posts[nextPostIndex];
-                if (!onlyPublic || nextPost.IsPublic)
-                {
-                    post.NextPost = nextPost;
-                    break;
-                }
-
-                nextPostIndex++;
-            }
-        }
-
-        public List<BlogPost> GetPosts(bool onlyPublic = true, bool publishTimeDesc = true, bool toppingPostsFirst = true)
+        public List<BlogPost> GetPosts(bool onlyPublic = true, bool publishTimeDesc = true,
+            bool toppingPostsFirst = true)
         {
             IEnumerable<BlogPost> posts = _blogAssetManager.GetAllPosts();
             posts = onlyPublic ? posts.Where(p => p.IsPublic) : posts;
@@ -90,7 +55,8 @@ namespace Laobian.Share.Blog
             return post;
         }
 
-        public List<BlogCategory> GetCategories(bool onlyPublic = true, bool publishTimeDesc = true, bool toppingPostsFirst = true)
+        public List<BlogCategory> GetCategories(bool onlyPublic = true, bool publishTimeDesc = true,
+            bool toppingPostsFirst = true)
         {
             var categories = new List<BlogCategory>();
             foreach (var blogCategory in _blogAssetManager.GetAllCategories())
@@ -161,7 +127,8 @@ namespace Laobian.Share.Blog
             return _blogAssetManager.GetAboutHtml();
         }
 
-        public List<BlogArchive> GetArchives(bool onlyPublic = true, bool publishTimeDesc = true, bool toppingPostsFirst = true)
+        public List<BlogArchive> GetArchives(bool onlyPublic = true, bool publishTimeDesc = true,
+            bool toppingPostsFirst = true)
         {
             var archives = new List<BlogArchive>();
             foreach (var item in _blogAssetManager.GetAllPosts().ToLookup(p => p.PublishTime.Year))
@@ -269,6 +236,43 @@ namespace Laobian.Share.Blog
             finally
             {
                 _semaphoreSlim2.Release();
+            }
+        }
+
+        private void SetPrevAndNextPosts(BlogPost post, List<BlogPost> posts, bool onlyPublic)
+        {
+            if (!post.IsPublic && onlyPublic)
+            {
+                _logger.LogWarning(
+                    $"Try to set post's Next and Prev. However this post is not public while requesting only public, we need to fix this. Post = {post.Link}, Call stack = {Environment.StackTrace}");
+                return;
+            }
+
+            var postIndex = posts.IndexOf(post);
+            var prevPostIndex = postIndex - 1;
+            while (prevPostIndex >= 0)
+            {
+                var prevPost = posts[prevPostIndex];
+                if (!onlyPublic || prevPost.IsPublic)
+                {
+                    post.PrevPost = prevPost;
+                    break;
+                }
+
+                prevPostIndex--;
+            }
+
+            var nextPostIndex = postIndex + 1;
+            while (nextPostIndex < posts.Count)
+            {
+                var nextPost = posts[nextPostIndex];
+                if (!onlyPublic || nextPost.IsPublic)
+                {
+                    post.NextPost = nextPost;
+                    break;
+                }
+
+                nextPostIndex++;
             }
         }
     }

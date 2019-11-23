@@ -4,19 +4,15 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Laobian.Share.Blog.Model;
-using Laobian.Share.Config;
-using Microsoft.Extensions.Options;
 
 namespace Laobian.Share.Blog.Parser
 {
     public class BlogPostParser : BlogAssetParser
     {
-        private readonly AppConfig _appConfig;
         private readonly Dictionary<BlogAssetMetaAttribute, PropertyInfo> _metaProperties;
 
-        public BlogPostParser(IOptions<AppConfig> appConfig)
+        public BlogPostParser()
         {
-            _appConfig = appConfig.Value;
             _metaProperties = new Dictionary<BlogAssetMetaAttribute, PropertyInfo>();
             foreach (var propertyInfo in typeof(BlogPostRaw).GetProperties())
             {
@@ -31,8 +27,8 @@ namespace Laobian.Share.Blog.Parser
         public async Task<BlogAssetParseResult<BlogPost>> FromTextAsync(string text)
         {
             var parseResult =
-                await FromTextAsync(text, _appConfig.Common.ColonSplitter, _appConfig.Blog.MetadataSplitter);
-            var result = new BlogAssetParseResult<BlogPost>(parseResult) { Instance = new BlogPost() };
+                await FromTextAsync(text, Global.Config.Common.ColonSplitter, Global.Config.Blog.MetadataSplitter);
+            var result = new BlogAssetParseResult<BlogPost>(parseResult) {Instance = new BlogPost()};
 
             foreach (var nameValue in result.NameValues)
             {
@@ -72,7 +68,7 @@ namespace Laobian.Share.Blog.Parser
                         prop.SetValue(result.Instance.Raw, nameValue.Value);
                         break;
                     case BlogAssetMetaReturnType.ListOfString:
-                        var parts = nameValue.Value.Split(_appConfig.Common.PeriodSplitter);
+                        var parts = nameValue.Value.Split(Global.Config.Common.PeriodSplitter);
                         prop.SetValue(result.Instance.Raw, parts.ToList());
                         break;
                     default:
@@ -106,23 +102,23 @@ namespace Laobian.Share.Blog.Parser
                             value = Convert.ToDateTime(obj).ToString("yyyy-MM-dd hh:mm:ss");
                             break;
                         case BlogAssetMetaReturnType.ListOfString:
-                            value = string.Join(_appConfig.Common.PeriodSplitter, (List<string>)obj);
+                            value = string.Join(Global.Config.Common.PeriodSplitter, (List<string>) obj);
                             break;
                         default:
                             value = string.Empty;
                             break;
                     }
                 }
-                
+
                 if (!string.IsNullOrEmpty(value))
                 {
                     nameValues[item.Key.Alias.First()] = value;
                 }
             }
 
-            return await ToTextAsync(nameValues, _appConfig.Common.ColonSplitter, _appConfig.Blog.MetadataSplitter,
+            return await ToTextAsync(nameValues, Global.Config.Common.ColonSplitter,
+                Global.Config.Blog.MetadataSplitter,
                 post.Raw.Markdown);
         }
-
     }
 }

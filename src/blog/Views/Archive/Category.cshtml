@@ -20,7 +20,9 @@
                 @foreach (var post in item.Posts)
                 {
                     <tr>
-                        <td><span class="text-muted post-meta">@post.PublishTime.ToDate()</span></td>
+                        <td>
+                            <span class="text-muted post-meta">@post.PublishTime.ToDate()</span>
+                        </td>
 
                         <td>
                             <a href="@post.FullUrl">
@@ -35,7 +37,7 @@
 </div>
 
 @section style{
-    <link rel="stylesheet" href="~/style/archive.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/style/archive.min.css" asp-append-version="true"/>
 }
 
 @section script{

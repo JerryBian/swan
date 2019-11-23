@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Laobian.Share.Blog.Model;
 
@@ -22,7 +20,8 @@ namespace Laobian.Share.Blog
         List<BlogArchive> GetArchives(bool onlyPublic = true, bool publishTimeDesc = true,
             bool toppingPostsFirst = true);
 
-        Task ReloadLocalAssetsAsync(bool clone = true, bool updateTemplate = true, List<string> addedPosts = null, List<string> modifiedPosts = null);
+        Task ReloadLocalAssetsAsync(bool clone = true, bool updateTemplate = true, List<string> addedPosts = null,
+            List<string> modifiedPosts = null);
 
         Task UpdateRemoteAssetsAsync();
     }

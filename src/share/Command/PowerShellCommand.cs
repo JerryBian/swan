@@ -25,7 +25,8 @@ namespace Laobian.Share.Command
                 var result = await ps.InvokeAsync();
                 if (result.Any())
                 {
-                    _logger.LogInformation($"Executed command {command}, the output is:{Environment.NewLine}{string.Join(Environment.NewLine, result)}");
+                    _logger.LogInformation(
+                        $"Executed command {command}, the output is:{Environment.NewLine}{string.Join(Environment.NewLine, result)}");
                 }
             }
         }

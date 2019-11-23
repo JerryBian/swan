@@ -23,23 +23,17 @@
         [ConfigMeta(Name = "STARTUP_CLONE_ASSETS", DefaultValue = true)]
         public bool CloneAssetsDuringStartup { get; set; }
 
-        [ConfigMeta(Name = "ASSET_LOCAL_COMMIT_USER_NAME", DefaultValue = "bot")]
+        [ConfigMeta(Name = "ASSET_LOCAL_COMMIT_USER_NAME", DefaultValue = "blog-system")]
         public string AssetGitCommitUser { get; set; }
 
-        [ConfigMeta(Name = "ASSET_LOCAL_COMMIT_USER_EMAIL", DefaultValue = "bot@laobian.me")]
+        [ConfigMeta(Name = "ASSET_LOCAL_COMMIT_USER_EMAIL", DefaultValue = "blog@laobian.me")]
         public string AssetGitCommitEmail { get; set; }
 
         [ConfigMeta(Name = "BLOG_ADDRESS", DefaultValue = "https://blog.laobian.me")]
         public string BlogAddress { get; set; }
 
-        [ConfigMeta(Name = "POST_UPDATE_SCHEDULED", DefaultValue = false)]
-        public bool PostUpdateScheduled { get; set; }
-
-        [ConfigMeta(Name = "POST_UPDATE_AT_HOUR", DefaultValue = 0)]
-        public int PostUpdateAtHour { get; set; }
-
-        [ConfigMeta(Name = "POST_UPDATE_EVERY_SECONDS", DefaultValue = 300)]
-        public int PostUpdateEverySeconds { get; set; }
+        [ConfigMeta(Name = "ASSET_UPDATE_AT_HOUR", DefaultValue = 0)]
+        public int AssetUpdateAtHour { get; set; }
 
         [ConfigMeta(Name = "POST_GIT_PATH", DefaultValue = "blog/post/")]
         public string PostGitPath { get; set; }
@@ -64,18 +58,6 @@
 
         [ConfigMeta(Name = "METADATA_SPLITTER", DefaultValue = "---")]
         public string MetadataSplitter { get; set; }
-
-        [ConfigMeta(Name = "DEFAULT_CATEGORY_NAME", DefaultValue = "未分类")]
-        public string DefaultCategoryName { get; set; }
-
-        [ConfigMeta(Name = "DEFAULT_CATEGORY_LINK", DefaultValue = "untitled")]
-        public string DefaultCategoryLink { get; set; }
-
-        [ConfigMeta(Name = "DEFAULT_TAG_NAME", DefaultValue = "未分类")]
-        public string DefaultTagName { get; set; }
-
-        [ConfigMeta(Name = "DEFAULT_TAG_LINK", DefaultValue = "untitled")]
-        public string DefaultTagLink { get; set; }
 
         [ConfigMeta(Name = "BLOG_DESCRIPTION", DefaultValue = "技术心得与生活感悟 - Jerry Bian(卞良忠)")]
         public string Description { get; set; }

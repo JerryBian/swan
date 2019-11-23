@@ -4,40 +4,41 @@
     <div class="list-group list-group-flush">
         @foreach (var post in Model.Posts)
         {
-        <div class="list-group-item flex-column align-items-start post-item">
-            <div>
-                @if (!post.IsPublic)
-                {
-                    <div class="text-warning font-italic"><i class="fas fa-info-circle" title="置顶"></i> 这篇文章尚未发布，仅供管理员预览。</div>
-                }
-                <div class="mb-1 post-item-title">
-                    @if (post.IsTopping)
+            <div class="list-group-item flex-column align-items-start post-item">
+                <div>
+                    @if (!post.IsPublic)
                     {
-                        <i class="fas fa-flag fa-sm text-info"></i>
+                        <div class="text-warning font-italic">
+                            <i class="fas fa-info-circle" title="置顶"></i>
+                            这篇文章尚未发布，仅供管理员预览。
+                        </div>
                     }
-                    <a href="@post.FullUrl">@post.Title</a>
-                </div>
-            </div>
-            <div class="container-fluid mt-1 mb-1">
-                <div class="row">
-                    <div class="mb-2 mt-1 post-item-excerpt">
-                        @Html.Raw(post.ExcerptHtml)
+                    <div class="mb-1 post-item-title">
+                        @if (post.IsTopping)
+                        {
+                            <i class="fas fa-flag fa-sm text-info"></i>
+                        }
+                        <a href="@post.FullUrl">@post.Title</a>
                     </div>
                 </div>
+                <div class="container-fluid mt-1 mb-1">
+                    <div class="row">
+                        <div class="mb-2 mt-1 post-item-excerpt">
+                            @Html.Raw(post.ExcerptHtml)
+                        </div>
+                    </div>
+                </div>
+                <div class="text-muted d-none d-sm-block post-item-meta">@Html.Raw(post.GetMetadataHtml())</div>
+                <div class="text-muted d-sm-none post-item-meta">@Html.Raw(post.GetSimpleMetadataHtml())</div>
             </div>
-            <div class="text-muted d-none d-sm-block post-item-meta">@Html.Raw(post.GetMetadataHtml())</div>
-            <div class="text-muted d-sm-none post-item-meta">@Html.Raw(post.GetSimpleMetadataHtml())</div>
-        </div>
         }
     </div>
-
     <pagination total-pages="@Model.TotalPages" current-page="@Model.CurrentPage" url="@Model.Url"></pagination>
-
 </div>
 
 
 @section style{
-    <link rel="stylesheet" href="~/style/index.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/style/index.min.css" asp-append-version="true"/>
 }
 
 @section script{

@@ -16,9 +16,20 @@ namespace Laobian.Share.Blog.Model
 
         internal BlogPostRaw Raw { get; }
 
+        #region Public Methods
+
+        public void NewAccess()
+        {
+            Interlocked.Increment(ref _accessCount);
+            Raw.AccessCount = _accessCount;
+        }
+
+        #endregion
+
         #region Public Property
 
         private int _accessCount;
+
         public int AccessCount
         {
             get => _accessCount;
@@ -33,7 +44,7 @@ namespace Laobian.Share.Blog.Model
 
         public string AccessCountString => _accessCount.Human();
 
-        public bool IsPublic => DateTime.Now > PublishTime && 
+        public bool IsPublic => DateTime.Now > PublishTime &&
                                 Raw.IsDraft != null &&
                                 !Raw.IsDraft.Value;
 
@@ -75,16 +86,6 @@ namespace Laobian.Share.Blog.Model
         public bool IsTopping => Raw.IsTopping ?? false;
 
         public bool ContainsMath => Raw.ContainsMath ?? false;
-
-        #endregion
-
-        #region Public Methods
-
-        public void NewAccess()
-        {
-            Interlocked.Increment(ref _accessCount);
-            Raw.AccessCount = _accessCount;
-        }
 
         #endregion
     }

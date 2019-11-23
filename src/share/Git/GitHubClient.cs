@@ -16,18 +16,18 @@ namespace Laobian.Share.Git
             _logger = logger;
         }
 
-        public async Task CloneAsync(GitConfig gitConfig)
+        public async Task CloneToLocalAsync(GitConfig gitConfig)
         {
             var localPath = Path.GetFullPath(gitConfig.GitCloneToDir);
-            await _command.ExecuteAsync($"Remove-Item -Path {localPath} -Force -Recurse -ErrorAction SilentlyContinue");
-            _logger.LogInformation($"Clean folder {localPath} completed.");
+            var commandText = $"Remove-Item -Path {localPath} -Force -Recurse -ErrorAction SilentlyContinue";
+            var repoUrl =
+                $"https://{gitConfig.GitHubAccessToken}@github.com/{gitConfig.GitHubRepositoryOwner}/{gitConfig.GitHubRepositoryName}.git";
+            commandText += $"; git clone -b {gitConfig.GitHubRepositoryBranch} --single-branch {repoUrl} {localPath}";
+            commandText +=
+                $"; cd {gitConfig.GitCloneToDir}; git config --local user.name \"{gitConfig.GitCommitUser}\"; git config --local user.email \"{gitConfig.GitCommitEmail}\"";
 
-            var repoUrl = $"https://{gitConfig.GitHubAccessToken}@github.com/{gitConfig.GitHubRepositoryOwner}/{gitConfig.GitHubRepositoryName}.git";
-            await _command.ExecuteAsync($"git clone -b {gitConfig.GitHubRepositoryBranch} --single-branch {repoUrl} {localPath}");
-            _logger.LogInformation("Clone assets to local completed.");
-
-            await _command.ExecuteAsync($"cd {gitConfig.GitCloneToDir}; git config user.name \"{gitConfig.GitCommitUser}\"; git config user.email \"{gitConfig.GitCommitEmail}\"");
-            _logger.LogInformation("Set local commit user completed.");
+            await _command.ExecuteAsync(commandText);
+            _logger.LogInformation("Clone repository to local completed.");
         }
 
         public async Task CommitAsync(string workingDir, string message)

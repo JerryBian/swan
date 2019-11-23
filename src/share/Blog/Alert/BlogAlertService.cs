@@ -2,27 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Laobian.Share.Config;
 using Laobian.Share.Email;
+using Laobian.Share.Extension;
 using Laobian.Share.Log;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Laobian.Share.Blog.Alert
 {
     public class BlogAlertService : IBlogAlertService
     {
-        private readonly AppConfig _appConfig;
         private readonly IEmailClient _emailClient;
         private readonly ILogger<BlogAlertService> _logger;
 
         public BlogAlertService(
-            IOptions<AppConfig> appConfig,
             IEmailClient emailClient,
             ILogger<BlogAlertService> logger)
         {
             _logger = logger;
-            _appConfig = appConfig.Value;
             _emailClient = emailClient;
         }
 
@@ -30,18 +26,18 @@ namespace Laobian.Share.Blog.Alert
         {
             try
             {
-                var emailEntry = new EmailEntry(_appConfig.Common.AdminEnglishName, _appConfig.Common.AdminEmail)
+                var emailEntry = new EmailEntry(Global.Config.Common.AdminEnglishName, Global.Config.Common.AdminEmail)
                 {
-                    FromName = _appConfig.Common.ReportSenderName,
-                    FromAddress = _appConfig.Common.ReportSenderEmail,
+                    FromName = Global.Config.Common.AlertSenderName,
+                    FromAddress = Global.Config.Common.AlertSenderEmail,
                     Subject = subject,
-                    HtmlContent = $"<p>Warnings you need to pay attention: </p><ol>"
+                    HtmlContent = "<p>Warnings you need to pay attention: </p><ol>"
                 };
 
                 foreach (var logEntry in entries)
                 {
                     emailEntry.HtmlContent +=
-                        $"<li>{logEntry.Message}<br/><pre><code>{logEntry.Exception}</code></pre></li>";
+                        $"<li>{logEntry.When.ToDateAndTime()}: {logEntry.Message}<br/><pre><code>{logEntry.Exception}</code></pre></li>";
                 }
 
                 emailEntry.HtmlContent += "</ol>";
@@ -49,25 +45,26 @@ namespace Laobian.Share.Blog.Alert
             }
             catch (Exception ex)
             {
-                _logger.LogInformation(ex, "Alert warnings failed.");
+                _logger.LogInformation(ex, "[Need Attention] - Alert warnings failed.");
             }
         }
+
         public async Task AlertCriticalAsync(string subject, List<LogEntry> entries)
         {
             try
             {
-                var emailEntry = new EmailEntry(_appConfig.Common.AdminEnglishName, _appConfig.Common.AdminEmail)
+                var emailEntry = new EmailEntry(Global.Config.Common.AdminEnglishName, Global.Config.Common.AdminEmail)
                 {
-                    FromName = _appConfig.Common.ReportSenderName,
-                    FromAddress = _appConfig.Common.ReportSenderEmail,
+                    FromName = Global.Config.Common.AlertSenderName,
+                    FromAddress = Global.Config.Common.AlertSenderEmail,
                     Subject = subject,
-                    HtmlContent = $"<p>Critical logs you need to pay attention: </p><ol>"
+                    HtmlContent = "<p>Critical logs you need to pay attention: </p><ol>"
                 };
 
                 foreach (var logEntry in entries)
                 {
                     emailEntry.HtmlContent +=
-                        $"<li>{logEntry.Message}<br/><pre><code>{logEntry.Exception}</code></pre></li>";
+                        $"<li>{logEntry.When.ToDateAndTime()}: {logEntry.Message}<br/><pre><code>{logEntry.Exception}</code></pre></li>";
                 }
 
                 emailEntry.HtmlContent += "</ol>";
@@ -75,7 +72,8 @@ namespace Laobian.Share.Blog.Alert
             }
             catch (Exception ex)
             {
-                _logger.LogInformation(ex, "Alert critical failed."); // Email error will be recorded as information
+                _logger.LogInformation(ex,
+                    "[Need Attention] - Alert critical failed."); // Email error will be recorded as information
             }
         }
 
@@ -83,18 +81,18 @@ namespace Laobian.Share.Blog.Alert
         {
             try
             {
-                var emailEntry = new EmailEntry(_appConfig.Common.AdminEnglishName, _appConfig.Common.AdminEmail)
+                var emailEntry = new EmailEntry(Global.Config.Common.AdminEnglishName, Global.Config.Common.AdminEmail)
                 {
-                    FromName = _appConfig.Common.ReportSenderName,
-                    FromAddress = _appConfig.Common.ReportSenderEmail,
+                    FromName = Global.Config.Common.AlertSenderName,
+                    FromAddress = Global.Config.Common.AlertSenderEmail,
                     Subject = subject,
-                    HtmlContent = $"<p>Error logs you need to pay attention: </p><ol>"
+                    HtmlContent = "<p>Error logs you need to pay attention: </p><ol>"
                 };
 
                 foreach (var logEntry in entries)
                 {
                     emailEntry.HtmlContent +=
-                        $"<li>{logEntry.Message}<br/><pre><code>{logEntry.Exception}</code></pre></li>";
+                        $"<li>{logEntry.When.ToDateAndTime()}: {logEntry.Message}<br/><pre><code>{logEntry.Exception}</code></pre></li>";
                 }
 
                 emailEntry.HtmlContent += "</ol>";
@@ -102,7 +100,8 @@ namespace Laobian.Share.Blog.Alert
             }
             catch (Exception ex)
             {
-                _logger.LogInformation(ex, "Alert errors failed."); // Email error will be recorded as information
+                _logger.LogInformation(ex,
+                    "[Need Attention] - Alert errors failed."); // Email error will be recorded as information
             }
         }
 
@@ -112,38 +111,42 @@ namespace Laobian.Share.Blog.Alert
             try
             {
                 // send alert email out. 
-                var emailEntry = new EmailEntry(_appConfig.Common.AdminEnglishName, _appConfig.Common.AdminEmail)
+                var emailEntry = new EmailEntry(Global.Config.Common.AdminEnglishName, Global.Config.Common.AdminEmail)
                 {
-                    FromName = _appConfig.Common.ReportSenderName,
-                    FromAddress = _appConfig.Common.ReportSenderEmail,
+                    FromName = Global.Config.Common.AlertSenderName,
+                    FromAddress = Global.Config.Common.AlertSenderEmail,
                     Subject = "Event Alert",
-                    HtmlContent = $"<p>An alert event created, please check.</p><p><strong>Message body: </strong>{message}</p>"
+                    HtmlContent =
+                        $"<p>An alert event created, please check if necessary.</p><p><strong>Message body: </strong>{message}</p>"
                 };
 
                 if (error != null)
                 {
-                    emailEntry.HtmlContent += $"<p><strong>Exception details: </strong></p><p><pre><code>{error}</code></pre></p>";
+                    emailEntry.HtmlContent +=
+                        $"<p><strong>Exception details: </strong></p><p><pre><code>{error}</code></pre></p>";
                 }
 
                 await _emailClient.SendAsync(emailEntry);
             }
             catch (Exception ex)
             {
-                _logger.LogInformation(ex, $"Alert accident failed. Original Message = {message}, Original Exception = {error}. Current exception = {ex}.");
+                _logger.LogInformation(ex,
+                    $"[Need Attention] - Alert event failed. Original Message = {message}, Original Exception = {error}. Current exception = {ex}.");
             }
         }
 
-        public async Task AlertAssetReloadResultAsync(string subject, string warning, string error, List<string> addedPosts = null, List<string> modifiedPosts = null)
+        public async Task AlertAssetReloadResultAsync(string subject, string warning, string error,
+            List<string> addedPosts = null, List<string> modifiedPosts = null)
         {
             try
             {
                 // send alert email out. 
-                var emailEntry = new EmailEntry(_appConfig.Common.AdminEnglishName, _appConfig.Common.AdminEmail)
+                var emailEntry = new EmailEntry(Global.Config.Common.AdminEnglishName, Global.Config.Common.AdminEmail)
                 {
-                    FromName = _appConfig.Common.ReportSenderName,
-                    FromAddress = _appConfig.Common.ReportSenderEmail,
+                    FromName = Global.Config.Common.AlertSenderName,
+                    FromAddress = Global.Config.Common.AlertSenderEmail,
                     Subject = subject,
-                    HtmlContent = $"<p>Reload assets finished, please check.</p>"
+                    HtmlContent = "<p>Reload assets finished, please check.</p>"
                 };
 
                 if (addedPosts != null && addedPosts.Any())
@@ -170,7 +173,8 @@ namespace Laobian.Share.Blog.Alert
 
                 if (!string.IsNullOrEmpty(warning))
                 {
-                    emailEntry.HtmlContent += $"<p><strong>Warnings: </strong></p><p><pre><code>{warning}</code></pre></p>";
+                    emailEntry.HtmlContent +=
+                        $"<p><strong>Warnings: </strong></p><p><pre><code>{warning}</code></pre></p>";
                 }
 
                 if (!string.IsNullOrEmpty(error))
@@ -183,7 +187,8 @@ namespace Laobian.Share.Blog.Alert
             catch (Exception ex)
             {
                 _logger.LogInformation(
-                    $"Alert assets reloading failed, subject = {subject}, warning = {warning}, error = {error}.", ex,
+                    $"[Need Attention] - Alert assets reloading failed, subject = {subject}, warning = {warning}, error = {error}.",
+                    ex,
                     true);
             }
         }
