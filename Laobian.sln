@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laobian.Share", "src\share\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laobian.Blog", "src\blog\Laobian.Blog.csproj", "{2AC816A7-B384-4C68-9B2A-186F35ECAE1C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laobian.Share.Test", "test\Laobian.Share.Test\Laobian.Share.Test.csproj", "{226403EC-931B-4CA6-B312-3898208F63F8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{2AC816A7-B384-4C68-9B2A-186F35ECAE1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2AC816A7-B384-4C68-9B2A-186F35ECAE1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2AC816A7-B384-4C68-9B2A-186F35ECAE1C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{226403EC-931B-4CA6-B312-3898208F63F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{226403EC-931B-4CA6-B312-3898208F63F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{226403EC-931B-4CA6-B312-3898208F63F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{226403EC-931B-4CA6-B312-3898208F63F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -32,6 +38,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{010ABB08-086A-424F-A744-60358EC2680D} = {BDE66F76-FC12-43AF-8F40-38948C8CA787}
 		{2AC816A7-B384-4C68-9B2A-186F35ECAE1C} = {BDE66F76-FC12-43AF-8F40-38948C8CA787}
+		{226403EC-931B-4CA6-B312-3898208F63F8} = {C75B5382-8A45-485A-8D3B-9172336F5776}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8FA34FBF-846E-4584-A02A-933F651F5B49}

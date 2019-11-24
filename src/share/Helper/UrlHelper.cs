@@ -2,9 +2,9 @@
 {
     public static class UrlHelper
     {
-        public static string Combine(params string[] parts)
+        public static string Combine(string baseAddress, params string[] parts)
         {
-            var url = string.Empty;
+            var url = baseAddress.Trim('/', '\\');
             foreach (var part in parts)
             {
                 url += "/" + part.TrimStart('/', '\\');
