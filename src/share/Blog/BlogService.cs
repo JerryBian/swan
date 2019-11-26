@@ -241,6 +241,11 @@ namespace Laobian.Share.Blog
 
         private void SetPrevAndNextPosts(BlogPost post, List<BlogPost> posts, bool onlyPublic)
         {
+            if(post == null)
+            {
+                return;
+            }
+
             if (!post.IsPublic && onlyPublic)
             {
                 _logger.LogWarning(

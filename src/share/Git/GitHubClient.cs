@@ -1,6 +1,8 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using Laobian.Share.Command;
+using Laobian.Share.Extension;
 using Microsoft.Extensions.Logging;
 
 namespace Laobian.Share.Git
@@ -37,7 +39,7 @@ namespace Laobian.Share.Git
                 return;
             }
 
-            await _command.ExecuteAsync($"cd {workingDir}; git add .; git commit -m \"{message}\"; git push");
+            await _command.ExecuteAsync($"cd {workingDir}; git add .; git commit -m \"[{DateTime.Now.ToDateAndTime()}] {message}\"; git push");
             _logger.LogInformation($"Commit completed, message = {message}.");
         }
     }
