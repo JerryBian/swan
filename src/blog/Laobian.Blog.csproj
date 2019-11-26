@@ -6,7 +6,6 @@
     <UserSecretsId>f6e89c8c-637e-4c79-8186-2e3263a7cce4</UserSecretsId>
     <RootNamespace>Laobian.Blog</RootNamespace>
     <AssemblyName>Laobian.Blog</AssemblyName>
-    <PublishTrimmed>true</PublishTrimmed>
   </PropertyGroup>
 
   <ItemGroup>

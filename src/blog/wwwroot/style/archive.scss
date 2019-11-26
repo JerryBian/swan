@@ -1,5 +1,23 @@
 ﻿@import "_/_common.scss";
-@import "../lib/bootstrap/scss/bootstrap.scss";
+@import "../lib/bootstrap/scss/functions";
+@import "../lib/bootstrap/scss/variables";
+@import "../lib/bootstrap/scss/mixins";
+@import "../lib/bootstrap/scss/reboot";
+@import "../lib/bootstrap/scss/type";
+@import "../lib/bootstrap/scss/images";
+@import "../lib/bootstrap/scss/code";
+@import "../lib/bootstrap/scss/grid";
+@import "../lib/bootstrap/scss/alert";
+@import "../lib/bootstrap/scss/buttons";
+@import "../lib/bootstrap/scss/card";
+@import "../lib/bootstrap/scss/list-group";
+@import "../lib/bootstrap/scss/nav";
+@import "../lib/bootstrap/scss/navbar";
+@import "../lib/bootstrap/scss/pagination";
+@import "../lib/bootstrap/scss/progress";
+@import "../lib/bootstrap/scss/tables";
+@import "../lib/bootstrap/scss/transitions";
+@import "../lib/bootstrap/scss/utilities";
 @import "shared.scss";
 
 .archive {
@@ -29,7 +47,7 @@
     }
 
     table tr td:first-child {
-        padding-right: 1rem;
-        min-width: 120px;
+        padding-right: 0.8rem;
+        min-width: 100px;
     }
 }

@@ -1,12 +1,18 @@
 ﻿using System;
+using System.Linq;
+using System.Reflection;
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
 using Laobian.Blog.HostedService;
-using Laobian.Share.BlogEngine;
+using Laobian.Share;
+using Laobian.Share.Blog;
+using Laobian.Share.Blog.Alert;
+using Laobian.Share.Blog.Asset;
+using Laobian.Share.Cache;
+using Laobian.Share.Command;
 using Laobian.Share.Config;
-using Laobian.Share.Infrastructure.Cache;
-using Laobian.Share.Infrastructure.Command;
-using Laobian.Share.Infrastructure.Email;
-using Laobian.Share.Infrastructure.Git;
-using Laobian.Share.Log;
+using Laobian.Share.Email;
+using Laobian.Share.Git;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,17 +23,17 @@ namespace Laobian.Blog.Helpers
     {
         public static void RegisterService(IServiceCollection services, IConfiguration config)
         {
-            
-            services.Configure<AppConfig>(ac => MapConfig(config, ac));
-
-            services.AddSingleton<IMemoryCacheClient, MemoryCacheClient>();
+            MapConfig(config);
+            services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
+            services.AddSingleton<ICacheClient, MemoryCacheClient>();
             services.AddSingleton<ICommand, PowerShellCommand>();
             services.AddSingleton<IBlogService, BlogService>();
-            services.AddSingleton<IGitClient, GitClient>();
+            services.AddSingleton<IGitClient, GitHubClient>();
             services.AddSingleton<IEmailClient, SendGridEmailClient>();
-            services.AddSingleton<ILogStore, LogStore>();
+            services.AddSingleton<IBlogAssetManager, BlogAssetManager>();
+            services.AddSingleton<IBlogAlertService, BlogAlertService>();
 
-            services.AddHostedService<PostHostedService>();
+            services.AddHostedService<AssetHostedService>();
             services.AddHostedService<LogHostedService>();
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -37,30 +43,42 @@ namespace Laobian.Blog.Helpers
                     options.LogoutPath = "/logout";
                     options.ReturnUrlParameter = "r";
                     options.Cookie.HttpOnly = true;
-                    options.ExpireTimeSpan = TimeSpan.FromDays(30);
+                    options.ExpireTimeSpan = TimeSpan.FromDays(7);
                 });
         }
 
-        private static void MapConfig(IConfiguration config, AppConfig ac)
+        private static void MapConfig(IConfiguration config)
         {
-            ac.SendGridApiKey = config.GetValue<string>("SEND_GRID_API_KEY");
-            ac.AssetGitHubRepoApiToken = config.GetValue<string>("ASSET_GITHUB_REPO_API_TOKEN");
-            ac.AssetGitHubRepoBranch = config.GetValue<string>("ASSET_GITHUB_REPO_BRANCH");
-            ac.AssetGitHubRepoOwner = config.GetValue<string>("ASSET_GITHUB_REPO_OWNER");
-            ac.AssetGitHubRepoName = config.GetValue<string>("ASSET_GITHUB_REPO_NAME");
-            ac.AssetRepoLocalDir = config.GetValue<string>("ASSET_REPO_LOCAL_DIR");
-            ac.CloneAssetsDuringStartup = config.GetValue("STARTUP_CLONE_ASSETS", true);
-            ac.AssetGitCommitUser = config.GetValue("ASSET_LOCAL_COMMIT_USER_NAME", "bot");
-            ac.AssetGitCommitEmail = config.GetValue("ASSET_LOCAL_COMMIT_USER_EMAIL", "bot@laobian.me");
-            ac.BlogAddress = config.GetValue("BLOG_ADDRESS", "https://blog.laobian.me/");
-            ac.AssetGitHubHookSecret = config.GetValue("ASSET_GITHUB_HOOK_SECRET", "test");
-            ac.PostUpdateScheduled = config.GetValue("POST_UPDATE_SCHEDULED", false);
-            ac.PostUpdateAtHour = config.GetValue("POST_UPDATE_AT_HOUR", 3);
-            ac.PostUpdateEverySeconds = config.GetValue("POST_UPDATE_EVERY_SECONDS", 5 * 60);
-            ac.ErrorLogsSendInterval = config.GetValue("ERROR_LOG_SEND_INTERVAL", 60);
-            ac.WarningLogsSendInterval = config.GetValue("WARNING_LOGS_SEND_INTERVAL", 60 * 5);
-            ac.AdminUserName = config.GetValue<string>("ADMIN_USER_NAME");
-            ac.AdminPassword = config.GetValue<string>("ADMIN_PASSWORD");
+            var ac = new AppConfig();
+            foreach (var domainProp in typeof(AppConfig).GetProperties()
+                .Where(p => typeof(IConfig).IsAssignableFrom(p.PropertyType)))
+            {
+                var obj = Activator.CreateInstance(domainProp.PropertyType);
+                foreach (var propertyInfo in domainProp.PropertyType.GetProperties())
+                {
+                    var attr = propertyInfo.GetCustomAttribute<ConfigMetaAttribute>();
+                    if (attr != null)
+                    {
+                        var configValue = config.GetValue(propertyInfo.PropertyType, attr.Name);
+                        if (configValue == null)
+                        {
+                            if (attr.Required)
+                            {
+                                throw new AppConfigException(
+                                    $"Missing AppConfig. Domain: {domainProp.Name}, config: {propertyInfo.Name}.");
+                            }
+
+                            configValue = Convert.ChangeType(attr.DefaultValue, propertyInfo.PropertyType);
+                        }
+
+                        propertyInfo.SetValue(obj, Convert.ChangeType(configValue, propertyInfo.PropertyType));
+                    }
+                }
+
+                domainProp.SetValue(ac, obj);
+            }
+
+            Global.Config = ac;
         }
     }
 }

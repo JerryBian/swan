@@ -1,4 +1,5 @@
-﻿using Laobian.Share.Extension;
+﻿using System;
+using Laobian.Share.Log;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
@@ -11,12 +12,17 @@ namespace Laobian.Blog
             CreateHostBuilder(args).Build().Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
+        public static IHostBuilder CreateHostBuilder(string[] args)
+        {
+            return Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.ConfigureLogging(builder => builder.AddEmail());
+                    webBuilder.CaptureStartupErrors(true);
+                    webBuilder.UseSetting(WebHostDefaults.DetailedErrorsKey, bool.TrueString);
+                    webBuilder.UseShutdownTimeout(TimeSpan.FromMinutes(2));
+                    webBuilder.ConfigureLogging(builder => builder.AddQueuedLogger());
                     webBuilder.UseStartup<Startup>();
                 });
+        }
     }
 }

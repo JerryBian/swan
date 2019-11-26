@@ -1,114 +1,124 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.ServiceModel.Syndication;
 using System.Text;
 using System.Xml;
-using Laobian.Share.BlogEngine;
-using Laobian.Share.Config;
+using Laobian.Share;
+using Laobian.Share.Blog;
+using Laobian.Share.Blog.Asset;
+using Laobian.Share.Cache;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace Laobian.Blog.Controllers
 {
     public class SubscribeController : Controller
     {
-        private readonly AppConfig _appConfig;
         private readonly IBlogService _blogService;
+        private readonly ICacheClient _cacheClient;
 
-        public SubscribeController(IOptions<AppConfig> appConfig, IBlogService blogService)
+        public SubscribeController(ICacheClient cacheClient, IBlogService blogService)
         {
-            _appConfig = appConfig.Value;
             _blogService = blogService;
+            _cacheClient = cacheClient;
         }
 
         [Route("/rss")]
-        [ResponseCache(CacheProfileName = "Cache1Hour")]
         public IActionResult Rss()
         {
-            var feed = GetFeed();
-            var rssFormatter = new Rss20FeedFormatter(feed) { SerializeExtensionsAsAtom = false };
-            using (var ms = new MemoryStream())
+            var rss = _cacheClient.GetOrCreate(CacheKey.Build(nameof(SubscribeController), nameof(Rss)), () =>
             {
-                using (var xmlWriter = XmlWriter.Create(ms, new XmlWriterSettings { Async = true, Encoding = Encoding.UTF8 }))
+                var feed = GetFeed();
+                var rssFormatter = new Rss20FeedFormatter(feed) {SerializeExtensionsAsAtom = false};
+                using (var ms = new MemoryStream())
                 {
-                    rssFormatter.WriteTo(xmlWriter);
-                }
+                    using (var xmlWriter = XmlWriter.Create(ms,
+                        new XmlWriterSettings {Async = true, Encoding = Encoding.UTF8}))
+                    {
+                        rssFormatter.WriteTo(xmlWriter);
+                    }
 
-                return Content(Encoding.UTF8.GetString(ms.ToArray()), "application/rss+xml", Encoding.UTF8);
-            }
+                    return Encoding.UTF8.GetString(ms.ToArray());
+                }
+            }, new BlogAssetChangeToken());
+
+            return Content(rss, "application/rss+xml", Encoding.UTF8);
         }
 
         [Route("/atom")]
-        [ResponseCache(CacheProfileName = "Cache1Hour")]
         public IActionResult Atom()
         {
-            var feed = GetFeed();
-            var atomFormatter = new Atom10FeedFormatter(feed);
-            using (var ms = new MemoryStream())
+            var atom = _cacheClient.GetOrCreate(CacheKey.Build(nameof(SubscribeController), nameof(Atom)), () =>
             {
-                using (var xmlWriter = XmlWriter.Create(ms, new XmlWriterSettings { Async = true, Encoding = Encoding.UTF8 }))
+                var feed = GetFeed();
+                var atomFormatter = new Atom10FeedFormatter(feed);
+                using (var ms = new MemoryStream())
                 {
-                    atomFormatter.WriteTo(xmlWriter);
-                }
+                    using (var xmlWriter = XmlWriter.Create(ms,
+                        new XmlWriterSettings {Async = true, Encoding = Encoding.UTF8}))
+                    {
+                        atomFormatter.WriteTo(xmlWriter);
+                    }
 
-                return Content(Encoding.UTF8.GetString(ms.ToArray()), "application/atom+xml", Encoding.UTF8);
-            }
+                    return Encoding.UTF8.GetString(ms.ToArray());
+                }
+            }, new BlogAssetChangeToken());
+
+            return Content(atom, "application/atom+xml", Encoding.UTF8);
         }
 
         private SyndicationFeed GetFeed()
         {
-            var feed = new SyndicationFeed("", "", new Uri(_appConfig.BlogAddress))
+            var feed = new SyndicationFeed("", "", new Uri(Global.Config.Blog.BlogAddress))
             {
-                Title = new TextSyndicationContent(BlogConstant.BlogName, TextSyndicationContentKind.Plaintext),
+                Title = new TextSyndicationContent(Global.Config.Blog.Name, TextSyndicationContentKind.Plaintext),
                 Copyright = new TextSyndicationContent(
-                    $"Copyright {DateTime.UtcNow.Year} {BlogConstant.AuthorChineseName}",
+                    $"Copyright {DateTime.UtcNow.Year} {Global.Config.Common.AdminChineseName}",
                     TextSyndicationContentKind.Plaintext),
                 Description =
-                    new TextSyndicationContent(BlogConstant.BlogDescription, TextSyndicationContentKind.Plaintext),
+                    new TextSyndicationContent(Global.Config.Blog.Description, TextSyndicationContentKind.Plaintext),
                 Generator = "ASP.NET CORE",
-                BaseUri = new Uri(_appConfig.BlogAddress),
-                Id = _appConfig.BlogAddress,
+                BaseUri = new Uri(Global.Config.Blog.BlogAddress),
+                Id = Global.Config.Blog.BlogAddress,
                 Language = "zh-cn",
                 LastUpdatedTime = DateTimeOffset.UtcNow,
                 TimeToLive = TimeSpan.FromHours(1)
             };
 
-            var sp = new SyndicationPerson(BlogConstant.AuthorEmail, BlogConstant.AuthorChineseName, _appConfig.BlogAddress);
+            var sp = new SyndicationPerson(Global.Config.Common.AdminEmail, Global.Config.Common.AdminChineseName,
+                Global.Config.Blog.BlogAddress);
             feed.Authors.Add(sp);
             feed.Contributors.Add(sp);
-            
+
             var items = new List<SyndicationItem>();
-            var posts = _blogService.GetPosts().Where(p => p.IsReallyPublic).OrderByDescending(p => p.CreationTimeUtc)
-                .ToList();
+            var posts = _blogService.GetPosts();
             foreach (var blogPost in posts)
             {
                 var item = new SyndicationItem
                 {
                     Title = new TextSyndicationContent(blogPost.Title, TextSyndicationContentKind.Plaintext),
                     Copyright = feed.Copyright,
-                    Id = blogPost.FullUrlWithBaseAddress,
-                    PublishDate = new DateTimeOffset(blogPost.CreationTimeUtc, TimeSpan.Zero),
-                    Summary = new TextSyndicationContent(blogPost.Excerpt, TextSyndicationContentKind.Html),
-                    Content = new TextSyndicationContent(blogPost.HtmlContent, TextSyndicationContentKind.Html),
-                    LastUpdatedTime = new DateTimeOffset(blogPost.LastUpdateTimeUtc, TimeSpan.Zero)
+                    Id = blogPost.FullUrlWithBase,
+                    PublishDate = new DateTimeOffset(blogPost.PublishTime, TimeSpan.FromHours(8)),
+                    Summary = new TextSyndicationContent(blogPost.ExcerptHtml, TextSyndicationContentKind.Html),
+                    Content = new TextSyndicationContent(blogPost.ContentHtml, TextSyndicationContentKind.Html),
+                    LastUpdatedTime = new DateTimeOffset(blogPost.LastUpdateTime, TimeSpan.FromHours(8))
                 };
 
-                item.AddPermalink(new Uri(blogPost.FullUrlWithBaseAddress));
+                item.AddPermalink(new Uri(blogPost.FullUrlWithBase));
                 item.Authors.Add(sp);
                 item.Contributors.Add(sp);
 
-                foreach (var cat in blogPost.CategoryNames)
+                foreach (var cat in blogPost.Categories)
                 {
-                    item.Categories.Add(new SyndicationCategory(cat));
+                    item.Categories.Add(new SyndicationCategory(cat.Name));
                 }
 
                 items.Add(item);
             }
 
             feed.Items = items;
-            
+
             return feed;
         }
     }

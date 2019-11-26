@@ -1,29 +1,28 @@
-﻿@model PostViewModel
-@inject IOptions<AppConfig> Config
+﻿@model BlogPost
 
 <article class="post">
+    @if (!Model.IsPublic)
+    {
+        <div class="text-warning font-italic"><i class="fas fa-info-circle"></i> 这篇文章尚未发布，仅供管理员预览。</div>
+    }
     <div class="post-title">
-        <i class="fas fa-angle-down"></i>
-        @{
-            if (!Model.Post.IsReallyPublic)
-            {
-                <span class="badge badge-secondary">Private</span>
-            }
+        @if (Model.IsTopping)
+        {
+            <i class="fas fa-flag fa-sm text-info"></i>
         }
-        @Model.Post.Title
+        @Model.Title
     </div>
     <div class="text-muted text-left d-block d-lg-none post-meta">
-        <time datetime="@Model.Post.CreationTimeUtc.ToChinaTime().ToDateAndTime()"></time>
+        <time datetime="@Model.PublishTime.ToDateAndTime()"></time>
         @Html.Raw(Model.GetSimpleMetadataHtml())
     </div>
     <div class="mt-2 mb-4 post-content">
-        @Html.Raw(Model.Post.HtmlContent)
-
+        @Html.Raw(Model.ContentHtml)
         <p class="text-muted">（本文完）</p>
     </div>
 </article>
 
-<div class="alert alert-info post-alert" role="alert">
+<div class="alert alert-warning post-alert" role="alert">
     <ul>
         @{
             var meta = Model.GetCategoryAndTagHtml();
@@ -31,33 +30,38 @@
             {
                 <li>发表于 @Html.Raw(meta)</li>
             }
-
-            if (Model.PrevPost != null)
-            {
-                <li>前一篇：<a href="@Model.PrevPost.FullUrl">@Model.PrevPost.Title</a></li>
-            }
-
-            if (Model.NextPost != null)
-            {
-                <li>后一篇：<a href="@Model.NextPost.FullUrl">@Model.NextPost.Title</a></li>
-            }
         }
         <li>
-            关于这篇文章的评论，请发送电子邮件至 <a href="mailto:@BlogConstant.AuthorEmail?subject=评论 - @Model.Post.Title&body=Good job！">@BlogConstant.AuthorEmail</a>。
+            这篇文章的留言，请发送电子邮件至
+            <a href="mailto:@Global.Config.Common.AdminEmail?subject=留言 - @Model.Title&body=Good job！">
+                @Global.Config.Common.AdminEmail
+            </a>
         </li>
+
+        @if (Model.PrevPost != null)
+        {
+            <li>前一篇：<a href="@Model.PrevPost.FullUrl">@Model.PrevPost.Title</a></li>
+        }
+
+        @if (Model.NextPost != null)
+        {
+            <li>后一篇：<a href="@Model.NextPost.FullUrl">@Model.NextPost.Title</a></li>
+        }
     </ul>
 </div>
 
-@section sidebar{
-    @await Component.InvokeAsync("PostRecommend", new { adminView = ViewData["AdminView"], excludedLink = Model.Post.Link })
-}
+<div id="imgModal" class="modal">
+    <span id="modal-close">&times;</span>
+    <img id="modal-content">
+    <div id="modal-caption"></div>
+</div>
 
 @section stickySidebar{
-    <partial name="_AsidePostInfo" model="@Model" />
+    <partial name="_AsidePostInfo" model="@Model"/>
 }
 
 @section script{
-    @if (Model.Post.IncludeMathJax)
+    @if (Model.ContainsMath)
     {
         <script>
             MathJax = {
@@ -78,5 +82,5 @@
 }
 
 @section style{
-    <link rel="stylesheet" href="~/style/post.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/style/post.min.css" asp-append-version="true"/>
 }

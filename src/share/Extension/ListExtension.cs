@@ -4,12 +4,12 @@ using System.Linq;
 namespace Laobian.Share.Extension
 {
     /// <summary>
-    /// Extensions for <see cref="List{T}"/>
+    ///     Extensions for <see cref="List{T}" />
     /// </summary>
     public static class ListExtension
     {
         /// <summary>
-        /// Split to equal-sized groups, return for current page only
+        ///     Split to equal-sized groups, return for current page only
         /// </summary>
         /// <typeparam name="T">Type of instance</typeparam>
         /// <param name="source">The given source</param>
