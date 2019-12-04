@@ -8,7 +8,7 @@
                 return;
             }
 
-            const images = document.querySelectorAll(".post img");
+            var images = document.querySelectorAll(".post img");
             var modalImg = document.querySelector("#modal-content");
             var caption = document.querySelector("#modal-caption");
             images.forEach(function(img) {
