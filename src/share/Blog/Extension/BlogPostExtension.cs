@@ -101,6 +101,7 @@ namespace Laobian.Share.Blog.Extension
             post.FullUrl =
                 $"/{post.PublishTime.Year}/{post.PublishTime.Month:D2}/{post.Link}{Global.Config.Common.HtmlExtension}";
             post.FullUrlWithBase = $"{Global.Config.Blog.BlogAddress}{post.FullUrl}";
+            post.AccessCount = post.Raw.AccessCount ?? 0;
         }
 
         private static void HandleCategory(BlogPost post, List<BlogCategory> allCategories)
