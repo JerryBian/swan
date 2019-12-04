@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Share;
@@ -14,6 +15,8 @@ namespace Laobian.Blog.HostedService
         private readonly ILogger<AssetHostedService> _logger;
 
         private DateTime _lastUpdateTime;
+
+        public static event EventHandler<BlogAssetChange> BlogAssetChangeEvent;
 
         public AssetHostedService(IBlogService blogService, ILogger<AssetHostedService> logger)
         {
@@ -43,6 +46,17 @@ namespace Laobian.Blog.HostedService
                             _lastUpdateTime, Global.Config.Blog.AssetUpdateAtHour);
                     }
                 }
+
+                var posts = _blogService.GetPosts();
+                var nextRefreshAt = posts
+                    .Where(p => p.GetRawPublishTime() != null && p.GetRawPublishTime() > DateTime.Now)
+                    .Min(p => p.GetRawPublishTime());
+                if (nextRefreshAt != null && nextRefreshAt != default(DateTime))
+                {
+                    BlogAssetChangeEvent?.Invoke(this, new BlogAssetChange { NextRefreshAt = nextRefreshAt.Value });
+                }
+
+                _logger.LogDebug("Next refresh at {0}.", nextRefreshAt);
             }
         }
 
