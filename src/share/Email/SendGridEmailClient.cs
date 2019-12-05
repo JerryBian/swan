@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using SendGrid;
@@ -36,6 +37,11 @@ namespace Laobian.Share.Email
             var to = new EmailAddress(entry.ToAddress, entry.ToName);
             var message =
                 MailHelper.CreateSingleEmail(from, to, entry.Subject, entry.PlainContent, entry.HtmlContent);
+            foreach (var entryAttachment in entry.Attachments)
+            {
+                await message.AddAttachmentAsync(entryAttachment.Key, entryAttachment.Value);
+            }
+
             var response = await _client.SendEmailAsync(message);
             return response.StatusCode == HttpStatusCode.Accepted;
         }
