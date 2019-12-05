@@ -180,21 +180,30 @@ namespace Laobian.Share.Blog
                 if (reloadResult.Success)
                 {
                     BlogState.AssetLastUpdate = DateTime.Now;
+
+                    var postsPublishTime = new List<DateTime>();
+                    foreach (var blogPost in _blogAssetManager.GetAllPosts())
+                    {
+                        var oldPost = oldPosts.FirstOrDefault(p => CompareHelper.IgnoreCase(p.GitPath, blogPost.GitPath));
+                        if (oldPost != null)
+                        {
+                            blogPost.AccessCount = Math.Max(oldPost.AccessCount, blogPost.AccessCount);
+                        }
+
+                        var rawPublishTime = blogPost.GetRawPublishTime();
+                        if (rawPublishTime.HasValue && rawPublishTime != default(DateTime))
+                        {
+                            postsPublishTime.Add(rawPublishTime.Value);
+                        }
+                    }
+
+                    BlogState.PostsPublishTime = postsPublishTime.OrderBy(p => p);
                 }
 
                 var reloadResultText = reloadResult.Success ? "SUCCESS!" : "FAIL!";
                 var subject = $"Local and memory assets reload: {reloadResultText}";
                 await _blogAlertService.AlertAssetReloadResultAsync(subject, reloadResult.Warning, reloadResult.Error,
                     addedPosts, modifiedPosts);
-
-                foreach (var blogPost in _blogAssetManager.GetAllPosts())
-                {
-                    var oldPost = oldPosts.FirstOrDefault(p => CompareHelper.IgnoreCase(p.GitPath, blogPost.GitPath));
-                    if (oldPost != null)
-                    {
-                        blogPost.AccessCount = Math.Max(oldPost.AccessCount, blogPost.AccessCount);
-                    }
-                }
 
                 if (addedPosts != null && addedPosts.Any() || modifiedPosts != null && modifiedPosts.Any())
                 {

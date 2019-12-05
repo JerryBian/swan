@@ -24,6 +24,11 @@ namespace Laobian.Share.Blog.Model
             Raw.AccessCount = _accessCount;
         }
 
+        public DateTime? GetRawPublishTime()
+        {
+            return Raw.PublishTime;
+        }
+
         #endregion
 
         #region Public Property
