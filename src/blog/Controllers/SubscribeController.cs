@@ -6,7 +6,6 @@ using System.Text;
 using System.Xml;
 using Laobian.Share;
 using Laobian.Share.Blog;
-using Laobian.Share.Blog.Asset;
 using Laobian.Share.Cache;
 using Microsoft.AspNetCore.Mvc;
 
@@ -40,7 +39,7 @@ namespace Laobian.Blog.Controllers
 
                     return Encoding.UTF8.GetString(ms.ToArray());
                 }
-            }, new BlogAssetChangeToken());
+            });
 
             return Content(rss, "application/rss+xml", Encoding.UTF8);
         }
@@ -62,7 +61,7 @@ namespace Laobian.Blog.Controllers
 
                     return Encoding.UTF8.GetString(ms.ToArray());
                 }
-            }, new BlogAssetChangeToken());
+            });
 
             return Content(atom, "application/atom+xml", Encoding.UTF8);
         }

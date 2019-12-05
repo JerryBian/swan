@@ -25,7 +25,7 @@ namespace Laobian.Blog.Helpers
         {
             MapConfig(config);
             services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
-            services.AddSingleton<ICacheClient, MemoryCacheClient>();
+            services.AddSingleton<ICacheClient, BlogMemoryCacheClient>();
             services.AddSingleton<ICommand, PowerShellCommand>();
             services.AddSingleton<IBlogService, BlogService>();
             services.AddSingleton<IGitClient, GitHubClient>();

@@ -4,7 +4,6 @@ using System.Text;
 using Laobian.Blog.Models;
 using Laobian.Share;
 using Laobian.Share.Blog;
-using Laobian.Share.Blog.Asset;
 using Laobian.Share.Cache;
 using Laobian.Share.Extension;
 using Laobian.Share.Helper;
@@ -41,7 +40,7 @@ namespace Laobian.Blog.Controllers
                     }
 
                     return model;
-                }, new BlogAssetChangeToken());
+                });
 
             if (viewModel.CurrentPage > 1)
             {
@@ -115,7 +114,7 @@ namespace Laobian.Blog.Controllers
 
                     urlSet.Urls = urls;
                     return SerializeHelper.ToXml(urlSet, ns: "http://www.sitemaps.org/schemas/sitemap/0.9");
-                }, new BlogAssetChangeToken());
+                });
 
             return Content(xml, "text/xml", Encoding.UTF8);
         }

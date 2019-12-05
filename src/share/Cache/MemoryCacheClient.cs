@@ -7,19 +7,19 @@ namespace Laobian.Share.Cache
 {
     public class MemoryCacheClient : ICacheClient
     {
-        private readonly ILogger<MemoryCacheClient> _logger;
-        private readonly IMemoryCache _memoryCache;
+        protected readonly ILogger<MemoryCacheClient> Logger;
+        protected readonly IMemoryCache MemoryCache;
 
         public MemoryCacheClient(ILogger<MemoryCacheClient> logger)
         {
-            _logger = logger;
-            _memoryCache = new MemoryCache(new MemoryCacheOptions());
+            Logger = logger;
+            MemoryCache = new MemoryCache(new MemoryCacheOptions());
         }
 
-        public T GetOrCreate<T>(string cacheKey, Func<T> func, IChangeToken changeToken = null,
+        public virtual T GetOrCreate<T>(string cacheKey, Func<T> func, IChangeToken changeToken = null,
             TimeSpan? expireAfter = null)
         {
-            return _memoryCache.GetOrCreate(cacheKey, cacheEntry =>
+            return MemoryCache.GetOrCreate(cacheKey, cacheEntry =>
             {
                 var value = func();
                 cacheEntry.Value = value;
@@ -30,7 +30,7 @@ namespace Laobian.Share.Cache
                     cacheEntry.ExpirationTokens.Add(changeToken);
                 }
 
-                _logger.LogInformation($"Cache created. Key: {cacheKey}");
+                Logger.LogInformation($"Cache created. Key: {cacheKey}");
                 return value;
             });
         }

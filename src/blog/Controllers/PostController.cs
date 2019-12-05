@@ -1,6 +1,5 @@
 ﻿using Laobian.Blog.Models;
 using Laobian.Share.Blog;
-using Laobian.Share.Blog.Asset;
 using Laobian.Share.Cache;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -26,8 +25,7 @@ namespace Laobian.Blog.Controllers
             var post = _cacheClient.GetOrCreate(
                 CacheKey.Build(nameof(PostController), nameof(Index), year, month, link,
                     !User.Identity.IsAuthenticated),
-                () => _blogService.GetPost(year, month, link, !User.Identity.IsAuthenticated),
-                new BlogAssetChangeToken());
+                () => _blogService.GetPost(year, month, link, !User.Identity.IsAuthenticated));
 
             if (post == null)
             {

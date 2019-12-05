@@ -1,19 +1,18 @@
 ﻿using System;
-using Laobian.Blog.HostedService;
-using Laobian.Share.Blog;
+using System.Linq;
 using Microsoft.Extensions.Primitives;
 
-namespace Laobian.Blog
+namespace Laobian.Share.Blog.Asset
 {
     public class BlogAssetChangeToken : IChangeToken
     {
-        private DateTime _nextRefreshAt;
+        private readonly DateTime? _nextHardRefreshAt;
         private readonly DateTime _assetLastUpdate;
 
         public BlogAssetChangeToken()
         {
             _assetLastUpdate = BlogState.AssetLastUpdate;
-            AssetHostedService.BlogAssetChangeEvent += (sender, change) => { _nextRefreshAt = change.NextRefreshAt; };
+            _nextHardRefreshAt = BlogState.PostsPublishTime?.Where(p => p > DateTime.Now).FirstOrDefault();
         }
 
         public IDisposable RegisterChangeCallback(Action<object> callback, object state)
@@ -25,12 +24,14 @@ namespace Laobian.Blog
         {
             get
             {
-                if (_assetLastUpdate == BlogState.AssetLastUpdate)
+                if (_assetLastUpdate != BlogState.AssetLastUpdate)
                 {
                     return true;
                 }
 
-                if (_nextRefreshAt != default && DateTime.Now >= _nextRefreshAt)
+                if (_nextHardRefreshAt != null && 
+                    _nextHardRefreshAt != default(DateTime) && 
+                    DateTime.Now >= _nextHardRefreshAt)
                 {
                     return true;
                 }

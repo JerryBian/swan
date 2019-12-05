@@ -3,7 +3,6 @@ using System.Linq;
 using Laobian.Blog.Models;
 using Laobian.Share;
 using Laobian.Share.Blog;
-using Laobian.Share.Blog.Asset;
 using Laobian.Share.Cache;
 using Laobian.Share.Extension;
 using Microsoft.AspNetCore.Mvc;
@@ -26,8 +25,7 @@ namespace Laobian.Blog.ViewComponents
             var adminView = HttpContext.User.Identity.IsAuthenticated;
             var postsCount = _cacheClient.GetOrCreate(
                 CacheKey.Build(nameof(BlogInfoViewComponent), nameof(Invoke), !adminView, "POSTS"),
-                () => _blogService.GetPosts(!adminView).Count,
-                new BlogAssetChangeToken());
+                () => _blogService.GetPosts(!adminView).Count);
             var postsAccessCount = _cacheClient.GetOrCreate(
                 CacheKey.Build(nameof(BlogInfoViewComponent), nameof(Invoke), !adminView, "POSTS_ACCESS_COUNT"),
                 () => _blogService.GetPosts(!adminView).Sum(p => p.AccessCount),
