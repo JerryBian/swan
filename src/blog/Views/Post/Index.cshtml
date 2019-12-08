@@ -1,23 +1,23 @@
-﻿@model BlogPost
+﻿@model PostViewModel
 
 <article class="post">
-    @if (!Model.IsPublic)
+    @if (!Model.Post.IsPublic)
     {
         <div class="text-warning font-italic"><i class="fas fa-info-circle"></i> 这篇文章尚未发布，仅供管理员预览。</div>
     }
     <div class="post-title">
-        @if (Model.IsTopping)
+        @if (Model.Post.IsTopping)
         {
             <i class="fas fa-flag fa-sm text-info"></i>
         }
-        @Model.Title
+        @Model.Post.Title
     </div>
     <div class="text-muted text-left d-block d-lg-none post-meta">
-        <time datetime="@Model.PublishTime.ToDateAndTime()"></time>
-        @Html.Raw(Model.GetSimpleMetadataHtml())
+        <time datetime="@Model.Post.PublishTime.ToDateAndTime()"></time>
+        @Html.Raw(Model.Post.GetSimpleMetadataHtml())
     </div>
     <div class="mt-2 mb-4 post-content">
-        @Html.Raw(Model.ContentHtml)
+        @Html.Raw(Model.Post.ContentHtml)
         <p class="text-muted">（本文完）</p>
     </div>
 </article>
@@ -25,7 +25,7 @@
 <div class="alert alert-warning post-alert" role="alert">
     <ul>
         @{
-            var meta = Model.GetCategoryAndTagHtml();
+            var meta = Model.Post.GetCategoryAndTagHtml();
             if (!string.IsNullOrEmpty(meta))
             {
                 <li>发表于 @Html.Raw(meta)</li>
@@ -33,7 +33,7 @@
         }
         <li>
             这篇文章的留言，请发送电子邮件至
-            <a href="mailto:@Global.Config.Common.AdminEmail?subject=留言 - @Model.Title&body=Good job！">
+            <a href="mailto:@Global.Config.Common.AdminEmail?subject=留言 - @Model.Post.Title&body=Good job！">
                 @Global.Config.Common.AdminEmail
             </a>
         </li>
@@ -57,11 +57,11 @@
 </div>
 
 @section stickySidebar{
-    <partial name="_AsidePostInfo" model="@Model"/>
+    <partial name="_AsidePostInfo" model="@Model.Post"/>
 }
 
 @section script{
-    @if (Model.ContainsMath)
+    @if (Model.Post.ContainsMath)
     {
         <script>
             MathJax = {

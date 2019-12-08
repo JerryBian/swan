@@ -84,10 +84,6 @@ namespace Laobian.Share.Blog.Model
 
         public string Link => Raw.Link;
 
-        public BlogPost PrevPost { get; set; }
-
-        public BlogPost NextPost { get; set; }
-
         public bool IsTopping => Raw.IsTopping ?? false;
 
         public bool ContainsMath => Raw.ContainsMath ?? false;

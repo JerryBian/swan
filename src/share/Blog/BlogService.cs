@@ -51,7 +51,6 @@ namespace Laobian.Share.Blog
                 : posts.FirstOrDefault(p =>
                     p.PublishTime.Year == year && p.PublishTime.Month == month &&
                     CompareHelper.IgnoreCase(p.Link, link));
-            SetPrevAndNextPosts(post, posts.ToList(), onlyPublic);
             return post;
         }
 
@@ -245,48 +244,6 @@ namespace Laobian.Share.Blog
             finally
             {
                 _semaphoreSlim2.Release();
-            }
-        }
-
-        private void SetPrevAndNextPosts(BlogPost post, List<BlogPost> posts, bool onlyPublic)
-        {
-            if(post == null)
-            {
-                return;
-            }
-
-            if (!post.IsPublic && onlyPublic)
-            {
-                _logger.LogWarning(
-                    $"Try to set post's Next and Prev. However this post is not public while requesting only public, we need to fix this. Post = {post.Link}, Call stack = {Environment.StackTrace}");
-                return;
-            }
-
-            var postIndex = posts.IndexOf(post);
-            var prevPostIndex = postIndex - 1;
-            while (prevPostIndex >= 0)
-            {
-                var prevPost = posts[prevPostIndex];
-                if (!onlyPublic || prevPost.IsPublic)
-                {
-                    post.PrevPost = prevPost;
-                    break;
-                }
-
-                prevPostIndex--;
-            }
-
-            var nextPostIndex = postIndex + 1;
-            while (nextPostIndex < posts.Count)
-            {
-                var nextPost = posts[nextPostIndex];
-                if (!onlyPublic || nextPost.IsPublic)
-                {
-                    post.NextPost = nextPost;
-                    break;
-                }
-
-                nextPostIndex++;
             }
         }
     }
