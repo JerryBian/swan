@@ -68,10 +68,10 @@
         [ConfigMeta(Name = "POSTS_PER_PAGE", DefaultValue = 8)]
         public int PostsPerPage { get; set; }
 
-        [ConfigMeta(Name = "LOG_FLUSH_AT_HOUR", DefaultValue = 22)]
+        [ConfigMeta(Name = "LOG_FLUSH_AT_HOUR", DefaultValue = 9)]
         public int LogFlushAtHour { get; set; }
 
-        [ConfigMeta(Name = "WARNING_LOG_THRESHOLD", DefaultValue = 30)]
+        [ConfigMeta(Name = "WARNING_LOG_THRESHOLD", DefaultValue = 100)]
         public int WarningLogsThreshold { get; set; }
 
         [ConfigMeta(Name = "ERROR_LOG_THRESHOLD", DefaultValue = 10)]

@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Net;
+﻿using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 
@@ -10,9 +10,11 @@ namespace Laobian.Share.Email
     public class SendGridEmailClient : IEmailClient
     {
         private readonly SendGridClient _client;
+        private readonly ILogger<SendGridClient> _logger;
 
-        public SendGridEmailClient()
+        public SendGridEmailClient(ILogger<SendGridClient> logger)
         {
+            _logger = logger;
             _client = new SendGridClient(Global.Config.Common.SendGridApiKey);
         }
 
@@ -43,7 +45,14 @@ namespace Laobian.Share.Email
             }
 
             var response = await _client.SendEmailAsync(message);
-            return response.StatusCode == HttpStatusCode.Accepted;
+            if (response.StatusCode != HttpStatusCode.Accepted)
+            {
+                var body = await response.Body.ReadAsStringAsync();
+                _logger.LogError($"Send email failed for subject: {entry.Subject}, SendGrid response: {body}.");
+                return false;
+            }
+
+            return true;
         }
     }
 }

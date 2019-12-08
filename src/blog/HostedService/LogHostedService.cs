@@ -153,7 +153,7 @@ namespace Laobian.Blog.HostedService
                 if (logs.Any())
                 {
                     // send alert
-                    await _alertService.AlertWarningsAsync("WARNINGS - blog", logs);
+                    await _alertService.AlertWarningsAsync("Many Warnings in blog", logs);
                 }
             }
         }
@@ -171,7 +171,7 @@ namespace Laobian.Blog.HostedService
                 if (logs.Any())
                 {
                     // send alert
-                    await _alertService.AlertErrorsAsync("ERRORS - blog", logs);
+                    await _alertService.AlertErrorsAsync("Many errors in blog", logs);
                 }
             }
         }
@@ -189,7 +189,7 @@ namespace Laobian.Blog.HostedService
                 if (logs.Any())
                 {
                     // send alert
-                    await _alertService.AlertCriticalAsync("CRITICAL - blog", logs);
+                    await _alertService.AlertCriticalAsync("Critical log in blog", logs);
                 }
             }
         }

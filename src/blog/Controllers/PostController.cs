@@ -29,7 +29,6 @@ namespace Laobian.Blog.Controllers
 
             if (post == null)
             {
-                _logger.LogWarning($"Request post not exists. Year={year}, Month={month}, Link={link}.");
                 return NotFound();
             }
 
@@ -39,7 +38,7 @@ namespace Laobian.Blog.Controllers
 
                 if (!User.Identity.IsAuthenticated)
                 {
-                    _logger.LogWarning(
+                    _logger.LogError(
                         $"Trying to access private post failed. Year={year}, Month={month}, Link={link}. " +
                         $"IP={Request.HttpContext.Connection.RemoteIpAddress}, UserAgent={Request.Headers["User-Agent"]}.");
                     return NotFound();
