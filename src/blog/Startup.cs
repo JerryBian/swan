@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -77,8 +78,10 @@ namespace Laobian.Blog
             app.UseStatusCodePages(async context =>
             {
                 logger.LogWarning(
-                    $"Hit status code page. Request Url= {context.HttpContext.Request.Path}, " +
-                    $"Status= {context.HttpContext.Response.StatusCode}.");
+                    $"Hit status code page. Request Url= {context.HttpContext.Request.GetDisplayUrl()}, " +
+                    $"Status= {context.HttpContext.Response.StatusCode}, " +
+                    $"Request IP= {context.HttpContext.Connection.RemoteIpAddress}, " +
+                    $"User Agent={context.HttpContext.Request.Headers["User-Agent"]}.");
                 context.HttpContext.Response.ContentType = "text/plain";
                 await context.HttpContext.Response.WriteAsync(
                     "Status code page, status code: " +

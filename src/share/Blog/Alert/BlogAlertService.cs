@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Laobian.Share.Email;
@@ -20,6 +21,31 @@ namespace Laobian.Share.Blog.Alert
         {
             _logger = logger;
             _emailClient = emailClient;
+        }
+
+        public async Task AlertReportAsync(string message, Dictionary<string, Stream> logs)
+        {
+            try
+            {
+                var emailEntry = new EmailEntry(Global.Config.Common.AdminEnglishName, Global.Config.Common.AdminEmail)
+                {
+                    FromName = Global.Config.Common.AlertSenderName,
+                    FromAddress = Global.Config.Common.AlertSenderEmail,
+                    Subject = $"daily report@{DateTime.Now:yyyyMMdd}",
+                    HtmlContent = message
+                };
+
+                foreach (var item in logs)
+                {
+                    emailEntry.Attachments.Add(item.Key, item.Value);
+                }
+
+                await _emailClient.SendAsync(emailEntry);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex, "[Need Attention] - Alert report failed.");
+            }
         }
 
         public async Task AlertWarningsAsync(string subject, List<LogEntry> entries)

@@ -201,7 +201,7 @@ namespace Laobian.Share.Blog
                 }
 
                 var reloadResultText = reloadResult.Success ? "SUCCESS!" : "FAIL!";
-                var subject = $"Local and memory assets reload: {reloadResultText}";
+                var subject = $"Assets reload: {reloadResultText}";
                 await _blogAlertService.AlertAssetReloadResultAsync(subject, reloadResult.Warning, reloadResult.Error,
                     addedPosts, modifiedPosts);
 
