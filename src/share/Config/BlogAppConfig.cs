@@ -50,6 +50,9 @@
         [ConfigMeta(Name = "ABOUT_GIT_PATH", DefaultValue = "blog/about.md")]
         public string AboutGitPath { get; set; }
 
+        [ConfigMeta(Name = "POST_VISIT_GIT_PATH", DefaultValue = "blog/post-visit.txt")]
+        public string PostVisitGitPath { get; set; }
+
         [ConfigMeta(Name = "FILE_GIT_PATH", DefaultValue = "blog/file/")]
         public string FileGitPath { get; set; }
 

@@ -58,7 +58,7 @@ namespace Laobian.Blog.Controllers
                 ViewData[ViewDataConstant.VisibleToSearchEngine] = false;
             }
 
-            model.Post.NewAccess();
+            _blogService.PostNewVisit(model.Post);
             ViewData[ViewDataConstant.Canonical] = model.Post.FullUrlWithBase;
             ViewData[ViewDataConstant.Title] = model.Post.Title;
             ViewData[ViewDataConstant.Description] = model.Post.ExcerptPlain;

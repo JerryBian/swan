@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 using Laobian.Share.Extension;
 
 namespace Laobian.Share.Blog.Model
@@ -18,12 +17,6 @@ namespace Laobian.Share.Blog.Model
 
         #region Public Methods
 
-        public void NewAccess()
-        {
-            Interlocked.Increment(ref _accessCount);
-            Raw.AccessCount = _accessCount;
-        }
-
         public DateTime? GetRawPublishTime()
         {
             return Raw.PublishTime;
@@ -33,21 +26,11 @@ namespace Laobian.Share.Blog.Model
 
         #region Public Property
 
-        private int _accessCount;
-
-        public int AccessCount
-        {
-            get => _accessCount;
-            set
-            {
-                _accessCount = value;
-                Raw.AccessCount = _accessCount;
-            }
-        }
+        public int AccessCount { get; set; }
 
         public string Title => Raw.Title ?? throw new InvalidBlogAssetException(nameof(Title));
 
-        public string AccessCountString => _accessCount.Human();
+        public string AccessCountString => AccessCount.Human();
 
         public bool IsPublic => DateTime.Now > PublishTime &&
                                 Raw.IsDraft != null &&
