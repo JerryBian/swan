@@ -29,6 +29,20 @@ namespace Laobian.Share.Blog
             _semaphoreSlim2 = new SemaphoreSlim(1, 1);
         }
 
+        public BlogPostVisit GetPostVisits()
+        {
+            return _blogAssetManager.GetPostVisit();
+        }
+
+        public void PostNewVisit(BlogPost post)
+        {
+            if (post != null)
+            {
+                var postVisit = _blogAssetManager.GetPostVisit();
+                postVisit.Update(post.GitPath);
+            }
+        }
+
         public List<BlogPost> GetPosts(bool onlyPublic = true, bool publishTimeDesc = true,
             bool toppingPostsFirst = true)
         {
@@ -174,21 +188,26 @@ namespace Laobian.Share.Blog
                     await _blogAssetManager.UpdateRemoteGitTemplatePostAsync();
                 }
 
-                var oldPosts = new List<BlogPost>(_blogAssetManager.GetAllPosts());
+                var existingPostVisit = _blogAssetManager.GetPostVisit().Clone();
                 var reloadResult = await _blogAssetManager.LocalFileToLocalMemoryAsync();
                 if (reloadResult.Success)
                 {
                     BlogState.AssetLastUpdate = DateTime.Now;
+                    foreach (var item in _blogAssetManager.GetPostVisit().Dump())
+                    {
+                        if (existingPostVisit.ContainsKey(item.Key))
+                        {
+                            _blogAssetManager.
+                                GetPostVisit().
+                                Update(item.Key, Math.Max(item.Value, existingPostVisit.Get(item.Key)));
+                        }
+                    }
 
                     var postsPublishTime = new List<DateTime>();
+                    var postVisits = 0;
                     foreach (var blogPost in _blogAssetManager.GetAllPosts())
                     {
-                        var oldPost = oldPosts.FirstOrDefault(p => CompareHelper.IgnoreCase(p.GitPath, blogPost.GitPath));
-                        if (oldPost != null)
-                        {
-                            blogPost.AccessCount = Math.Max(oldPost.AccessCount, blogPost.AccessCount);
-                        }
-
+                        postVisits += blogPost.AccessCount;
                         var rawPublishTime = blogPost.GetRawPublishTime();
                         if (rawPublishTime.HasValue && rawPublishTime != default(DateTime))
                         {
@@ -196,6 +215,7 @@ namespace Laobian.Share.Blog
                         }
                     }
 
+                    BlogState.PostsVisitsTotal = postVisits;
                     BlogState.PostsPublishTime = postsPublishTime.OrderBy(p => p);
                 }
 

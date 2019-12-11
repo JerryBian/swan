@@ -91,7 +91,8 @@ namespace Laobian.Share.Blog.Extension
         public static void Resolve(
             this BlogPost post,
             List<BlogCategory> allCategories,
-            List<BlogTag> allTags)
+            List<BlogTag> allTags,
+            BlogPostVisit postVisit)
         {
             SetDefault(post);
             HandleContent(post);
@@ -101,7 +102,7 @@ namespace Laobian.Share.Blog.Extension
             post.FullUrl =
                 $"/{post.PublishTime.Year}/{post.PublishTime.Month:D2}/{post.Link}{Global.Config.Common.HtmlExtension}";
             post.FullUrlWithBase = $"{Global.Config.Blog.BlogAddress}{post.FullUrl}";
-            post.AccessCount = post.Raw.AccessCount ?? 0;
+            post.AccessCount = postVisit.Get(post.GitPath);
         }
 
         private static void HandleCategory(BlogPost post, List<BlogCategory> allCategories)

@@ -29,6 +29,14 @@ namespace Laobian.Blog.HostedService
                 if (Global.Environment.IsDevelopment())
                 {
                     await _blogService.UpdateRemoteAssetsAsync();
+                    var visitTotal = 0;
+                    foreach (var blogPost in _blogService.GetPosts(false))
+                    {
+                        blogPost.AccessCount = _blogService.GetPostVisits().Get(blogPost.GitPath);
+                        visitTotal += blogPost.AccessCount;
+                    }
+
+                    BlogState.PostsVisitsTotal = visitTotal;
                     _lastUpdateTime = DateTime.Now;
                     _logger.LogInformation("Asset updated. Last executed at= {0}.", _lastUpdateTime);
                 }
@@ -38,6 +46,15 @@ namespace Laobian.Blog.HostedService
                         _lastUpdateTime.Date < DateTime.Now.Date)
                     {
                         await _blogService.UpdateRemoteAssetsAsync();
+                        var visitTotal = 0;
+                        foreach (var blogPost in _blogService.GetPosts(false))
+                        {
+                            blogPost.AccessCount = _blogService.GetPostVisits().Get(blogPost.GitPath);
+                            visitTotal += blogPost.AccessCount;
+                        }
+
+                        BlogState.PostsVisitsTotal = visitTotal;
+
                         _lastUpdateTime = DateTime.Now;
                         _logger.LogInformation("Asset updated. Last executed at= {0}, schedule hour={1}.",
                             _lastUpdateTime, Global.Config.Blog.AssetUpdateAtHour);
