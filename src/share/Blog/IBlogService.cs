@@ -6,7 +6,7 @@ namespace Laobian.Share.Blog
 {
     public interface IBlogService
     {
-        BlogPostVisit GetPostVisits();
+        BlogPostAccess GetPostAccess();
 
         List<BlogPost> GetPosts(bool onlyPublic = true, bool publishTimeDesc = true, bool toppingPostsFirst = true);
 
@@ -19,7 +19,7 @@ namespace Laobian.Share.Blog
 
         string GetAboutHtml();
 
-        void PostNewVisit(BlogPost post);
+        void NewPostAccess(BlogPost post);
 
         List<BlogArchive> GetArchives(bool onlyPublic = true, bool publishTimeDesc = true,
             bool toppingPostsFirst = true);

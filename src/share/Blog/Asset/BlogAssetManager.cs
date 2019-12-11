@@ -29,14 +29,14 @@ namespace Laobian.Share.Blog.Asset
         private readonly BlogPostVisitParser _postVisitParser;
 
         private string _aboutHtml;
-        private BlogPostVisit _allPostVisit;
+        private BlogPostAccess _allPostAccess;
 
         public BlogAssetManager(IGitClient gitClient)
         {
             _allTags = new List<BlogTag>();
             _allPosts = new List<BlogPost>();
             _allCategories = new List<BlogCategory>();
-            _allPostVisit = new BlogPostVisit();
+            _allPostAccess = new BlogPostAccess();
             _gitClient = gitClient;
             _postParser = new BlogPostParser();
             _categoryParser = new BlogCategoryParser();
@@ -81,10 +81,10 @@ namespace Laobian.Share.Blog.Asset
             return _aboutHtml;
         }
 
-        public BlogPostVisit GetPostVisit()
+        public BlogPostAccess GetPostVisit()
         {
             _manualReset.Wait();
-            return _allPostVisit;
+            return _allPostAccess;
         }
 
         public async Task RemoteGitToLocalFileAsync()
@@ -170,9 +170,9 @@ namespace Laobian.Share.Blog.Asset
                 await File.WriteAllTextAsync(blogPost.LocalPath, text, Encoding.UTF8);
             }
 
-            var postVisitText = await _postVisitParser.ToTextAsync(_allPostVisit);
+            var postVisitText = await _postVisitParser.ToTextAsync(_allPostAccess);
             await File.WriteAllTextAsync(
-                Path.Combine(Global.Config.Blog.AssetRepoLocalDir, Global.Config.Blog.PostVisitGitPath),
+                Path.Combine(Global.Config.Blog.AssetRepoLocalDir, Global.Config.Blog.PostAccessGitPath),
                 postVisitText,
                 Encoding.UTF8);
         }
@@ -187,7 +187,7 @@ namespace Laobian.Share.Blog.Asset
             BlogAssetReloadResult<List<BlogCategory>> categoryReloadResult,
             BlogAssetReloadResult<List<BlogTag>> tagReloadResult,
             BlogAssetReloadResult<string> aboutReloadResult,
-            BlogAssetReloadResult<BlogPostVisit> postVisitReloadResult)
+            BlogAssetReloadResult<BlogPostAccess> postVisitReloadResult)
         {
             var errors = new List<string>();
             if (!string.IsNullOrEmpty(postReloadResult.Error))
@@ -224,7 +224,7 @@ namespace Laobian.Share.Blog.Asset
             BlogAssetReloadResult<List<BlogCategory>> categoryReloadResult,
             BlogAssetReloadResult<List<BlogTag>> tagReloadResult,
             BlogAssetReloadResult<string> aboutReloadResult,
-            BlogAssetReloadResult<BlogPostVisit> postVisitReloadResult)
+            BlogAssetReloadResult<BlogPostAccess> postVisitReloadResult)
         {
             var warnings = new List<string>();
             if (!string.IsNullOrEmpty(postReloadResult.Warning))
@@ -261,7 +261,7 @@ namespace Laobian.Share.Blog.Asset
             BlogAssetReloadResult<List<BlogCategory>> categoryReloadResult,
             BlogAssetReloadResult<List<BlogTag>> tagReloadResult,
             BlogAssetReloadResult<string> aboutReloadResult,
-            BlogAssetReloadResult<BlogPostVisit> postVisitReloadResult)
+            BlogAssetReloadResult<BlogPostAccess> postVisitReloadResult)
         {
             _allPosts.Clear();
             _allPosts.AddRange(postReloadResult.Result);
@@ -273,11 +273,11 @@ namespace Laobian.Share.Blog.Asset
             _allTags.AddRange(tagReloadResult.Result);
 
             _aboutHtml = aboutReloadResult.Result;
-            _allPostVisit = postVisitReloadResult.Result;
+            _allPostAccess = postVisitReloadResult.Result;
 
             foreach (var blogPost in _allPosts)
             {
-                blogPost.Resolve(_allCategories, _allTags, _allPostVisit);
+                blogPost.Resolve(_allCategories, _allTags, _allPostAccess);
             }
 
             foreach (var blogCategory in _allCategories)
@@ -421,10 +421,10 @@ namespace Laobian.Share.Blog.Asset
             return result;
         }
 
-        private async Task<BlogAssetReloadResult<BlogPostVisit>> ReloadLocalMemoryPostVisitAsync()
+        private async Task<BlogAssetReloadResult<BlogPostAccess>> ReloadLocalMemoryPostVisitAsync()
         {
-            var result = new BlogAssetReloadResult<BlogPostVisit> { Result = new BlogPostVisit() };
-            var postVisitLocalPath = Path.Combine(Global.Config.Blog.AssetRepoLocalDir, Global.Config.Blog.PostVisitGitPath);
+            var result = new BlogAssetReloadResult<BlogPostAccess> { Result = new BlogPostAccess() };
+            var postVisitLocalPath = Path.Combine(Global.Config.Blog.AssetRepoLocalDir, Global.Config.Blog.PostAccessGitPath);
             if (!File.Exists(postVisitLocalPath))
             {
                 result.Success = true;

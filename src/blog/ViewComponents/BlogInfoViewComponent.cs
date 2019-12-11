@@ -32,7 +32,7 @@ namespace Laobian.Blog.ViewComponents
                 PostsAccessCountTitle = BlogState.PostsVisitsTotal.ToString(),
                 Version = Global.Version,
                 RunTime = Global.RuntimeString,
-                RunTimeTitle = $"系统启动于 {Global.StartTime.ToDateAndTime()}，运行时长 {Global.Runtime}。"
+                RunTimeTitle = $"当前版本启动于 {Global.StartTime.ToDateAndTime()}，运行时长 {Global.Runtime}。"
             };
 
             return View(model);

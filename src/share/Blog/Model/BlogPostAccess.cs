@@ -4,11 +4,11 @@ using System.Collections.Generic;
 
 namespace Laobian.Share.Blog.Model
 {
-    public class BlogPostVisit
+    public class BlogPostAccess
     {
         private readonly ConcurrentDictionary<string, int> _postVisits;
 
-        public BlogPostVisit()
+        public BlogPostAccess()
         {
             _postVisits = new ConcurrentDictionary<string, int>(StringComparer.OrdinalIgnoreCase);
         }
@@ -47,9 +47,9 @@ namespace Laobian.Share.Blog.Model
             return _postVisits;
         }
 
-        public BlogPostVisit Clone()
+        public BlogPostAccess Clone()
         {
-            var result = new BlogPostVisit();
+            var result = new BlogPostAccess();
             foreach (var item in Dump())
             {
                 result.Add(item.Key, item.Value);

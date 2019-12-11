@@ -7,10 +7,10 @@ namespace Laobian.Share.Blog.Parser
 {
     public class BlogPostVisitParser : BlogAssetParser
     {
-        public async Task<BlogAssetParseResult<BlogPostVisit>> FromTextAsync(string text)
+        public async Task<BlogAssetParseResult<BlogPostAccess>> FromTextAsync(string text)
         {
             var parseResult = await FromTextAsync(text, Global.Config.Common.ColonSplitter);
-            var result = new BlogAssetParseResult<BlogPostVisit>(parseResult){Instance = new BlogPostVisit()};
+            var result = new BlogAssetParseResult<BlogPostAccess>(parseResult){Instance = new BlogPostAccess()};
 
             if (!parseResult.Success)
             {
@@ -25,10 +25,10 @@ namespace Laobian.Share.Blog.Parser
             return result;
         }
 
-        public async Task<string> ToTextAsync(BlogPostVisit postVisit)
+        public async Task<string> ToTextAsync(BlogPostAccess postAccess)
         {
             var nameValues = new Dictionary<string, string>();
-            foreach (var item in postVisit.Dump())
+            foreach (var item in postAccess.Dump())
             {
                 nameValues.Add(item.Key, item.Value.ToString());
             }

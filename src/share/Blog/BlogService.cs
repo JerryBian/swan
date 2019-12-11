@@ -29,12 +29,12 @@ namespace Laobian.Share.Blog
             _semaphoreSlim2 = new SemaphoreSlim(1, 1);
         }
 
-        public BlogPostVisit GetPostVisits()
+        public BlogPostAccess GetPostAccess()
         {
             return _blogAssetManager.GetPostVisit();
         }
 
-        public void PostNewVisit(BlogPost post)
+        public void NewPostAccess(BlogPost post)
         {
             if (post != null)
             {
