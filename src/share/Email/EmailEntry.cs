@@ -1,4 +1,7 @@
-﻿namespace Laobian.Share.Email
+﻿using System.Collections.Generic;
+using System.IO;
+
+namespace Laobian.Share.Email
 {
     public class EmailEntry
     {
@@ -6,6 +9,7 @@
         {
             ToName = toName;
             ToAddress = toAddress;
+            Attachments = new Dictionary<string, Stream>();
         }
 
         public string FromName { get; set; }
@@ -21,5 +25,7 @@
         public string PlainContent { get; set; }
 
         public string HtmlContent { get; set; }
+
+        public Dictionary<string, Stream> Attachments { get; }
     }
 }

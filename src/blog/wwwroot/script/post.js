@@ -8,7 +8,7 @@
                 return;
             }
 
-            const images = document.querySelectorAll(".post img");
+            var images = document.querySelectorAll(".post img");
             var modalImg = document.querySelector("#modal-content");
             var caption = document.querySelector("#modal-caption");
             images.forEach(function(img) {
@@ -16,11 +16,15 @@
                     modal.style.display = "block";
                     modalImg.src = this.src;
                     caption.innerHTML = this.alt;
+                    document.documentElement.style.overflow = 'hidden';
+                    document.body.scroll = "no";
                 };
             });
 
             document.querySelector("#modal-close").onclick = function() {
                 modal.style.display = "none";
+                document.documentElement.style.overflow = 'auto';
+                document.body.scroll = "yes";
             };
         } catch (e) {
             console.log(e);

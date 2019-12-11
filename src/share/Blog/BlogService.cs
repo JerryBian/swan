@@ -29,6 +29,20 @@ namespace Laobian.Share.Blog
             _semaphoreSlim2 = new SemaphoreSlim(1, 1);
         }
 
+        public BlogPostAccess GetPostAccess()
+        {
+            return _blogAssetManager.GetPostVisit();
+        }
+
+        public void NewPostAccess(BlogPost post)
+        {
+            if (post != null)
+            {
+                var postVisit = _blogAssetManager.GetPostVisit();
+                postVisit.Update(post.GitPath);
+            }
+        }
+
         public List<BlogPost> GetPosts(bool onlyPublic = true, bool publishTimeDesc = true,
             bool toppingPostsFirst = true)
         {
@@ -51,7 +65,6 @@ namespace Laobian.Share.Blog
                 : posts.FirstOrDefault(p =>
                     p.PublishTime.Year == year && p.PublishTime.Month == month &&
                     CompareHelper.IgnoreCase(p.Link, link));
-            SetPrevAndNextPosts(post, posts.ToList(), onlyPublic);
             return post;
         }
 
@@ -175,26 +188,41 @@ namespace Laobian.Share.Blog
                     await _blogAssetManager.UpdateRemoteGitTemplatePostAsync();
                 }
 
-                var oldPosts = new List<BlogPost>(_blogAssetManager.GetAllPosts());
+                var existingPostVisit = _blogAssetManager.GetPostVisit().Clone();
                 var reloadResult = await _blogAssetManager.LocalFileToLocalMemoryAsync();
                 if (reloadResult.Success)
                 {
                     BlogState.AssetLastUpdate = DateTime.Now;
+                    foreach (var item in _blogAssetManager.GetPostVisit().Dump())
+                    {
+                        if (existingPostVisit.ContainsKey(item.Key))
+                        {
+                            _blogAssetManager.
+                                GetPostVisit().
+                                Update(item.Key, Math.Max(item.Value, existingPostVisit.Get(item.Key)));
+                        }
+                    }
+
+                    var postsPublishTime = new List<DateTime>();
+                    var postVisits = 0;
+                    foreach (var blogPost in _blogAssetManager.GetAllPosts())
+                    {
+                        postVisits += blogPost.AccessCount;
+                        var rawPublishTime = blogPost.GetRawPublishTime();
+                        if (rawPublishTime.HasValue && rawPublishTime != default(DateTime))
+                        {
+                            postsPublishTime.Add(rawPublishTime.Value);
+                        }
+                    }
+
+                    BlogState.PostsVisitsTotal = postVisits;
+                    BlogState.PostsPublishTime = postsPublishTime.OrderBy(p => p);
                 }
 
                 var reloadResultText = reloadResult.Success ? "SUCCESS!" : "FAIL!";
-                var subject = $"Local and memory assets reload: {reloadResultText}";
+                var subject = $"Assets reload: {reloadResultText}";
                 await _blogAlertService.AlertAssetReloadResultAsync(subject, reloadResult.Warning, reloadResult.Error,
                     addedPosts, modifiedPosts);
-
-                foreach (var blogPost in _blogAssetManager.GetAllPosts())
-                {
-                    var oldPost = oldPosts.FirstOrDefault(p => CompareHelper.IgnoreCase(p.GitPath, blogPost.GitPath));
-                    if (oldPost != null)
-                    {
-                        blogPost.AccessCount = Math.Max(oldPost.AccessCount, blogPost.AccessCount);
-                    }
-                }
 
                 if (addedPosts != null && addedPosts.Any() || modifiedPosts != null && modifiedPosts.Any())
                 {
@@ -236,48 +264,6 @@ namespace Laobian.Share.Blog
             finally
             {
                 _semaphoreSlim2.Release();
-            }
-        }
-
-        private void SetPrevAndNextPosts(BlogPost post, List<BlogPost> posts, bool onlyPublic)
-        {
-            if(post == null)
-            {
-                return;
-            }
-
-            if (!post.IsPublic && onlyPublic)
-            {
-                _logger.LogWarning(
-                    $"Try to set post's Next and Prev. However this post is not public while requesting only public, we need to fix this. Post = {post.Link}, Call stack = {Environment.StackTrace}");
-                return;
-            }
-
-            var postIndex = posts.IndexOf(post);
-            var prevPostIndex = postIndex - 1;
-            while (prevPostIndex >= 0)
-            {
-                var prevPost = posts[prevPostIndex];
-                if (!onlyPublic || prevPost.IsPublic)
-                {
-                    post.PrevPost = prevPost;
-                    break;
-                }
-
-                prevPostIndex--;
-            }
-
-            var nextPostIndex = postIndex + 1;
-            while (nextPostIndex < posts.Count)
-            {
-                var nextPost = posts[nextPostIndex];
-                if (!onlyPublic || nextPost.IsPublic)
-                {
-                    post.NextPost = nextPost;
-                    break;
-                }
-
-                nextPostIndex++;
             }
         }
     }

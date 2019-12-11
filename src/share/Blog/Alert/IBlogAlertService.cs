@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Laobian.Share.Log;
 
@@ -17,5 +18,7 @@ namespace Laobian.Share.Blog.Alert
 
         Task AlertAssetReloadResultAsync(string subject, string warning, string error, List<string> addedPosts = null,
             List<string> modifiedPosts = null);
+
+        Task AlertReportAsync(string message, Dictionary<string, Stream> logs);
     }
 }

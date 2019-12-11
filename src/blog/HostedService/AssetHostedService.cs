@@ -28,7 +28,7 @@ namespace Laobian.Blog.HostedService
                 await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
                 if (Global.Environment.IsDevelopment())
                 {
-                    await _blogService.UpdateRemoteAssetsAsync();
+                    await ExecuteInternalAsync();
                     _lastUpdateTime = DateTime.Now;
                     _logger.LogInformation("Asset updated. Last executed at= {0}.", _lastUpdateTime);
                 }
@@ -37,7 +37,7 @@ namespace Laobian.Blog.HostedService
                     if (DateTime.Now.Hour == Global.Config.Blog.AssetUpdateAtHour &&
                         _lastUpdateTime.Date < DateTime.Now.Date)
                     {
-                        await _blogService.UpdateRemoteAssetsAsync();
+                        await ExecuteInternalAsync();
                         _lastUpdateTime = DateTime.Now;
                         _logger.LogInformation("Asset updated. Last executed at= {0}, schedule hour={1}.",
                             _lastUpdateTime, Global.Config.Blog.AssetUpdateAtHour);
@@ -51,7 +51,7 @@ namespace Laobian.Blog.HostedService
             _logger.LogInformation($"{nameof(AssetHostedService)} is starting.");
             await _blogService.ReloadLocalAssetsAsync(Global.Config.Blog.CloneAssetsDuringStartup,
                 Global.Config.Blog.CloneAssetsDuringStartup);
-
+            RefreshPostAccessCount();
             await base.StartAsync(cancellationToken);
             _logger.LogInformation($"{nameof(AssetHostedService)} has started.");
         }
@@ -62,6 +62,24 @@ namespace Laobian.Blog.HostedService
             await _blogService.UpdateRemoteAssetsAsync();
             await base.StopAsync(cancellationToken);
             _logger.LogInformation($"{nameof(AssetHostedService)} has stopped.");
+        }
+
+        private async Task ExecuteInternalAsync()
+        {
+            await _blogService.UpdateRemoteAssetsAsync();
+            RefreshPostAccessCount();
+        }
+
+        private void RefreshPostAccessCount()
+        {
+            var visitTotal = 0;
+            foreach (var blogPost in _blogService.GetPosts(false))
+            {
+                blogPost.AccessCount = _blogService.GetPostAccess().Get(blogPost.GitPath);
+                visitTotal += blogPost.AccessCount;
+            }
+
+            BlogState.PostsVisitsTotal = visitTotal;
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Laobian.Blog.Models;
 using Laobian.Share.Blog;
-using Laobian.Share.Blog.Asset;
 using Laobian.Share.Cache;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,8 +20,7 @@ namespace Laobian.Blog.Controllers
         {
             var html = _cacheClient.GetOrCreate(
                 CacheKey.Build(nameof(AboutController), nameof(Index)),
-                () => _blogService.GetAboutHtml(),
-                new BlogAssetChangeToken());
+                () => _blogService.GetAboutHtml());
 
             ViewData[ViewDataConstant.Title] = "关于";
             ViewData[ViewDataConstant.Canonical] = "/about/";

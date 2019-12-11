@@ -50,6 +50,9 @@
         [ConfigMeta(Name = "ABOUT_GIT_PATH", DefaultValue = "blog/about.md")]
         public string AboutGitPath { get; set; }
 
+        [ConfigMeta(Name = "POST_ACCESS_GIT_PATH", DefaultValue = "blog/post-access.txt")]
+        public string PostAccessGitPath { get; set; }
+
         [ConfigMeta(Name = "FILE_GIT_PATH", DefaultValue = "blog/file/")]
         public string FileGitPath { get; set; }
 
@@ -71,7 +74,7 @@
         [ConfigMeta(Name = "LOG_FLUSH_AT_HOUR", DefaultValue = 9)]
         public int LogFlushAtHour { get; set; }
 
-        [ConfigMeta(Name = "WARNING_LOG_THRESHOLD", DefaultValue = 30)]
+        [ConfigMeta(Name = "WARNING_LOG_THRESHOLD", DefaultValue = 100)]
         public int WarningLogsThreshold { get; set; }
 
         [ConfigMeta(Name = "ERROR_LOG_THRESHOLD", DefaultValue = 10)]

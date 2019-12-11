@@ -1,7 +1,5 @@
-Source code of my personal websites, built by latest ASP.NET Core.
+Source code of my personal websites.
 
 - [Jerry Bian's blog](https://blog.laobian.me/)
 
-### License
-
-MIT.
+License under MIT.

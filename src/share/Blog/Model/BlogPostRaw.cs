@@ -36,9 +36,6 @@ namespace Laobian.Share.Blog.Model
         [BlogAssetMeta(BlogAssetMetaReturnType.Bool, "数学文章", "ContainsMath")]
         public bool? ContainsMath { get; set; }
 
-        [BlogAssetMeta(BlogAssetMetaReturnType.Int32, "访问数量", "AccessCount")]
-        public int? AccessCount { get; set; }
-
         [BlogAssetMeta(BlogAssetMetaReturnType.ListOfString, "文章分类", "Category")]
         public List<string> Category { get; set; }
 

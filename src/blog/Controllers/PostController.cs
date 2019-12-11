@@ -1,9 +1,7 @@
 ﻿using Laobian.Blog.Models;
 using Laobian.Share.Blog;
-using Laobian.Share.Blog.Asset;
 using Laobian.Share.Cache;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace Laobian.Blog.Controllers
 {
@@ -11,11 +9,9 @@ namespace Laobian.Blog.Controllers
     {
         private readonly IBlogService _blogService;
         private readonly ICacheClient _cacheClient;
-        private readonly ILogger<PostController> _logger;
 
-        public PostController(IBlogService blogService, ICacheClient cacheClient, ILogger<PostController> logger)
+        public PostController(IBlogService blogService, ICacheClient cacheClient)
         {
-            _logger = logger;
             _cacheClient = cacheClient;
             _blogService = blogService;
         }
@@ -23,37 +19,51 @@ namespace Laobian.Blog.Controllers
         [Route("{year:int}/{month:int}/{link}.html")]
         public IActionResult Index(int year, int month, string link)
         {
-            var post = _cacheClient.GetOrCreate(
+            var model = _cacheClient.GetOrCreate(
                 CacheKey.Build(nameof(PostController), nameof(Index), year, month, link,
                     !User.Identity.IsAuthenticated),
-                () => _blogService.GetPost(year, month, link, !User.Identity.IsAuthenticated),
-                new BlogAssetChangeToken());
+                () =>
+                {
+                    var post = _blogService.GetPost(year, month, link, !User.Identity.IsAuthenticated);
+                    if (post == null)
+                    {
+                        return null;
+                    }
 
-            if (post == null)
+                    var viewModel = new PostViewModel { Post = post };
+                    var posts = _blogService.GetPosts(!User.Identity.IsAuthenticated);
+                    var postIndex = posts.IndexOf(post);
+                    var prevPostIndex = postIndex - 1;
+                    if (prevPostIndex >= 0)
+                    {
+                        viewModel.PrevPost = posts[prevPostIndex];
+                    }
+
+                    var nextPostIndex = postIndex + 1;
+                    if (nextPostIndex < posts.Count)
+                    {
+                        viewModel.NextPost = posts[nextPostIndex];
+                    }
+
+                    return viewModel;
+                });
+
+            if (model == null)
             {
-                _logger.LogWarning($"Request post not exists. Year={year}, Month={month}, Link={link}.");
                 return NotFound();
             }
 
-            if (!post.IsPublic)
+            if (!model.Post.IsPublic)
             {
                 ViewData[ViewDataConstant.VisibleToSearchEngine] = false;
-
-                if (!User.Identity.IsAuthenticated)
-                {
-                    _logger.LogWarning(
-                        $"Trying to access private post failed. Year={year}, Month={month}, Link={link}. " +
-                        $"IP={Request.HttpContext.Connection.RemoteIpAddress}, UserAgent={Request.Headers["User-Agent"]}.");
-                    return NotFound();
-                }
             }
 
-            post.NewAccess();
-            ViewData[ViewDataConstant.Canonical] = post.FullUrlWithBase;
-            ViewData[ViewDataConstant.Title] = post.Title;
-            ViewData[ViewDataConstant.Description] = post.ExcerptPlain;
+            _blogService.NewPostAccess(model.Post);
+            ViewData[ViewDataConstant.Canonical] = model.Post.FullUrlWithBase;
+            ViewData[ViewDataConstant.Title] = model.Post.Title;
+            ViewData[ViewDataConstant.Description] = model.Post.ExcerptPlain;
 
-            return View(post);
+            return View(model);
         }
     }
 }

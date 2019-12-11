@@ -18,6 +18,7 @@ namespace Laobian.Share.Blog.Asset
         private readonly List<BlogCategory> _allCategories;
         private readonly List<BlogPost> _allPosts;
         private readonly List<BlogTag> _allTags;
+
         private readonly BlogCategoryParser _categoryParser;
         private readonly IGitClient _gitClient;
         private readonly GitConfig _gitConfig;
@@ -25,18 +26,23 @@ namespace Laobian.Share.Blog.Asset
         private readonly BlogPostParser _postParser;
         private readonly SemaphoreSlim _semaphore;
         private readonly BlogTagParser _tagParser;
+        private readonly BlogPostVisitParser _postVisitParser;
 
         private string _aboutHtml;
+        private BlogPostAccess _allPostAccess;
 
         public BlogAssetManager(IGitClient gitClient)
         {
             _allTags = new List<BlogTag>();
             _allPosts = new List<BlogPost>();
             _allCategories = new List<BlogCategory>();
+            _allPostAccess = new BlogPostAccess();
             _gitClient = gitClient;
             _postParser = new BlogPostParser();
             _categoryParser = new BlogCategoryParser();
             _tagParser = new BlogTagParser();
+            _postParser = new BlogPostParser();
+            _postVisitParser = new BlogPostVisitParser();
             _semaphore = new SemaphoreSlim(1, 1);
             _manualReset = new ManualResetEventSlim(true);
             _gitConfig = new GitConfig
@@ -75,6 +81,12 @@ namespace Laobian.Share.Blog.Asset
             return _aboutHtml;
         }
 
+        public BlogPostAccess GetPostVisit()
+        {
+            _manualReset.Wait();
+            return _allPostAccess;
+        }
+
         public async Task RemoteGitToLocalFileAsync()
         {
             await _gitClient.CloneToLocalAsync(_gitConfig);
@@ -83,11 +95,10 @@ namespace Laobian.Share.Blog.Asset
         public async Task UpdateRemoteGitTemplatePostAsync()
         {
             var templatePost = new BlogPost();
-            templatePost.Raw.AccessCount = 10;
             templatePost.Raw.IsDraft = true;
             templatePost.Raw.PublishTime = new DateTime(2017, 08, 31, 16, 06, 05);
-            templatePost.Raw.Category = new List<string> {"分类名称1", "分类名称2"};
-            templatePost.Raw.Tag = new List<string> {"标签名称1", "标签名称2"};
+            templatePost.Raw.Category = new List<string> { "分类名称1", "分类名称2" };
+            templatePost.Raw.Tag = new List<string> { "标签名称1", "标签名称2" };
             templatePost.Raw.CreateTime = new DateTime(2012, 10, 16, 02, 21, 01);
             templatePost.Raw.ContainsMath = false;
             templatePost.Raw.IsTopping = false;
@@ -112,9 +123,10 @@ namespace Laobian.Share.Blog.Asset
                 var categoryReloadResult = await ReloadLocalMemoryCategoryAsync();
                 var tagReloadResult = await ReloadLocalMemoryTagAsync();
                 var aboutReloadResult = await ReloadLocalMemoryAboutAsync();
+                var postVisitReloadResult = await ReloadLocalMemoryPostVisitAsync();
 
-                var warning = GetWarning(postReloadResult, categoryReloadResult, tagReloadResult, aboutReloadResult);
-                var error = GetError(postReloadResult, categoryReloadResult, tagReloadResult, aboutReloadResult);
+                var warning = GetWarning(postReloadResult, categoryReloadResult, tagReloadResult, aboutReloadResult, postVisitReloadResult);
+                var error = GetError(postReloadResult, categoryReloadResult, tagReloadResult, aboutReloadResult, postVisitReloadResult);
                 var result = new BlogAssetReloadResult<object>
                 {
                     Warning = warning,
@@ -124,12 +136,13 @@ namespace Laobian.Share.Blog.Asset
                 if (postReloadResult.Success &&
                     categoryReloadResult.Success &&
                     tagReloadResult.Success &&
-                    aboutReloadResult.Success)
+                    aboutReloadResult.Success &&
+                    postVisitReloadResult.Success)
                 {
                     try
                     {
                         _manualReset.Reset();
-                        RefreshMemoryAsset(postReloadResult, categoryReloadResult, tagReloadResult, aboutReloadResult);
+                        RefreshMemoryAsset(postReloadResult, categoryReloadResult, tagReloadResult, aboutReloadResult, postVisitReloadResult);
                     }
                     finally
                     {
@@ -156,6 +169,12 @@ namespace Laobian.Share.Blog.Asset
                 var text = await _postParser.ToTextAsync(blogPost);
                 await File.WriteAllTextAsync(blogPost.LocalPath, text, Encoding.UTF8);
             }
+
+            var postVisitText = await _postVisitParser.ToTextAsync(_allPostAccess);
+            await File.WriteAllTextAsync(
+                Path.Combine(Global.Config.Blog.AssetRepoLocalDir, Global.Config.Blog.PostAccessGitPath),
+                postVisitText,
+                Encoding.UTF8);
         }
 
         public async Task LocalFileToRemoteGitAsync()
@@ -167,7 +186,8 @@ namespace Laobian.Share.Blog.Asset
             BlogAssetReloadResult<List<BlogPost>> postReloadResult,
             BlogAssetReloadResult<List<BlogCategory>> categoryReloadResult,
             BlogAssetReloadResult<List<BlogTag>> tagReloadResult,
-            BlogAssetReloadResult<string> aboutReloadResult)
+            BlogAssetReloadResult<string> aboutReloadResult,
+            BlogAssetReloadResult<BlogPostAccess> postVisitReloadResult)
         {
             var errors = new List<string>();
             if (!string.IsNullOrEmpty(postReloadResult.Error))
@@ -190,6 +210,11 @@ namespace Laobian.Share.Blog.Asset
                 errors.Add(aboutReloadResult.Error);
             }
 
+            if (!string.IsNullOrEmpty(postVisitReloadResult.Error))
+            {
+                errors.Add(postVisitReloadResult.Error);
+            }
+
             var error = errors.Any() ? string.Join(Environment.NewLine, errors) : string.Empty;
             return error;
         }
@@ -198,7 +223,8 @@ namespace Laobian.Share.Blog.Asset
             BlogAssetReloadResult<List<BlogPost>> postReloadResult,
             BlogAssetReloadResult<List<BlogCategory>> categoryReloadResult,
             BlogAssetReloadResult<List<BlogTag>> tagReloadResult,
-            BlogAssetReloadResult<string> aboutReloadResult)
+            BlogAssetReloadResult<string> aboutReloadResult,
+            BlogAssetReloadResult<BlogPostAccess> postVisitReloadResult)
         {
             var warnings = new List<string>();
             if (!string.IsNullOrEmpty(postReloadResult.Warning))
@@ -221,6 +247,11 @@ namespace Laobian.Share.Blog.Asset
                 warnings.Add(aboutReloadResult.Warning);
             }
 
+            if (!string.IsNullOrEmpty(postVisitReloadResult.Warning))
+            {
+                warnings.Add(postVisitReloadResult.Warning);
+            }
+
             var warning = warnings.Any() ? string.Join(Environment.NewLine, warnings) : string.Empty;
             return warning;
         }
@@ -229,7 +260,8 @@ namespace Laobian.Share.Blog.Asset
             BlogAssetReloadResult<List<BlogPost>> postReloadResult,
             BlogAssetReloadResult<List<BlogCategory>> categoryReloadResult,
             BlogAssetReloadResult<List<BlogTag>> tagReloadResult,
-            BlogAssetReloadResult<string> aboutReloadResult)
+            BlogAssetReloadResult<string> aboutReloadResult,
+            BlogAssetReloadResult<BlogPostAccess> postVisitReloadResult)
         {
             _allPosts.Clear();
             _allPosts.AddRange(postReloadResult.Result);
@@ -241,10 +273,11 @@ namespace Laobian.Share.Blog.Asset
             _allTags.AddRange(tagReloadResult.Result);
 
             _aboutHtml = aboutReloadResult.Result;
+            _allPostAccess = postVisitReloadResult.Result;
 
             foreach (var blogPost in _allPosts)
             {
-                blogPost.Resolve(_allCategories, _allTags);
+                blogPost.Resolve(_allCategories, _allTags, _allPostAccess);
             }
 
             foreach (var blogCategory in _allCategories)
@@ -260,7 +293,7 @@ namespace Laobian.Share.Blog.Asset
 
         private async Task<BlogAssetReloadResult<List<BlogPost>>> ReloadLocalMemoryPostAsync()
         {
-            var result = new BlogAssetReloadResult<List<BlogPost>> {Result = new List<BlogPost>()};
+            var result = new BlogAssetReloadResult<List<BlogPost>> { Result = new List<BlogPost>() };
             var postLocalPath = Path.Combine(Global.Config.Blog.AssetRepoLocalDir, Global.Config.Blog.PostGitPath);
             if (!Directory.Exists(postLocalPath))
             {
@@ -385,6 +418,36 @@ namespace Laobian.Share.Blog.Asset
 
             var md = await File.ReadAllTextAsync(aboutLocalPath);
             result.Result = MarkdownHelper.ToHtml(md);
+            return result;
+        }
+
+        private async Task<BlogAssetReloadResult<BlogPostAccess>> ReloadLocalMemoryPostVisitAsync()
+        {
+            var result = new BlogAssetReloadResult<BlogPostAccess> { Result = new BlogPostAccess() };
+            var postVisitLocalPath = Path.Combine(Global.Config.Blog.AssetRepoLocalDir, Global.Config.Blog.PostAccessGitPath);
+            if (!File.Exists(postVisitLocalPath))
+            {
+                result.Success = true;
+                result.Warning = $"No post visit asset found under \"{postVisitLocalPath}\".";
+                return result;
+            }
+
+            var text = await File.ReadAllTextAsync(postVisitLocalPath);
+            var parseResult = await _postVisitParser.FromTextAsync(text);
+            if (parseResult.WarningMessages.Any())
+            {
+                result.Warning =
+                    $"Blog post visit parse warnings: {Environment.NewLine}{string.Join(Environment.NewLine, parseResult.WarningMessages)}";
+            }
+
+            if (parseResult.ErrorMessages.Any())
+            {
+                result.Warning =
+                    $"Blog post visit parse errors: {Environment.NewLine}{string.Join(Environment.NewLine, parseResult.ErrorMessages)}";
+            }
+
+            result.Success = parseResult.Success;
+            result.Result = parseResult.Instance;
             return result;
         }
     }
