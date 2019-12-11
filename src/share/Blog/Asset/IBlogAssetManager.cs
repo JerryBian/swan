@@ -14,7 +14,7 @@ namespace Laobian.Share.Blog.Asset
 
         string GetAboutHtml();
 
-        BlogPostVisit GetPostVisit();
+        BlogPostAccess GetPostVisit();
 
         Task RemoteGitToLocalFileAsync();
 

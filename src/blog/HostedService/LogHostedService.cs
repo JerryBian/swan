@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Share;
 using Laobian.Share.Blog.Alert;
+using Laobian.Share.Extension;
 using Laobian.Share.Log;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -98,7 +99,7 @@ namespace Laobian.Blog.HostedService
                 errorMessage = "Please check error logs:";
                 foreach (var logEntry in errorLogs)
                 {
-                    errorMessage += Environment.NewLine + $"{logEntry.When}\t{logEntry.Message}\t{logEntry.Exception}";
+                    errorMessage += Environment.NewLine + Environment.NewLine + $"{logEntry.When.ToDateAndTime()}\t{logEntry.Message}\t{logEntry.Exception}";
                 }
             }
 
@@ -120,7 +121,7 @@ namespace Laobian.Blog.HostedService
                 warnMessage = "Please check warning logs:";
                 foreach (var logEntry in warnLogs)
                 {
-                    warnMessage += Environment.NewLine + $"{logEntry.When}\t{logEntry.Message}\t{logEntry.Exception}";
+                    warnMessage += Environment.NewLine + Environment.NewLine + $"{logEntry.When.ToDateAndTime()}\t{logEntry.Message}\t{logEntry.Exception}";
                 }
             }
 

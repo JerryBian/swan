@@ -7619,7 +7619,7 @@ footer,
 }
 
 footer {
-  font-size: 0.875rem;
+  font-size: small;
 }
 footer a:hover {
   padding-bottom: 2px;
