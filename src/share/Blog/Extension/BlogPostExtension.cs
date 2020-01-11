@@ -91,8 +91,7 @@ namespace Laobian.Share.Blog.Extension
         public static void Resolve(
             this BlogPost post,
             List<BlogCategory> allCategories,
-            List<BlogTag> allTags,
-            BlogPostAccess postAccess)
+            List<BlogTag> allTags)
         {
             SetDefault(post);
             HandleContent(post);
@@ -102,13 +101,12 @@ namespace Laobian.Share.Blog.Extension
             post.FullUrl =
                 $"/{post.PublishTime.Year}/{post.PublishTime.Month:D2}/{post.Link}{Global.Config.Common.HtmlExtension}";
             post.FullUrlWithBase = $"{Global.Config.Blog.BlogAddress}{post.FullUrl}";
-            post.AccessCount = postAccess.Get(post.GitPath);
         }
 
         private static void HandleCategory(BlogPost post, List<BlogCategory> allCategories)
         {
             post.Categories.Clear();
-            foreach (var categoryName in post.Raw.Category)
+            foreach (var categoryName in post.Metadata.Category)
             {
                 var category = allCategories?.FirstOrDefault(c => CompareHelper.IgnoreCase(c.Name, categoryName));
                 if (category != null)
@@ -121,7 +119,7 @@ namespace Laobian.Share.Blog.Extension
         private static void HandleTag(BlogPost post, List<BlogTag> allTags)
         {
             post.Tags.Clear();
-            foreach (var tagName in post.Raw.Tag)
+            foreach (var tagName in post.Metadata.Tag)
             {
                 var tag = allTags?.FirstOrDefault(c => CompareHelper.IgnoreCase(c.Name, tagName));
                 if (tag != null)
@@ -133,7 +131,7 @@ namespace Laobian.Share.Blog.Extension
 
         private static void HandleContent(BlogPost post)
         {
-            var html = MarkdownHelper.ToHtml(post.Raw.Markdown);
+            var html = MarkdownHelper.ToHtml(post.ContentMarkdown);
             var htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(html);
 
@@ -191,24 +189,14 @@ namespace Laobian.Share.Blog.Extension
 
         private static void SetDefault(BlogPost post)
         {
-            if (post.Raw.CreateTime == null)
+            if (string.IsNullOrEmpty(post.Metadata.Title))
             {
-                post.Raw.CreateTime = DateTime.Now;
+                post.Metadata.Title = Guid.NewGuid().ToString("N");
             }
 
-            if (post.Raw.LastUpdateTime == null)
+            if (string.IsNullOrEmpty(post.Metadata.Link))
             {
-                post.Raw.LastUpdateTime = DateTime.Now;
-            }
-
-            if (string.IsNullOrEmpty(post.Raw.Title))
-            {
-                post.Raw.Title = Guid.NewGuid().ToString("N");
-            }
-
-            if (string.IsNullOrEmpty(post.Raw.Link))
-            {
-                post.Raw.Link = Guid.NewGuid().ToString("N");
+                post.Metadata.Link = Guid.NewGuid().ToString("N");
             }
         }
     }

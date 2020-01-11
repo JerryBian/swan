@@ -28,8 +28,8 @@ namespace Laobian.Blog.ViewComponents
             var model = new BlogInfo
             {
                 PostsCount = postsCount.ToString(),
-                PostsAccessCount = BlogState.PostsVisitsTotal.Human(),
-                PostsAccessCountTitle = BlogState.PostsVisitsTotal.ToString(),
+                //PostsAccessCount = BlogState.PostsVisitsTotal.Human(),
+                //PostsAccessCountTitle = BlogState.PostsVisitsTotal.ToString(),
                 Version = Global.Version,
                 RunTime = Global.RuntimeString,
                 RunTimeTitle = $"当前版本启动于 {Global.StartTime.ToDateAndTime()}，运行时长 {Global.Runtime}。"

@@ -6,8 +6,6 @@ namespace Laobian.Share.Blog
 {
     public interface IBlogService
     {
-        BlogPostAccess GetPostAccess();
-
         List<BlogPost> GetPosts(bool onlyPublic = true, bool publishTimeDesc = true, bool toppingPostsFirst = true);
 
         BlogPost GetPost(int year, int month, string link, bool onlyPublic = true);
@@ -19,12 +17,10 @@ namespace Laobian.Share.Blog
 
         string GetAboutHtml();
 
-        void NewPostAccess(BlogPost post);
-
         List<BlogArchive> GetArchives(bool onlyPublic = true, bool publishTimeDesc = true,
             bool toppingPostsFirst = true);
 
-        Task ReloadLocalAssetsAsync(bool clone = true, bool updateTemplate = true, List<string> addedPosts = null,
+        Task ReloadLocalAssetsAsync(bool clone = true, List<string> addedPosts = null,
             List<string> modifiedPosts = null);
 
         Task UpdateRemoteAssetsAsync();

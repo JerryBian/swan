@@ -29,20 +29,6 @@ namespace Laobian.Share.Blog
             _semaphoreSlim2 = new SemaphoreSlim(1, 1);
         }
 
-        public BlogPostAccess GetPostAccess()
-        {
-            return _blogAssetManager.GetPostVisit();
-        }
-
-        public void NewPostAccess(BlogPost post)
-        {
-            if (post != null)
-            {
-                var postVisit = _blogAssetManager.GetPostVisit();
-                postVisit.Update(post.GitPath);
-            }
-        }
-
         public List<BlogPost> GetPosts(bool onlyPublic = true, bool publishTimeDesc = true,
             bool toppingPostsFirst = true)
         {
@@ -50,7 +36,7 @@ namespace Laobian.Share.Blog
             posts = onlyPublic ? posts.Where(p => p.IsPublic) : posts;
             posts = publishTimeDesc
                 ? posts.OrderByDescending(p => p.PublishTime)
-                : posts.OrderBy(p => p.Raw.PublishTime);
+                : posts.OrderBy(p => p.Metadata.PublishTime);
             posts = toppingPostsFirst ? posts.OrderBy(p => p.IsTopping ? 0 : 1) : posts;
             return posts.ToList();
         }
@@ -171,7 +157,6 @@ namespace Laobian.Share.Blog
 
         public async Task ReloadLocalAssetsAsync(
             bool clone = true,
-            bool updateTemplate = true,
             List<string> addedPosts = null,
             List<string> modifiedPosts = null)
         {
@@ -183,31 +168,25 @@ namespace Laobian.Share.Blog
                     await _blogAssetManager.RemoteGitToLocalFileAsync();
                 }
 
-                if (updateTemplate)
-                {
-                    await _blogAssetManager.UpdateRemoteGitTemplatePostAsync();
-                }
-
-                var existingPostVisit = _blogAssetManager.GetPostVisit().Clone();
+                var existingPosts = _blogAssetManager.GetAllPosts().ToList();
                 var reloadResult = await _blogAssetManager.LocalFileToLocalMemoryAsync();
-                if (reloadResult.Success)
+                if (reloadResult)
                 {
                     BlogState.AssetLastUpdate = DateTime.Now;
-                    foreach (var item in _blogAssetManager.GetPostVisit().Dump())
+                    foreach (var item in _blogAssetManager.GetAllPosts())
                     {
-                        if (existingPostVisit.ContainsKey(item.Key))
+                        var existingPost =
+                            existingPosts.FirstOrDefault(p => CompareHelper.IgnoreCase(p.Link, item.Link));
+                        if (existingPost != null)
                         {
-                            _blogAssetManager.
-                                GetPostVisit().
-                                Update(item.Key, Math.Max(item.Value, existingPostVisit.Get(item.Key)));
+                            item.AccessCount = Math.Max(item.AccessCount,
+                                existingPost.AccessCount);
                         }
                     }
 
                     var postsPublishTime = new List<DateTime>();
-                    var postVisits = 0;
                     foreach (var blogPost in _blogAssetManager.GetAllPosts())
                     {
-                        postVisits += blogPost.AccessCount;
                         var rawPublishTime = blogPost.GetRawPublishTime();
                         if (rawPublishTime.HasValue && rawPublishTime != default(DateTime))
                         {
@@ -215,14 +194,8 @@ namespace Laobian.Share.Blog
                         }
                     }
 
-                    BlogState.PostsVisitsTotal = postVisits;
                     BlogState.PostsPublishTime = postsPublishTime.OrderBy(p => p);
                 }
-
-                var reloadResultText = reloadResult.Success ? "SUCCESS!" : "FAIL!";
-                var subject = $"Assets reload: {reloadResultText}";
-                await _blogAlertService.AlertAssetReloadResultAsync(subject, reloadResult.Warning, reloadResult.Error,
-                    addedPosts, modifiedPosts);
 
                 if (addedPosts != null && addedPosts.Any() || modifiedPosts != null && modifiedPosts.Any())
                 {
@@ -232,7 +205,7 @@ namespace Laobian.Share.Blog
                             modifiedPosts.FirstOrDefault(mp => CompareHelper.IgnoreCase(mp, p.GitPath)) != null);
                         foreach (var blogPost in posts)
                         {
-                            blogPost.Raw.LastUpdateTime = DateTime.Now;
+                            blogPost.Metadata.LastUpdateTime = DateTime.Now;
                         }
                     }
 

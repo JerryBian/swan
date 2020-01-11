@@ -14,13 +14,9 @@ namespace Laobian.Share.Blog.Asset
 
         string GetAboutHtml();
 
-        BlogPostAccess GetPostVisit();
-
         Task RemoteGitToLocalFileAsync();
 
-        Task UpdateRemoteGitTemplatePostAsync();
-
-        Task<BlogAssetReloadResult<object>> LocalFileToLocalMemoryAsync();
+        Task<bool> LocalFileToLocalMemoryAsync();
 
         Task LocalMemoryToLocalFileAsync();
 
