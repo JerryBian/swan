@@ -30,6 +30,7 @@
 
     .post-item-title {
         font-size: $font-size-lg;
+        font-family: $post-title-font;
 
         a {
             color: $post-title-color;
@@ -61,8 +62,6 @@
         font-size: $font-size-sm;
 
         a {
-            color: $text-muted;
-
             @include hover-focus {
                 color: darken($text-muted, 15%)
             }

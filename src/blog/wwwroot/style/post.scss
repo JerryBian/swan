@@ -23,16 +23,22 @@
 @import "shared.scss";
 
 .post {
-    .post-title {
-        background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAABCAYAAACsXeyTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAFUlEQVQIHWNIS0sr/v//PwMMDzY+ADqMahlW4J91AAAAAElFTkSuQmCC) bottom left repeat-x;
-        padding-bottom: 0.3rem;
-        font-size: $font-size-lg;
-        color: $post-title-color;
-    }
+    
 
     .post-content {
         @import "_/_postContent";
     }
+}
+
+.post-title {
+    padding-bottom: 0.3rem;
+    font-size: $font-size-lg;
+    color: $post-title-color;
+    font-family: $post-title-font;
+}
+
+.post-meta {
+    font-size: $font-size-sm;
 }
 
 .post-alert {

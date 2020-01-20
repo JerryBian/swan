@@ -1,43 +1,28 @@
 ﻿@model PostViewModel
 
-<article class="post">
-    @if (!Model.Post.IsPublic)
-    {
-        <div class="text-warning font-italic"><i class="fas fa-info-circle"></i> 这篇文章尚未发布，仅供管理员预览。</div>
-    }
-    <div class="post-title">
-        @if (Model.Post.IsTopping)
+    <article class="post">
+        @if (!Model.Post.IsPublic)
         {
-            <i class="fas fa-flag fa-sm text-info"></i>
+            <div class="text-warning font-italic"><i class="fas fa-info-circle"></i> 这篇文章尚未发布，仅供管理员预览。</div>
         }
-        @Model.Post.Title
-    </div>
-    <div class="text-muted text-left d-block d-lg-none post-meta">
-        <time datetime="@Model.Post.PublishTime.ToDateAndTime()"></time>
-        @Html.Raw(Model.Post.GetSimpleMetadataHtml())
-    </div>
-    <div class="mt-2 mb-4 post-content">
-        @Html.Raw(Model.Post.ContentHtml)
-        <p class="text-muted">（本文完）</p>
-    </div>
-</article>
+        <div class="text-muted d-none d-sm-block post-meta">@Html.Raw(Model.Post.GetMetadataHtml())</div>
+        <div class="text-muted d-sm-none post-meta">@Html.Raw(Model.Post.GetSimpleMetadataHtml())</div>
+        <div class="post-title pt-1">
+            @if (Model.Post.IsTopping)
+            {
+                <i class="fas fa-flag fa-sm text-info"></i>
+            }
+            @Model.Post.Title
+        </div>
+        <div class="mt-2 mb-4 post-content">
+            @Html.Raw(Model.Post.ContentHtml)
+            <p class="text-muted">（本文完）</p>
+        </div>
+    </article>
 
 <div class="alert alert-warning post-alert" role="alert">
     <ul>
-        @{
-            var meta = Model.Post.GetCategoryAndTagHtml();
-            if (!string.IsNullOrEmpty(meta))
-            {
-                <li>发表于 @Html.Raw(meta)</li>
-            }
-        }
-        <li>
-            这篇文章的留言，请发送电子邮件至
-            <a href="mailto:@Global.Config.Common.AdminEmail?subject=留言 - @Model.Post.Title&body=Good job！">
-                @Global.Config.Common.AdminEmail
-            </a>
-        </li>
-
+        <li>最后更新于：@Model.Post.LastUpdateTimeString</li>
         @if (Model.PrevPost != null)
         {
             <li>前一篇：<a href="@Model.PrevPost.FullUrl">@Model.PrevPost.Title</a></li>
@@ -47,6 +32,12 @@
         {
             <li>后一篇：<a href="@Model.NextPost.FullUrl">@Model.NextPost.Title</a></li>
         }
+        <li>
+            文章的留言，请发送电子邮件至
+            <a href="mailto:@Global.Config.Common.AdminEmail?subject=留言 - @Model.Post.Title&body=Good job！">
+                @Global.Config.Common.AdminEmail
+            </a>
+        </li>
     </ul>
 </div>
 
@@ -56,9 +47,7 @@
     <div id="modal-caption"></div>
 </div>
 
-@section stickySidebar{
-    <partial name="_AsidePostInfo" model="@Model.Post"/>
-}
+
 
 @section script{
     @if (Model.Post.ContainsMath)
@@ -82,5 +71,5 @@
 }
 
 @section style{
-    <link rel="stylesheet" href="~/style/post.min.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/style/post.min.css" asp-append-version="true" />
 }

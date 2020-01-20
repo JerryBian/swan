@@ -18,13 +18,13 @@ article, aside, figcaption, figure, footer, header, hgroup, main, nav, section {
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-family: Arial, "Noto Sans", serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
-  color: #2c3e50;
+  color: #0f0e17;
   text-align: left;
-  background-color: #fff;
+  background-color: #f8f5f2;
 }
 
 [tabindex="-1"]:focus:not(:focus-visible) {
@@ -437,7 +437,7 @@ mark,
 
 .img-thumbnail {
   padding: 0.25rem;
-  background-color: #fff;
+  background-color: #f8f5f2;
   border: 1px solid #dee2e6;
   border-radius: 0.25rem;
   max-width: 100%;
@@ -460,7 +460,7 @@ mark,
 
 code {
   font-size: 87.5%;
-  color: #B33771;
+  color: #594a4e;
   word-wrap: break-word;
 }
 a > code {
@@ -515,12 +515,12 @@ pre code {
 }
 @media (min-width: 992px) {
   .container {
-    max-width: 960px;
+    max-width: 840px;
   }
 }
 @media (min-width: 1200px) {
   .container {
-    max-width: 1140px;
+    max-width: 960px;
   }
 }
 
@@ -544,12 +544,12 @@ pre code {
 }
 @media (min-width: 992px) {
   .container-lg, .container-md, .container-sm, .container {
-    max-width: 960px;
+    max-width: 840px;
   }
 }
 @media (min-width: 1200px) {
-  .container-xl, .container-lg, .container-md, .container-sm, .container {
-    max-width: 1140px;
+  .container-xl, .container-md, .container-sm, .container {
+    max-width: 960px;
   }
 }
 .row {
@@ -1757,7 +1757,7 @@ pre code {
 .btn {
   display: inline-block;
   font-weight: 400;
-  color: #2c3e50;
+  color: #0f0e17;
   text-align: center;
   vertical-align: middle;
   cursor: pointer;
@@ -1776,7 +1776,7 @@ pre code {
   }
 }
 .btn:hover {
-  color: #2c3e50;
+  color: #0f0e17;
   text-decoration: none;
 }
 .btn:focus, .btn.focus {
@@ -2501,7 +2501,7 @@ input[type=button].btn-block {
   background-color: #f8f9fa;
 }
 .list-group-item-action:active {
-  color: #2c3e50;
+  color: #0f0e17;
   background-color: #e9ecef;
 }
 
@@ -2509,7 +2509,7 @@ input[type=button].btn-block {
   position: relative;
   display: block;
   padding: 0.75rem 1.25rem;
-  background-color: #fff;
+  background-color: transparent;
   border: 1px solid rgba(0, 0, 0, 0.125);
 }
 .list-group-item:first-child {
@@ -2523,7 +2523,7 @@ input[type=button].btn-block {
 .list-group-item.disabled, .list-group-item:disabled {
   color: #6c757d;
   pointer-events: none;
-  background-color: #fff;
+  background-color: transparent;
 }
 .list-group-item.active {
   z-index: 2;
@@ -2825,8 +2825,8 @@ input[type=button].btn-block {
 .nav-tabs .nav-link.active,
 .nav-tabs .nav-item.show .nav-link {
   color: #495057;
-  background-color: #fff;
-  border-color: #dee2e6 #dee2e6 #fff;
+  background-color: #f8f5f2;
+  border-color: #dee2e6 #dee2e6 #f8f5f2;
 }
 .nav-tabs .dropdown-menu {
   margin-top: -1px;
@@ -3358,7 +3358,7 @@ input[type=button].btn-block {
 .table {
   width: 100%;
   margin-bottom: 1rem;
-  color: #2c3e50;
+  color: #0f0e17;
 }
 .table th,
 .table td {
@@ -3403,7 +3403,7 @@ input[type=button].btn-block {
 }
 
 .table-hover tbody tr:hover {
-  color: #2c3e50;
+  color: #0f0e17;
   background-color: rgba(0, 0, 0, 0.075);
 }
 
@@ -7462,7 +7462,7 @@ a.text-dark:hover, a.text-dark:focus {
 }
 
 .text-body {
-  color: #2c3e50 !important;
+  color: #0f0e17 !important;
 }
 
 .text-muted {
@@ -7590,7 +7590,7 @@ select.form-control:focus::-ms-value {
   margin-bottom: 0;
   font-size: 1rem;
   line-height: 1.5;
-  color: #2c3e50;
+  color: #0f0e17;
   background-color: transparent;
   border: solid transparent;
   border-width: 1px 0;
@@ -7921,7 +7921,7 @@ textarea.form-control {
 .navbar,
 footer,
 .progress-container {
-  background-color: whitesmoke;
+  background-color: transparent;
 }
 
 .progress-container {
@@ -7953,19 +7953,17 @@ img {
   background-color: #fff;
 }
 
-aside table tr td:first-child {
-  padding-right: 0.75rem;
-  color: #6c757d;
+main {
+  background-color: #fffffe;
+  border-radius: 3px;
 }
-aside ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+
+header {
+  padding: 1rem 0;
 }
-aside ul li {
-  list-style: none;
-  border-bottom: 1px solid #EEE;
-  padding: 3px 0px;
+
+pre code {
+  font-size: 0.875rem;
 }
 
 /*# sourceMappingURL=account.css.map */
