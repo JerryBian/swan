@@ -49,7 +49,7 @@ namespace Laobian.Blog.HostedService
         public override async Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation($"{nameof(AssetHostedService)} is starting.");
-            await _blogService.ReloadLocalAssetsAsync(Global.Config.Blog.CloneAssetsDuringStartup);
+            await _blogService.InitAsync(Global.Config.Blog.CloneAssetsDuringStartup);
             await base.StartAsync(cancellationToken);
             _logger.LogInformation($"{nameof(AssetHostedService)} has started.");
         }
@@ -57,7 +57,7 @@ namespace Laobian.Blog.HostedService
         public override async Task StopAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation($"{nameof(AssetHostedService)} is stopping.");
-            await _blogService.UpdateRemoteAssetsAsync();
+            await _blogService.UpdateGitHubAsync();
             await base.StopAsync(cancellationToken);
             _logger.LogInformation($"{nameof(AssetHostedService)} has stopped.");
         }
@@ -66,7 +66,7 @@ namespace Laobian.Blog.HostedService
         {
             try
             {
-                await _blogService.UpdateRemoteAssetsAsync();
+                await _blogService.UpdateGitHubAsync();
             }
             catch (Exception ex)
             {

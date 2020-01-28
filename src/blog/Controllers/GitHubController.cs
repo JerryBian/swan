@@ -98,7 +98,7 @@ namespace Laobian.Blog.Controllers
                 Task.Run(async () => // Make GitHub hook return fast.
 #pragma warning restore 4014
                 {
-                    await _blogService.ReloadLocalAssetsAsync(true, addedPosts, modifiedPosts);
+                    await _blogService.GitHookAsync(modifiedPosts.Concat(addedPosts).ToList());
                 });
 
                 _logger.LogInformation("GitHub Hook executed completed.");

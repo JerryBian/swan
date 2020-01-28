@@ -14,12 +14,16 @@ namespace Laobian.Share.Blog.Asset
 
         string GetAboutHtml();
 
-        Task RemoteGitToLocalFileAsync();
+        Task<bool> PullFromGitHubAsync();
 
-        Task<bool> LocalFileToLocalMemoryAsync();
+        Task<bool> ParseAssetsToObjectsAsync();
 
-        Task LocalMemoryToLocalFileAsync();
+        Task<bool> SerializeAssetsToFilesAsync();
 
-        Task LocalFileToRemoteGitAsync();
+        Task<bool> PushToGitHubAsync();
+
+        bool MergePosts(List<BlogPost> oldPosts);
+
+        bool UpdatePosts(IEnumerable<string> postLinks);
     }
 }

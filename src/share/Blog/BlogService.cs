@@ -1,35 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Laobian.Share.Blog.Alert;
 using Laobian.Share.Blog.Asset;
 using Laobian.Share.Blog.Model;
 using Laobian.Share.Helper;
-using Microsoft.Extensions.Logging;
 
 namespace Laobian.Share.Blog
 {
     public class BlogService : IBlogService
     {
-        private readonly IBlogAlertService _blogAlertService;
         private readonly IBlogAssetManager _blogAssetManager;
-        private readonly ILogger<BlogService> _logger;
-        private readonly SemaphoreSlim _semaphoreSlim1;
-        private readonly SemaphoreSlim _semaphoreSlim2;
+        private readonly SemaphoreSlim _semaphoreSlim;
 
-        public BlogService(ILogger<BlogService> logger, IBlogAssetManager blogAssetManager,
-            IBlogAlertService blogAlertService)
+        public BlogService(
+            IBlogAssetManager blogAssetManager)
         {
-            _logger = logger;
             _blogAssetManager = blogAssetManager;
-            _blogAlertService = blogAlertService;
-            _semaphoreSlim1 = new SemaphoreSlim(1, 1);
-            _semaphoreSlim2 = new SemaphoreSlim(1, 1);
+            _semaphoreSlim = new SemaphoreSlim(1, 1);
         }
 
-        public List<BlogPost> GetPosts(bool onlyPublic = true, bool publishTimeDesc = true,
+        public List<BlogPost> GetPosts(
+            bool onlyPublic = true, 
+            bool publishTimeDesc = true,
             bool toppingPostsFirst = true)
         {
             IEnumerable<BlogPost> posts = _blogAssetManager.GetAllPosts();
@@ -54,7 +47,9 @@ namespace Laobian.Share.Blog
             return post;
         }
 
-        public List<BlogCategory> GetCategories(bool onlyPublic = true, bool publishTimeDesc = true,
+        public List<BlogCategory> GetCategories(
+            bool onlyPublic = true, 
+            bool publishTimeDesc = true,
             bool toppingPostsFirst = true)
         {
             var categories = new List<BlogCategory>();
@@ -88,7 +83,10 @@ namespace Laobian.Share.Blog
             return categories;
         }
 
-        public List<BlogTag> GetTags(bool onlyPublic = true, bool publishTimeDesc = true, bool toppingPostsFirst = true)
+        public List<BlogTag> GetTags(
+            bool onlyPublic = true, 
+            bool publishTimeDesc = true, 
+            bool toppingPostsFirst = true)
         {
             var tags = new List<BlogTag>();
             foreach (var blogTag in _blogAssetManager.GetAllTags())
@@ -126,7 +124,9 @@ namespace Laobian.Share.Blog
             return _blogAssetManager.GetAboutHtml();
         }
 
-        public List<BlogArchive> GetArchives(bool onlyPublic = true, bool publishTimeDesc = true,
+        public List<BlogArchive> GetArchives(
+            bool onlyPublic = true, 
+            bool publishTimeDesc = true,
             bool toppingPostsFirst = true)
         {
             var archives = new List<BlogArchive>();
@@ -155,88 +155,95 @@ namespace Laobian.Share.Blog
             return archives;
         }
 
-        public async Task ReloadLocalAssetsAsync(
-            bool clone = true,
-            List<string> addedPosts = null,
-            List<string> modifiedPosts = null)
+        public async Task InitAsync(bool clone = true)
         {
             try
             {
-                await _semaphoreSlim1.WaitAsync();
+                await _semaphoreSlim.WaitAsync();
+                var shouldContinue = true;
                 if (clone)
                 {
-                    await _blogAssetManager.RemoteGitToLocalFileAsync();
+                    shouldContinue = await _blogAssetManager.PullFromGitHubAsync();
                 }
 
-                var existingPosts = _blogAssetManager.GetAllPosts().ToList();
-                var reloadResult = await _blogAssetManager.LocalFileToLocalMemoryAsync();
-                if (reloadResult)
+                if (shouldContinue)
                 {
-                    BlogState.AssetLastUpdate = DateTime.Now;
-                    foreach (var item in _blogAssetManager.GetAllPosts())
-                    {
-                        var existingPost =
-                            existingPosts.FirstOrDefault(p => CompareHelper.IgnoreCase(p.Link, item.Link));
-                        if (existingPost != null)
-                        {
-                            item.AccessCount = Math.Max(item.AccessCount,
-                                existingPost.AccessCount);
-                        }
-                    }
-
-                    var postsPublishTime = new List<DateTime>();
-                    foreach (var blogPost in _blogAssetManager.GetAllPosts())
-                    {
-                        var rawPublishTime = blogPost.GetRawPublishTime();
-                        if (rawPublishTime.HasValue && rawPublishTime != default(DateTime))
-                        {
-                            postsPublishTime.Add(rawPublishTime.Value);
-                        }
-                    }
-
-                    BlogState.PostsPublishTime = postsPublishTime.OrderBy(p => p);
+                    shouldContinue = await _blogAssetManager.ParseAssetsToObjectsAsync();
                 }
 
-                if (addedPosts != null && addedPosts.Any() || modifiedPosts != null && modifiedPosts.Any())
+                if (shouldContinue)
                 {
-                    if (modifiedPosts != null)
-                    {
-                        var posts = _blogAssetManager.GetAllPosts().Where(p =>
-                            modifiedPosts.FirstOrDefault(mp => CompareHelper.IgnoreCase(mp, p.GitPath)) != null);
-                        foreach (var blogPost in posts)
-                        {
-                            blogPost.Metadata.LastUpdateTime = DateTime.Now;
-                        }
-                    }
-
-                    await UpdateRemoteAssetsAsync();
+                    shouldContinue = await _blogAssetManager.SerializeAssetsToFilesAsync();
                 }
 
-                _logger.LogInformation("Reload local and memory assets successfully.");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Reload local and memory assets throws error.");
-                await _blogAlertService.AlertEventAsync("Reload local and memory assets throws error.", ex);
+                if (shouldContinue)
+                {
+                    await _blogAssetManager.PushToGitHubAsync();
+                }
             }
             finally
             {
-                _semaphoreSlim1.Release();
+                _semaphoreSlim.Release();
             }
         }
 
-        public async Task UpdateRemoteAssetsAsync()
+        public async Task GitHookAsync(List<string> postLinks)
         {
             try
             {
-                await _semaphoreSlim2.WaitAsync();
-                await _blogAssetManager.LocalMemoryToLocalFileAsync();
-                await _blogAssetManager.LocalFileToRemoteGitAsync();
-                _logger.LogInformation("Update remote store successfully.");
+                await _semaphoreSlim.WaitAsync();
+                var shouldContinue = await _blogAssetManager.PullFromGitHubAsync();
+                if (shouldContinue)
+                {
+                    shouldContinue = await _blogAssetManager.PullFromGitHubAsync();
+                }
+
+                var oldPosts = new List<BlogPost>(_blogAssetManager.GetAllPosts());
+                if (shouldContinue)
+                {
+                    shouldContinue = await _blogAssetManager.ParseAssetsToObjectsAsync();
+                }
+
+                if (shouldContinue)
+                {
+                    shouldContinue = _blogAssetManager.MergePosts(oldPosts);
+                }
+
+                if (shouldContinue)
+                {
+                    shouldContinue = _blogAssetManager.UpdatePosts(postLinks);
+                }
+
+                if (shouldContinue)
+                {
+                    shouldContinue = await _blogAssetManager.SerializeAssetsToFilesAsync();
+                }
+
+                if (shouldContinue)
+                {
+                    await _blogAssetManager.PushToGitHubAsync();
+                }
             }
             finally
             {
-                _semaphoreSlim2.Release();
+                _semaphoreSlim.Release();
+            }
+        }
+
+        public async Task UpdateGitHubAsync()
+        {
+            try
+            {
+                await _semaphoreSlim.WaitAsync();
+                var shouldContinue = await _blogAssetManager.SerializeAssetsToFilesAsync();
+                if (shouldContinue)
+                {
+                    await _blogAssetManager.PushToGitHubAsync();
+                }
+            }
+            finally
+            {
+                _semaphoreSlim.Release();
             }
         }
     }

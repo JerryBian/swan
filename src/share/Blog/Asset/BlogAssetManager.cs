@@ -19,14 +19,13 @@ namespace Laobian.Share.Blog.Asset
         private readonly List<BlogCategory> _allCategories;
         private readonly List<BlogPost> _allPosts;
         private readonly List<BlogTag> _allTags;
+        private string _aboutHtml;
 
         private readonly IGitClient _gitClient;
         private readonly GitConfig _gitConfig;
         private readonly ManualResetEventSlim _manualReset;
         private readonly SemaphoreSlim _semaphore;
         private readonly ILogger<BlogAssetManager> _logger;
-
-        private string _aboutHtml;
 
         public BlogAssetManager(
             IGitClient gitClient,
@@ -49,6 +48,146 @@ namespace Laobian.Share.Blog.Asset
                 GitCommitEmail = Global.Config.Blog.AssetGitCommitEmail,
                 GitCommitUser = Global.Config.Blog.AssetGitCommitUser
             };
+        }
+
+        #region Public Interfaces
+
+        public async Task<bool> PullFromGitHubAsync()
+        {
+            try
+            {
+                await _gitClient.CloneToLocalAsync(_gitConfig);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex, "Pull assets from GitHub failed.");
+                return false;
+            }
+        }
+
+        public async Task<bool> ParseAssetsToObjectsAsync()
+        {
+            try
+            {
+                await _semaphore.WaitAsync();
+                var posts = await ReloadLocalMemoryPostAsync();
+                var categories = await ReloadLocalMemoryCategoryAsync();
+                var tags = await ReloadLocalMemoryTagAsync();
+                var aboutHtml = await ReloadLocalMemoryAboutAsync();
+
+                try
+                {
+                    _manualReset.Reset();
+                    RefreshMemoryAsset(posts, categories, tags, aboutHtml);
+                    return true;
+                }
+                finally
+                {
+                    _manualReset.Set();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex, "Parse assets to objects failed.");
+                return false;
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
+        }
+
+        public async Task<bool> SerializeAssetsToFilesAsync()
+        {
+            try
+            {
+                var postMetadata = new List<BlogPostMetadata>();
+                foreach (var blogPost in _allPosts)
+                {
+                    postMetadata.Add(blogPost.Metadata);
+                }
+
+                var postMetadataPath =
+                    Path.Combine(Global.Config.Blog.AssetRepoLocalDir, Global.Config.Blog.PostMetadataPath);
+                var metadataParseResult = BlogAssetParser.ToJson(postMetadata.OrderByDescending(p => p.CreateTime));
+                LogParseResultMessages(metadataParseResult);
+
+                if (metadataParseResult.Success)
+                {
+                    if (!Directory.Exists(Path.GetDirectoryName(postMetadataPath)))
+                    {
+                        Directory.CreateDirectory(Path.GetDirectoryName(postMetadataPath));
+                    }
+
+                    await File.WriteAllTextAsync(postMetadataPath, metadataParseResult.Instance, Encoding.UTF8);
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex, "Serialize assets to files failed.");
+                return false;
+            }
+        }
+
+        public async Task<bool> PushToGitHubAsync()
+        {
+            try
+            {
+                await _gitClient.CommitAsync(Global.Config.Blog.AssetRepoLocalDir, "Update assets");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex, "Push to GitHub failed.");
+                return false;
+            }
+        }
+
+        public bool MergePosts(List<BlogPost> oldPosts)
+        {
+            try
+            {
+                foreach (var blogPost in _allPosts)
+                {
+                    var oldPost = oldPosts.FirstOrDefault(p => CompareHelper.IgnoreCase(p.Link, blogPost.Link));
+                    if (oldPost != null)
+                    {
+                        blogPost.AccessCount = Math.Max(oldPost.AccessCount, blogPost.AccessCount);
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex, "Merge assets failed.");
+                return false;
+            }
+        }
+
+        public bool UpdatePosts(IEnumerable<string> postLinks)
+        {
+            try
+            {
+                foreach (var postLink in postLinks)
+                {
+                    var post = _allPosts.FirstOrDefault(p => CompareHelper.IgnoreCase(p.Link, postLink));
+                    if (post != null)
+                    {
+                        post.Metadata.LastUpdateTime = DateTime.Now;
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex, "Update posts failed.");
+                return false;
+            }
         }
 
         public List<BlogPost> GetAllPosts()
@@ -75,77 +214,10 @@ namespace Laobian.Share.Blog.Asset
             return _aboutHtml;
         }
 
-        public async Task RemoteGitToLocalFileAsync()
-        {
-            await _gitClient.CloneToLocalAsync(_gitConfig);
-        }
+        #endregion
 
-        public async Task<bool> LocalFileToLocalMemoryAsync()
-        {
-            try
-            {
-                await _semaphore.WaitAsync();
-                var posts = await ReloadLocalMemoryPostAsync();
-                var categories = await ReloadLocalMemoryCategoryAsync();
-                var tags = await ReloadLocalMemoryTagAsync();
-                var aboutHtml = await ReloadLocalMemoryAboutAsync();
 
-                try
-                {
-                    _manualReset.Reset();
-                    RefreshMemoryAsset(posts, categories, tags, aboutHtml);
-                }
-                finally
-                {
-                    _manualReset.Set();
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Local file to memory failed.");
-                return false;
-            }
-            finally
-            {
-                _semaphore.Release();
-            }
-
-            return true;
-        }
-
-        public async Task LocalMemoryToLocalFileAsync()
-        {
-            var postMetadata = new List<BlogPostMetadata>();
-
-            foreach (var blogPost in _allPosts)
-            {
-                var contentParseResult = BlogAssetParser.ToText(blogPost.ContentMarkdown);
-                if (contentParseResult.Success)
-                {
-                    await File.WriteAllTextAsync(blogPost.LocalPath, contentParseResult.Instance, Encoding.UTF8);
-                }
-
-                postMetadata.Add(blogPost.Metadata);
-            }
-
-            var postMetadataPath =
-                Path.Combine(Global.Config.Blog.AssetRepoLocalDir, Global.Config.Blog.PostMetadataPath);
-            var metadataParseResult = BlogAssetParser.ToJson(postMetadata.OrderByDescending(p => p.CreateTime));
-            if (metadataParseResult.Success)
-            {
-                if (!Directory.Exists(Path.GetDirectoryName(postMetadataPath)))
-                {
-                    Directory.CreateDirectory(Path.GetDirectoryName(postMetadataPath));
-                }
-
-                await File.WriteAllTextAsync(postMetadataPath, metadataParseResult.Instance, Encoding.UTF8);
-            }
-        }
-
-        public async Task LocalFileToRemoteGitAsync()
-        {
-            await _gitClient.CommitAsync(Global.Config.Blog.AssetRepoLocalDir, "Update assets");
-        }
+        #region Private Methods
 
         private void RefreshMemoryAsset(
             List<BlogPost> posts,
@@ -164,10 +236,18 @@ namespace Laobian.Share.Blog.Asset
 
             _aboutHtml = aboutHtml;
 
+            var postsPublishTime = new List<DateTime>();
             foreach (var blogPost in _allPosts)
             {
                 blogPost.Resolve(_allCategories, _allTags);
+                var rawPublishTime = blogPost.GetRawPublishTime();
+                if (rawPublishTime.HasValue && rawPublishTime != default(DateTime))
+                {
+                    postsPublishTime.Add(rawPublishTime.Value);
+                }
             }
+
+            BlogState.PostsPublishTime = postsPublishTime.OrderBy(p => p);
 
             foreach (var blogCategory in _allCategories)
             {
@@ -178,6 +258,8 @@ namespace Laobian.Share.Blog.Asset
             {
                 blogTag.Resolve(_allPosts);
             }
+
+            BlogState.AssetLastUpdate = DateTime.Now;
         }
 
         private async Task<List<BlogPost>> ReloadLocalMemoryPostAsync()
@@ -201,6 +283,8 @@ namespace Laobian.Share.Blog.Asset
                 {
                     postMetadata = metadataParseResult.Instance;
                 }
+
+                LogParseResultMessages(metadataParseResult);
             }
 
 
@@ -210,6 +294,8 @@ namespace Laobian.Share.Blog.Asset
                 {
                     var text = await File.ReadAllTextAsync(file);
                     var parseResult = BlogAssetParser.ToText(text);
+                    LogParseResultMessages(parseResult);
+
                     if (parseResult.Success)
                     {
                         var post = new BlogPost
@@ -258,6 +344,8 @@ namespace Laobian.Share.Blog.Asset
 
             var text = await File.ReadAllTextAsync(categoryLocalPath);
             var parseResult = await BlogAssetParser.ParseColonSeparatedTextAsync(text);
+            LogParseResultMessages(parseResult);
+
             if (parseResult.Success)
             {
                 foreach (var item in parseResult.Instance)
@@ -285,6 +373,8 @@ namespace Laobian.Share.Blog.Asset
 
             var text = await File.ReadAllTextAsync(tagLocalPath);
             var parseResult = await BlogAssetParser.ParseColonSeparatedTextAsync(text);
+            LogParseResultMessages(parseResult);
+
             if (parseResult.Success)
             {
                 foreach (var item in parseResult.Instance)
@@ -312,6 +402,8 @@ namespace Laobian.Share.Blog.Asset
 
             var md = await File.ReadAllTextAsync(aboutLocalPath);
             var parseResult = BlogAssetParser.ToText(md);
+            LogParseResultMessages(parseResult);
+
             if (parseResult.Success)
             {
                 result = MarkdownHelper.ToHtml(md);
@@ -319,5 +411,16 @@ namespace Laobian.Share.Blog.Asset
 
             return result;
         }
+
+        private void LogParseResultMessages<T>(BlogAssetParseResult<T> result)
+        {
+            var message = result.AggregateMessages();
+            if (!string.IsNullOrEmpty(message))
+            {
+                _logger.LogError(message);
+            }
+        }
+
+        #endregion
     }
 }

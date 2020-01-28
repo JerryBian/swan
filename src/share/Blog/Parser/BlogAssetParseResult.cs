@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Laobian.Share.Blog.Parser
 {
@@ -18,5 +20,30 @@ namespace Laobian.Share.Blog.Parser
         public List<string> ErrorMessages { get; }
 
         public T Instance { get; set; }
+
+        public string AggregateMessages()
+        {
+            var sb = new StringBuilder();
+
+            if (WarningMessages.Any())
+            {
+                sb.AppendLine("Warnings:");
+                foreach (var warningMessage in WarningMessages)
+                {
+                    sb.AppendLine(warningMessage);
+                }
+            }
+
+            if (ErrorMessages.Any())
+            {
+                sb.AppendLine("Errors:");
+                foreach (var errorMessage in ErrorMessages)
+                {
+                    sb.AppendLine(errorMessage);
+                }
+            }
+
+            return sb.ToString();
+        }
     }
 }
