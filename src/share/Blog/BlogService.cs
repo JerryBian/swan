@@ -178,7 +178,7 @@ namespace Laobian.Share.Blog
 
                 if (shouldContinue)
                 {
-                    await _blogAssetManager.PushToGitHubAsync();
+                    await _blogAssetManager.PushToGitHubAsync(":tada: Server started");
                 }
             }
             finally
@@ -221,7 +221,7 @@ namespace Laobian.Share.Blog
 
                 if (shouldContinue)
                 {
-                    await _blogAssetManager.PushToGitHubAsync();
+                    await _blogAssetManager.PushToGitHubAsync(":sparkles: Hook happened");
                 }
             }
             finally
@@ -238,7 +238,7 @@ namespace Laobian.Share.Blog
                 var shouldContinue = await _blogAssetManager.SerializeAssetsToFilesAsync();
                 if (shouldContinue)
                 {
-                    await _blogAssetManager.PushToGitHubAsync();
+                    await _blogAssetManager.PushToGitHubAsync(":wind_chime: Scheduled update or server stop");
                 }
             }
             finally

@@ -132,11 +132,11 @@ namespace Laobian.Share.Blog.Asset
             }
         }
 
-        public async Task<bool> PushToGitHubAsync()
+        public async Task<bool> PushToGitHubAsync(string message)
         {
             try
             {
-                await _gitClient.CommitAsync(Global.Config.Blog.AssetRepoLocalDir, "Update assets");
+                await _gitClient.CommitAsync(Global.Config.Blog.AssetRepoLocalDir, message);
                 return true;
             }
             catch (Exception ex)

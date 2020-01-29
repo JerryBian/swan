@@ -20,7 +20,7 @@ namespace Laobian.Share.Blog.Asset
 
         Task<bool> SerializeAssetsToFilesAsync();
 
-        Task<bool> PushToGitHubAsync();
+        Task<bool> PushToGitHubAsync(string message);
 
         bool MergePosts(List<BlogPost> oldPosts);
 
