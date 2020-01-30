@@ -33,16 +33,16 @@ namespace Laobian.Blog.Controllers
                     var viewModel = new PostViewModel { Post = post };
                     var posts = _blogService.GetPosts(!User.Identity.IsAuthenticated);
                     var postIndex = posts.IndexOf(post);
-                    var prevPostIndex = postIndex - 1;
-                    if (prevPostIndex >= 0)
-                    {
-                        viewModel.PrevPost = posts[prevPostIndex];
-                    }
-
-                    var nextPostIndex = postIndex + 1;
-                    if (nextPostIndex < posts.Count)
+                    var nextPostIndex = postIndex - 1;
+                    if (nextPostIndex >= 0)
                     {
                         viewModel.NextPost = posts[nextPostIndex];
+                    }
+
+                    var prevPostIndex = postIndex + 1;
+                    if (prevPostIndex < posts.Count)
+                    {
+                        viewModel.NextPost = posts[prevPostIndex];
                     }
 
                     return viewModel;
