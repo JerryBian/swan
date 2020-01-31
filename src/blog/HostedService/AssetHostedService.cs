@@ -49,9 +49,7 @@ namespace Laobian.Blog.HostedService
         public override async Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation($"{nameof(AssetHostedService)} is starting.");
-            await _blogService.ReloadLocalAssetsAsync(Global.Config.Blog.CloneAssetsDuringStartup,
-                Global.Config.Blog.CloneAssetsDuringStartup);
-            RefreshPostAccessCount();
+            await _blogService.InitAsync(Global.Config.Blog.CloneAssetsDuringStartup);
             await base.StartAsync(cancellationToken);
             _logger.LogInformation($"{nameof(AssetHostedService)} has started.");
         }
@@ -59,27 +57,21 @@ namespace Laobian.Blog.HostedService
         public override async Task StopAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation($"{nameof(AssetHostedService)} is stopping.");
-            await _blogService.UpdateRemoteAssetsAsync();
+            await _blogService.UpdateGitHubAsync();
             await base.StopAsync(cancellationToken);
             _logger.LogInformation($"{nameof(AssetHostedService)} has stopped.");
         }
 
         private async Task ExecuteInternalAsync()
         {
-            await _blogService.UpdateRemoteAssetsAsync();
-            RefreshPostAccessCount();
-        }
-
-        private void RefreshPostAccessCount()
-        {
-            var visitTotal = 0;
-            foreach (var blogPost in _blogService.GetPosts(false))
+            try
             {
-                blogPost.AccessCount = _blogService.GetPostAccess().Get(blogPost.GitPath);
-                visitTotal += blogPost.AccessCount;
+                await _blogService.UpdateGitHubAsync();
             }
-
-            BlogState.PostsVisitsTotal = visitTotal;
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error popup while updating assets.");
+            }
         }
     }
 }

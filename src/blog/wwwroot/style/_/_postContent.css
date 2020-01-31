@@ -1,24 +1,19 @@
-﻿h1, h2, h3, h4, h5, h6 { font-weight: normal; }
-
-h3 {
-    border-bottom: 1px solid #d3d3d3;
-    font-size: 1.35rem;
+﻿h3 {
+    background-color: #ced6e0;
+    font-size: 1.3rem;
     margin-bottom: 0.8rem;
     margin-top: 1.5rem;
-    padding-bottom: 0.4rem;
+    padding: 0.4rem;
     transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
 }
 
 h4 {
     border-bottom: 1px solid #eaecef;
-    font-size: 1.25rem;
-    font-weight: 400;
+    font-size: 1.2rem;
     margin-bottom: 0.6rem;
-    margin-top: 0.6rem;
+    margin-top: 1rem;
     padding-bottom: 0.3rem;
 }
-
-p { line-height: 1.65; }
 
 blockquote {
     background-color: #FFF8DC;

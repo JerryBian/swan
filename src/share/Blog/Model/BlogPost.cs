@@ -8,40 +8,42 @@ namespace Laobian.Share.Blog.Model
     {
         public BlogPost()
         {
-            Raw = new BlogPostRaw();
             Categories = new List<BlogCategory>();
             Tags = new List<BlogTag>();
+            Metadata = new BlogPostMetadata();
         }
 
-        internal BlogPostRaw Raw { get; }
+        internal BlogPostMetadata Metadata { get; set; }
 
         #region Public Methods
 
         public DateTime? GetRawPublishTime()
         {
-            return Raw.PublishTime;
+            return Metadata.PublishTime;
         }
 
         #endregion
 
         #region Public Property
 
-        public int AccessCount { get; set; }
+        public int AccessCount
+        {
+            get => Metadata.AccessCount;
+            set => Metadata.AccessCount = value;
+        }
 
-        public string Title => Raw.Title ?? throw new InvalidBlogAssetException(nameof(Title));
+        public string Title => Metadata.Title ?? throw new InvalidBlogAssetException(nameof(Title));
 
         public string AccessCountString => AccessCount.Human();
 
         public bool IsPublic => DateTime.Now > PublishTime &&
-                                Raw.IsDraft != null &&
-                                !Raw.IsDraft.Value;
+                                !Metadata.IsDraft;
 
-        public DateTime CreateTime => Raw.CreateTime ?? throw new InvalidBlogAssetException(nameof(CreateTime));
+        public DateTime CreateTime => Metadata.CreateTime;
 
-        public DateTime PublishTime => Raw.PublishTime ?? CreateTime;
+        public DateTime PublishTime => Metadata.PublishTime;
 
-        public DateTime LastUpdateTime =>
-            Raw.LastUpdateTime ?? throw new InvalidBlogAssetException(nameof(PublishTime));
+        public DateTime LastUpdateTime => Metadata.LastUpdateTime;
 
         public string LastUpdateTimeString => LastUpdateTime.Human();
 
@@ -65,12 +67,19 @@ namespace Laobian.Share.Blog.Model
 
         public string LocalPath { get; set; }
 
-        public string Link => Raw.Link;
+        public string Link { get; set; }
 
-        public bool IsTopping => Raw.IsTopping ?? false;
+        public bool IsTopping => Metadata.IsTopping;
 
-        public bool ContainsMath => Raw.ContainsMath ?? false;
+        public bool ContainsMath => Metadata.ContainsMath;
+
+        public string ContentMarkdown { get; set; }
 
         #endregion
+
+        public void NewAccess()
+        {
+            Metadata.IncrementAccessCount();
+        }
     }
 }

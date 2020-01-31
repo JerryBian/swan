@@ -26,7 +26,7 @@ namespace Laobian.Share.Blog.Extension
 
             foreach (var post in allPosts)
             {
-                foreach (var tagName in post.Raw.Tag)
+                foreach (var tagName in post.Metadata.Tag)
                 {
                     if (CompareHelper.IgnoreCase(tagName, tag.Name))
                     {

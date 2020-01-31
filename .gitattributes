@@ -3,5 +3,4 @@
 *.sh eol=lf
 *.sln eol=crlf
 
-*.js linguist-vendored
-*.css linguist-vendored
+src/blog/wwwroot/lib/* linguist-vendored

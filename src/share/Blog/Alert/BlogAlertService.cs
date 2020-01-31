@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Laobian.Share.Email;
 using Laobian.Share.Extension;
@@ -158,64 +157,6 @@ namespace Laobian.Share.Blog.Alert
             {
                 _logger.LogInformation(ex,
                     $"[Need Attention] - Alert event failed. Original Message = {message}, Original Exception = {error}. Current exception = {ex}.");
-            }
-        }
-
-        public async Task AlertAssetReloadResultAsync(string subject, string warning, string error,
-            List<string> addedPosts = null, List<string> modifiedPosts = null)
-        {
-            try
-            {
-                // send alert email out. 
-                var emailEntry = new EmailEntry(Global.Config.Common.AdminEnglishName, Global.Config.Common.AdminEmail)
-                {
-                    FromName = Global.Config.Common.AlertSenderName,
-                    FromAddress = Global.Config.Common.AlertSenderEmail,
-                    Subject = subject,
-                    HtmlContent = "<p>Reload assets finished, please check.</p>"
-                };
-
-                if (addedPosts != null && addedPosts.Any())
-                {
-                    emailEntry.HtmlContent += "<p><strong>Added posts: </strong></p><ul>";
-                    foreach (var addedPost in addedPosts)
-                    {
-                        emailEntry.HtmlContent += $"<li>{addedPost}</li>";
-                    }
-
-                    emailEntry.HtmlContent += "</ul>";
-                }
-
-                if (modifiedPosts != null && modifiedPosts.Any())
-                {
-                    emailEntry.HtmlContent += "<p><strong>Modified posts: </strong></p><ul>";
-                    foreach (var modifiedPost in modifiedPosts)
-                    {
-                        emailEntry.HtmlContent += $"<li>{modifiedPost}</li>";
-                    }
-
-                    emailEntry.HtmlContent += "</ul>";
-                }
-
-                if (!string.IsNullOrEmpty(warning))
-                {
-                    emailEntry.HtmlContent +=
-                        $"<p><strong>Warnings: </strong></p><p><pre><code>{warning}</code></pre></p>";
-                }
-
-                if (!string.IsNullOrEmpty(error))
-                {
-                    emailEntry.HtmlContent += $"<p><strong>Errors: </strong></p><p><pre><code>{error}</code></pre></p>";
-                }
-
-                await _emailClient.SendAsync(emailEntry);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogInformation(
-                    $"[Need Attention] - Alert assets reloading failed, subject = {subject}, warning = {warning}, error = {error}.",
-                    ex,
-                    true);
             }
         }
     }

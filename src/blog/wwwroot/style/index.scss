@@ -29,7 +29,8 @@
     }
 
     .post-item-title {
-        font-size: $font-size-lg;
+        font-size: $post-title-font-size;
+        font-family: $post-title-font;
 
         a {
             color: $post-title-color;
@@ -40,6 +41,11 @@
                 border-bottom: 1px double #567c73;
             }
         }
+
+        span {
+            font-size: $font-size-sm;
+            padding: 0.2rem;
+        }
     }
 
     .post-item-excerpt {
@@ -49,7 +55,6 @@
             margin-top: 0;
             margin-bottom: 0.75rem;
             padding: 0;
-            line-height: 1.6;
 
             &:last-of-type {
                 margin-bottom: 0;
@@ -61,8 +66,6 @@
         font-size: $font-size-sm;
 
         a {
-            color: $text-muted;
-
             @include hover-focus {
                 color: darken($text-muted, 15%)
             }

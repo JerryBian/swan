@@ -14,12 +14,6 @@
         [ConfigMeta(Name = "MARKDOWN_EXTENSION", DefaultValue = ".md")]
         public string MarkdownExtension { get; set; }
 
-        [ConfigMeta(Name = "COLON_SPLITTER", DefaultValue = ":")]
-        public string ColonSplitter { get; set; }
-
-        [ConfigMeta(Name = "PERIOD_SPLITTER", DefaultValue = ",")]
-        public string PeriodSplitter { get; set; }
-
         [ConfigMeta(Name = "HTML_EXTENSION", DefaultValue = ".html")]
         public string HtmlExtension { get; set; }
 
