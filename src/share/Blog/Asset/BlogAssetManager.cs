@@ -279,12 +279,16 @@ namespace Laobian.Share.Blog.Asset
             {
                 var metadataText = await File.ReadAllTextAsync(metadataLocalPath);
                 var metadataParseResult = BlogAssetParser.ParseJson<List<BlogPostMetadata>>(metadataText);
+                LogParseResultMessages(metadataParseResult);
+
                 if (metadataParseResult.Success)
                 {
                     postMetadata = metadataParseResult.Instance;
                 }
-
-                LogParseResultMessages(metadataParseResult);
+                else
+                {
+                    throw new Exception("Post metadata parse failed, please check errors.");
+                }
             }
 
 

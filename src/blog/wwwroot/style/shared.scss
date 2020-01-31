@@ -1,14 +1,10 @@
-﻿.navbar,
-footer,
-.progress-container {
-    background-color: transparent;
+﻿body{
+    line-height: 1.6;
 }
 
-.progress-container {
-    height: 3px;
-    position: fixed;
-    z-index: 1;
-    width: 100%;
+.navbar,
+footer{
+    background-color: transparent;
 }
 
 footer {
@@ -27,7 +23,7 @@ footer {
 }
 
 img {
-    max-width: 100%;
+    max-width: 98%;
     height: auto;
     padding: .25rem;
     padding-left: 0;

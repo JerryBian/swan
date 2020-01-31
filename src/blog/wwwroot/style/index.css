@@ -18,7 +18,7 @@ article, aside, figcaption, figure, footer, header, hgroup, main, nav, section {
 
 body {
   margin: 0;
-  font-family: Arial, "Noto Sans", serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-family: -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, "Noto Sans", serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
@@ -7506,17 +7506,13 @@ a.text-dark:hover, a.text-dark:focus {
   visibility: hidden !important;
 }
 
-.navbar,
-footer,
-.progress-container {
-  background-color: transparent;
+body {
+  line-height: 1.6;
 }
 
-.progress-container {
-  height: 3px;
-  position: fixed;
-  z-index: 1;
-  width: 100%;
+.navbar,
+footer {
+  background-color: transparent;
 }
 
 footer {
@@ -7534,7 +7530,7 @@ footer a:hover {
 }
 
 img {
-  max-width: 100%;
+  max-width: 98%;
   height: auto;
   padding: 0.25rem;
   padding-left: 0;
@@ -7562,16 +7558,20 @@ pre code {
   padding-top: 0;
 }
 .post-item .post-item-title {
-  font-size: 1.25rem;
+  font-size: 1.35rem;
   font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans", Arial, serif;
 }
 .post-item .post-item-title a {
-  color: #8c7851;
+  color: #474787;
 }
 .post-item .post-item-title a:hover, .post-item .post-item-title a:focus {
-  color: #5c4e35;
+  color: #2d2d55;
   padding-bottom: 2px;
   border-bottom: 1px double #567c73;
+}
+.post-item .post-item-title span {
+  font-size: 0.875rem;
+  padding: 0.2rem;
 }
 .post-item .post-item-excerpt p {
   margin-left: 0;
@@ -7579,7 +7579,6 @@ pre code {
   margin-top: 0;
   margin-bottom: 0.75rem;
   padding: 0;
-  line-height: 1.6;
 }
 .post-item .post-item-excerpt p:last-of-type {
   margin-bottom: 0;

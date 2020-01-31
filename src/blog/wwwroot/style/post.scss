@@ -23,8 +23,6 @@
 @import "shared.scss";
 
 .post {
-    
-
     .post-content {
         @import "_/_postContent";
     }
@@ -32,9 +30,14 @@
 
 .post-title {
     padding-bottom: 0.3rem;
-    font-size: $font-size-lg;
+    font-size: $post-title-font-size;
     color: $post-title-color;
     font-family: $post-title-font;
+
+    span {
+        font-size: $font-size-sm;
+        padding: 0.2rem;
+    }
 }
 
 .post-meta {

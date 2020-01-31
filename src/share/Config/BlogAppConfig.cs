@@ -38,9 +38,6 @@
         [ConfigMeta(Name = "POST_GIT_PATH", DefaultValue = "blog/post/")]
         public string PostGitPath { get; set; }
 
-        [ConfigMeta(Name = "TEMPLATE_POST_GIT_PATH", DefaultValue = "blog/post/__template.md")]
-        public string TemplatePostGitPath { get; set; }
-
         [ConfigMeta(Name = "CATEGORY_GIT_PATH", DefaultValue = "blog/category.txt")]
         public string CategoryGitPath { get; set; }
 
@@ -53,17 +50,11 @@
         [ConfigMeta(Name = "POST_METADATA_PATH", DefaultValue = "blog/_db/post-metadata.json")]
         public string PostMetadataPath { get; set; }
 
-        [ConfigMeta(Name = "POST_ACCESS_GIT_PATH", DefaultValue = "blog/post-access.txt")]
-        public string PostAccessGitPath { get; set; }
-
         [ConfigMeta(Name = "FILE_GIT_PATH", DefaultValue = "blog/file/")]
         public string FileGitPath { get; set; }
 
         [ConfigMeta(Name = "FILE_REQUEST_PATH", DefaultValue = "/static")]
         public string FileRequestPath { get; set; }
-
-        [ConfigMeta(Name = "METADATA_SPLITTER", DefaultValue = "---")]
-        public string MetadataSplitter { get; set; }
 
         [ConfigMeta(Name = "BLOG_DESCRIPTION", DefaultValue = "技术心得与生活感悟 - Jerry Bian(卞良忠)")]
         public string Description { get; set; }

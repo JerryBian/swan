@@ -117,7 +117,7 @@ article, aside, figcaption, figure, footer, header, hgroup, main, nav, section {
 
 body {
   margin: 0;
-  font-family: Arial, "Noto Sans", serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-family: -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, "Noto Sans", serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
@@ -7605,17 +7605,13 @@ a.text-dark:hover, a.text-dark:focus {
   visibility: hidden !important;
 }
 
-.navbar,
-footer,
-.progress-container {
-  background-color: transparent;
+body {
+  line-height: 1.6;
 }
 
-.progress-container {
-  height: 3px;
-  position: fixed;
-  z-index: 1;
-  width: 100%;
+.navbar,
+footer {
+  background-color: transparent;
 }
 
 footer {
@@ -7633,7 +7629,7 @@ footer a:hover {
 }
 
 img {
-  max-width: 100%;
+  max-width: 98%;
   height: auto;
   padding: 0.25rem;
   padding-left: 0;
@@ -7653,27 +7649,20 @@ pre code {
   font-size: 0.875rem;
 }
 
-.post .post-content h1, .post .post-content h2, .post .post-content h3, .post .post-content h4, .post .post-content h5, .post .post-content h6 {
-  font-weight: normal;
-}
 .post .post-content h3 {
-  border-bottom: 1px solid #d3d3d3;
-  font-size: 1.35rem;
+  background-color: #ced6e0;
+  font-size: 1.3rem;
   margin-bottom: 0.8rem;
   margin-top: 1.5rem;
-  padding-bottom: 0.4rem;
+  padding: 0.4rem;
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 .post .post-content h4 {
   border-bottom: 1px solid #eaecef;
-  font-size: 1.25rem;
-  font-weight: 400;
+  font-size: 1.2rem;
   margin-bottom: 0.6rem;
-  margin-top: 0.6rem;
+  margin-top: 1rem;
   padding-bottom: 0.3rem;
-}
-.post .post-content p {
-  line-height: 1.8;
 }
 .post .post-content blockquote {
   background-color: #FFF8DC;
@@ -7706,9 +7695,13 @@ pre code {
 
 .post-title {
   padding-bottom: 0.3rem;
-  font-size: 1.25rem;
-  color: #8c7851;
+  font-size: 1.35rem;
+  color: #474787;
   font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans", Arial, serif;
+}
+.post-title span {
+  font-size: 0.875rem;
+  padding: 0.2rem;
 }
 
 .post-meta {

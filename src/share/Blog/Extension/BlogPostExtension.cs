@@ -13,25 +13,6 @@ namespace Laobian.Share.Blog.Extension
     {
         public static string GetMetadataHtml(this BlogPost post)
         {
-            var results = new List<string> { post.GetSimpleMetadataHtml() };
-
-            var catHtml = post.GetCategoryHtml();
-            if (!string.IsNullOrEmpty(catHtml))
-            {
-                results.Add(catHtml);
-            }
-
-            var tagHtml = post.GetTagHtml();
-            if (!string.IsNullOrEmpty(tagHtml))
-            {
-                results.Add(tagHtml);
-            }
-
-            return string.Join(" &middot; ", results);
-        }
-
-        public static string GetSimpleMetadataHtml(this BlogPost post)
-        {
             var results = new List<string>();
             results.Add(
                 $"<span title=\"{post.PublishTime.ToDateAndTime()}\">发表于 {post.PublishTimeString}</span>");
@@ -140,6 +121,9 @@ namespace Laobian.Share.Blog.Extension
             {
                 if (imageNode.Attributes.Contains("src"))
                 {
+                    var parentNode = imageNode.ParentNode;
+                    parentNode?.AddClass("text-center");
+
                     var src = imageNode.Attributes["src"].Value;
                     if (Uri.TryCreate(src, UriKind.Absolute, out var uriResult) &&
                         (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps))

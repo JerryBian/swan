@@ -29,7 +29,7 @@
     }
 
     .post-item-title {
-        font-size: $font-size-lg;
+        font-size: $post-title-font-size;
         font-family: $post-title-font;
 
         a {
@@ -41,6 +41,11 @@
                 border-bottom: 1px double #567c73;
             }
         }
+
+        span {
+            font-size: $font-size-sm;
+            padding: 0.2rem;
+        }
     }
 
     .post-item-excerpt {
@@ -50,7 +55,6 @@
             margin-top: 0;
             margin-bottom: 0.75rem;
             padding: 0;
-            line-height: 1.6;
 
             &:last-of-type {
                 margin-bottom: 0;

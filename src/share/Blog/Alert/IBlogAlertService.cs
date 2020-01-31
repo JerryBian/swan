@@ -16,9 +16,6 @@ namespace Laobian.Share.Blog.Alert
 
         Task AlertEventAsync(string message, Exception error = null);
 
-        Task AlertAssetReloadResultAsync(string subject, string warning, string error, List<string> addedPosts = null,
-            List<string> modifiedPosts = null);
-
         Task AlertReportAsync(string message, Dictionary<string, Stream> logs);
     }
 }

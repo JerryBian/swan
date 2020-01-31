@@ -1,28 +1,38 @@
 ﻿@model PostViewModel
 
-    <article class="post">
+<article class="post">
+    <div class="text-muted d-sm-block post-meta">@Html.Raw(Model.Post.GetMetadataHtml())</div>
+    <div class="post-title pt-1">
+
+        @Model.Post.Title
+        @if (Model.Post.IsTopping)
+        {
+            <span class="bg-light text-dark">置顶</span>
+        }
         @if (!Model.Post.IsPublic)
         {
-            <div class="text-warning font-italic"><i class="fas fa-info-circle"></i> 这篇文章尚未发布，仅供管理员预览。</div>
+            <span class="text-white bg-success">
+                未发布
+            </span>
         }
-        <div class="text-muted d-none d-sm-block post-meta">@Html.Raw(Model.Post.GetMetadataHtml())</div>
-        <div class="text-muted d-sm-none post-meta">@Html.Raw(Model.Post.GetSimpleMetadataHtml())</div>
-        <div class="post-title pt-1">
-            @if (Model.Post.IsTopping)
-            {
-                <i class="fas fa-flag fa-sm text-info"></i>
-            }
-            @Model.Post.Title
-        </div>
-        <div class="mt-2 mb-4 post-content">
-            @Html.Raw(Model.Post.ContentHtml)
-            <p class="text-muted">（本文完）</p>
-        </div>
-    </article>
+    </div>
+    
+    <div class="mt-2 mb-4 post-content">
+        @Html.Raw(Model.Post.ContentHtml)
+        <p class="text-muted">（本文完）</p>
+    </div>
+</article>
 
 <div class="alert alert-warning post-alert" role="alert">
     <ul>
         <li>最后更新于：@Model.Post.LastUpdateTimeString</li>
+        @{
+            var html = Model.Post.GetCategoryAndTagHtml();
+            if (!string.IsNullOrEmpty(html))
+            {
+                <li>@Html.Raw(html)</li>
+            }
+        }
         @if (Model.PrevPost != null)
         {
             <li>前一篇：<a href="@Model.PrevPost.FullUrl">@Model.PrevPost.Title</a></li>
