@@ -19,26 +19,18 @@ namespace Laobian.Share.Blog.Model
 
         public DateTime? GetRawPublishTime()
         {
-<<<<<<< HEAD
             return Metadata.PublishTime;
-=======
-            return Raw.PublishTime;
->>>>>>> master
         }
 
         #endregion
 
         #region Public Property
 
-<<<<<<< HEAD
         public int AccessCount
         {
             get => Metadata.AccessCount;
             set => Metadata.AccessCount = value;
         }
-=======
-        public int AccessCount { get; set; }
->>>>>>> master
 
         public string Title => Metadata.Title ?? throw new InvalidBlogAssetException(nameof(Title));
 
@@ -77,17 +69,11 @@ namespace Laobian.Share.Blog.Model
 
         public string Link { get; set; }
 
-<<<<<<< HEAD
         public bool IsTopping => Metadata.IsTopping;
 
         public bool ContainsMath => Metadata.ContainsMath;
 
         public string ContentMarkdown { get; set; }
-=======
-        public bool IsTopping => Raw.IsTopping ?? false;
-
-        public bool ContainsMath => Raw.ContainsMath ?? false;
->>>>>>> master
 
         #endregion
 

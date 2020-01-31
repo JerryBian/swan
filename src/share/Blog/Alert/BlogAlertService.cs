@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-<<<<<<< HEAD
-=======
-using System.Linq;
->>>>>>> master
 using System.Threading.Tasks;
 using Laobian.Share.Email;
 using Laobian.Share.Extension;

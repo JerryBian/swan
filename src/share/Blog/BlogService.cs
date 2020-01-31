@@ -20,27 +20,9 @@ namespace Laobian.Share.Blog
             _semaphoreSlim = new SemaphoreSlim(1, 1);
         }
 
-<<<<<<< HEAD
         public List<BlogPost> GetPosts(
             bool onlyPublic = true, 
             bool publishTimeDesc = true,
-=======
-        public BlogPostAccess GetPostAccess()
-        {
-            return _blogAssetManager.GetPostVisit();
-        }
-
-        public void NewPostAccess(BlogPost post)
-        {
-            if (post != null)
-            {
-                var postVisit = _blogAssetManager.GetPostVisit();
-                postVisit.Update(post.GitPath);
-            }
-        }
-
-        public List<BlogPost> GetPosts(bool onlyPublic = true, bool publishTimeDesc = true,
->>>>>>> master
             bool toppingPostsFirst = true)
         {
             IEnumerable<BlogPost> posts = _blogAssetManager.GetAllPosts();
@@ -184,7 +166,6 @@ namespace Laobian.Share.Blog
                     shouldContinue = await _blogAssetManager.PullFromGitHubAsync();
                 }
 
-<<<<<<< HEAD
                 if (shouldContinue)
                 {
                     shouldContinue = await _blogAssetManager.ParseAssetsToObjectsAsync();
@@ -196,50 +177,6 @@ namespace Laobian.Share.Blog
                 }
 
                 if (shouldContinue)
-=======
-                if (updateTemplate)
-                {
-                    await _blogAssetManager.UpdateRemoteGitTemplatePostAsync();
-                }
-
-                var existingPostVisit = _blogAssetManager.GetPostVisit().Clone();
-                var reloadResult = await _blogAssetManager.LocalFileToLocalMemoryAsync();
-                if (reloadResult.Success)
-                {
-                    BlogState.AssetLastUpdate = DateTime.Now;
-                    foreach (var item in _blogAssetManager.GetPostVisit().Dump())
-                    {
-                        if (existingPostVisit.ContainsKey(item.Key))
-                        {
-                            _blogAssetManager.
-                                GetPostVisit().
-                                Update(item.Key, Math.Max(item.Value, existingPostVisit.Get(item.Key)));
-                        }
-                    }
-
-                    var postsPublishTime = new List<DateTime>();
-                    var postVisits = 0;
-                    foreach (var blogPost in _blogAssetManager.GetAllPosts())
-                    {
-                        postVisits += blogPost.AccessCount;
-                        var rawPublishTime = blogPost.GetRawPublishTime();
-                        if (rawPublishTime.HasValue && rawPublishTime != default(DateTime))
-                        {
-                            postsPublishTime.Add(rawPublishTime.Value);
-                        }
-                    }
-
-                    BlogState.PostsVisitsTotal = postVisits;
-                    BlogState.PostsPublishTime = postsPublishTime.OrderBy(p => p);
-                }
-
-                var reloadResultText = reloadResult.Success ? "SUCCESS!" : "FAIL!";
-                var subject = $"Assets reload: {reloadResultText}";
-                await _blogAlertService.AlertAssetReloadResultAsync(subject, reloadResult.Warning, reloadResult.Error,
-                    addedPosts, modifiedPosts);
-
-                if (addedPosts != null && addedPosts.Any() || modifiedPosts != null && modifiedPosts.Any())
->>>>>>> master
                 {
                     await _blogAssetManager.PushToGitHubAsync(":tada: Server started");
                 }
@@ -292,7 +229,6 @@ namespace Laobian.Share.Blog
                 _semaphoreSlim.Release();
             }
         }
-<<<<<<< HEAD
 
         public async Task UpdateGitHubAsync()
         {
@@ -310,7 +246,5 @@ namespace Laobian.Share.Blog
                 _semaphoreSlim.Release();
             }
         }
-=======
->>>>>>> master
     }
 }

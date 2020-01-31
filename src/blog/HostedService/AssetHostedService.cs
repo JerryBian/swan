@@ -49,13 +49,7 @@ namespace Laobian.Blog.HostedService
         public override async Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation($"{nameof(AssetHostedService)} is starting.");
-<<<<<<< HEAD
             await _blogService.InitAsync(Global.Config.Blog.CloneAssetsDuringStartup);
-=======
-            await _blogService.ReloadLocalAssetsAsync(Global.Config.Blog.CloneAssetsDuringStartup,
-                Global.Config.Blog.CloneAssetsDuringStartup);
-            RefreshPostAccessCount();
->>>>>>> master
             await base.StartAsync(cancellationToken);
             _logger.LogInformation($"{nameof(AssetHostedService)} has started.");
         }
@@ -70,7 +64,6 @@ namespace Laobian.Blog.HostedService
 
         private async Task ExecuteInternalAsync()
         {
-<<<<<<< HEAD
             try
             {
                 await _blogService.UpdateGitHubAsync();
@@ -79,22 +72,6 @@ namespace Laobian.Blog.HostedService
             {
                 _logger.LogError(ex, "An error popup while updating assets.");
             }
-=======
-            await _blogService.UpdateRemoteAssetsAsync();
-            RefreshPostAccessCount();
-        }
-
-        private void RefreshPostAccessCount()
-        {
-            var visitTotal = 0;
-            foreach (var blogPost in _blogService.GetPosts(false))
-            {
-                blogPost.AccessCount = _blogService.GetPostAccess().Get(blogPost.GitPath);
-                visitTotal += blogPost.AccessCount;
-            }
-
-            BlogState.PostsVisitsTotal = visitTotal;
->>>>>>> master
         }
     }
 }

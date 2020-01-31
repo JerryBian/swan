@@ -8,10 +8,5 @@ namespace Laobian.Share.Blog
         public static DateTime AssetLastUpdate;
 
         public static IEnumerable<DateTime> PostsPublishTime;
-<<<<<<< HEAD
-=======
-
-        public static int PostsVisitsTotal;
->>>>>>> master
     }
 }

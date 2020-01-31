@@ -14,13 +14,7 @@ namespace Laobian.Share.Blog.Asset
 
         string GetAboutHtml();
 
-<<<<<<< HEAD
         Task<bool> PullFromGitHubAsync();
-=======
-        BlogPostAccess GetPostVisit();
-
-        Task RemoteGitToLocalFileAsync();
->>>>>>> master
 
         Task<bool> ParseAssetsToObjectsAsync();
 

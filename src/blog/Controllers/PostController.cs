@@ -33,7 +33,6 @@ namespace Laobian.Blog.Controllers
                     var viewModel = new PostViewModel { Post = post };
                     var posts = _blogService.GetPosts(!User.Identity.IsAuthenticated);
                     var postIndex = posts.IndexOf(post);
-<<<<<<< HEAD
                     var nextPostIndex = postIndex - 1;
                     if (nextPostIndex >= 0)
                     {
@@ -44,18 +43,6 @@ namespace Laobian.Blog.Controllers
                     if (prevPostIndex < posts.Count)
                     {
                         viewModel.NextPost = posts[prevPostIndex];
-=======
-                    var prevPostIndex = postIndex - 1;
-                    if (prevPostIndex >= 0)
-                    {
-                        viewModel.PrevPost = posts[prevPostIndex];
-                    }
-
-                    var nextPostIndex = postIndex + 1;
-                    if (nextPostIndex < posts.Count)
-                    {
-                        viewModel.NextPost = posts[nextPostIndex];
->>>>>>> master
                     }
 
                     return viewModel;
@@ -71,11 +58,7 @@ namespace Laobian.Blog.Controllers
                 ViewData[ViewDataConstant.VisibleToSearchEngine] = false;
             }
 
-<<<<<<< HEAD
             model.Post.NewAccess();
-=======
-            _blogService.NewPostAccess(model.Post);
->>>>>>> master
             ViewData[ViewDataConstant.Canonical] = model.Post.FullUrlWithBase;
             ViewData[ViewDataConstant.Title] = model.Post.Title;
             ViewData[ViewDataConstant.Description] = model.Post.ExcerptPlain;
