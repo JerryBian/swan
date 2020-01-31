@@ -12,12 +12,6 @@
 
         public const string ReturnUrl = "ReturnUrl";
 
-        public const string PostsCount = "PostsCount";
-
-        public const string PostsAccessCount = "PostsAccessCount";
-
-        public const string PostsAccessCountTitle = "PostsAccessCountTitle";
-
         public const string RunTime = "RunTime";
 
         public const string RunTimeTitle = "RunTimeTitle";

@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laobian.Share", "src\share\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laobian.Blog", "src\blog\Laobian.Blog.csproj", "{2AC816A7-B384-4C68-9B2A-186F35ECAE1C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laobian.Share.Test", "test\Laobian.Share.Test\Laobian.Share.Test.csproj", "{226403EC-931B-4CA6-B312-3898208F63F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laobian.Share.Test", "test\Laobian.Share.Test\Laobian.Share.Test.csproj", "{226403EC-931B-4CA6-B312-3898208F63F8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

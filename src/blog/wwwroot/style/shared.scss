@@ -1,14 +1,10 @@
-﻿.navbar,
-footer,
-.progress-container {
-    background-color: whitesmoke;
+﻿body{
+    line-height: 1.6;
 }
 
-.progress-container {
-    height: 3px;
-    position: fixed;
-    z-index: 1;
-    width: 100%;
+.navbar,
+footer{
+    background-color: transparent;
 }
 
 footer {
@@ -27,28 +23,22 @@ footer {
 }
 
 img {
-    max-width: 100%;
+    max-width: 98%;
     height: auto;
     padding: .25rem;
     padding-left: 0;
     background-color: #fff;
 }
 
-aside {
-    table tr td:first-child {
-        padding-right: 0.75rem;
-        color: $text-muted;
-    }
+main {
+    background-color: #fffffe;
+    border-radius: 3px;
+}
 
-    ul {
-        list-style: none;
-        margin: 0;
-        padding: 0;
+header{
+    padding: 1rem 0;
+}
 
-        li {
-            list-style: none;
-            border-bottom: 1px solid #EEE;
-            padding: 3px 0px;
-        }
-    }
+pre code {
+    font-size: $font-size-sm;
 }

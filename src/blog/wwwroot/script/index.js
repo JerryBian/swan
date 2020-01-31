@@ -1,5 +1,7 @@
 ﻿document.addEventListener("DOMContentLoaded",
     function() {
+<<<<<<< HEAD
+=======
         window.onscroll = function() {
             var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
             var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
@@ -9,6 +11,7 @@
             ele.setAttribute("aria-valuenow", scrolled);
         };
 
+>>>>>>> master
         galite("create", "UA-97849167-1", "auto");
         galite("send", "pageview");
     },

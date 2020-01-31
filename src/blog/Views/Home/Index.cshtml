@@ -6,30 +6,30 @@
         {
             <div class="list-group-item flex-column align-items-start post-item">
                 <div>
-                    @if (!post.IsPublic)
-                    {
-                        <div class="text-warning font-italic">
-                            <i class="fas fa-info-circle" title="置顶"></i>
-                            这篇文章尚未发布，仅供管理员预览。
-                        </div>
-                    }
-                    <div class="mb-1 post-item-title">
+                    <div class="text-muted d-sm-block post-item-meta">@Html.Raw(post.GetMetadataHtml())</div>
+                    <div class="mb-1 pt-1 post-item-title">
+                        <a href="@post.FullUrl">@post.Title</a>
                         @if (post.IsTopping)
                         {
-                            <i class="fas fa-flag fa-sm text-info"></i>
+                            <span class="bg-light text-dark">置顶</span>
                         }
-                        <a href="@post.FullUrl">@post.Title</a>
+                        @if (!post.IsPublic)
+                        {
+                            <span class="text-white bg-success">
+                                未发布
+                            </span>
+                        }
                     </div>
                 </div>
-                <div class="container-fluid mt-1 mb-1">
+
+                
+                <div class="container-fluid mt-2 mb-1">
                     <div class="row">
                         <div class="mb-2 mt-1 post-item-excerpt">
                             @Html.Raw(post.ExcerptHtml)
                         </div>
                     </div>
                 </div>
-                <div class="text-muted d-none d-sm-block post-item-meta">@Html.Raw(post.GetMetadataHtml())</div>
-                <div class="text-muted d-sm-none post-item-meta">@Html.Raw(post.GetSimpleMetadataHtml())</div>
             </div>
         }
     </div>
@@ -38,7 +38,7 @@
 
 
 @section style{
-    <link rel="stylesheet" href="~/style/index.min.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/style/index.min.css" asp-append-version="true" />
 }
 
 @section script{

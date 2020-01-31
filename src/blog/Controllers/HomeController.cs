@@ -52,7 +52,6 @@ namespace Laobian.Blog.Controllers
             return View(viewModel);
         }
 
-        [Route("/sitemap")]
         [Route("/sitemap.xml")]
         public IActionResult SiteMap()
         {

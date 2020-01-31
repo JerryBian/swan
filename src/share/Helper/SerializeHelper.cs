@@ -1,4 +1,6 @@
-﻿using System.Text.Json;
+﻿using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Unicode;
 using System.Xml.Serialization;
 
 namespace Laobian.Share.Helper
@@ -17,7 +19,7 @@ namespace Laobian.Share.Helper
         /// <returns>JSON string</returns>
         public static string ToJson<T>(T obj, bool indented = false)
         {
-            return JsonSerializer.Serialize(obj, new JsonSerializerOptions {WriteIndented = indented});
+            return JsonSerializer.Serialize(obj, new JsonSerializerOptions { WriteIndented = indented, Encoder = JavaScriptEncoder.Create(UnicodeRanges.All) });
         }
 
         /// <summary>
@@ -28,7 +30,7 @@ namespace Laobian.Share.Helper
         /// <returns>Deserialized object</returns>
         public static T FromJson<T>(string json)
         {
-            return JsonSerializer.Deserialize<T>(json);
+            return JsonSerializer.Deserialize<T>(json, new JsonSerializerOptions { Encoder = JavaScriptEncoder.Create(UnicodeRanges.All) });
         }
 
         public static string ToXml<T>(T obj, string nsPrefix = "", string ns = "")

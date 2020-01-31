@@ -21,16 +21,12 @@
 @import "shared.scss";
 
 .archive {
-    ul, li, ol {
-        list-style: none;
-    }
-
-    ul {
-        padding-left: 0.25rem;
-    }
-
-    li, ol {
-        margin-bottom: 0.25rem;
+    table {
+        tr {
+            td {
+                padding-bottom: .25rem;
+            }
+        }
     }
 
     h3 {

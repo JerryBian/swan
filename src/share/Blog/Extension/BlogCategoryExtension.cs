@@ -26,7 +26,7 @@ namespace Laobian.Share.Blog.Extension
 
             foreach (var post in allPosts)
             {
-                foreach (var categoryName in post.Raw.Category)
+                foreach (var categoryName in post.Metadata.Category)
                 {
                     if (CompareHelper.IgnoreCase(categoryName, category.Name))
                     {
