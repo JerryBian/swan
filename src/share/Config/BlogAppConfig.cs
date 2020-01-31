@@ -47,8 +47,13 @@
         [ConfigMeta(Name = "ABOUT_GIT_PATH", DefaultValue = "blog/about.md")]
         public string AboutGitPath { get; set; }
 
+<<<<<<< HEAD
         [ConfigMeta(Name = "POST_METADATA_PATH", DefaultValue = "blog/_db/post-metadata.json")]
         public string PostMetadataPath { get; set; }
+=======
+        [ConfigMeta(Name = "POST_ACCESS_GIT_PATH", DefaultValue = "blog/post-access.txt")]
+        public string PostAccessGitPath { get; set; }
+>>>>>>> master
 
         [ConfigMeta(Name = "FILE_GIT_PATH", DefaultValue = "blog/file/")]
         public string FileGitPath { get; set; }

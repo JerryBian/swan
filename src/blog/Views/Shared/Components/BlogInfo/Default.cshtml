@@ -1,0 +1,31 @@
+﻿@model BlogInfo
+
+<div class="card mb-3">
+    <div class="card-header">信息</div>
+    <div class="card-body">
+        <div class="card-text">
+            <table>
+                <tr>
+                    <td>当前版本</td>
+                    <td>@Model.Version</td>
+                </tr>
+                <tr>
+                    <td>文章总数</td>
+                    <td>
+                        @Model.PostsCount
+                    </td>
+                </tr>
+                <tr>
+                    <td>文章阅读</td>
+                    <td title="@Model.PostsAccessCountTitle">
+                        @Model.PostsAccessCount 次
+                    </td>
+                </tr>
+                <tr>
+                    <td>博客运行</td>
+                    <td title="@Model.RunTimeTitle">@Model.RunTime</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
