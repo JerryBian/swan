@@ -28,7 +28,7 @@ namespace Laobian.Blog.HostedService
                 await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
                 if (Global.Environment.IsDevelopment())
                 {
-                    await ExecuteInternalAsync();
+                    //await ExecuteInternalAsync();
                     _lastUpdateTime = DateTime.Now;
                     _logger.LogInformation("Asset updated. Last executed at= {0}.", _lastUpdateTime);
                 }
