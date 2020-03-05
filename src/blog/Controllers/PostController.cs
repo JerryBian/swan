@@ -42,7 +42,7 @@ namespace Laobian.Blog.Controllers
                     var prevPostIndex = postIndex + 1;
                     if (prevPostIndex < posts.Count)
                     {
-                        viewModel.NextPost = posts[prevPostIndex];
+                        viewModel.PrevPost = posts[prevPostIndex];
                     }
 
                     return viewModel;

@@ -18,13 +18,13 @@ article, aside, figcaption, figure, footer, header, hgroup, main, nav, section {
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, "Noto Sans", serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
-  color: #0f0e17;
+  color: #1a1a1a;
   text-align: left;
-  background-color: #f8f5f2;
+  background-color: #f6f6f6;
 }
 
 [tabindex="-1"]:focus:not(:focus-visible) {
@@ -437,7 +437,7 @@ mark,
 
 .img-thumbnail {
   padding: 0.25rem;
-  background-color: #f8f5f2;
+  background-color: #f6f6f6;
   border: 1px solid #dee2e6;
   border-radius: 0.25rem;
   max-width: 100%;
@@ -1757,7 +1757,7 @@ pre code {
 .btn {
   display: inline-block;
   font-weight: 400;
-  color: #0f0e17;
+  color: #1a1a1a;
   text-align: center;
   vertical-align: middle;
   cursor: pointer;
@@ -1776,7 +1776,7 @@ pre code {
   }
 }
 .btn:hover {
-  color: #0f0e17;
+  color: #1a1a1a;
   text-decoration: none;
 }
 .btn:focus, .btn.focus {
@@ -2501,7 +2501,7 @@ input[type=button].btn-block {
   background-color: #f8f9fa;
 }
 .list-group-item-action:active {
-  color: #0f0e17;
+  color: #1a1a1a;
   background-color: #e9ecef;
 }
 
@@ -2825,8 +2825,8 @@ input[type=button].btn-block {
 .nav-tabs .nav-link.active,
 .nav-tabs .nav-item.show .nav-link {
   color: #495057;
-  background-color: #f8f5f2;
-  border-color: #dee2e6 #dee2e6 #f8f5f2;
+  background-color: #f6f6f6;
+  border-color: #dee2e6 #dee2e6 #f6f6f6;
 }
 .nav-tabs .dropdown-menu {
   margin-top: -1px;
@@ -3358,7 +3358,7 @@ input[type=button].btn-block {
 .table {
   width: 100%;
   margin-bottom: 1rem;
-  color: #0f0e17;
+  color: #1a1a1a;
 }
 .table th,
 .table td {
@@ -3403,7 +3403,7 @@ input[type=button].btn-block {
 }
 
 .table-hover tbody tr:hover {
-  color: #0f0e17;
+  color: #1a1a1a;
   background-color: rgba(0, 0, 0, 0.075);
 }
 
@@ -3664,6 +3664,146 @@ input[type=button].btn-block {
 }
 .table-responsive > .table-bordered {
   border: 0;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25em 0.4em;
+  font-size: 75%;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 0.25rem;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .badge {
+    transition: none;
+  }
+}
+a.badge:hover, a.badge:focus {
+  text-decoration: none;
+}
+
+.badge:empty {
+  display: none;
+}
+
+.btn .badge {
+  position: relative;
+  top: -1px;
+}
+
+.badge-pill {
+  padding-right: 0.6em;
+  padding-left: 0.6em;
+  border-radius: 10rem;
+}
+
+.badge-primary {
+  color: #fff;
+  background-color: #2c3e50;
+}
+a.badge-primary:hover, a.badge-primary:focus {
+  color: #fff;
+  background-color: #1a252f;
+}
+a.badge-primary:focus, a.badge-primary.focus {
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.5);
+}
+
+.badge-secondary {
+  color: #212529;
+  background-color: #CAD3C8;
+}
+a.badge-secondary:hover, a.badge-secondary:focus {
+  color: #212529;
+  background-color: #afbcac;
+}
+a.badge-secondary:focus, a.badge-secondary.focus {
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(202, 211, 200, 0.5);
+}
+
+.badge-success {
+  color: #fff;
+  background-color: #28a745;
+}
+a.badge-success:hover, a.badge-success:focus {
+  color: #fff;
+  background-color: #1e7e34;
+}
+a.badge-success:focus, a.badge-success.focus {
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.5);
+}
+
+.badge-info {
+  color: #fff;
+  background-color: #17a2b8;
+}
+a.badge-info:hover, a.badge-info:focus {
+  color: #fff;
+  background-color: #117a8b;
+}
+a.badge-info:focus, a.badge-info.focus {
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.5);
+}
+
+.badge-warning {
+  color: #212529;
+  background-color: #ffc107;
+}
+a.badge-warning:hover, a.badge-warning:focus {
+  color: #212529;
+  background-color: #d39e00;
+}
+a.badge-warning:focus, a.badge-warning.focus {
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5);
+}
+
+.badge-danger {
+  color: #fff;
+  background-color: #dc3545;
+}
+a.badge-danger:hover, a.badge-danger:focus {
+  color: #fff;
+  background-color: #bd2130;
+}
+a.badge-danger:focus, a.badge-danger.focus {
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.5);
+}
+
+.badge-light {
+  color: #212529;
+  background-color: #f8f9fa;
+}
+a.badge-light:hover, a.badge-light:focus {
+  color: #212529;
+  background-color: #dae0e5;
+}
+a.badge-light:focus, a.badge-light.focus {
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(248, 249, 250, 0.5);
+}
+
+.badge-dark {
+  color: #fff;
+  background-color: #343a40;
+}
+a.badge-dark:hover, a.badge-dark:focus {
+  color: #fff;
+  background-color: #1d2124;
+}
+a.badge-dark:focus, a.badge-dark.focus {
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(52, 58, 64, 0.5);
 }
 
 .fade {
@@ -7462,7 +7602,7 @@ a.text-dark:hover, a.text-dark:focus {
 }
 
 .text-body {
-  color: #0f0e17 !important;
+  color: #1a1a1a !important;
 }
 
 .text-muted {
@@ -7590,7 +7730,7 @@ select.form-control:focus::-ms-value {
   margin-bottom: 0;
   font-size: 1rem;
   line-height: 1.5;
-  color: #0f0e17;
+  color: #1a1a1a;
   background-color: transparent;
   border: solid transparent;
   border-width: 1px 0;
@@ -7918,13 +8058,15 @@ textarea.form-control {
   }
 }
 
-body {
+body, html {
   line-height: 1.6;
+  height: 100%;
 }
 
 .navbar,
 footer {
-  background-color: transparent;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(26, 26, 26, 0.1);
 }
 
 footer {
@@ -7950,8 +8092,9 @@ img {
 }
 
 main {
-  background-color: #fffffe;
+  background-color: #fff;
   border-radius: 3px;
+  box-shadow: 0 1px 3px rgba(26, 26, 26, 0.1);
 }
 
 header {
@@ -7960,6 +8103,10 @@ header {
 
 pre code {
   font-size: 0.875rem;
+}
+
+.list-group-item:last-child {
+  border: none;
 }
 
 /*# sourceMappingURL=account.css.map */

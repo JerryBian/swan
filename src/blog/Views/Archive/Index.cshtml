@@ -5,7 +5,7 @@
         @foreach (var item in Model)
         {
             <a class="btn btn-light archive-link" href="@item.GetRelativeLink()">
-                @item.Title <span class="badge badge-light">@item.Posts.Count.Human()</span>
+                @item.Title <span class="badge badge-dark">@item.Posts.Count.Human()</span>
             </a>
         }
     </div>

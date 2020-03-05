@@ -1,10 +1,12 @@
-﻿body{
+﻿body, html {
     line-height: 1.6;
+    height: 100%;
 }
 
 .navbar,
-footer{
-    background-color: transparent;
+footer {
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(26,26,26,.1);
 }
 
 footer {
@@ -31,14 +33,19 @@ img {
 }
 
 main {
-    background-color: #fffffe;
+    background-color: #fff;
     border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(26,26,26,.1);
 }
 
-header{
+header {
     padding: 1rem 0;
 }
 
 pre code {
     font-size: $font-size-sm;
+}
+
+.list-group-item:last-child {
+    border: none;
 }
