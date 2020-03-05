@@ -11,11 +11,11 @@
                         <a href="@post.FullUrl">@post.Title</a>
                         @if (post.IsTopping)
                         {
-                            <span class="bg-light text-dark">置顶</span>
+                            <span class="badge badge-light">置顶</span>
                         }
                         @if (!post.IsPublic)
                         {
-                            <span class="text-white bg-success">
+                            <span class="badge badge-success">
                                 未发布
                             </span>
                         }

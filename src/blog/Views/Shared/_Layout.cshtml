@@ -42,12 +42,14 @@
             </ul>
         </div>
     </nav>
-    <main class="container mt-1 pl-3 pr-3 pb-1 pt-3 mb-2">
+    <main class="container mt-2 pl-3 pr-3 pb-1 pt-3 mb-2">
         @RenderBody()
+        
+        <div class="push"></div>
     </main>
 
     <footer class="text-muted">
-        <div class="container pb-3 text-center mt-3">
+        <div class="container pb-3 pt-3 text-center">
             <div>
                 &copy; @DateTime.Now.Year @Global.Config.Common.AdminChineseName &middot;
                 Powered by @Global.RuntimeVersion

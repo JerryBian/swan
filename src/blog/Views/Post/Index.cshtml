@@ -7,11 +7,11 @@
         @Model.Post.Title
         @if (Model.Post.IsTopping)
         {
-            <span class="bg-light text-dark">置顶</span>
+            <span class="badge badge-light">置顶</span>
         }
         @if (!Model.Post.IsPublic)
         {
-            <span class="text-white bg-success">
+            <span class="badge badge-success">
                 未发布
             </span>
         }
