@@ -1,5 +1,3 @@
-Source code of my personal websites.
+Source of my blog: [Jerry Bian's blog](https://blog.laobian.me/).
 
-- [Jerry Bian's blog](https://blog.laobian.me/)
-
-License under MIT.
+Powered by .NET Core, license under [MIT](./LICENSE).
