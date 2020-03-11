@@ -21,7 +21,7 @@ namespace Laobian.Share.Blog
         }
 
         public List<BlogPost> GetPosts(
-            bool onlyPublic = true, 
+            bool onlyPublic = true,
             bool publishTimeDesc = true,
             bool toppingPostsFirst = true)
         {
@@ -48,7 +48,7 @@ namespace Laobian.Share.Blog
         }
 
         public List<BlogCategory> GetCategories(
-            bool onlyPublic = true, 
+            bool onlyPublic = true,
             bool publishTimeDesc = true,
             bool toppingPostsFirst = true)
         {
@@ -80,12 +80,21 @@ namespace Laobian.Share.Blog
                 }
             }
 
+            var allPosts = GetPosts(onlyPublic);
+            var remainingPosts = allPosts.Except(categories.SelectMany(p => p.Posts)).ToList();
+            if (remainingPosts.Any())
+            {
+                var cat = new BlogCategory {Link = "untitled", Name = "[未分类]"};
+                cat.Posts.AddRange(remainingPosts);
+                categories.Add(cat);
+            }
+
             return categories;
         }
 
         public List<BlogTag> GetTags(
-            bool onlyPublic = true, 
-            bool publishTimeDesc = true, 
+            bool onlyPublic = true,
+            bool publishTimeDesc = true,
             bool toppingPostsFirst = true)
         {
             var tags = new List<BlogTag>();
@@ -116,6 +125,15 @@ namespace Laobian.Share.Blog
                 }
             }
 
+            var allPosts = GetPosts(onlyPublic);
+            var remainingPosts = allPosts.Except(tags.SelectMany(p => p.Posts)).ToList();
+            if (remainingPosts.Any())
+            {
+                var tag = new BlogTag {Link = "untitled", Name = "[无标签]"};
+                tag.Posts.AddRange(remainingPosts);
+                tags.Add(tag);
+            }
+
             return tags;
         }
 
@@ -125,12 +143,13 @@ namespace Laobian.Share.Blog
         }
 
         public List<BlogArchive> GetArchives(
-            bool onlyPublic = true, 
+            bool onlyPublic = true,
             bool publishTimeDesc = true,
             bool toppingPostsFirst = true)
         {
             var archives = new List<BlogArchive>();
-            foreach (var item in _blogAssetManager.GetAllPosts().ToLookup(p => p.PublishTime.Year))
+            foreach (var item in _blogAssetManager.GetAllPosts().ToLookup(p => p.PublishTime.Year)
+                .OrderByDescending(x => x.Key))
             {
                 var archive = new BlogArchive(item.Key);
                 IEnumerable<BlogPost> posts = new List<BlogPost>(item);

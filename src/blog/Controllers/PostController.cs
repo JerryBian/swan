@@ -30,7 +30,7 @@ namespace Laobian.Blog.Controllers
                         return null;
                     }
 
-                    var viewModel = new PostViewModel { Post = post };
+                    var viewModel = new PostViewModel {Post = post};
                     var posts = _blogService.GetPosts(!User.Identity.IsAuthenticated);
                     var postIndex = posts.IndexOf(post);
                     var nextPostIndex = postIndex - 1;

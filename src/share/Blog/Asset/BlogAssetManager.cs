@@ -19,13 +19,13 @@ namespace Laobian.Share.Blog.Asset
         private readonly List<BlogCategory> _allCategories;
         private readonly List<BlogPost> _allPosts;
         private readonly List<BlogTag> _allTags;
-        private string _aboutHtml;
 
         private readonly IGitClient _gitClient;
         private readonly GitConfig _gitConfig;
+        private readonly ILogger<BlogAssetManager> _logger;
         private readonly ManualResetEventSlim _manualReset;
         private readonly SemaphoreSlim _semaphore;
-        private readonly ILogger<BlogAssetManager> _logger;
+        private string _aboutHtml;
 
         public BlogAssetManager(
             IGitClient gitClient,

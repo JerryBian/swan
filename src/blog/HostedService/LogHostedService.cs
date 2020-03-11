@@ -99,7 +99,8 @@ namespace Laobian.Blog.HostedService
                 errorMessage = "Please check error logs:";
                 foreach (var logEntry in errorLogs)
                 {
-                    errorMessage += Environment.NewLine + Environment.NewLine + $"{logEntry.When.ToDateAndTime()}\t{logEntry.Message}\t{logEntry.Exception}";
+                    errorMessage += Environment.NewLine + Environment.NewLine +
+                                    $"{logEntry.When.ToDateAndTime()}\t{logEntry.Message}\t{logEntry.Exception}";
                 }
             }
 
@@ -121,7 +122,8 @@ namespace Laobian.Blog.HostedService
                 warnMessage = "Please check warning logs:";
                 foreach (var logEntry in warnLogs)
                 {
-                    warnMessage += Environment.NewLine + Environment.NewLine + $"{logEntry.When.ToDateAndTime()}\t{logEntry.Message}\t{logEntry.Exception}";
+                    warnMessage += Environment.NewLine + Environment.NewLine +
+                                   $"{logEntry.When.ToDateAndTime()}\t{logEntry.Message}\t{logEntry.Exception}";
                 }
             }
 

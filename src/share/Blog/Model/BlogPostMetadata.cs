@@ -6,6 +6,8 @@ namespace Laobian.Share.Blog.Model
 {
     internal class BlogPostMetadata
     {
+        private int _accessCount;
+
         public BlogPostMetadata()
         {
             _accessCount = 1;
@@ -30,8 +32,6 @@ namespace Laobian.Share.Blog.Model
         public List<string> Category { get; set; } = new List<string>();
 
         public List<string> Tag { get; set; } = new List<string>();
-
-        private int _accessCount;
 
         public int AccessCount
         {
