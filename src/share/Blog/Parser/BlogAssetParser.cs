@@ -26,7 +26,7 @@ namespace Laobian.Share.Blog.Parser
 
         public static BlogAssetParseResult<string> ToText(string text)
         {
-            var result = new BlogAssetParseResult<string> { Instance = text };
+            var result = new BlogAssetParseResult<string> {Instance = text};
             return result;
         }
 

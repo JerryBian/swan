@@ -16,14 +16,14 @@
                     modal.style.display = "block";
                     modalImg.src = this.src;
                     caption.innerHTML = this.alt;
-                    document.documentElement.style.overflow = 'hidden';
+                    document.documentElement.style.overflow = "hidden";
                     document.body.scroll = "no";
                 };
             });
 
             document.querySelector("#modal-close").onclick = function() {
                 modal.style.display = "none";
-                document.documentElement.style.overflow = 'auto';
+                document.documentElement.style.overflow = "auto";
                 document.body.scroll = "yes";
             };
         } catch (e) {

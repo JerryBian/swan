@@ -14,9 +14,9 @@ namespace Laobian.Share.Blog
         }
 
         public override T GetOrCreate<T>(
-            string cacheKey, 
-            Func<T> func, 
-            IChangeToken changeToken = null, 
+            string cacheKey,
+            Func<T> func,
+            IChangeToken changeToken = null,
             TimeSpan? expireAfter = null)
         {
             return MemoryCache.GetOrCreate(cacheKey, cacheEntry =>

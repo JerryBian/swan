@@ -15,12 +15,12 @@ namespace Laobian.Share
 
         public static ConcurrentQueue<LogEntry> CriticalLogQueue = new ConcurrentQueue<LogEntry>();
 
+        public static string RuntimeVersion = RuntimeInformation.FrameworkDescription;
+
         public static AppConfig Config { get; set; }
 
         public static DateTime StartTime { get; set; }
 
         public static IHostEnvironment Environment { get; set; }
-
-        public static string RuntimeVersion = RuntimeInformation.FrameworkDescription;
     }
 }

@@ -6,8 +6,8 @@ namespace Laobian.Share.Blog.Asset
 {
     public class BlogAssetChangeToken : IChangeToken
     {
-        private readonly DateTime? _nextHardRefreshAt;
         private readonly DateTime _assetLastUpdate;
+        private readonly DateTime? _nextHardRefreshAt;
 
         public BlogAssetChangeToken()
         {
@@ -29,8 +29,8 @@ namespace Laobian.Share.Blog.Asset
                     return true;
                 }
 
-                if (_nextHardRefreshAt != null && 
-                    _nextHardRefreshAt != default(DateTime) && 
+                if (_nextHardRefreshAt != null &&
+                    _nextHardRefreshAt != default(DateTime) &&
                     DateTime.Now >= _nextHardRefreshAt)
                 {
                     return true;

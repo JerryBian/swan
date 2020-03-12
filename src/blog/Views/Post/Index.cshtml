@@ -16,7 +16,7 @@
             </span>
         }
     </div>
-    
+
     <div class="mt-2 mb-4 post-content">
         @Html.Raw(Model.Post.ContentHtml)
         <p class="text-muted">（本文完）</p>
@@ -58,7 +58,6 @@
 </div>
 
 
-
 @section script{
     @if (Model.Post.ContainsMath)
     {
@@ -81,5 +80,5 @@
 }
 
 @section style{
-    <link rel="stylesheet" href="~/style/post.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/style/post.min.css" asp-append-version="true"/>
 }

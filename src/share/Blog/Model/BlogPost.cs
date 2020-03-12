@@ -24,6 +24,11 @@ namespace Laobian.Share.Blog.Model
 
         #endregion
 
+        public void NewAccess()
+        {
+            Metadata.IncrementAccessCount();
+        }
+
         #region Public Property
 
         public int AccessCount
@@ -76,10 +81,5 @@ namespace Laobian.Share.Blog.Model
         public string ContentMarkdown { get; set; }
 
         #endregion
-
-        public void NewAccess()
-        {
-            Metadata.IncrementAccessCount();
-        }
     }
 }
