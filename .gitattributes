@@ -4,3 +4,6 @@
 *.sln eol=crlf
 
 src/blog/wwwroot/* linguist-vendored
+src/blog/wwwroot/script/*.js -linguist-vendored
+src/blog/wwwroot/style/*.css -linguist-vendored
+src/blog/wwwroot/style/*.scss -linguist-vendored
