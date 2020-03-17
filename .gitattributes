@@ -3,4 +3,4 @@
 *.sh eol=lf
 *.sln eol=crlf
 
-src/blog/*
+src/blog/* linguist-vendored
