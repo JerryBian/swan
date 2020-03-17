@@ -1,10 +1,20 @@
 ﻿using System;
+using Laobian.Share.Blog.Alert;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Logging;
 
 namespace Laobian.Share.Log
 {
     public class QueuedLogger : ILogger
     {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public QueuedLogger(IHttpContextAccessor httpContextAccessor)
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
+
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception,
             Func<TState, Exception, string> formatter)
         {
@@ -12,18 +22,15 @@ namespace Laobian.Share.Log
             {
                 return;
             }
-
-            var log = new LogEntry
+            
+            var log = new BlogAlertEntry
             {
-                Exception = exception,
                 Message = formatter(state, exception),
-                When = DateTime.Now
+                When = DateTime.Now,
+                Ip = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString(),
+                RequestUrl = _httpContextAccessor.HttpContext.Request.GetDisplayUrl(),
+                UserAgent = _httpContextAccessor.HttpContext.Request.Headers["User-Agent"]
             };
-
-            if (logLevel == LogLevel.Critical)
-            {
-                Global.CriticalLogQueue.Enqueue(log);
-            }
 
             if (logLevel == LogLevel.Warning)
             {
@@ -32,6 +39,7 @@ namespace Laobian.Share.Log
 
             if (logLevel == LogLevel.Error)
             {
+                log.Exception = exception;
                 Global.ErrorLogQueue.Enqueue(log);
             }
         }

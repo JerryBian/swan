@@ -6,7 +6,7 @@ namespace Laobian.Share.Log
     {
         public static ILoggingBuilder AddQueuedLogger(this ILoggingBuilder loggingBuilder)
         {
-            loggingBuilder.AddProvider(new QueuedLoggerProvider());
+            loggingBuilder.AddProvider(new QueuedLoggerProvider(null)); // TODO: HOW???
             return loggingBuilder;
         }
     }

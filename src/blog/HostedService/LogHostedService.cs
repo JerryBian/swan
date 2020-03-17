@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Share;
 using Laobian.Share.Blog.Alert;
-using Laobian.Share.Extension;
-using Laobian.Share.Log;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -36,8 +31,6 @@ namespace Laobian.Blog.HostedService
 
                 try
                 {
-                    await CheckLogsAsync();
-
                     if (DateTime.Now.Date > _lastReportGeneratedAt.Date &&
                         DateTime.Now.Hour == Global.Config.Blog.LogFlushAtHour)
                     {
@@ -72,129 +65,19 @@ namespace Laobian.Blog.HostedService
 
         private async Task GenerateLogReportAsync()
         {
-            var logs = new Dictionary<string, Stream>();
-            var warnStream = GetWarnStream();
-            logs.Add("warn-log.txt", warnStream);
-            var errorStream = GetErrorStream();
-            logs.Add("error-log.txt", errorStream);
-
-            using (warnStream)
-            using (errorStream)
-            {
-                await _alertService.AlertReportAsync("<p>Please check attached daily reports of logs.</p>", logs);
-            }
-        }
-
-        private static MemoryStream GetErrorStream()
-        {
-            var errorLogs = new List<LogEntry>();
+            var errorLogs = new List<BlogAlertEntry>();
             while (Global.ErrorLogQueue.TryDequeue(out var errorLog))
             {
                 errorLogs.Add(errorLog);
             }
 
-            var errorMessage = "Good! There is no error logs today!";
-            if (errorLogs.Any())
-            {
-                errorMessage = "Please check error logs:";
-                foreach (var logEntry in errorLogs)
-                {
-                    errorMessage += Environment.NewLine + Environment.NewLine +
-                                    $"{logEntry.When.ToDateAndTime()}\t{logEntry.Message}\t{logEntry.Exception}";
-                }
-            }
-
-            var errorStream = new MemoryStream(Encoding.UTF8.GetBytes(errorMessage));
-            return errorStream;
-        }
-
-        private static MemoryStream GetWarnStream()
-        {
-            var warnLogs = new List<LogEntry>();
+            var warnLogs = new List<BlogAlertEntry>();
             while (Global.WarningLogQueue.TryDequeue(out var warnLog))
             {
                 warnLogs.Add(warnLog);
             }
 
-            var warnMessage = "Good! There is no warning logs today!";
-            if (warnLogs.Any())
-            {
-                warnMessage = "Please check warning logs:";
-                foreach (var logEntry in warnLogs)
-                {
-                    warnMessage += Environment.NewLine + Environment.NewLine +
-                                   $"{logEntry.When.ToDateAndTime()}\t{logEntry.Message}\t{logEntry.Exception}";
-                }
-            }
-
-            var warnStream = new MemoryStream(Encoding.UTF8.GetBytes(warnMessage));
-            return warnStream;
-        }
-
-        private async Task CheckLogsAsync()
-        {
-            var tasks = new List<Task>
-            {
-                CheckCriticalLogsAsync(),
-                CheckErrorLogsAsync(),
-                CheckWarningLogsAsync()
-            };
-
-            await Task.WhenAll(tasks);
-        }
-
-        private async Task CheckWarningLogsAsync()
-        {
-            if (Global.WarningLogQueue.Count >= Global.Config.Blog.WarningLogsThreshold)
-            {
-                var logs = new List<LogEntry>();
-                while (Global.WarningLogQueue.TryDequeue(out var log))
-                {
-                    logs.Add(log);
-                }
-
-                if (logs.Any())
-                {
-                    // send alert
-                    await _alertService.AlertWarningsAsync("Many Warnings in blog", logs);
-                }
-            }
-        }
-
-        private async Task CheckErrorLogsAsync()
-        {
-            if (Global.ErrorLogQueue.Count >= Global.Config.Blog.ErrorLogsThreshold)
-            {
-                var logs = new List<LogEntry>();
-                while (Global.ErrorLogQueue.TryDequeue(out var log))
-                {
-                    logs.Add(log);
-                }
-
-                if (logs.Any())
-                {
-                    // send alert
-                    await _alertService.AlertErrorsAsync("Many errors in blog", logs);
-                }
-            }
-        }
-
-        private async Task CheckCriticalLogsAsync()
-        {
-            if (Global.CriticalLogQueue.Count >= Global.Config.Blog.CriticalLogsThreshold)
-            {
-                var logs = new List<LogEntry>();
-                while (Global.CriticalLogQueue.TryDequeue(out var log))
-                {
-                    logs.Add(log);
-                }
-
-                if (logs.Any())
-                {
-                    // send alert
-                    await _alertService.AlertCriticalAsync("Critical log in blog", logs);
-                }
-            }
+            await _alertService.AlertReportAsync(warnLogs, errorLogs);
         }
     }
 }
