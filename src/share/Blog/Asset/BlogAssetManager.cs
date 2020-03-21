@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -71,10 +72,16 @@ namespace Laobian.Share.Blog.Asset
             try
             {
                 await _semaphore.WaitAsync();
-                var posts = await ReloadLocalMemoryPostAsync();
-                var categories = await ReloadLocalMemoryCategoryAsync();
-                var tags = await ReloadLocalMemoryTagAsync();
-                var aboutHtml = await ReloadLocalMemoryAboutAsync();
+                var postTask = ReloadLocalMemoryPostAsync();
+                var categoryTask = ReloadLocalMemoryCategoryAsync();
+                var tagTask = ReloadLocalMemoryTagAsync();
+                var aboutTask = ReloadLocalMemoryAboutAsync();
+                await Task.WhenAll(postTask, categoryTask, tagTask, aboutTask);
+
+                var posts = await postTask;
+                var categories = await categoryTask;
+                var tags = await tagTask;
+                var aboutHtml = await aboutTask;
 
                 try
                 {
@@ -236,8 +243,8 @@ namespace Laobian.Share.Blog.Asset
 
             _aboutHtml = aboutHtml;
 
-            var postsPublishTime = new List<DateTime>();
-            foreach (var blogPost in _allPosts)
+            var postsPublishTime = new ConcurrentBag<DateTime>();
+            Parallel.ForEach(_allPosts, blogPost =>
             {
                 blogPost.Resolve(_allCategories, _allTags);
                 var rawPublishTime = blogPost.GetRawPublishTime();
@@ -245,31 +252,22 @@ namespace Laobian.Share.Blog.Asset
                 {
                     postsPublishTime.Add(rawPublishTime.Value);
                 }
-            }
+            });
 
             BlogState.PostsPublishTime = postsPublishTime.OrderBy(p => p);
-
-            foreach (var blogCategory in _allCategories)
-            {
-                blogCategory.Resolve(_allPosts);
-            }
-
-            foreach (var blogTag in _allTags)
-            {
-                blogTag.Resolve(_allPosts);
-            }
-
+            Parallel.ForEach(_allCategories, blogCategory => { blogCategory.Resolve(_allPosts); });
+            Parallel.ForEach(_allTags, blogTag => { blogTag.Resolve(_allPosts); });
             BlogState.AssetLastUpdate = DateTime.Now;
         }
 
         private async Task<List<BlogPost>> ReloadLocalMemoryPostAsync()
         {
-            var result = new List<BlogPost>();
+            var result = new ConcurrentBag<BlogPost>();
             var postLocalPath = Path.Combine(Global.Config.Blog.AssetRepoLocalDir, Global.Config.Blog.PostGitPath);
             if (!Directory.Exists(postLocalPath))
             {
                 _logger.LogWarning($"No post folder found under \"{postLocalPath}\".");
-                return result;
+                return result.ToList();
             }
 
             var postMetadata = new List<BlogPostMetadata>();
@@ -291,48 +289,48 @@ namespace Laobian.Share.Blog.Asset
                 }
             }
 
-
-            foreach (var file in Directory.EnumerateFiles(postLocalPath, $"*{Global.Config.Common.MarkdownExtension}"))
-            {
-                try
+            Parallel.ForEach(Directory.EnumerateFiles(postLocalPath, $"*{Global.Config.Common.MarkdownExtension}"),
+                file =>
                 {
-                    var text = await File.ReadAllTextAsync(file);
-                    var parseResult = BlogAssetParser.ToText(text);
-                    LogParseResultMessages(parseResult);
-
-                    if (parseResult.Success)
+                    try
                     {
-                        var post = new BlogPost
-                        {
-                            Link = Path.GetFileNameWithoutExtension(file),
-                            GitPath = file.Substring(
-                                file.IndexOf(Global.Config.Blog.AssetRepoLocalDir, StringComparison.CurrentCulture) +
-                                Global.Config.Blog.AssetRepoLocalDir.Length + 1),
-                            LocalPath = file,
-                            ContentMarkdown = parseResult.Instance
-                        };
+                        var text = File.ReadAllText(file);
+                        var parseResult = BlogAssetParser.ToText(text);
+                        LogParseResultMessages(parseResult);
 
-                        var metadata = postMetadata.FirstOrDefault(m => CompareHelper.IgnoreCase(m.Link, post.Link));
-                        if (metadata != null)
+                        if (parseResult.Success)
                         {
-                            post.Metadata = metadata;
-                        }
-                        else
-                        {
-                            post.Metadata.Link = post.Link;
-                        }
+                            var post = new BlogPost
+                            {
+                                Link = Path.GetFileNameWithoutExtension(file),
+                                GitPath = file.Substring(
+                                    file.IndexOf(Global.Config.Blog.AssetRepoLocalDir, StringComparison.CurrentCulture) +
+                                    Global.Config.Blog.AssetRepoLocalDir.Length + 1),
+                                LocalPath = file,
+                                ContentMarkdown = parseResult.Instance
+                            };
 
-                        result.Add(post);
+                            var metadata = postMetadata.FirstOrDefault(m => CompareHelper.IgnoreCase(m.Link, post.Link));
+                            if (metadata != null)
+                            {
+                                post.Metadata = metadata;
+                            }
+                            else
+                            {
+                                post.Metadata.Link = post.Link;
+                            }
+
+                            result.Add(post);
+                        }
                     }
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(
-                        $"Parse post throw exception: {file}.{Environment.NewLine}{ex}{Environment.NewLine}");
-                }
-            }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(
+                            $"Parse post throw exception: {file}.{Environment.NewLine}{ex}{Environment.NewLine}");
+                    }
+                });
 
-            return result;
+            return result.ToList();
         }
 
         private async Task<List<BlogCategory>> ReloadLocalMemoryCategoryAsync()

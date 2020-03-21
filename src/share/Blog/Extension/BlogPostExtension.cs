@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using HtmlAgilityPack;
 using Laobian.Share.Blog.Model;
 using Laobian.Share.Extension;
@@ -36,8 +38,7 @@ namespace Laobian.Share.Blog.Extension
 
         public static string GetCategoryHtml(this BlogPost post)
         {
-            var results = new List<string>();
-
+            var results = new ConcurrentBag<string>();
             foreach (var blogCategory in post.Categories)
             {
                 results.Add($"<a href='{blogCategory.GetLink()}' title='{blogCategory.Name}'>{blogCategory.Name}</a>");

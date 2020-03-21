@@ -31,7 +31,5 @@
 
         [ConfigMeta(Name = "ALERT_SENDER_EMAIL", DefaultValue = "alert-cat@laobian.me")]
         public string AlertSenderEmail { get; set; }
-
-        [ConfigMeta(Name = "VERSION")] public string Version { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using Laobian.Blog.Helpers;
 using Laobian.Share;
 using Laobian.Share.Blog.Alert;
@@ -15,6 +16,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Context;
 
 namespace Laobian.Blog
 {
@@ -75,17 +78,25 @@ namespace Laobian.Blog
                 app.UseDeveloperExceptionPage();
             }
 
+            app.Use(async (context, next) =>
+            {
+                using (LogContext.PushProperty(LogEntryItem.RequestUrl.ToString(), context.Request.GetDisplayUrl()))
+                using (LogContext.PushProperty(LogEntryItem.RequestIp.ToString(), context.Connection.RemoteIpAddress))
+                using (LogContext.PushProperty(LogEntryItem.RequestUserAgent.ToString(), context.Request.Headers["User-Agent"]))
+                {
+                    await next();
+                }
+            });
+
+            app.UseSerilogRequestLogging();
+
             app.UseStatusCodePages(async context =>
             {
-                logger.LogWarning(
-                    $"Hit status code page. Request Url= {context.HttpContext.Request.GetDisplayUrl()}, " +
-                    $"Status= {context.HttpContext.Response.StatusCode}, " +
-                    $"Request IP= {context.HttpContext.Connection.RemoteIpAddress}, " +
-                    $"User Agent={context.HttpContext.Request.Headers["User-Agent"]}.");
+                var message = "Status code page, status code: " +
+                              context.HttpContext.Response.StatusCode;
+                logger.LogWarning(message);
                 context.HttpContext.Response.ContentType = "text/plain";
-                await context.HttpContext.Response.WriteAsync(
-                    "Status code page, status code: " +
-                    context.HttpContext.Response.StatusCode);
+                await context.HttpContext.Response.WriteAsync(message);
             });
 
             app.UseStaticFiles();
@@ -116,6 +127,8 @@ namespace Laobian.Blog
             applicationLifetime.ApplicationStarted.Register(async () =>
             {
                 Global.StartTime = DateTime.Now;
+                var appVersion = Assembly.GetEntryAssembly()?.GetName().Version;
+                Global.AppVersion = appVersion == null ? "1.0" : $"{appVersion.Major}.{appVersion.Minor}";
 
                 if (!Global.Environment.IsDevelopment())
                 {

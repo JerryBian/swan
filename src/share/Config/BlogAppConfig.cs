@@ -67,14 +67,5 @@
 
         [ConfigMeta(Name = "LOG_FLUSH_AT_HOUR", DefaultValue = 9)]
         public int LogFlushAtHour { get; set; }
-
-        [ConfigMeta(Name = "WARNING_LOG_THRESHOLD", DefaultValue = 100)]
-        public int WarningLogsThreshold { get; set; }
-
-        [ConfigMeta(Name = "ERROR_LOG_THRESHOLD", DefaultValue = 10)]
-        public int ErrorLogsThreshold { get; set; }
-
-        [ConfigMeta(Name = "CRITICAL_LOG_THRESHOLD", DefaultValue = 1)]
-        public int CriticalLogsThreshold { get; set; }
     }
 }

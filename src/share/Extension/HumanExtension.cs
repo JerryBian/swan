@@ -11,9 +11,14 @@ namespace Laobian.Share.Extension
             return number.ToMetric(decimals: 1);
         }
 
-        public static string Human(this TimeSpan interval)
+        public static string HumanByte(this long bytes)
         {
-            return interval.Humanize(maxUnit: TimeUnit.Year);
+            return bytes.Bytes().ToString("#.##MB");
+        }
+
+        public static string Human(this TimeSpan interval, int precision = 2)
+        {
+            return interval.Humanize(maxUnit: TimeUnit.Year, precision: precision);
         }
 
         public static string Human(this DateTime time)
