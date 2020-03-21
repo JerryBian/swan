@@ -17,17 +17,15 @@ namespace Laobian.Share.Command
 
         public async Task ExecuteAsync(string command)
         {
-            using (var ps = PowerShell.Create())
-            {
-                ps.AddScript(command);
-                ps.AddCommand("Out-String");
+            using var ps = PowerShell.Create();
+            ps.AddScript(command);
+            ps.AddCommand("Out-String");
 
-                var result = await ps.InvokeAsync();
-                if (result.Any())
-                {
-                    _logger.LogInformation(
-                        $"Executed command {command}, the output is:{Environment.NewLine}{string.Join(Environment.NewLine, result)}");
-                }
+            var result = await ps.InvokeAsync();
+            if (result.Any())
+            {
+                _logger.LogInformation(
+                    $"Executed command {command}, the output is:{Environment.NewLine}{string.Join(Environment.NewLine, result)}");
             }
         }
     }

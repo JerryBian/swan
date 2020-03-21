@@ -27,7 +27,15 @@ namespace Laobian.Blog.HostedService
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
+                if (Global.Environment.IsDevelopment())
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
+                    await GenerateLogReportAsync();
+                }
+                else
+                {
+                    await Task.Delay(TimeSpan.FromMinutes(3), stoppingToken);
+                }
 
                 try
                 {
@@ -66,15 +74,17 @@ namespace Laobian.Blog.HostedService
         private async Task GenerateLogReportAsync()
         {
             var errorLogs = new List<BlogAlertEntry>();
-            while (Global.ErrorLogQueue.TryDequeue(out var errorLog))
-            {
-                errorLogs.Add(errorLog);
-            }
-
             var warnLogs = new List<BlogAlertEntry>();
-            while (Global.WarningLogQueue.TryDequeue(out var warnLog))
+            while (Global.InMemoryLogQueue.TryPop(out var item))
             {
-                warnLogs.Add(warnLog);
+                if (item.Level == LogLevel.Warning)
+                {
+                    warnLogs.Add(item);
+                }
+                else
+                {
+                    errorLogs.Add(item);
+                }
             }
 
             await _alertService.AlertReportAsync(warnLogs, errorLogs);

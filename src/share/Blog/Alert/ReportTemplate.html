@@ -7,6 +7,14 @@
     <title>[Production] - Daily Logs</title>
 
     <style>
+        pre {
+            white-space: pre-wrap; /* Since CSS 2.1 */
+            white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+            white-space: -pre-wrap; /* Opera 4-6 */
+            white-space: -o-pre-wrap; /* Opera 7 */
+            word-wrap: break-word; /* Internet Explorer 5.5+ */
+        }
+
         body, html {
             font-size: 1rem;
             color: #1a1a1a;
@@ -20,67 +28,67 @@
             padding: 0.5rem 0;
         }
 
-            header a {
-                text-align: center;
-                flex-basis: 100%;
-            }
+        header a {
+            text-align: center;
+            flex-basis: 100%;
+        }
 
         main {
             line-height: 150%;
         }
 
-            main table {
-                border-spacing: 0.5rem;
-                border-collapse: collapse;
-                width: 100%;
-                max-width: 100%;
-                table-layout: fixed;
-                font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
-                font-size: 80%;
-            }
+        main table {
+            border-spacing: 0.5rem;
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 100%;
+            table-layout: fixed;
+            font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+            font-size: 80%;
+        }
 
-            main td, main th {
-                border: 1px solid #ccc;
-                padding: 0.5rem;
-                word-wrap: break-word;
-            }
+        main td, main th {
+            border: 1px solid #ccc;
+            padding: 0.5rem;
+            word-wrap: break-word;
+        }
 
-            main #warn,
-            main #error {
-                padding: 0.25rem 0.5rem;
-                margin: 0.5rem 0;
-            }
+        main #warn,
+        main #error {
+            padding: 0.25rem 0.5rem;
+            margin: 0.5rem 0;
+        }
 
-            main h3 {
-                font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-                background-color: #e8ecf1;
-                padding: 0.5rem;
-            }
+        main h3 {
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            background-color: #e8ecf1;
+            padding: 0.5rem;
+        }
 
-            main details {
-                margin-bottom: 0.25rem;
-            }
+        main details {
+            margin-bottom: 0.25rem;
+        }
 
-            main section {
-                padding: 0.5rem;
-                margin-bottom: 0.5rem;
-            }
+        main section {
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
 
-                main section:nth-child(even) {
-                    background-color: #ecf0f1;
-                }
+        main section:nth-child(even) {
+            background-color: #ecf0f1;
+        }
 
-                main section:nth-child(odd) {
-                    background-color: #ececec;
-                }
+        main section:nth-child(odd) {
+            background-color: #ececec;
+        }
 
-            main #warn {
-                background-color: #fff9de;
-            }
+        main #warn {
+            background-color: #fff9de;
+        }
 
-            main #error {
-                background-color: #c8f7c5;
-            }
+        main #error {
+            background-color: #c8f7c5;
+        }
 
         footer {
             text-align: center;
@@ -194,6 +202,12 @@
     </main>
     <footer>
         <div>Generated at 2010-10-10 10:23:21, by <a href="https://blog.laobian.me">https://blog.laobian.me</a>.</div>
+        <details>
+            <summary>Server states</summary>
+            <ul>
+                <li></li>
+            </ul>
+        </details>
     </footer>
 </body>
 
