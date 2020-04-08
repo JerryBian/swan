@@ -24,7 +24,8 @@ namespace Laobian.Blog.Helpers
                 description = viewData[ViewDataConstant.Description].ToString();
             }
 
-            description += $" {Global.Config.Blog.Description}";
+            description = description.TrimEnd('。');
+            description += $"。 {Global.Config.Blog.Description}";
 
             return description.Length >= 150 ? description.Substring(0, 150) : description;
         }
