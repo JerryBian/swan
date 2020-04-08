@@ -56,7 +56,7 @@
         [ConfigMeta(Name = "FILE_REQUEST_PATH", DefaultValue = "/static")]
         public string FileRequestPath { get; set; }
 
-        [ConfigMeta(Name = "BLOG_DESCRIPTION", DefaultValue = "技术心得与生活感悟 - Jerry Bian(卞良忠)")]
+        [ConfigMeta(Name = "BLOG_DESCRIPTION", DefaultValue = "记录技术心得与生活感悟 by Jerry Bian(卞良忠)")]
         public string Description { get; set; }
 
         [ConfigMeta(Name = "BLOG_NAME", DefaultValue = "Jerry Bian's blog")]

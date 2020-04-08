@@ -3,7 +3,7 @@ using System.Xml.Serialization;
 
 namespace Laobian.Blog.Models
 {
-    [XmlRoot("urlset")]
+    [XmlRoot("urlset", Namespace = "http://www.sitemaps.org/schemas/sitemap/0.9", IsNullable = true)]
     public class SiteMapUrlSet
     {
         [XmlElement("url")] public List<SiteMapUrl> Urls { get; set; }

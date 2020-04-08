@@ -181,7 +181,7 @@ namespace Laobian.Share.Blog.Asset
             {
                 foreach (var postLink in postLinks)
                 {
-                    var post = _allPosts.FirstOrDefault(p => CompareHelper.IgnoreCase(p.Link, postLink));
+                    var post = _allPosts.FirstOrDefault(p => CompareHelper.IgnoreCase(p.Link, Path.GetFileNameWithoutExtension(postLink)));
                     if (post != null)
                     {
                         post.Metadata.LastUpdateTime = DateTime.Now;
