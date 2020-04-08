@@ -22,12 +22,14 @@ namespace Laobian.Blog.Helpers
             if (viewData[ViewDataConstant.Description] != null)
             {
                 description = viewData[ViewDataConstant.Description].ToString();
+                description = description.TrimEnd('。');
+                var maxLength = 145 - Global.Config.Blog.Description.Length;
+                description = description.Substring(0, description.Length < maxLength ? description.Length : maxLength);
+                description += "。";
             }
 
-            description = description.TrimEnd('。');
-            description += $"。 {Global.Config.Blog.Description}";
-
-            return description.Length >= 150 ? description.Substring(0, 150) : description;
+            description += Global.Config.Blog.Description;
+            return description;
         }
 
         public static string GetTitle(dynamic viewData)
