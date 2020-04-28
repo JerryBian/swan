@@ -1,11 +1,11 @@
-name: Stage code build & deploy
+name: Stage code
 
 on:
   push:
     branches: [ stage ]
 
 jobs:
-  build:
+  build&test&deploy:
     runs-on: ubuntu-18.04
 
     steps:
