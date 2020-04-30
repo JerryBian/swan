@@ -28,4 +28,4 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         port: ${{ secrets.PORT }}
         script: |
-          sh /deploy.sh stage >> /dev/null
+          sh /ga/deploy.sh stage
