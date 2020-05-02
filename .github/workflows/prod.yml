@@ -1,10 +1,10 @@
-name: Stage code
+name: build
 
 on:
   push:
-    branches: [ stage ]
+    branches: [ master ]
   pull_request:
-    branches: [ stage ]
+    branches: [ master ]
 
 jobs:
   build:
@@ -30,4 +30,4 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         port: ${{ secrets.PORT }}
         script: |
-          sh /ga/deploy.sh stage
+          sh /ga/deploy.sh
