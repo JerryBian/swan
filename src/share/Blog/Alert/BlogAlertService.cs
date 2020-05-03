@@ -44,6 +44,7 @@ namespace Laobian.Share.Blog.Alert
                         $"<p><strong>Exception details: </strong></p><p><pre><code>{error}</code></pre></p>";
                 }
 
+                emailEntry.HtmlContent += $"<p><small>Host Name: {Environment.MachineName}, Timezone: {TimeZoneInfo.Local.DisplayName}({TimeZoneInfo.Local.BaseUtcOffset})</small>.</p>";
                 await _emailClient.SendAsync(emailEntry);
             }
             catch (Exception ex)
