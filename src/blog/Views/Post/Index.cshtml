@@ -1,7 +1,7 @@
 ﻿@model PostViewModel
 
 <article class="post">
-    <div class="text-muted d-sm-block post-meta">@Html.Raw(Model.Post.GetMetadataHtml())</div>
+    <div class="text-muted d-sm-block post-meta">@Html.Raw(Model.Post.MetadataHtml)</div>
     <div class="post-title pt-1">
 
         @Model.Post.Title
@@ -27,7 +27,7 @@
     <ul>
         <li>最后更新于：@Model.Post.LastUpdateTimeString</li>
         @{
-            var html = Model.Post.GetCategoryAndTagHtml();
+            var html = Model.Post.CategoryAndTagHtml;
             if (!string.IsNullOrEmpty(html))
             {
                 <li>@Html.Raw(html)</li>

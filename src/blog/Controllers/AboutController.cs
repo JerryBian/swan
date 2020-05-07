@@ -24,7 +24,7 @@ namespace Laobian.Blog.Controllers
 
             ViewData[ViewDataConstant.Title] = "关于";
             ViewData[ViewDataConstant.Canonical] = "/about/";
-            ViewData[ViewDataConstant.Description] = "关于作者以及这个博客的一切";
+            ViewData[ViewDataConstant.Description] = "关于作者以及这个博客的一切...";
             return View(model: html);
         }
     }

@@ -13,7 +13,7 @@ namespace Laobian.Share.Blog.Extension
 {
     public static class BlogPostExtension
     {
-        public static string GetMetadataHtml(this BlogPost post)
+        private static void SetMetadataHtml(BlogPost post)
         {
             var results = new List<string>();
             results.Add(
@@ -21,22 +21,24 @@ namespace Laobian.Share.Blog.Extension
             results.Add(
                 $"<span title=\"{post.AccessCount}\">{post.AccessCountString} 次阅读</span>");
 
-            return string.Join(" &middot; ", results);
+            post.MetadataHtml = string.Join(" &middot; ", results);
         }
 
-        public static string GetCategoryAndTagHtml(this BlogPost post)
+        private static void SetCategoryAndTagHtml(BlogPost post)
         {
-            var categoryHtml = post.GetCategoryHtml();
-            var tagHtml = post.GetTagHtml();
+            var categoryHtml = GetCategoryHtml(post);
+            var tagHtml = GetTagHtml(post);
             if (!string.IsNullOrEmpty(tagHtml))
             {
-                return categoryHtml + " &middot; " + tagHtml;
+                post.CategoryAndTagHtml = categoryHtml + " &middot; " + tagHtml;
             }
-
-            return categoryHtml;
+            else
+            {
+                post.CategoryAndTagHtml = categoryHtml;
+            }
         }
 
-        public static string GetCategoryHtml(this BlogPost post)
+        private static string GetCategoryHtml(BlogPost post)
         {
             var results = new ConcurrentBag<string>();
             foreach (var blogCategory in post.Categories)
@@ -52,7 +54,7 @@ namespace Laobian.Share.Blog.Extension
             return $"分类：<span>{string.Join(", ", results)}</span>";
         }
 
-        public static string GetTagHtml(this BlogPost post)
+        private static string GetTagHtml(BlogPost post)
         {
             var results = new List<string>();
 
@@ -82,6 +84,18 @@ namespace Laobian.Share.Blog.Extension
             post.FullUrl =
                 $"/{post.PublishTime.Year}/{post.PublishTime.Month:D2}/{post.Link}{Global.Config.Common.HtmlExtension}";
             post.FullUrlWithBase = UrlHelper.Combine(Global.Config.Blog.BlogAddress, post.FullUrl);
+
+            SetCategoryAndTagHtml(post);
+            SetMetadataHtml(post);
+            SetHeadDescription(post);
+        }
+
+        private static void SetHeadDescription(BlogPost post)
+        {
+            var maxLength = 145 - Global.Config.Blog.Description.Length;
+            var description = post.ExcerptPlain.Substring(0, post.ExcerptPlain.Length < maxLength ? post.ExcerptPlain.Length : maxLength);
+            description += "...";
+            post.HeadDescription = description;
         }
 
         private static void HandleCategory(BlogPost post, List<BlogCategory> allCategories)

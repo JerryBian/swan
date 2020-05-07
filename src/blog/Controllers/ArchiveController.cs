@@ -24,7 +24,7 @@ namespace Laobian.Blog.Controllers
                 () => _blogService.GetCategories(!User.Identity.IsAuthenticated));
             ViewData[ViewDataConstant.Title] = "分类";
             ViewData[ViewDataConstant.Canonical] = "/category/";
-            ViewData[ViewDataConstant.Description] = "所有文章以分类的形式展现";
+            ViewData[ViewDataConstant.Description] = "所有文章以分类的形式展现...";
             return View("Category", model);
         }
 
@@ -36,7 +36,7 @@ namespace Laobian.Blog.Controllers
                 () => _blogService.GetTags(!User.Identity.IsAuthenticated));
             ViewData[ViewDataConstant.Title] = "标签";
             ViewData[ViewDataConstant.Canonical] = "/tag/";
-            ViewData[ViewDataConstant.Description] = "所有文章以标签归类的形式展现";
+            ViewData[ViewDataConstant.Description] = "所有文章以标签归类的形式展现...";
             return View("Tag", model);
         }
 
@@ -48,7 +48,7 @@ namespace Laobian.Blog.Controllers
                 () => _blogService.GetArchives(!User.Identity.IsAuthenticated));
             ViewData[ViewDataConstant.Title] = "存档";
             ViewData[ViewDataConstant.Canonical] = "/archive/";
-            ViewData[ViewDataConstant.Description] = "所有文章以发表日期归类的形式展现";
+            ViewData[ViewDataConstant.Description] = "所有文章以发表日期归类的形式展现...";
             return View("Index", model);
         }
     }

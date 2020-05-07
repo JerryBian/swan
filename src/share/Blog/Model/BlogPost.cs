@@ -81,5 +81,15 @@ namespace Laobian.Share.Blog.Model
         public string ContentMarkdown { get; set; }
 
         #endregion
+
+        #region UI
+
+        public string MetadataHtml { get; set; }
+
+        public string CategoryAndTagHtml { get; set; }
+
+        public string HeadDescription { get; set; }
+
+        #endregion
     }
 }

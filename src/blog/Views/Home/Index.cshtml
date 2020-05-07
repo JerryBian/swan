@@ -6,7 +6,7 @@
         {
             <div class="list-group-item flex-column align-items-start post-item">
                 <div>
-                    <div class="text-muted d-sm-block post-item-meta">@Html.Raw(post.GetMetadataHtml())</div>
+                    <div class="text-muted d-sm-block post-item-meta">@Html.Raw(post.MetadataHtml)</div>
                     <div class="mb-1 pt-1 post-item-title">
                         <a href="@post.FullUrl">@post.Title</a>
                         @if (post.IsTopping)
