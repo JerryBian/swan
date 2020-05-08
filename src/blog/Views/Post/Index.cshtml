@@ -77,6 +77,13 @@
     {
         <script src="~/script/post.min.js" defer asp-append-version="true"></script>
     }
+<script>
+        document.addEventListener("DOMContentLoaded", function() {
+            if (anchors) {
+                anchors.options.base = "@Model.Post.FullUrl";
+            }
+        });
+</script>
 }
 
 @section style{

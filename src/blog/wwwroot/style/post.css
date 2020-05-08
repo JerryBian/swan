@@ -7869,6 +7869,11 @@ pre code {
   margin-bottom: 0.25rem;
 }
 
+.anchorjs-link {
+  border-bottom-style: none !important;
+  transition: all 0.25s linear;
+}
+
 .modal {
   display: none;
   position: fixed;

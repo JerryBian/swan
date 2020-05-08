@@ -61,6 +61,11 @@
     }
 }
 
+.anchorjs-link {
+    border-bottom-style: none !important;
+    transition: all .25s linear;
+}
+
 .modal {
     display: none;
     position: fixed;
