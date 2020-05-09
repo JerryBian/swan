@@ -24,6 +24,6 @@ namespace Laobian.Share.Blog
 
         Task GitHookAsync(List<string> postLinks);
 
-        Task UpdateGitHubAsync();
+        Task UpdateGitHubAsync(string commitMessage);
     }
 }

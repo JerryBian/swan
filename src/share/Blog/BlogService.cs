@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Share.Blog.Asset;
 using Laobian.Share.Blog.Model;
+using Laobian.Share.Git;
 using Laobian.Share.Helper;
 
 namespace Laobian.Share.Blog
@@ -197,7 +198,7 @@ namespace Laobian.Share.Blog
 
                 if (shouldContinue)
                 {
-                    await _blogAssetManager.PushToGitHubAsync(":tada: Server started");
+                    await _blogAssetManager.PushToGitHubAsync(GitCommitMessageFactory.ServerStarted());
                 }
             }
             finally
@@ -240,7 +241,7 @@ namespace Laobian.Share.Blog
 
                 if (shouldContinue)
                 {
-                    await _blogAssetManager.PushToGitHubAsync(":sparkles: Hook happened");
+                    await _blogAssetManager.PushToGitHubAsync(GitCommitMessageFactory.GitHubHook());
                 }
             }
             finally
@@ -249,7 +250,7 @@ namespace Laobian.Share.Blog
             }
         }
 
-        public async Task UpdateGitHubAsync()
+        public async Task UpdateGitHubAsync(string commitMessage)
         {
             try
             {
@@ -257,7 +258,7 @@ namespace Laobian.Share.Blog
                 var shouldContinue = await _blogAssetManager.SerializeAssetsToFilesAsync();
                 if (shouldContinue)
                 {
-                    await _blogAssetManager.PushToGitHubAsync(":wind_chime: Scheduled update or server stop");
+                    await _blogAssetManager.PushToGitHubAsync(commitMessage);
                 }
             }
             finally

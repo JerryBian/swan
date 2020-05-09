@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Share;
 using Laobian.Share.Blog;
+using Laobian.Share.Git;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -28,7 +29,7 @@ namespace Laobian.Blog.HostedService
                 await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
                 if (Global.Environment.IsDevelopment())
                 {
-                    await ExecuteInternalAsync();
+                    await ExecuteInternalAsync(GitCommitMessageFactory.ScheduleUpdated());
                     _lastUpdateTime = DateTime.Now;
                     _logger.LogInformation("Asset updated. Last executed at= {0}.", _lastUpdateTime);
                 }
@@ -37,7 +38,7 @@ namespace Laobian.Blog.HostedService
                     if (DateTime.Now.Hour == Global.Config.Blog.AssetUpdateAtHour &&
                         _lastUpdateTime.Date < DateTime.Now.Date)
                     {
-                        await ExecuteInternalAsync();
+                        await ExecuteInternalAsync(GitCommitMessageFactory.ScheduleUpdated());
                         _lastUpdateTime = DateTime.Now;
                         _logger.LogInformation("Asset updated. Last executed at= {0}, schedule hour={1}.",
                             _lastUpdateTime, Global.Config.Blog.AssetUpdateAtHour);
@@ -57,16 +58,16 @@ namespace Laobian.Blog.HostedService
         public override async Task StopAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation($"{nameof(AssetHostedService)} is stopping.");
-            await _blogService.UpdateGitHubAsync();
+            await ExecuteInternalAsync(GitCommitMessageFactory.ServerStopped());
             await base.StopAsync(cancellationToken);
             _logger.LogInformation($"{nameof(AssetHostedService)} has stopped.");
         }
 
-        private async Task ExecuteInternalAsync()
+        private async Task ExecuteInternalAsync(string message)
         {
             try
             {
-                await _blogService.UpdateGitHubAsync();
+                await _blogService.UpdateGitHubAsync(message);
             }
             catch (Exception ex)
             {
