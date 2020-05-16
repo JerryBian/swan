@@ -47,7 +47,7 @@ namespace Laobian.Blog.HostedService
                         _logger.LogInformation("Report generated completely.");
                     }
 
-                    _logger.LogInformation("Logs flushed completely.");
+                    _logger.LogDebug("Logs flushed completely.");
                 }
                 catch (Exception ex)
                 {
