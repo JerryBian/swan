@@ -24,7 +24,7 @@ namespace Laobian.Share.Extension
         /// <returns>Date part format</returns>
         public static string ToDate(this DateTime time)
         {
-            return time.ToString("yyyy-MM-dd");
+            return time.ToString("yyyy年MM月dd日");
         }
     }
 }

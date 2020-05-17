@@ -181,7 +181,8 @@ namespace Laobian.Share.Blog.Asset
             {
                 foreach (var postLink in postLinks)
                 {
-                    var post = _allPosts.FirstOrDefault(p => CompareHelper.IgnoreCase(p.Link, Path.GetFileNameWithoutExtension(postLink)));
+                    var post = _allPosts.FirstOrDefault(p =>
+                        CompareHelper.IgnoreCase(p.Link, Path.GetFileNameWithoutExtension(postLink)));
                     if (post != null)
                     {
                         post.Metadata.LastUpdateTime = DateTime.Now;
@@ -304,13 +305,15 @@ namespace Laobian.Share.Blog.Asset
                             {
                                 Link = Path.GetFileNameWithoutExtension(file),
                                 GitPath = file.Substring(
-                                    file.IndexOf(Global.Config.Blog.AssetRepoLocalDir, StringComparison.CurrentCulture) +
+                                    file.IndexOf(Global.Config.Blog.AssetRepoLocalDir,
+                                        StringComparison.CurrentCulture) +
                                     Global.Config.Blog.AssetRepoLocalDir.Length + 1),
                                 LocalPath = file,
                                 ContentMarkdown = parseResult.Instance
                             };
 
-                            var metadata = postMetadata.FirstOrDefault(m => CompareHelper.IgnoreCase(m.Link, post.Link));
+                            var metadata =
+                                postMetadata.FirstOrDefault(m => CompareHelper.IgnoreCase(m.Link, post.Link));
                             if (metadata != null)
                             {
                                 post.Metadata = metadata;

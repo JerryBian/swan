@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Runtime.InteropServices;
 using Laobian.Share.Blog.Alert;
 using Laobian.Share.Config;
-using Laobian.Share.Extension;
+using Laobian.Share.Helper;
 using Microsoft.Extensions.Hosting;
 
 namespace Laobian.Share
@@ -22,6 +22,6 @@ namespace Laobian.Share
 
         public static string AppVersion { get; set; }
 
-        public static string RunningInterval => (DateTime.Now - StartTime).Human();
+        public static string RunningInterval => HumanHelper.DisplayTimeSpan(DateTime.Now - StartTime);
     }
 }

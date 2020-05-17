@@ -9,15 +9,12 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Serilog;
-using Serilog.Context;
 
 namespace Laobian.Blog
 {
@@ -77,18 +74,6 @@ namespace Laobian.Blog
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.Use(async (context, next) =>
-            {
-                using (LogContext.PushProperty(LogEntryItem.RequestUrl.ToString(), context.Request.GetDisplayUrl()))
-                using (LogContext.PushProperty(LogEntryItem.RequestIp.ToString(), context.Connection.RemoteIpAddress))
-                using (LogContext.PushProperty(LogEntryItem.RequestUserAgent.ToString(), context.Request.Headers["User-Agent"]))
-                {
-                    await next();
-                }
-            });
-
-            app.UseSerilogRequestLogging();
 
             app.UseStatusCodePages(async context =>
             {

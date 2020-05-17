@@ -1,8 +1,6 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Threading.Tasks;
 using Laobian.Share.Command;
-using Laobian.Share.Extension;
 using Microsoft.Extensions.Logging;
 
 namespace Laobian.Share.Git

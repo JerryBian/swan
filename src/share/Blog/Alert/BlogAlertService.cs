@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Laobian.Share.Email;
 using Laobian.Share.Extension;
+using Laobian.Share.Helper;
 using Microsoft.Extensions.Logging;
 
 namespace Laobian.Share.Blog.Alert
@@ -44,7 +45,8 @@ namespace Laobian.Share.Blog.Alert
                         $"<p><strong>Exception details: </strong></p><p><pre><code>{error}</code></pre></p>";
                 }
 
-                emailEntry.HtmlContent += $"<p><small>Host Name: {Environment.MachineName}, Timezone: {TimeZoneInfo.Local.DisplayName}({TimeZoneInfo.Local.BaseUtcOffset})</small>.</p>";
+                emailEntry.HtmlContent +=
+                    $"<p><small>Host Name: {Environment.MachineName}, Timezone: {TimeZoneInfo.Local.DisplayName}({TimeZoneInfo.Local.BaseUtcOffset})</small>.</p>";
                 await _emailClient.SendAsync(emailEntry);
             }
             catch (Exception ex)
@@ -78,7 +80,8 @@ namespace Laobian.Share.Blog.Alert
                     errorSb.AppendLine($"<section><h4>({item.When.ToDateAndTime()}) {item.Message}</h4>");
                     if (!string.IsNullOrEmpty(item.RequestUrl))
                     {
-                        errorSb.AppendLine($"<details><summary>Exception StackTrace</summary><pre>{item.Exception}</pre></details>");
+                        errorSb.AppendLine(
+                            $"<details><summary>Exception StackTrace</summary><pre>{item.Exception}</pre></details>");
                         errorSb.AppendLine("<table><tbody>");
                         errorSb.AppendLine($"<tr><td>IP</td><td>{item.Ip}</td></tr>");
                         errorSb.AppendLine($"<tr><td>Request URL</td><td>{item.RequestUrl}</td></tr>");
@@ -117,7 +120,8 @@ namespace Laobian.Share.Blog.Alert
                     FromName = Global.Config.Common.AlertSenderName,
                     FromAddress = Global.Config.Common.AlertSenderEmail,
                     Subject = $"Report@{DateTime.Now:yyyyMMdd}",
-                    HtmlContent = $"<p>{errorAlerts.Count.Human()} Errors, {warnAlerts.Count.Human()} Warnings.</p>"
+                    HtmlContent =
+                        $"<p>{HumanHelper.DisplayInt(errorAlerts.Count)} Errors, {HumanHelper.DisplayInt(warnAlerts.Count)} Warnings.</p>"
                 };
 
                 await using var ms = new MemoryStream(Encoding.UTF8.GetBytes(template));
@@ -135,11 +139,14 @@ namespace Laobian.Share.Blog.Alert
             var sb = new StringBuilder();
             using (var process = Process.GetCurrentProcess())
             {
-                sb.AppendLine($"<li>Start at {Global.StartTime.ToDateAndTime()}, it has been running for {Global.RunningInterval}.</li>");
+                sb.AppendLine(
+                    $"<li>Start at {Global.StartTime.ToDateAndTime()}, it has been running for {Global.RunningInterval}.</li>");
                 sb.AppendLine($"<li>Process Id: {process.Id}, process name: {process.ProcessName}.</li>");
                 sb.AppendLine($"<li>Host name: {Environment.MachineName}, current user: {Environment.UserName}.</li>");
-                sb.AppendLine($"<li>OS version: {Environment.OSVersion}, .NET version: {Global.RuntimeVersion}, app version: {Global.AppVersion}</li>");
-                sb.AppendLine($"<li>Processor count: {Environment.ProcessorCount}, Allocated memory: {process.WorkingSet64.HumanByte()}, CPU time: {process.TotalProcessorTime.Human()}.</li>");
+                sb.AppendLine(
+                    $"<li>OS version: {Environment.OSVersion}, .NET version: {Global.RuntimeVersion}, app version: {Global.AppVersion}</li>");
+                sb.AppendLine(
+                    $"<li>Processor count: {Environment.ProcessorCount}, Allocated memory: {HumanHelper.DisplayBytes(process.WorkingSet64)}, CPU time: {HumanHelper.DisplayTimeSpan(process.TotalProcessorTime)}.</li>");
             }
 
             return sb.ToString();

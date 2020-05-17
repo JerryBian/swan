@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Laobian.Share.Extension;
+using Laobian.Share.Helper;
 
 namespace Laobian.Share.Blog.Model
 {
@@ -39,7 +40,7 @@ namespace Laobian.Share.Blog.Model
 
         public string Title => Metadata.Title ?? throw new InvalidBlogAssetException(nameof(Title));
 
-        public string AccessCountString => AccessCount.Human();
+        public string AccessCountString => HumanHelper.DisplayInt(AccessCount);
 
         public bool IsPublic => DateTime.Now > PublishTime &&
                                 !Metadata.IsDraft;
@@ -50,13 +51,13 @@ namespace Laobian.Share.Blog.Model
 
         public DateTime LastUpdateTime => Metadata.LastUpdateTime;
 
-        public string LastUpdateTimeString => LastUpdateTime.Human();
+        public string LastUpdateTimeString => LastUpdateTime.ToDate();
 
         public List<BlogCategory> Categories { get; }
 
         public List<BlogTag> Tags { get; }
 
-        public string PublishTimeString => PublishTime.Human();
+        public string PublishTimeString => PublishTime.ToDate();
 
         public string ContentHtml { get; set; }
 

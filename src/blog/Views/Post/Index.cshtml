@@ -86,11 +86,12 @@
         </script>
     }
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            if (anchors) {
-                anchors.options.base = "@Model.Post.FullUrl";
-            }
-        });
+        document.addEventListener("DOMContentLoaded",
+            function() {
+                if (anchors) {
+                    anchors.options.base = "@Model.Post.FullUrl";
+                }
+            });
     </script>
 }
 
@@ -101,5 +102,5 @@
           asp-fallback-test-class="sr-only"
           asp-fallback-test-property="position"
           asp-fallback-test-value="absolute"
-          asp-append-version="true" />
+          asp-append-version="true"/>
 }

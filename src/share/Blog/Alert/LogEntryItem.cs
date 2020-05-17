@@ -6,6 +6,6 @@
 
         RequestUrl,
 
-        RequestUserAgent,
+        RequestUserAgent
     }
 }

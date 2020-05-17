@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using HtmlAgilityPack;
 using Laobian.Share.Blog.Model;
 using Laobian.Share.Extension;
@@ -93,7 +92,8 @@ namespace Laobian.Share.Blog.Extension
         private static void SetHeadDescription(BlogPost post)
         {
             var maxLength = 145 - Global.Config.Blog.Description.Length;
-            var description = post.ExcerptPlain.Substring(0, post.ExcerptPlain.Length < maxLength ? post.ExcerptPlain.Length : maxLength);
+            var description = post.ExcerptPlain.Substring(0,
+                post.ExcerptPlain.Length < maxLength ? post.ExcerptPlain.Length : maxLength);
             description += "...";
             post.HeadDescription = description;
         }
