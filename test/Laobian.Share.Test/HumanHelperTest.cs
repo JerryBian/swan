@@ -59,5 +59,11 @@ namespace Laobian.Share.Test
         {
             Assert.Equal("1.3T", HumanHelper.DisplayBytes(Convert.ToInt64((long) 1024 * 1024 * 1024 * 1024 * 1.25)));
         }
+
+        [Fact]
+        public void Test10()
+        {
+            Assert.Equal("12.6k", HumanHelper.DisplayInt(109009));
+        }
     }
 }

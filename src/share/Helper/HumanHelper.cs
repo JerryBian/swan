@@ -11,14 +11,14 @@ namespace Laobian.Share.Helper
                 return number.ToString();
             }
 
-            if (number < 100_000)
+            if (number < 1_000_000)
             {
                 var i = (double) number / 1000;
                 var s = i.ToString("#.#");
                 return $"{s}k";
             }
 
-            var j = (double) number / 100_000;
+            var j = (double) number / 1_000_000;
             var t = j.ToString("#.#");
             return $"{t}m";
         }
