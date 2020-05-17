@@ -27,7 +27,7 @@ namespace Laobian.Share.Test
         [Fact]
         public void Test4()
         {
-            Assert.Equal("1.3m", HumanHelper.DisplayInt(125_123));
+            Assert.Equal("1.3m", HumanHelper.DisplayInt(1_255_123));
         }
 
         [Fact]
@@ -63,7 +63,7 @@ namespace Laobian.Share.Test
         [Fact]
         public void Test10()
         {
-            Assert.Equal("12.6k", HumanHelper.DisplayInt(109009));
+            Assert.Equal("109k", HumanHelper.DisplayInt(109009));
         }
     }
 }
