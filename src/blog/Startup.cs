@@ -5,8 +5,10 @@ using System.Reflection;
 using Laobian.Blog.Helpers;
 using Laobian.Share;
 using Laobian.Share.Blog.Alert;
+using Laobian.Share.Helper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -85,6 +87,7 @@ namespace Laobian.Blog
             });
 
             app.UseStaticFiles();
+            app.UseHealthChecks("/health");
 
             var fileDirFullPath = Path.Combine(Global.Config.Blog.AssetRepoLocalDir, Global.Config.Blog.FileGitPath);
             Directory.CreateDirectory(fileDirFullPath);
