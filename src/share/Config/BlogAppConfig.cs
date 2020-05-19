@@ -32,6 +32,9 @@
         [ConfigMeta(Name = "BLOG_ADDRESS", DefaultValue = "https://blog.laobian.me")]
         public string BlogAddress { get; set; }
 
+        [ConfigMeta(Name = "STATIC_ADDRESS", DefaultValue = "https://static.laobian.me")]
+        public string StaticAddress { get; set; }
+
         [ConfigMeta(Name = "ASSET_UPDATE_AT_HOUR", DefaultValue = 0)]
         public int AssetUpdateAtHour { get; set; }
 

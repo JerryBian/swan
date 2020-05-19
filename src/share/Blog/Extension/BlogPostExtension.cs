@@ -149,9 +149,26 @@ namespace Laobian.Share.Blog.Extension
 
                     if (!Path.IsPathRooted(src))
                     {
+                        var fileFolderName = Global.Config.Blog.FileGitPath.Split('/', StringSplitOptions.RemoveEmptyEntries).Last();
+                        var parts = new List<string>();
+                        var found = false;
+                        foreach (var item in src.Split('/', StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            if (found)
+                            {
+                                parts.Add(item);
+                                continue;
+                            }
+
+                            if (item == fileFolderName)
+                            {
+                                found = true;
+                            }
+                        }
+
+                        parts.Insert(0, Global.Config.Blog.FileRequestPath);
                         imageNode.SetAttributeValue("src",
-                            UrlHelper.Combine(Global.Config.Blog.BlogAddress, Global.Config.Blog.FileRequestPath,
-                                Path.GetFileName(src)));
+                            UrlHelper.Combine(Global.Config.Blog.StaticAddress, parts.ToArray()));
                     }
                 }
             }

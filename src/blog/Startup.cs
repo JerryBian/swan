@@ -89,15 +89,18 @@ namespace Laobian.Blog
             app.UseStaticFiles();
             app.UseHealthChecks("/health");
 
-            var fileDirFullPath = Path.Combine(Global.Config.Blog.AssetRepoLocalDir, Global.Config.Blog.FileGitPath);
-            Directory.CreateDirectory(fileDirFullPath);
-            var fileServerOptions = new FileServerOptions
+            if (Global.Environment.IsDevelopment())
             {
-                FileProvider = new PhysicalFileProvider(fileDirFullPath),
-                RequestPath = Global.Config.Blog.FileRequestPath,
-                EnableDirectoryBrowsing = true
-            };
-            app.UseFileServer(fileServerOptions);
+                var fileDirFullPath = Path.Combine(Global.Config.Blog.AssetRepoLocalDir, Global.Config.Blog.FileGitPath);
+                Directory.CreateDirectory(fileDirFullPath);
+                var fileServerOptions = new FileServerOptions
+                {
+                    FileProvider = new PhysicalFileProvider(fileDirFullPath),
+                    RequestPath = Global.Config.Blog.FileRequestPath,
+                    EnableDirectoryBrowsing = true
+                };
+                app.UseFileServer(fileServerOptions);
+            }
 
             app.UseRouting();
 
