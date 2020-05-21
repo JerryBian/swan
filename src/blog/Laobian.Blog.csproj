@@ -17,4 +17,8 @@
   <ItemGroup>
     <ProjectReference Include="..\share\Laobian.Share.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="wwwroot\lib\**" CopyToPublishDirectory="Never" />
+  </ItemGroup>
 </Project>
