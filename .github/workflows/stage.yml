@@ -57,4 +57,4 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         port: ${{ secrets.PORT }}
         script: |
-          sh /ga/deploy.sh stage
+          sh /ga/blog-deploy.sh stage
