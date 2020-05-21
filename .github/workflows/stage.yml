@@ -30,7 +30,7 @@ jobs:
         FOLDER: src/blog/wwwroot # The folder the action should deploy.
         SINGLE_COMMIT: false
     - name: Publish binary
-      run: dotnet publish ./src/blog/Laobian.Blog.csproj -p:PublishSingleFile=true -c Release -r linux-x64 -o publish --self-contained
+      run: dotnet publish ./src/blog/Laobian.Blog.csproj -p:PublishTrimmed=true -p:PublishSingleFile=true -c Release -r linux-x64 -o publish --self-contained -v d
     - name: clean up build binary
       uses: appleboy/ssh-action@master
       with:
