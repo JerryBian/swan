@@ -6,6 +6,7 @@ using Laobian.Blog.Helpers;
 using Laobian.Share;
 using Laobian.Share.Blog.Alert;
 using Laobian.Share.Helper;
+using Laobian.Share.Log;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -66,7 +67,7 @@ namespace Laobian.Blog
                     ExceptionHandler = async context =>
                     {
                         logger.LogError(context.Features.Get<IExceptionHandlerFeature>()?.Error,
-                            $"Something is wrong! Request Url= {context.Request.Path}");
+                            LogMessageHelper.Format($"Something is wrong! Request Url= {context.Request.Path}", context));
                         await context.Response.WriteAsync(
                             $"Something was wrong! Please contact {Global.Config.Common.AdminEmail}.");
                     }
@@ -81,7 +82,7 @@ namespace Laobian.Blog
             {
                 var message = "Status code page, status code: " +
                               context.HttpContext.Response.StatusCode;
-                logger.LogWarning(message);
+                logger.LogWarning(LogMessageHelper.Format(message, context.HttpContext));
                 context.HttpContext.Response.ContentType = "text/plain";
                 await context.HttpContext.Response.WriteAsync(message);
             });
@@ -137,6 +138,16 @@ namespace Laobian.Blog
                 }
 
                 logger.LogInformation("Application is stopping.");
+            });
+
+            applicationLifetime.ApplicationStopped.Register(async () =>
+            {
+                if (!Global.Environment.IsDevelopment())
+                {
+                    await alertService.AlertEventAsync("Blog is stopped.");
+                }
+
+                logger.LogInformation("Application is stopped.");
             });
         }
     }

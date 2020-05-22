@@ -11,7 +11,6 @@ using Laobian.Share.Blog.Model;
 using Laobian.Share.Blog.Parser;
 using Laobian.Share.Git;
 using Laobian.Share.Helper;
-using Microsoft.Extensions.Logging;
 
 namespace Laobian.Share.Blog.Asset
 {
@@ -23,16 +22,13 @@ namespace Laobian.Share.Blog.Asset
 
         private readonly IGitClient _gitClient;
         private readonly GitConfig _gitConfig;
-        private readonly ILogger<BlogAssetManager> _logger;
         private readonly ManualResetEventSlim _manualReset;
         private readonly SemaphoreSlim _semaphore;
         private string _aboutHtml;
 
         public BlogAssetManager(
-            IGitClient gitClient,
-            ILogger<BlogAssetManager> logger)
+            IGitClient gitClient)
         {
-            _logger = logger;
             _allTags = new List<BlogTag>();
             _allPosts = new List<BlogPost>();
             _allCategories = new List<BlogCategory>();
@@ -53,21 +49,12 @@ namespace Laobian.Share.Blog.Asset
 
         #region Public Interfaces
 
-        public async Task<bool> PullFromGitHubAsync()
+        public async Task PullFromGitHubAsync()
         {
-            try
-            {
-                await _gitClient.CloneToLocalAsync(_gitConfig);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogCritical(ex, "Pull assets from GitHub failed.");
-                return false;
-            }
+            await _gitClient.CloneToLocalAsync(_gitConfig);
         }
 
-        public async Task<bool> ParseAssetsToObjectsAsync()
+        public async Task<string> ParseAssetsToObjectsAsync()
         {
             try
             {
@@ -86,18 +73,38 @@ namespace Laobian.Share.Blog.Asset
                 try
                 {
                     _manualReset.Reset();
-                    RefreshMemoryAsset(posts, categories, tags, aboutHtml);
-                    return true;
+                    RefreshMemoryAsset(posts.Instance, categories.Instance, tags.Instance, aboutHtml.Instance);
+                    var result = new StringBuilder();
+                    var agg = posts.AggregateMessages();
+                    if (!string.IsNullOrEmpty(agg))
+                    {
+                        result.AppendLine(agg);
+                    }
+
+                    agg = categories.AggregateMessages();
+                    if (!string.IsNullOrEmpty(agg))
+                    {
+                        result.AppendLine(agg);
+                    }
+
+                    agg = tags.AggregateMessages();
+                    if (!string.IsNullOrEmpty(agg))
+                    {
+                        result.AppendLine(agg);
+                    }
+
+                    agg = aboutHtml.AggregateMessages();
+                    if (!string.IsNullOrEmpty(agg))
+                    {
+                        result.AppendLine(agg);
+                    }
+
+                    return result.ToString();
                 }
                 finally
                 {
                     _manualReset.Set();
                 }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogCritical(ex, "Parse assets to objects failed.");
-                return false;
             }
             finally
             {
@@ -105,96 +112,60 @@ namespace Laobian.Share.Blog.Asset
             }
         }
 
-        public async Task<bool> SerializeAssetsToFilesAsync()
+        public async Task SerializeAssetsToFilesAsync()
         {
-            try
+            var postMetadata = new List<BlogPostMetadata>();
+            foreach (var blogPost in _allPosts)
             {
-                var postMetadata = new List<BlogPostMetadata>();
-                foreach (var blogPost in _allPosts)
-                {
-                    postMetadata.Add(blogPost.Metadata);
-                }
-
-                var postMetadataPath =
-                    Path.Combine(Global.Config.Blog.AssetRepoLocalDir, Global.Config.Blog.PostMetadataPath);
-                var metadataParseResult = BlogAssetParser.ToJson(postMetadata.OrderByDescending(p => p.CreateTime));
-                LogParseResultMessages(metadataParseResult);
-
-                if (metadataParseResult.Success)
-                {
-                    if (!Directory.Exists(Path.GetDirectoryName(postMetadataPath)))
-                    {
-                        Directory.CreateDirectory(Path.GetDirectoryName(postMetadataPath));
-                    }
-
-                    await File.WriteAllTextAsync(postMetadataPath, metadataParseResult.Instance, Encoding.UTF8);
-                }
-
-                return true;
+                postMetadata.Add(blogPost.Metadata);
             }
-            catch (Exception ex)
+
+            var postMetadataPath =
+                Path.Combine(Global.Config.Blog.AssetRepoLocalDir, Global.Config.Blog.PostMetadataPath);
+            var metadataParseResult = BlogAssetParser.ToJson(postMetadata.OrderByDescending(p => p.CreateTime));
+
+            if (metadataParseResult.Success)
             {
-                _logger.LogCritical(ex, "Serialize assets to files failed.");
-                return false;
+                if (!Directory.Exists(Path.GetDirectoryName(postMetadataPath)))
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(postMetadataPath));
+                }
+
+                await File.WriteAllTextAsync(postMetadataPath, metadataParseResult.Instance, Encoding.UTF8);
+            }
+            else
+            {
+                throw new Exception($"SerializeAssetsToFiles failed. {metadataParseResult.AggregateMessages()}");
             }
         }
 
-        public async Task<bool> PushToGitHubAsync(string message)
+        public async Task PushToGitHubAsync(string message)
         {
-            try
+            await _gitClient.CommitAsync(Global.Config.Blog.AssetRepoLocalDir, message);
+        }
+
+        public void MergePosts(List<BlogPost> oldPosts)
+        {
+            foreach (var blogPost in _allPosts)
             {
-                await _gitClient.CommitAsync(Global.Config.Blog.AssetRepoLocalDir, message);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogCritical(ex, "Push to GitHub failed.");
-                return false;
+                var oldPost = oldPosts.FirstOrDefault(p => CompareHelper.IgnoreCase(p.Link, blogPost.Link));
+                if (oldPost != null)
+                {
+                    blogPost.AccessCount = Math.Max(oldPost.AccessCount, blogPost.AccessCount);
+                }
             }
         }
 
-        public bool MergePosts(List<BlogPost> oldPosts)
+        public void UpdatePosts(IEnumerable<string> postLinks)
         {
-            try
+            foreach (var postLink in postLinks)
             {
-                foreach (var blogPost in _allPosts)
+                var post = _allPosts.FirstOrDefault(p =>
+                    CompareHelper.IgnoreCase(p.Link, Path.GetFileNameWithoutExtension(postLink)));
+                if (post != null)
                 {
-                    var oldPost = oldPosts.FirstOrDefault(p => CompareHelper.IgnoreCase(p.Link, blogPost.Link));
-                    if (oldPost != null)
-                    {
-                        blogPost.AccessCount = Math.Max(oldPost.AccessCount, blogPost.AccessCount);
-                    }
+                    post.Metadata.LastUpdateTime = DateTime.Now;
                 }
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogCritical(ex, "Merge assets failed.");
-                return false;
-            }
-        }
-
-        public bool UpdatePosts(IEnumerable<string> postLinks)
-        {
-            try
-            {
-                foreach (var postLink in postLinks)
-                {
-                    var post = _allPosts.FirstOrDefault(p =>
-                        CompareHelper.IgnoreCase(p.Link, Path.GetFileNameWithoutExtension(postLink)));
-                    if (post != null)
-                    {
-                        post.Metadata.LastUpdateTime = DateTime.Now;
-                    }
-                }
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogCritical(ex, "Update posts failed.");
-                return false;
             }
         }
 
@@ -261,14 +232,17 @@ namespace Laobian.Share.Blog.Asset
             BlogState.AssetLastUpdate = DateTime.Now;
         }
 
-        private async Task<List<BlogPost>> ReloadLocalMemoryPostAsync()
+        private async Task<BlogAssetLoadResult<List<BlogPost>>> ReloadLocalMemoryPostAsync()
         {
-            var result = new ConcurrentBag<BlogPost>();
+            var result = new BlogAssetLoadResult<List<BlogPost>> { Description = "Load Posts" };
+            var posts = new ConcurrentBag<BlogPost>();
+            
             var postLocalPath = Path.Combine(Global.Config.Blog.AssetRepoLocalDir, Global.Config.Blog.PostGitPath);
             if (!Directory.Exists(postLocalPath))
             {
-                _logger.LogWarning($"No post folder found under \"{postLocalPath}\".");
-                return result.ToList();
+                result.Instance = posts.ToList();
+                result.Warnings.Add($"No post folder found under \"{postLocalPath}\".");
+                return result;
             }
 
             var postMetadata = new List<BlogPostMetadata>();
@@ -278,152 +252,155 @@ namespace Laobian.Share.Blog.Asset
             {
                 var metadataText = await File.ReadAllTextAsync(metadataLocalPath);
                 var metadataParseResult = BlogAssetParser.ParseJson<List<BlogPostMetadata>>(metadataText);
-                LogParseResultMessages(metadataParseResult);
 
                 if (metadataParseResult.Success)
                 {
                     postMetadata = metadataParseResult.Instance;
+                    result.Warnings.AddRange(metadataParseResult.WarningMessages);
+                    result.Errors.AddRange(metadataParseResult.ErrorMessages);
                 }
                 else
                 {
-                    throw new Exception("Post metadata parse failed, please check errors.");
+                    throw new Exception($"Post metadata parse failed, please check errors.{metadataParseResult.AggregateMessages()}");
                 }
             }
 
             Parallel.ForEach(Directory.EnumerateFiles(postLocalPath, $"*{Global.Config.Common.MarkdownExtension}"),
                 file =>
                 {
-                    try
-                    {
-                        var text = File.ReadAllText(file);
-                        var parseResult = BlogAssetParser.ToText(text);
-                        LogParseResultMessages(parseResult);
+                    var text = File.ReadAllText(file);
+                    var parseResult = BlogAssetParser.ToText(text);
 
-                        if (parseResult.Success)
+                    if (parseResult.Success)
+                    {
+                        var post = new BlogPost
                         {
-                            var post = new BlogPost
-                            {
-                                Link = Path.GetFileNameWithoutExtension(file),
-                                GitPath = file.Substring(
-                                    file.IndexOf(Global.Config.Blog.AssetRepoLocalDir,
-                                        StringComparison.CurrentCulture) +
-                                    Global.Config.Blog.AssetRepoLocalDir.Length + 1),
-                                LocalPath = file,
-                                ContentMarkdown = parseResult.Instance
-                            };
+                            Link = Path.GetFileNameWithoutExtension(file),
+                            GitPath = file.Substring(
+                                file.IndexOf(Global.Config.Blog.AssetRepoLocalDir,
+                                    StringComparison.CurrentCulture) +
+                                Global.Config.Blog.AssetRepoLocalDir.Length + 1),
+                            LocalPath = file,
+                            ContentMarkdown = parseResult.Instance
+                        };
 
-                            var metadata =
-                                postMetadata.FirstOrDefault(m => CompareHelper.IgnoreCase(m.Link, post.Link));
-                            if (metadata != null)
-                            {
-                                post.Metadata = metadata;
-                            }
-                            else
-                            {
-                                post.Metadata.Link = post.Link;
-                            }
-
-                            result.Add(post);
+                        var metadata =
+                            postMetadata.FirstOrDefault(m => CompareHelper.IgnoreCase(m.Link, post.Link));
+                        if (metadata != null)
+                        {
+                            post.Metadata = metadata;
                         }
+                        else
+                        {
+                            post.Metadata.Link = post.Link;
+                        }
+
+                        posts.Add(post);
+                        result.Warnings.AddRange(parseResult.WarningMessages);
+                        result.Errors.AddRange(parseResult.ErrorMessages);
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        _logger.LogError(
-                            $"Parse post throw exception: {file}.{Environment.NewLine}{ex}{Environment.NewLine}");
+                        throw new Exception($"Post({postLocalPath}) parse failed, please check errors.{parseResult.AggregateMessages()}");
                     }
                 });
 
-            return result.ToList();
+            result.Instance = posts.ToList();
+            return result;
         }
 
-        private async Task<List<BlogCategory>> ReloadLocalMemoryCategoryAsync()
+        private async Task<BlogAssetLoadResult<List<BlogCategory>>> ReloadLocalMemoryCategoryAsync()
         {
-            var result = new List<BlogCategory>();
+            var result = new BlogAssetLoadResult<List<BlogCategory>> { Description = "Load Categories" };
+            var categories = new List<BlogCategory>();
+            result.Instance = categories;
             var categoryLocalPath =
                 Path.Combine(Global.Config.Blog.AssetRepoLocalDir, Global.Config.Blog.CategoryGitPath);
             if (!File.Exists(categoryLocalPath))
             {
-                _logger.LogWarning($"No category asset found under \"{categoryLocalPath}\".");
+                result.Warnings.Add($"No category asset found under \"{categoryLocalPath}\".");
                 return result;
             }
 
             var text = await File.ReadAllTextAsync(categoryLocalPath);
             var parseResult = await BlogAssetParser.ParseColonSeparatedTextAsync(text);
-            LogParseResultMessages(parseResult);
 
             if (parseResult.Success)
             {
                 foreach (var item in parseResult.Instance)
                 {
-                    result.Add(new BlogCategory
+                    categories.Add(new BlogCategory
                     {
                         Name = item.Key,
                         Link = item.Value
                     });
                 }
             }
+            else
+            {
+                throw new Exception($"Category parse failed, please check errors.{parseResult.AggregateMessages()}");
+            }
 
             return result;
         }
 
-        private async Task<List<BlogTag>> ReloadLocalMemoryTagAsync()
+        private async Task<BlogAssetLoadResult<List<BlogTag>>> ReloadLocalMemoryTagAsync()
         {
-            var result = new List<BlogTag>();
+            var result = new BlogAssetLoadResult<List<BlogTag>> { Description = "Load Tags" };
+            var tags = new List<BlogTag>();
+            result.Instance = tags;
             var tagLocalPath = Path.Combine(Global.Config.Blog.AssetRepoLocalDir, Global.Config.Blog.TagGitPath);
             if (!File.Exists(tagLocalPath))
             {
-                _logger.LogWarning($"No tag asset found under \"{tagLocalPath}\".");
+                result.Warnings.Add($"No tag asset found under \"{tagLocalPath}\".");
                 return result;
             }
 
             var text = await File.ReadAllTextAsync(tagLocalPath);
             var parseResult = await BlogAssetParser.ParseColonSeparatedTextAsync(text);
-            LogParseResultMessages(parseResult);
 
             if (parseResult.Success)
             {
                 foreach (var item in parseResult.Instance)
                 {
-                    result.Add(new BlogTag
+                    tags.Add(new BlogTag
                     {
                         Name = item.Key,
                         Link = item.Value
                     });
                 }
             }
+            else
+            {
+                throw new Exception($"Tag parse failed, please check errors.{parseResult.AggregateMessages()}");
+            }
 
             return result;
         }
 
-        private async Task<string> ReloadLocalMemoryAboutAsync()
+        private async Task<BlogAssetLoadResult<string>> ReloadLocalMemoryAboutAsync()
         {
-            var result = string.Empty;
+            var result = new BlogAssetLoadResult<string> { Description = "Load About" };
             var aboutLocalPath = Path.Combine(Global.Config.Blog.AssetRepoLocalDir, Global.Config.Blog.AboutGitPath);
             if (!File.Exists(aboutLocalPath))
             {
-                _logger.LogWarning($"No about asset found under \"{aboutLocalPath}\".");
+                result.Warnings.Add($"No about asset found under \"{aboutLocalPath}\".");
                 return result;
             }
 
             var md = await File.ReadAllTextAsync(aboutLocalPath);
             var parseResult = BlogAssetParser.ToText(md);
-            LogParseResultMessages(parseResult);
 
             if (parseResult.Success)
             {
-                result = MarkdownHelper.ToHtml(md);
+                result.Instance = MarkdownHelper.ToHtml(md);
+            }
+            else
+            {
+                throw new Exception($"About parse failed, please check errors.{parseResult.AggregateMessages()}");
             }
 
             return result;
-        }
-
-        private void LogParseResultMessages<T>(BlogAssetParseResult<T> result)
-        {
-            var message = result.AggregateMessages();
-            if (!string.IsNullOrEmpty(message))
-            {
-                _logger.LogError(message);
-            }
         }
 
         #endregion

@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Laobian.Blog.Models;
 using Laobian.Share;
+using Laobian.Share.Log;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
@@ -53,7 +54,7 @@ namespace Laobian.Blog.Controllers
                 return Redirect(r);
             }
 
-            _logger.LogWarning($"Login failed. User Name = {userName}, Password = {password}");
+            _logger.LogWarning(LogMessageHelper.Format($"Login failed. User Name = {userName}, Password = {password}", HttpContext));
             return Redirect("/");
         }
 
@@ -62,7 +63,7 @@ namespace Laobian.Blog.Controllers
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-            _logger.LogInformation("Logout successfully.");
+            _logger.LogInformation(LogMessageHelper.Format("Logout successfully.", HttpContext));
             return Redirect("/");
         }
     }

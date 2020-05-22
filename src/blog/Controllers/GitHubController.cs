@@ -8,6 +8,7 @@ using Laobian.Share;
 using Laobian.Share.Blog;
 using Laobian.Share.Git;
 using Laobian.Share.Helper;
+using Laobian.Share.Log;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -41,20 +42,20 @@ namespace Laobian.Blog.Controllers
                 !Request.Headers.ContainsKey(signatureHeader) ||
                 !Request.Headers.ContainsKey(deliveryHeader))
             {
-                _logger.LogWarning("Headers are not completed.");
+                _logger.LogWarning(LogMessageHelper.Format("Headers are not completed.", HttpContext));
                 return BadRequest("Invalid Request.");
             }
 
             if (!CompareHelper.IgnoreCase("push", Request.Headers[eventHeader]))
             {
-                _logger.LogWarning($"Invalid github event {Request.Headers[eventHeader]}");
+                _logger.LogWarning(LogMessageHelper.Format($"Invalid github event {Request.Headers[eventHeader]}"));
                 return BadRequest("Only support push event.");
             }
 
             var signature = Request.Headers[signatureHeader].ToString();
             if (!signature.StartsWith("sha1=", StringComparison.OrdinalIgnoreCase))
             {
-                _logger.LogWarning($"Invalid github signature {signature}");
+                _logger.LogWarning(LogMessageHelper.Format($"Invalid github signature {signature}", HttpContext));
                 return BadRequest("Invalid signature.");
             }
 
@@ -78,7 +79,7 @@ namespace Laobian.Blog.Controllers
 
                     if (!hashStr.Equals(signature))
                     {
-                        _logger.LogWarning($"Invalid github signature {signature}, {hashStr}");
+                        _logger.LogWarning(LogMessageHelper.Format($"Invalid github signature {signature}, {hashStr}"));
                         return BadRequest("Invalid signature.");
                     }
                 }
@@ -88,7 +89,7 @@ namespace Laobian.Blog.Controllers
                     CompareHelper.IgnoreCase(Global.Config.Blog.AssetGitCommitEmail, c.Author.Email) &&
                     CompareHelper.IgnoreCase(Global.Config.Blog.AssetGitCommitUser, c.Author.User)))
                 {
-                    _logger.LogInformation("Got request from server, no need to refresh.");
+                    _logger.LogInformation(LogMessageHelper.Format("Got request from server, no need to refresh."));
                     return Ok("No need to refresh.");
                 }
 
@@ -98,10 +99,25 @@ namespace Laobian.Blog.Controllers
                 Task.Run(async () => // Make GitHub hook return fast.
 #pragma warning restore 4014
                 {
-                    await _blogService.GitHookAsync(modifiedPosts.Concat(addedPosts).ToList());
+                    try
+                    {
+                        var messages = await _blogService.GitHookAsync(modifiedPosts.Concat(addedPosts).ToList());
+                        if (string.IsNullOrEmpty(messages))
+                        {
+                            _logger.LogInformation("Completed GitHub Hook with no warnings/errors. Great!");
+                        }
+                        else
+                        {
+                            _logger.LogWarning($"Completed GitHub Hook with some warnings/errors.{Environment.NewLine}{messages}");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Failed GitHub Hook with exception.");
+                    }
                 });
 
-                _logger.LogInformation("GitHub Hook executed completed.");
+                _logger.LogInformation(LogMessageHelper.Format("GitHub Hook executed completed."));
                 return Ok("Local updated.");
             }
         }

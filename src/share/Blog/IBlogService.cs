@@ -20,9 +20,9 @@ namespace Laobian.Share.Blog
         List<BlogArchive> GetArchives(bool onlyPublic = true, bool publishTimeDesc = true,
             bool toppingPostsFirst = true);
 
-        Task InitAsync(bool clone = true);
+        Task<string> InitAsync(bool clone = true);
 
-        Task GitHookAsync(List<string> postLinks);
+        Task<string> GitHookAsync(List<string> postLinks);
 
         Task UpdateGitHubAsync(string commitMessage);
     }

@@ -12,6 +12,10 @@ namespace Laobian.Share
     {
         public static ConcurrentStack<BlogAlertEntry> InMemoryLogQueue = new ConcurrentStack<BlogAlertEntry>();
 
+        public static ConcurrentQueue<string> InMemoryWarningLogQueue = new ConcurrentQueue<string>();
+
+        public static ConcurrentQueue<string> InMemoryErrorLogQueue = new ConcurrentQueue<string>();
+
         public static string RuntimeVersion = RuntimeInformation.FrameworkDescription;
 
         public static AppConfig Config { get; set; }

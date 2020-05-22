@@ -175,31 +175,20 @@ namespace Laobian.Share.Blog
             return archives;
         }
 
-        public async Task InitAsync(bool clone = true)
+        public async Task<string> InitAsync(bool clone = true)
         {
             try
             {
                 await _semaphoreSlim.WaitAsync();
-                var shouldContinue = true;
                 if (clone)
                 {
-                    shouldContinue = await _blogAssetManager.PullFromGitHubAsync();
+                    await _blogAssetManager.PullFromGitHubAsync();
                 }
-
-                if (shouldContinue)
-                {
-                    shouldContinue = await _blogAssetManager.ParseAssetsToObjectsAsync();
-                }
-
-                if (shouldContinue)
-                {
-                    shouldContinue = await _blogAssetManager.SerializeAssetsToFilesAsync();
-                }
-
-                if (shouldContinue)
-                {
-                    await _blogAssetManager.PushToGitHubAsync(GitCommitMessageFactory.ServerStarted());
-                }
+                
+                var messages = await _blogAssetManager.ParseAssetsToObjectsAsync();
+                await _blogAssetManager.SerializeAssetsToFilesAsync();
+                await _blogAssetManager.PushToGitHubAsync(GitCommitMessageFactory.ServerStarted());
+                return messages;
             }
             finally
             {
@@ -207,42 +196,20 @@ namespace Laobian.Share.Blog
             }
         }
 
-        public async Task GitHookAsync(List<string> postLinks)
+        public async Task<string> GitHookAsync(List<string> postLinks)
         {
             try
             {
                 await _semaphoreSlim.WaitAsync();
-                var shouldContinue = await _blogAssetManager.PullFromGitHubAsync();
-                if (shouldContinue)
-                {
-                    shouldContinue = await _blogAssetManager.PullFromGitHubAsync();
-                }
+                await _blogAssetManager.PullFromGitHubAsync();
 
                 var oldPosts = new List<BlogPost>(_blogAssetManager.GetAllPosts());
-                if (shouldContinue)
-                {
-                    shouldContinue = await _blogAssetManager.ParseAssetsToObjectsAsync();
-                }
-
-                if (shouldContinue)
-                {
-                    shouldContinue = _blogAssetManager.MergePosts(oldPosts);
-                }
-
-                if (shouldContinue)
-                {
-                    shouldContinue = _blogAssetManager.UpdatePosts(postLinks);
-                }
-
-                if (shouldContinue)
-                {
-                    shouldContinue = await _blogAssetManager.SerializeAssetsToFilesAsync();
-                }
-
-                if (shouldContinue)
-                {
-                    await _blogAssetManager.PushToGitHubAsync(GitCommitMessageFactory.GitHubHook());
-                }
+                var messages = await _blogAssetManager.ParseAssetsToObjectsAsync();
+                _blogAssetManager.MergePosts(oldPosts);
+                _blogAssetManager.UpdatePosts(postLinks);
+                await _blogAssetManager.SerializeAssetsToFilesAsync();
+                await _blogAssetManager.PushToGitHubAsync(GitCommitMessageFactory.GitHubHook());
+                return messages;
             }
             finally
             {
@@ -255,11 +222,8 @@ namespace Laobian.Share.Blog
             try
             {
                 await _semaphoreSlim.WaitAsync();
-                var shouldContinue = await _blogAssetManager.SerializeAssetsToFilesAsync();
-                if (shouldContinue)
-                {
-                    await _blogAssetManager.PushToGitHubAsync(commitMessage);
-                }
+                await _blogAssetManager.SerializeAssetsToFilesAsync();
+                await _blogAssetManager.PushToGitHubAsync(commitMessage);
             }
             finally
             {
