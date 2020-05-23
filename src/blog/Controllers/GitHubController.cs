@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Laobian.Share;
 using Laobian.Share.Blog;
+using Laobian.Share.Blog.Alert;
 using Laobian.Share.Git;
 using Laobian.Share.Helper;
 using Laobian.Share.Log;
@@ -19,14 +20,17 @@ namespace Laobian.Blog.Controllers
     public class GitHubController : ControllerBase
     {
         private readonly IBlogService _blogService;
+        private readonly IBlogAlertService _blogAlertService;
         private readonly ILogger<GitHubController> _logger;
 
         public GitHubController(
             IBlogService blogService,
-            ILogger<GitHubController> logger)
+            ILogger<GitHubController> logger,
+            IBlogAlertService blogAlertService)
         {
             _logger = logger;
             _blogService = blogService;
+            _blogAlertService = blogAlertService;
         }
 
         // http://michaco.net/blog/HowToValidateGitHubWebhooksInCSharpWithASPNETCoreMVC
@@ -105,19 +109,25 @@ namespace Laobian.Blog.Controllers
                         if (string.IsNullOrEmpty(messages))
                         {
                             _logger.LogInformation("Completed GitHub Hook with no warnings/errors. Great!");
+                            await _blogAlertService.AlertEventAsync(
+                                "<p>Completed GitHub Hook with no warnings/errors. Great!</p>");
                         }
                         else
                         {
                             _logger.LogWarning($"Completed GitHub Hook with some warnings/errors.{Environment.NewLine}{messages}");
+                            await _blogAlertService.AlertEventAsync(
+                                $"<p>Completed GitHub Hook with some warnings/errors.</p><div><pre>{messages}</pre></div>");
                         }
                     }
                     catch (Exception ex)
                     {
                         _logger.LogError(ex, "Failed GitHub Hook with exception.");
+                        await _blogAlertService.AlertEventAsync(
+                            $"<p>Failed GitHub Hook with exception.</p>", ex);
                     }
                 });
 
-                _logger.LogInformation(LogMessageHelper.Format("GitHub Hook executed completed."));
+                _logger.LogInformation(LogMessageHelper.Format("GitHub Hook executed completed(not really)."));
                 return Ok("Local updated.");
             }
         }

@@ -5,11 +5,10 @@ using System.Reflection;
 using Laobian.Blog.Helpers;
 using Laobian.Share;
 using Laobian.Share.Blog.Alert;
-using Laobian.Share.Helper;
+using Laobian.Share.Extension;
 using Laobian.Share.Log;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -124,7 +123,7 @@ namespace Laobian.Blog
 
                 if (!Global.Environment.IsDevelopment())
                 {
-                    await alertService.AlertEventAsync("Blog started.");
+                    await alertService.AlertEventAsync($"<p>Blog started, it's {DateTime.Now.ToDateAndTime()}.</p>");
                 }
 
                 logger.LogInformation("Application started.");
@@ -134,7 +133,7 @@ namespace Laobian.Blog
             {
                 if (!Global.Environment.IsDevelopment())
                 {
-                    await alertService.AlertEventAsync("Blog is stopping.");
+                    await alertService.AlertEventAsync($"<p>Blog is stopping, it's {DateTime.Now.ToDateAndTime()}.");
                 }
 
                 logger.LogInformation("Application is stopping.");
@@ -144,7 +143,7 @@ namespace Laobian.Blog
             {
                 if (!Global.Environment.IsDevelopment())
                 {
-                    await alertService.AlertEventAsync("Blog is stopped.");
+                    await alertService.AlertEventAsync($"<p>Blog is stopped, it's {DateTime.Now.ToDateAndTime()}.");
                 }
 
                 logger.LogInformation("Application is stopped.");

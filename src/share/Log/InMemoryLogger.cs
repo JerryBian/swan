@@ -15,17 +15,39 @@ namespace Laobian.Share.Log
             var message = $"{formatter(state, exception)}";
             if (logLevel == LogLevel.Warning)
             {
-                Global.InMemoryWarningLogQueue.Enqueue(message);
+                Global.InMemoryLogQueue.Enqueue(new LogEntry
+                {
+                    Exception =  exception,
+                    Level = LogLevel.Warning,
+                    Message = message,
+                    When = DateTime.Now
+                });
+            }
+            else if(logLevel == LogLevel.Information)
+            {
+                Global.InMemoryLogQueue.Enqueue(new LogEntry
+                {
+                    Exception = exception,
+                    Level = LogLevel.Information,
+                    Message = message,
+                    When = DateTime.Now
+                });
             }
             else
             {
-                Global.InMemoryErrorLogQueue.Enqueue(message);
+                Global.InMemoryLogQueue.Enqueue(new LogEntry
+                {
+                    Exception = exception,
+                    Level = LogLevel.Error,
+                    Message = message,
+                    When = DateTime.Now
+                });
             }
         }
 
         public bool IsEnabled(LogLevel logLevel)
         {
-            return logLevel >= LogLevel.Warning;
+            return logLevel >= LogLevel.Information;
         }
 
         public IDisposable BeginScope<TState>(TState state)

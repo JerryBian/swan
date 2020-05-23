@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 
 namespace Laobian.Share.Log
@@ -12,7 +13,7 @@ namespace Laobian.Share.Log
                 return message;
             }
 
-            return $"{context.Connection.RemoteIpAddress}\t{context.Request.GetDisplayUrl()}\t{message}";
+            return $"{message}{Environment.NewLine}{context.Connection.RemoteIpAddress}{Environment.NewLine}{context.Request.GetDisplayUrl()}{Environment.NewLine}{context.Request.Headers["User-Agent"]}";
         }
     }
 }
