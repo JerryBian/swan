@@ -27,35 +27,34 @@
     <title>@ViewDataHelper.GetTitle(ViewData)</title>
 </head>
 <body>
-<nav class="navbar">
-    <div class="container">
-        <a class="navbar-brand" href="/">@Global.Config.Blog.Name</a>
-        <ul class="nav ml-auto">
-            <li>
-                <a class="nav-item nav-link" href="/about/">关于</a>
-            </li>
-            <li>
-                <a class="nav-item nav-link" href="/archive/">存档</a>
-            </li>
-        </ul>
-    </div>
-</nav>
-<main class="container mt-2 pl-3 pr-3 pb-1 pt-3 mb-2">
-    @RenderBody()
-</main>
-<footer class="text-muted">
-    <div class="container pb-3 pt-3 text-center">
-        <div>
-            &copy; @DateTime.Now.Year @Global.Config.Common.AdminChineseName &middot;
-            Powered by @Global.RuntimeVersion &hearts;
+    <nav class="navbar">
+        <div class="container">
+            <a class="navbar-brand" href="/">@Global.Config.Blog.Name</a>
+            <ul class="nav ml-auto">
+                <li>
+                    <a class="nav-item nav-link" href="/about/">关于</a>
+                </li>
+                <li>
+                    <a class="nav-item nav-link" href="/archive/">存档</a>
+                </li>
+            </ul>
         </div>
-    </div>
-</footer>
+    </nav>
+    <main class="container mt-2 pl-3 pr-3 pb-1 pt-3 mb-2">
+        @RenderBody()
+    </main>
+    <footer class="text-muted">
+        <div class="container pb-3 pt-3 text-center">
+            <div>
+                &copy; @DateTime.Now.Year @Global.Config.Common.AdminChineseName &middot;
+                &hearts; &middot;
+                <a href="/about/">关于</a> | <a href="/rss/">订阅</a>
+            </div>
+        </div>
+    </footer>
 
-@RenderSection("script", false)
+    @RenderSection("script", false)
 
-<!--App version: @Global.AppVersion.-->
-<!--Page generated at @DateTime.Now.ToDateAndTime().-->
-<!--boot at @Global.StartTime.ToDateAndTime(), has been online for @Global.RunningInterval.-->
+    <!--Page generated at @DateTime.Now.ToDateAndTime().-->
 </body>
 </html>
