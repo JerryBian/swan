@@ -1,0 +1,103 @@
+﻿<div id="log_page">
+    <ul class="nav justify-content-center" id="types">
+        <li class="nav-item">
+            <a class="nav-link active" id="all_logs" href="#" onclick="select(this); return false;">All</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="info_logs" href="#" onclick="select(this); return false;">Information</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="warn_logs" href="#" onclick="select(this); return false;">Warning</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="error_logs" href="#" onclick="select(this); return false;">Error</a>
+        </li>
+    </ul>
+
+    <section id="log_window">
+    </section>
+
+</div>
+
+
+@section style{
+    <link rel="stylesheet"
+          href="~/style/admin.min.css"
+          asp-fallback-href="https://jerrybian.github.io/blog.laobian.me/style/admin.min.css"
+          asp-fallback-test-class="sr-only"
+          asp-fallback-test-property="position"
+          asp-fallback-test-value="absolute"
+          asp-append-version="true" />
+}
+
+@section script{
+    <script src="~/script/admin.min.js"
+            asp-fallback-src="https://jerrybian.github.io/blog.laobian.me/script/admin.min.js"
+            asp-fallback-test="window.test"
+            asp-append-version="true">
+    </script>
+
+    <script>
+        let timer;
+
+        function loadLogs(type) {
+            window.fetch(`/admin/api/log?type=${type}`,
+                {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    mode: 'no-cors',
+                    cache: 'no-cache',
+                    redirect: 'follow',
+                    referrerPolicy: 'no-referrer',
+                    headers: {
+                        'Content-Type': 'text/plain'
+                    }
+                })
+                .then(res => {
+                    if (res.ok) {
+                        return res.text();
+                    } else {
+                        throw new Error(`Response error: ${res.status}(${res.statusText})`);
+                    }
+                })
+                .then(txt => {
+                    document.querySelector('#log_window').innerHTML = `<pre>${txt}</pre>`;
+                })
+                .catch(error => console.error(error));
+        }
+
+        function selectType(type) {
+            let ele = document.querySelector('#types');
+            if (ele) {
+                let children = [...ele.children];
+                children.forEach(function (li) {
+                    let child = li.querySelector('a');
+                    child.classList.remove('active');
+
+                    if (child.id === type) {
+                        child.classList.add('active');
+                    }
+                });
+            }
+        }
+
+        function select(ele) {
+            selectType(ele.id);
+
+            if (timer) {
+                clearInterval(timer);
+            }
+
+            document.querySelector('#log_window').innerHTML = '<pre></pre>';
+            loadLogs(ele.id);
+            timer = setInterval(function () {
+                loadLogs(ele.id);
+            }, 1000 * 3);
+        }
+
+        document.addEventListener("DOMContentLoaded",
+            function () {
+                select(document.querySelector('#all_logs'));
+            });
+    </script>
+}

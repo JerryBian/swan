@@ -30,7 +30,7 @@ namespace Laobian.Blog.HostedService
             {
                 if (Global.Environment.IsDevelopment())
                 {
-                    await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
+                    await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
                     await GenerateLogReportAsync();
                 }
                 else
