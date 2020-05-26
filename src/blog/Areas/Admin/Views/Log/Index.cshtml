@@ -15,6 +15,7 @@
     </ul>
 
     <section id="log_window">
+        <ul id="log_items"></ul>
     </section>
 
 </div>
@@ -38,39 +39,72 @@
     </script>
 
     <script>
-        let timer;
+        let connection;
+        let subscribe;
+        const ul = document.querySelector('#log_items');
 
-        function loadLogs(type) {
-            window.fetch(`/admin/api/log?type=${type}`,
-                {
-                    method: 'POST',
-                    credentials: 'same-origin',
-                    mode: 'no-cors',
-                    cache: 'no-cache',
-                    redirect: 'follow',
-                    referrerPolicy: 'no-referrer',
-                    headers: {
-                        'Content-Type': 'text/plain'
+        function stream(type) {
+            subscribe = connection.stream('Get', type)
+                .subscribe({
+                    next: (item) => {
+                        console.log(item);
+                        
+                        item.forEach(i => {
+                            let li = document.createElement('li');
+                            li.innerHTML = `[${i.when}]\t${i.message}`;
+                            if (i.exception) {
+                                li.innerHTML += `<br />${i.exception}`;
+                            }
+
+                            ul.prepend(li);
+                        });
+
+                    },
+                    complete: () => {
+                        console.log('complete');
+                    },
+                    error: (err) => {
+                        console.log(err);
                     }
-                })
-                .then(res => {
-                    if (res.ok) {
-                        return res.text();
-                    } else {
-                        throw new Error(`Response error: ${res.status}(${res.statusText})`);
-                    }
-                })
-                .then(txt => {
-                    document.querySelector('#log_window').innerHTML = `<pre>${txt}</pre>`;
-                })
-                .catch(error => console.error(error));
+                });
         }
+
+        async function start(type) {
+            connection = new signalR.HubConnectionBuilder()
+                .withUrl('/hub/log')
+                .withAutomaticReconnect()
+                .configureLogging(signalR.LogLevel.Information)
+                .build();
+
+            connection.onclose(() => {
+                console.log('connection closed');
+            });
+
+            connection.onreconnecting(error => {
+                console.log(`Connection lost due to error "${error}". Reconnecting.`);
+            });
+
+            connection.onreconnected(connectionId => {
+                stream(type);
+            });
+
+            try {
+                await connection.start();
+                console.log("connected");
+
+                ul.innerHTML = '';
+                stream(type);
+            } catch (err) {
+                console.log(err);
+            }
+        }
+
 
         function selectType(type) {
             let ele = document.querySelector('#types');
             if (ele) {
                 let children = [...ele.children];
-                children.forEach(function (li) {
+                children.forEach(function(li) {
                     let child = li.querySelector('a');
                     child.classList.remove('active');
 
@@ -84,19 +118,19 @@
         function select(ele) {
             selectType(ele.id);
 
-            if (timer) {
-                clearInterval(timer);
+            if (subscribe) {
+                subscribe.dispose();
             }
 
-            document.querySelector('#log_window').innerHTML = '<pre></pre>';
-            loadLogs(ele.id);
-            timer = setInterval(function () {
-                loadLogs(ele.id);
-            }, 1000 * 3);
+            if (connection) {
+                connection.stop();
+            }
+
+            start(ele.id);
         }
 
         document.addEventListener("DOMContentLoaded",
-            function () {
+            function() {
                 select(document.querySelector('#all_logs'));
             });
     </script>

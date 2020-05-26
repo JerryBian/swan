@@ -35,6 +35,7 @@ namespace Laobian.Blog.Helpers
             services.AddSingleton<IBlogAlertService, BlogAlertService>();
             services.AddHealthChecks();
             services.AddHttpContextAccessor();
+            services.AddSignalR();
 
             services.AddHostedService<AssetHostedService>();
             services.AddHostedService<LogHostedService>();

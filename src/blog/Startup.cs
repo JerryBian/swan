@@ -3,6 +3,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using Laobian.Blog.Helpers;
+using Laobian.Blog.Hubs;
 using Laobian.Share;
 using Laobian.Share.Blog.Alert;
 using Laobian.Share.Extension;
@@ -109,6 +110,7 @@ namespace Laobian.Blog
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHub<LogHub>("/hub/log");
                 endpoints.MapAreaControllerRoute(
                     "AdminArea", 
                     "Admin",

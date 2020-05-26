@@ -17,7 +17,7 @@ namespace Laobian.Share.Log
             {
                 Global.InMemoryLogQueue.Enqueue(new LogEntry
                 {
-                    Exception =  exception,
+                    Exception =  exception?.ToString(),
                     Level = LogLevel.Warning,
                     Message = message,
                     When = DateTime.Now
@@ -27,7 +27,7 @@ namespace Laobian.Share.Log
             {
                 Global.InMemoryLogQueue.Enqueue(new LogEntry
                 {
-                    Exception = exception,
+                    Exception = exception?.ToString(),
                     Level = LogLevel.Information,
                     Message = message,
                     When = DateTime.Now
@@ -37,7 +37,7 @@ namespace Laobian.Share.Log
             {
                 Global.InMemoryLogQueue.Enqueue(new LogEntry
                 {
-                    Exception = exception,
+                    Exception = exception?.ToString(),
                     Level = LogLevel.Error,
                     Message = message,
                     When = DateTime.Now
