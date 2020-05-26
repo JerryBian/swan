@@ -23,7 +23,7 @@ namespace Laobian.Share.Log
                     When = DateTime.Now
                 });
             }
-            else if(logLevel == LogLevel.Information)
+            else if(logLevel == LogLevel.Information || logLevel == LogLevel.Debug)
             {
                 Global.InMemoryLogQueue.Enqueue(new LogEntry
                 {
