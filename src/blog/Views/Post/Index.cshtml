@@ -71,16 +71,16 @@
                 }
             };
         </script>
-        <script src="~/script/post-mathjax.min.js"
-                asp-fallback-src="https://jerrybian.github.io/blog.laobian.me/script/post-mathjax.min.js"
+        <script src="~/dist/post-mathjax.min.js"
+                asp-fallback-src="https://jerrybian.github.io/blog.laobian.me/post-mathjax.min.js"
                 asp-fallback-test="window.test"
                 asp-append-version="true">
         </script>
     }
     else
     {
-        <script src="~/script/post.min.js"
-                asp-fallback-src="https://jerrybian.github.io/blog.laobian.me/script/post.min.js"
+        <script src="~/dist/post.min.js"
+                asp-fallback-src="https://jerrybian.github.io/blog.laobian.me/post.min.js"
                 asp-fallback-test="window.test"
                 asp-append-version="true">
         </script>
@@ -100,8 +100,8 @@
 
 @section style{
     <link rel="stylesheet"
-          href="~/style/post.min.css"
-          asp-fallback-href="https://jerrybian.github.io/blog.laobian.me/style/post.min.css"
+          href="~/dist/post.min.css"
+          asp-fallback-href="https://jerrybian.github.io/blog.laobian.me/post.min.css"
           asp-fallback-test-class="sr-only"
           asp-fallback-test-property="position"
           asp-fallback-test-value="absolute"

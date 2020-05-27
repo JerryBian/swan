@@ -27,7 +27,7 @@ jobs:
       with:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         BRANCH: gh-pages # The branch the action should deploy to.
-        FOLDER: src/blog/wwwroot # The folder the action should deploy.
+        FOLDER: src/blog/wwwroot/dist # The folder the action should deploy.
         SINGLE_COMMIT: false
     - name: Publish binary
       run: dotnet publish ./src/blog/Laobian.Blog.csproj -p:PublishTrimmed=true -p:PublishSingleFile=true -c Release -r linux-x64 -o publish --self-contained
