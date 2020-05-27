@@ -20,5 +20,6 @@
 
   <ItemGroup>
     <Content Update="wwwroot\lib\**" CopyToPublishDirectory="Never" />
+    <Content Update="wwwroot\src\**" CopyToPublishDirectory="Never" />
   </ItemGroup>
 </Project>
