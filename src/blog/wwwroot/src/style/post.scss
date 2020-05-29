@@ -1,6 +1,6 @@
 ﻿@use "../../lib/highlight/styles/github.css";
 
-@import "_/_common.scss";
+@import "variable.scss";
 @import "../../lib/bootstrap/scss/functions";
 @import "../../lib/bootstrap/scss/variables";
 @import "../../lib/bootstrap/scss/mixins";
@@ -25,7 +25,7 @@
 
 .post {
     .post-content {
-        @import "_/_postContent";
+        @import "../../dist/post-content.css";
     }
 }
 

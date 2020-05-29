@@ -5,8 +5,7 @@
 
 .navbar,
 footer {
-    background-color: #fff;
-    box-shadow: 0 1px 3px rgba(26,26,26,.1);
+    background-color: $navbar-bg;
 }
 
 footer {
@@ -18,30 +17,38 @@ footer {
     }
 }
 
-.sticky-top {
-    @supports (position: sticky) {
-        top: $font-size-base * 1.1;
+.navbar-brand {
+    color: $navbar-brand-color;
+
+    @include hover-focus {
+        color: darken($navbar-brand-color, 15%);
     }
 }
 
-img {
-    max-width: 98%;
-    height: auto;
-    padding: .25rem;
-    padding-left: 0;
-    background-color: #fff;
-}
+    .sticky-top {
+        @supports (position: sticky) {
+            top: $font-size-base * 1.1;
+        }
+    }
 
-main {
-    background-color: #fff;
-    border-radius: 3px;
-    box-shadow: 0 1px 3px rgba(26,26,26,.1);
-}
+    img {
+        max-width: 98%;
+        height: auto;
+        padding: .25rem;
+        padding-left: 0;
+        background-color: #fff;
+    }
 
-header {
-    padding: 1rem 0;
-}
+    main {
+        background-color: #fff;
+        border-radius: 3px;
+        box-shadow: 0 1px 3px rgba(26,26,26,.1);
+    }
 
-pre code {
-    font-size: $font-size-sm;
-}
+    header {
+        padding: 1rem 0;
+    }
+
+    pre code {
+        font-size: $font-size-sm;
+    }
