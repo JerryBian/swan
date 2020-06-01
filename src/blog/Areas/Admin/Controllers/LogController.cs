@@ -8,7 +8,6 @@ namespace Laobian.Blog.Areas.Admin.Controllers
     [Area("admin")]
     public class LogController : Controller
     {
-        // GET: /<controller>/
         public IActionResult Index()
         {
             ViewData[ViewDataConstant.Title] = "View Logs";

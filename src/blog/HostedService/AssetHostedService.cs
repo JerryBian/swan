@@ -55,7 +55,6 @@ namespace Laobian.Blog.HostedService
             _logger.LogInformation($"{nameof(AssetHostedService)} has started.");
             if (!string.IsNullOrEmpty(messages))
             {
-                //TODO: Add direct alert
                 _logger.LogWarning($"nameof(AssetHostedService)}} has started, but there are warnings/errors your need to pay attention to.{Environment.NewLine}{messages}");
             }
         }

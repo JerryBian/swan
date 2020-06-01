@@ -16,7 +16,7 @@ namespace Laobian.Share.Blog.Extension
         {
             var results = new List<string>();
             results.Add(
-                $"<span>发表于</span> <time class=\"muted-bolder\" datetime=\"{post.PublishTime.ToDateAndTime()}\" title=\"{post.PublishTime.ToDateAndTime()}\">{post.PublishTimeString}</time>");
+                $"<span>发表于</span> <time class=\"muted-bolder\" datetime=\"{post.PublishTime.ToDateAndTime()}\" title=\"{post.PublishTime.ToChinaDateAndTime()}\">{post.PublishTimeString}</time>");
             results.Add(
                 $"<span class=\"muted-bolder\" title=\"{post.AccessCount}\">{post.AccessCountString}</span> <span>次阅读</span>");
 

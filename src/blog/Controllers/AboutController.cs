@@ -37,7 +37,7 @@ namespace Laobian.Blog.Controllers
                         TopPosts = posts.OrderByDescending(p => p.AccessCount).Take(Global.Config.Blog.PostsPerPage),
                         SystemAppVersion = Global.AppVersion,
                         SystemDotNetVersion = Global.RuntimeVersion,
-                        SystemLastBoot = Global.StartTime.ToDateAndTime(),
+                        SystemLastBoot = Global.StartTime.ToChinaDateAndTime(),
                         SystemRunningInterval = Global.RunningInterval,
                         TagTotalCount = tags.Count.ToString(),
                         TopTags = tags.OrderByDescending(t => t.Posts.Count).Take(Global.Config.Blog.PostsPerPage),

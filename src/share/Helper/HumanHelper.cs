@@ -50,7 +50,24 @@ namespace Laobian.Share.Helper
 
         public static string DisplayTimeSpan(TimeSpan interval)
         {
-            return interval.ToString();
+            if (interval.TotalSeconds < 60)
+            {
+                return $"{interval:ss}秒";
+            }
+
+            if (interval.Days <= 0)
+            {
+                return $"{interval:hh}小时{interval:mm}分钟";
+            }
+
+            if (interval.Days > 365)
+            {
+                var year = interval.Days / 365;
+                var days = interval.Days % 365;
+                return $"{year}年{days}天{interval:hh}小时";
+            }
+
+            return $"{interval:dd}天{interval:hh}小时";
         }
     }
 }

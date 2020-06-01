@@ -37,7 +37,7 @@ namespace Laobian.Share.Blog.Alert
                 {
                     FromName = Global.Config.Common.AlertSenderName,
                     FromAddress = Global.Config.Common.AlertSenderEmail,
-                    Subject = "new event happened!",
+                    Subject = "new event arrived...",
                     HtmlContent = $"<div>{message}</div>"
                 };
 
@@ -61,10 +61,10 @@ namespace Laobian.Share.Blog.Alert
         {
             if (!logs.Any())
             {
-                _logger.LogInformation("No need to generate log report as there is no warnings/errors yesterday.");
+                _logger.LogInformation("No need to generate log report as there is no warnings/errors during last time window.");
                 if (!Global.Environment.IsDevelopment())
                 {
-                    await AlertEventAsync("No need to generate log report as there is no warnings/errors yesterday.");
+                    await AlertEventAsync("No need to generate log report as there is no warnings/errors during last time window.");
                 }
                 
                 return;

@@ -45,7 +45,6 @@ namespace Laobian.Blog.HostedService
                     {
                         await GenerateLogReportAsync();
                         _lastReportGeneratedAt = DateTime.Now;
-                        _logger.LogInformation("Report generated completely.");
                     }
 
                     _logger.LogDebug("Logs flushed completely.");

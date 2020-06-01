@@ -50,7 +50,7 @@ namespace Laobian.Blog.Controllers
                     r = "/";
                 }
 
-                _logger.LogInformation("Login successfully.");
+                _logger.LogInformation($"Login successfully, user={userName}.");
                 return Redirect(r);
             }
 

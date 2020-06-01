@@ -24,7 +24,6 @@
 
 <div class="alert alert-warning post-alert" role="alert">
     <ul>
-        <li>最后更新于：<span title="@Model.Post.LastUpdateTime">@Model.Post.LastUpdateTimeString</span></li>
         @{
             var html = Model.Post.CategoryAndTagHtml;
             if (!string.IsNullOrEmpty(html))
@@ -32,6 +31,9 @@
                 <li>@Html.Raw(html)</li>
             }
         }
+
+        <li>最后更新于：<span title="@Model.Post.LastUpdateTime.ToChinaDateAndTime()">@Model.Post.LastUpdateTimeString</span></li>
+
         @if (Model.PrevPost != null)
         {
             <li>前一篇：<a href="@Model.PrevPost.FullUrl">@Model.PrevPost.Title</a></li>

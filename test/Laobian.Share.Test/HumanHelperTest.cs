@@ -65,5 +65,35 @@ namespace Laobian.Share.Test
         {
             Assert.Equal("109k", HumanHelper.DisplayInt(109009));
         }
+
+        [Fact]
+        public void Test11()
+        {
+            Assert.Equal("12小时01分钟", HumanHelper.DisplayTimeSpan(new TimeSpan(0, 12, 1, 2)));
+        }
+
+        [Fact]
+        public void Test12()
+        {
+            Assert.Equal("10天02小时", HumanHelper.DisplayTimeSpan(new TimeSpan(10, 2, 1, 2)));
+        }
+
+        [Fact]
+        public void Test13()
+        {
+            Assert.Equal("2年256天12小时", HumanHelper.DisplayTimeSpan(new TimeSpan(986, 12, 1, 2)));
+        }
+
+        [Fact]
+        public void Test14()
+        {
+            Assert.Equal("365天12小时", HumanHelper.DisplayTimeSpan(new TimeSpan(365, 12, 1, 2)));
+        }
+
+        [Fact]
+        public void Test15()
+        {
+            Assert.Equal("59秒", HumanHelper.DisplayTimeSpan(new TimeSpan(0, 0, 0, 59)));
+        }
     }
 }

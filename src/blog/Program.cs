@@ -19,7 +19,7 @@ namespace Laobian.Blog
                 {
                     webBuilder.CaptureStartupErrors(true);
                     webBuilder.UseSetting(WebHostDefaults.DetailedErrorsKey, bool.TrueString);
-                    webBuilder.UseShutdownTimeout(TimeSpan.FromMinutes(2));
+                    webBuilder.UseShutdownTimeout(TimeSpan.FromMinutes(5));
                     webBuilder.ConfigureLogging(builder => builder.AddInMemoryLogger());
                     webBuilder.UseStartup<Startup>();
                 });
