@@ -85,8 +85,6 @@ namespace Laobian.Share.Blog.Model
 
         #region UI
 
-        public string MetadataHtml { get; set; }
-
         public string CategoryAndTagHtml { get; set; }
 
         public string HeadDescription { get; set; }

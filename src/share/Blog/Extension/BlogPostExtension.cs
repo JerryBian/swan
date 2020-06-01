@@ -12,15 +12,15 @@ namespace Laobian.Share.Blog.Extension
 {
     public static class BlogPostExtension
     {
-        private static void SetMetadataHtml(BlogPost post)
+        public static string GetMetadataHtml(this BlogPost post)
         {
-            var results = new List<string>();
-            results.Add(
-                $"<span>发表于</span> <time class=\"muted-bolder\" datetime=\"{post.PublishTime.ToDateAndTime()}\" title=\"{post.PublishTime.ToChinaDateAndTime()}\">{post.PublishTimeString}</time>");
-            results.Add(
-                $"<span class=\"muted-bolder\" title=\"{post.AccessCount}\">{post.AccessCountString}</span> <span>次阅读</span>");
+            var results = new List<string>
+            {
+                $"<span>发表于</span> <time class=\"muted-bolder\" datetime=\"{post.PublishTime.ToDateAndTime()}\" title=\"{post.PublishTime.ToChinaDateAndTime()}\">{post.PublishTimeString}</time>",
+                $"<span class=\"muted-bolder\" title=\"{post.AccessCount}\">{post.AccessCountString}</span> <span>次阅读</span>"
+            };
 
-            post.MetadataHtml = string.Join(" &middot; ", results);
+            return string.Join(" &middot; ", results);
         }
 
         private static void SetCategoryAndTagHtml(BlogPost post)
@@ -85,7 +85,6 @@ namespace Laobian.Share.Blog.Extension
             post.FullUrlWithBase = UrlHelper.Combine(Global.Config.Blog.BlogAddress, post.FullUrl);
 
             SetCategoryAndTagHtml(post);
-            SetMetadataHtml(post);
             SetHeadDescription(post);
         }
 

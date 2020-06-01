@@ -1,7 +1,7 @@
 ﻿@model PostViewModel
 
 <article class="post">
-    <div class="text-muted d-sm-block post-meta">@Html.Raw(Model.Post.MetadataHtml)</div>
+    <div class="text-muted d-sm-block post-meta">@Html.Raw(Model.Post.GetMetadataHtml())</div>
     <div class="post-title">
         @Model.Post.Title
         @if (Model.Post.IsTopping)
