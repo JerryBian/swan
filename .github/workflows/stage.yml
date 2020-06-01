@@ -3,8 +3,6 @@ name: stage
 on:
   push:
     branches: [ stage ]
-  pull_request:
-    branches: [ stage ]
 
 jobs:
   build:
