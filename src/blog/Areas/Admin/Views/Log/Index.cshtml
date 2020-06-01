@@ -48,17 +48,17 @@
                 .subscribe({
                     next: (item) => {
                         console.log(item);
-                        
-                        item.forEach(i => {
+
+                        for (let i of item) {
                             let li = document.createElement('li');
-                            li.innerHTML = `[${i.when}]\t${i.message}`;
+                            li.classList.add(getColor(i.level));
+                            li.innerHTML = `<span class='text-muted'>[${i.when}]</span>&nbsp;&nbsp;${i.message}`;
                             if (i.exception) {
                                 li.innerHTML += `<br />${i.exception}`;
                             }
 
                             ul.prepend(li);
-                        });
-
+                        }
                     },
                     complete: () => {
                         console.log('complete');
@@ -67,6 +67,18 @@
                         console.log(err);
                     }
                 });
+        }
+
+        function getColor(level) {
+            if (level === 2) {
+                return 'text-info';
+            } else if (level === 3) {
+                return 'text-warning';
+            } else if (level === 4) {
+                return 'text-danger';
+            } else {
+                return '';
+            }
         }
 
         async function start(type) {
@@ -104,7 +116,7 @@
             let ele = document.querySelector('#types');
             if (ele) {
                 let children = [...ele.children];
-                children.forEach(function(li) {
+                children.forEach(function (li) {
                     let child = li.querySelector('a');
                     child.classList.remove('active');
 
@@ -130,7 +142,7 @@
         }
 
         document.addEventListener("DOMContentLoaded",
-            function() {
+            function () {
                 select(document.querySelector('#all_logs'));
             });
     </script>

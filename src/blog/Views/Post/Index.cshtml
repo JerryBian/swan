@@ -2,16 +2,15 @@
 
 <article class="post">
     <div class="text-muted d-sm-block post-meta">@Html.Raw(Model.Post.MetadataHtml)</div>
-    <div class="post-title pt-1">
-
+    <div class="post-title">
         @Model.Post.Title
         @if (Model.Post.IsTopping)
         {
-            <span class="badge badge-light">置顶</span>
+            <span class="badge badge-success">置顶</span>
         }
         @if (!Model.Post.IsPublic)
         {
-            <span class="badge badge-success">
+            <span class="badge badge-warning">
                 未发布
             </span>
         }
@@ -25,7 +24,7 @@
 
 <div class="alert alert-warning post-alert" role="alert">
     <ul>
-        <li>最后更新于：@Model.Post.LastUpdateTimeString</li>
+        <li>最后更新于：<span title="@Model.Post.LastUpdateTime">@Model.Post.LastUpdateTimeString</span></li>
         @{
             var html = Model.Post.CategoryAndTagHtml;
             if (!string.IsNullOrEmpty(html))

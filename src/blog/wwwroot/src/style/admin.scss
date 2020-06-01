@@ -21,19 +21,39 @@
 @import "../../lib/bootstrap/scss/utilities";
 @import "shared.scss";
 
-#log_page{
+#log_page {
 
-    #types{
-
+    a {
+        text-decoration: none;
+        color: theme-color('primary');
+        border-bottom: none;
     }
 
-    #log_window{
+    .active {
+        color: theme-color("secondary");
+    }
+
+    .nav {
+        margin-bottom: 1%;
+    }
+
+    #types {
+    }
+
+    #log_window {
         max-width: 100%;
         padding: 1%;
-        border: 1px solid black;
+        background-color: #f9f9f9;
         overflow-y: auto;
         overflow-x: hidden;
         word-break: break-word;
         word-wrap: break-word;
+        font-family: $font-family-monospace;
+        font-size: 80%;
+        height: 480px;
+
+        li {
+            margin-bottom: .5rem;
+        }
     }
 }

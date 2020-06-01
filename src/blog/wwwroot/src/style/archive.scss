@@ -47,4 +47,9 @@
         padding-right: 0.8rem;
         min-width: 100px;
     }
+
+    .anchorjs-link {
+        border-bottom-style: none !important;
+        transition: all .25s linear;
+    }
 }

@@ -24,6 +24,7 @@
 .post-item {
     padding-left: 0;
     padding-right: 0;
+    padding-top: 1rem;
 
     &:first-of-type {
         padding-top: 0;
@@ -32,21 +33,7 @@
     .post-item-title {
         font-size: $post-title-font-size;
         font-family: $post-title-font;
-
-        a {
-            color: $post-title-color;
-
-            @include hover-focus {
-                color: darken($post-title-color, 15%);
-                padding-bottom: 2px;
-                border-bottom: 1px double #567c73;
-            }
-        }
-
-        span {
-            font-size: $font-size-sm;
-            padding: 0.2rem;
-        }
+        color: $post-title-color;
     }
 
     .post-item-excerpt {
@@ -54,7 +41,7 @@
             margin-left: 0;
             margin-right: 0;
             margin-top: 0;
-            margin-bottom: 0.75rem;
+            margin-bottom: 1.0rem;
             padding: 0;
 
             &:last-of-type {

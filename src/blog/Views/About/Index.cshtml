@@ -65,4 +65,15 @@
             asp-fallback-test="window.test"
             asp-append-version="true">
     </script>
+    <script>
+        document.addEventListener("DOMContentLoaded",
+            function () {
+                anchors.options = {
+                    placement: 'right',
+                    visible: 'hover',
+                    base: '/about'
+                };
+                anchors.add('.post-content h3, .post-content h4');
+            });
+    </script>
 }

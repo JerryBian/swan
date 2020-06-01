@@ -53,7 +53,6 @@ namespace Laobian.Blog.Hubs
                 logs.AddRange(entries.Where(e => e.Level == LogLevel.Information));
             }
 
-            logs.Reverse();
             return logs;
         }
     }

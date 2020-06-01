@@ -6,7 +6,7 @@
         @foreach (var item in Model)
         {
             <a class="btn btn-light archive-link" href="@item.GetRelativeLink()">
-                @item.Name <span class="badge badge-dark">@HumanHelper.DisplayInt(item.Posts.Count)</span>
+                @item.Name <span class="badge badge-info">@HumanHelper.DisplayInt(item.Posts.Count)</span>
             </a>
         }
     </div>
@@ -44,13 +44,24 @@
           asp-fallback-test-class="sr-only"
           asp-fallback-test-property="position"
           asp-fallback-test-value="absolute"
-          asp-append-version="true"/>
+          asp-append-version="true" />
 }
 
 @section script{
-    <script src="~/dist/index.min.js"
-            asp-fallback-src="https://jerrybian.github.io/blog.laobian.me/index.min.js"
+    <script src="~/dist/archive.min.js"
+            asp-fallback-src="https://jerrybian.github.io/blog.laobian.me/archive.min.js"
             asp-fallback-test="window.test"
             asp-append-version="true">
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded",
+            function () {
+                anchors.options = {
+                    placement: 'right',
+                    visible: 'hover',
+                    base: '/category'
+                };
+                anchors.add('.archive h3');
+            });
     </script>
 }
