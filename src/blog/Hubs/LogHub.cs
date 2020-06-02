@@ -27,7 +27,12 @@ namespace Laobian.Blog.Hubs
                 var timestamp = lastTimestamp;
                 yield return logs.Where(l => l.When > timestamp);
 
-                lastTimestamp = logs.FirstOrDefault()?.When ?? default;
+                var latest = logs.LastOrDefault();
+                if (latest != null)
+                {
+                    lastTimestamp = latest.When;
+                }
+
                 await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
             }
         }
