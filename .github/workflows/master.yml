@@ -1,4 +1,4 @@
-name: stage
+name: master
 
 on:
   push:
