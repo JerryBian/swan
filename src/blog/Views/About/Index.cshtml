@@ -19,7 +19,7 @@
         <ol>
             @foreach (var post in Model.TopPosts)
             {
-                <li><a href="@post.Link">@post.Title</a> <i>(@post.AccessCount)</i></li>
+                <li><a href="@post.FullUrl">@post.Title</a> <i>(@post.AccessCount)</i></li>
             }
         </ol>
         @if (Model.LatestPost != null)

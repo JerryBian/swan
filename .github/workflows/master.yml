@@ -1,4 +1,4 @@
-name: stage
+name: prod
 
 on:
   push:
