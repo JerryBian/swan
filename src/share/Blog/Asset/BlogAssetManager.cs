@@ -24,7 +24,6 @@ namespace Laobian.Share.Blog.Asset
         private readonly GitConfig _gitConfig;
         private readonly ManualResetEventSlim _manualReset;
         private readonly SemaphoreSlim _semaphore;
-        private string _aboutHtml;
 
         public BlogAssetManager(
             IGitClient gitClient)
@@ -62,18 +61,16 @@ namespace Laobian.Share.Blog.Asset
                 var postTask = ReloadLocalMemoryPostAsync();
                 var categoryTask = ReloadLocalMemoryCategoryAsync();
                 var tagTask = ReloadLocalMemoryTagAsync();
-                var aboutTask = ReloadLocalMemoryAboutAsync();
-                await Task.WhenAll(postTask, categoryTask, tagTask, aboutTask);
+                await Task.WhenAll(postTask, categoryTask, tagTask);
 
                 var posts = await postTask;
                 var categories = await categoryTask;
                 var tags = await tagTask;
-                var aboutHtml = await aboutTask;
 
                 try
                 {
                     _manualReset.Reset();
-                    RefreshMemoryAsset(posts.Instance, categories.Instance, tags.Instance, aboutHtml.Instance);
+                    RefreshMemoryAsset(posts.Instance, categories.Instance, tags.Instance);
                     var result = new StringBuilder();
                     var agg = posts.AggregateMessages();
                     if (!string.IsNullOrEmpty(agg))
@@ -88,12 +85,6 @@ namespace Laobian.Share.Blog.Asset
                     }
 
                     agg = tags.AggregateMessages();
-                    if (!string.IsNullOrEmpty(agg))
-                    {
-                        result.AppendLine(agg);
-                    }
-
-                    agg = aboutHtml.AggregateMessages();
                     if (!string.IsNullOrEmpty(agg))
                     {
                         result.AppendLine(agg);
@@ -187,12 +178,6 @@ namespace Laobian.Share.Blog.Asset
             return _allTags;
         }
 
-        public string GetAboutHtml()
-        {
-            _manualReset.Wait();
-            return _aboutHtml;
-        }
-
         #endregion
 
 
@@ -201,8 +186,7 @@ namespace Laobian.Share.Blog.Asset
         private void RefreshMemoryAsset(
             List<BlogPost> posts,
             List<BlogCategory> categories,
-            List<BlogTag> tags,
-            string aboutHtml)
+            List<BlogTag> tags)
         {
             _allPosts.Clear();
             _allPosts.AddRange(posts);
@@ -212,8 +196,6 @@ namespace Laobian.Share.Blog.Asset
 
             _allTags.Clear();
             _allTags.AddRange(tags);
-
-            _aboutHtml = aboutHtml;
 
             var postsPublishTime = new ConcurrentBag<DateTime>();
             Parallel.ForEach(_allPosts, blogPost =>
@@ -373,31 +355,6 @@ namespace Laobian.Share.Blog.Asset
             else
             {
                 throw new Exception($"Tag parse failed, please check errors.{parseResult.AggregateMessages()}");
-            }
-
-            return result;
-        }
-
-        private async Task<BlogAssetLoadResult<string>> ReloadLocalMemoryAboutAsync()
-        {
-            var result = new BlogAssetLoadResult<string> { Description = "Load About" };
-            var aboutLocalPath = Path.Combine(Global.Config.Blog.AssetRepoLocalDir, Global.Config.Blog.AboutGitPath);
-            if (!File.Exists(aboutLocalPath))
-            {
-                result.Warnings.Add($"No about asset found under \"{aboutLocalPath}\".");
-                return result;
-            }
-
-            var md = await File.ReadAllTextAsync(aboutLocalPath);
-            var parseResult = BlogAssetParser.ToText(md);
-
-            if (parseResult.Success)
-            {
-                result.Instance = MarkdownHelper.ToHtml(md);
-            }
-            else
-            {
-                throw new Exception($"About parse failed, please check errors.{parseResult.AggregateMessages()}");
             }
 
             return result;

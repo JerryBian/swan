@@ -15,8 +15,6 @@ namespace Laobian.Share.Blog
 
         List<BlogTag> GetTags(bool onlyPublic = true, bool publishTimeDesc = true, bool toppingPostsFirst = true);
 
-        string GetAboutHtml();
-
         List<BlogArchive> GetArchives(bool onlyPublic = true, bool publishTimeDesc = true,
             bool toppingPostsFirst = true);
 

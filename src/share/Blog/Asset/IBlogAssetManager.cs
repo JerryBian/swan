@@ -12,8 +12,6 @@ namespace Laobian.Share.Blog.Asset
 
         List<BlogTag> GetAllTags();
 
-        string GetAboutHtml();
-
         Task PullFromGitHubAsync();
 
         Task<string> ParseAssetsToObjectsAsync();

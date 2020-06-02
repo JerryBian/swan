@@ -138,11 +138,6 @@ namespace Laobian.Share.Blog
             return tags;
         }
 
-        public string GetAboutHtml()
-        {
-            return _blogAssetManager.GetAboutHtml();
-        }
-
         public List<BlogArchive> GetArchives(
             bool onlyPublic = true,
             bool publishTimeDesc = true,
