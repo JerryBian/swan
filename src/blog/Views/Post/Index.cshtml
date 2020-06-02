@@ -2,16 +2,15 @@
 
 <article class="post">
     <div class="text-muted d-sm-block post-meta">@Html.Raw(Model.Post.GetMetadataHtml())</div>
-    <div class="post-title pt-1">
-
+    <div class="post-title">
         @Model.Post.Title
         @if (Model.Post.IsTopping)
         {
-            <span class="badge badge-light">置顶</span>
+            <span class="badge badge-success">置顶</span>
         }
         @if (!Model.Post.IsPublic)
         {
-            <span class="badge badge-success">
+            <span class="badge badge-warning">
                 未发布
             </span>
         }
@@ -25,14 +24,16 @@
 
 <div class="alert alert-warning post-alert" role="alert">
     <ul>
-        <li>最后更新于：@Model.Post.LastUpdateTimeString</li>
         @{
-            var html = Model.Post.GetCategoryAndTagHtml();
+            var html = Model.Post.CategoryAndTagHtml;
             if (!string.IsNullOrEmpty(html))
             {
                 <li>@Html.Raw(html)</li>
             }
         }
+
+        <li>最后更新于：<span title="@Model.Post.LastUpdateTime.ToChinaDateAndTime()">@Model.Post.LastUpdateTimeString</span></li>
+
         @if (Model.PrevPost != null)
         {
             <li>前一篇：<a href="@Model.PrevPost.FullUrl">@Model.PrevPost.Title</a></li>
@@ -71,14 +72,39 @@
                 }
             };
         </script>
-        <script src="~/script/post-mathjax.min.js" defer asp-append-version="true"></script>
+        <script src="~/dist/post-mathjax.min.js"
+                asp-fallback-src="https://jerrybian.github.io/blog.laobian.me/post-mathjax.min.js"
+                asp-fallback-test="window.test"
+                asp-append-version="true">
+        </script>
     }
     else
     {
-        <script src="~/script/post.min.js" defer asp-append-version="true"></script>
+        <script src="~/dist/post.min.js"
+                asp-fallback-src="https://jerrybian.github.io/blog.laobian.me/post.min.js"
+                asp-fallback-test="window.test"
+                asp-append-version="true">
+        </script>
     }
+    <script>
+        document.addEventListener("DOMContentLoaded",
+            function () {
+                anchors.options = {
+                    placement: 'right',
+                    visible: 'hover',
+                    base: '@Model.Post.FullUrl'
+                };
+                anchors.add('.post-content h3, .post-content h4');
+            });
+    </script>
 }
 
 @section style{
-    <link rel="stylesheet" href="~/style/post.min.css" asp-append-version="true"/>
+    <link rel="stylesheet"
+          href="~/dist/post.min.css"
+          asp-fallback-href="https://jerrybian.github.io/blog.laobian.me/post.min.css"
+          asp-fallback-test-class="sr-only"
+          asp-fallback-test-property="position"
+          asp-fallback-test-value="absolute"
+          asp-append-version="true" />
 }

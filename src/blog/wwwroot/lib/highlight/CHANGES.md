@@ -1,3 +1,228 @@
+## Version 10.0.3
+
+- [Issue](https://github.com/highlightjs/highlight.js/issues/2514) fix(javascript) Fix `get`/`set` incorrect highlighting (#2515) [Josh Goebel][]
+
+[Josh Goebel]: https://github.com/yyyc514
+
+
+## Version 10.0.2
+
+Brower build:
+
+- [Issue](https://github.com/highlightjs/highlight.js/issues/2505) (bug) Fix: Version 10 fails to load as CommonJS module. (#2511) [Josh Goebel][]
+- [Issue](https://github.com/highlightjs/highlight.js/issues/2505) (removal) AMD module loading support has been removed. (#2511) [Josh Goebel][]
+
+Parser Engine Changes:
+
+- [Issue](https://github.com/highlightjs/highlight.js/issues/2522) fix(parser) Fix freeze issue with illegal 0 width matches (#2524) [Josh Goebel][]
+
+
+[Josh Goebel]: https://github.com/yyyc514
+
+
+## Version 10.0.1
+
+Parser Engine Changes:
+
+- (bug) Fix sublanguage with no relevance score (#2506) [Josh Goebel][]
+
+[Josh Goebel]: https://github.com/yyyc514
+
+
+## Version 10.0.0
+
+New languages:
+
+- add(php-template) Explicit language to detect PHP templates (vs xml) [Josh Goebel][]
+- enh(python) Added `python-repl` for Python REPL sessions
+- add(never) Added 3rd party Never language support
+
+New themes:
+
+- *Srcery* by [Chen Bin][]
+
+Parser Engine Changes:
+
+- (bug) Fix `beginKeywords` to ignore . matches (#2434) [Josh Goebel][]
+- (enh) add `before:highlight` plugin API callback (#2395) [Josh Goebel][]
+- (enh) add `after:highlight` plugin API callback (#2395) [Josh Goebel][]
+- (enh) split out parse tree generation and HTML rendering concerns (#2404) [Josh Goebel][]
+- (enh) every language can have a `name` attribute now (#2400) [Josh Goebel][]
+- (enh) improve regular expression detect (less false-positives) (#2380) [Josh Goebel][]
+- (enh) make `noHighlightRe` and `languagePrefixRe` configurable (#2374) [Josh Goebel][]
+
+Language Improvements:
+
+- enh(python) Exclude parens from functions params (#2490) [Álvaro Mondéjar][]
+- enh(swift) Add `compactMap` to keywords as built_in (#2478) [Omid Golparvar][]
+- enh(nim) adds `func` keyword (#2468) [Adnan Yaqoob][]
+- enh(xml) deprecate ActionScript inside script tags (#2444) [Josh Goebel][]
+- fix(javascript) prevent get/set variables conflicting with keywords (#2440) [Josh Goebel][]
+- bug(clojure) Now highlights `defn-` properly (#2438) [Josh Goebel][]
+- enh(bash) default value is another variable (#2439) [Josh Goebel][]
+- enh(bash) string nested within string (#2439) [Josh Goebel][]
+- enh(bash) Add arithmetic expression support (#2439) [Josh Goebel][]
+- enh(clojure) Add support for global definitions name (#2347) [Alexandre Grison][]
+- enh(fortran) Support Fortran 77 style comments (#2416) [Josh Goebel][]
+- (csharp) add support for `@identifier` style identifiers (#2414) [Josh Goebel][]
+- fix(elixir) Support function names with a slash (#2406) [Josh Goebel][]
+- fix(javascript) comma is allowed in a "value container" (#2403) [Josh Goebel][]
+- enh(apache) add `deny` and `allow` keywords [Josh Goebel][]
+- enh(apache) highlight numeric attributes values [Josh Goebel][]
+- enh(apache) highlight IP addresses, ports, and strings in sections [Josh Goebel][]
+- enh(php) added more keywords and include `<?=` syntax to meta [Taufik Nurrohman][]
+- fix(protobuf) Fix `rpc` when followed by a block (#) [Josh Goebel][]
+- enh(zephir) almost complete rework of the zephir grammar (#2387) [Josh Goebel][]
+- (markdown) much improved code block support (#2382) [Josh Goebel][]
+- (markdown) improve bold/italic nesting (#2382) [Josh Goebel][]
+- enh(csharp) Support `where` keyword as class constraint (#2378) [Josh Goebel][]
+- enh(csharp) Allow reference path in class inheritance lists (#2378) [Josh Goebel][]
+- enh(csharp) Add generic modifiers (in, out) (#2378) [Josh Goebel][]
+- (fortran) enh(fortran) support intrinsic data types (#2379) [Josh Goebel][]
+- enh(java) annotations can include numbers (#2377) [Josh Goebel][]
+- enh(java) annotations can take params (#2377) [Josh Goebel][]
+- enh(java) allow annotations inside function call params (#2377) [Josh Goebel][]
+- enh(parser) pre/post-highlightBlock callbacks via plugin (#2285) [Josh Goebel][]
+- (fortran) Add Fortran 2018 keywords and coarray intrinsics (#2361) [Sam Miller][]
+- (delphi) highlight hexadecimal, octal, and binary numbers (#2370) [Robert Riebisch]()
+- enh(plaintext) added `text` and `txt` as alias (#2360) [Taufik Nurrohman][]
+- enh(powershell) added PowerShell v5.1/v7 default aliases as "built_in"s (#2423) [Sean Williams][]
+- enh(yaml) added support for timestamps (#2475) [Peter Plantinga][]
+
+Developer Tools:
+
+- added Dockerfile for optionally developing with a container
+
+[Omid Golparvar]: https://github.com/omidgolparvar
+[Alexandre Grison]: https://github.com/agrison
+[Josh Goebel]: https://github.com/yyyc514
+[Chen Bin]: https://github.com/redguardtoo
+[Sam Miller]: https://github.com/smillerc
+[Robert Riebisch]: https://github.com/bttrx
+[Taufik Nurrohman]: https://github.com/taufik-nurrohman
+[Josh Goebel]: https://github.com/yyyc514
+[Sean Williams]: https://github.com/hmmwhatsthisdo
+[Adnan Yaqoob]: https://github.com/adnanyaqoobvirk
+[Álvaro Mondéjar]: https://github.com/mondeja
+
+
+## Version 9.18.1
+
+Grammar Improvements:
+
+- bug(coffeescript) fix freezing bug due to badly behaved regex (#2376) [Josh Goebel][]
+
+[Josh Goebel]: https://github.com/yyyc514
+
+
+## Version 9.18.0
+
+New languages:
+
+- none.
+
+New themes:
+
+- none.
+
+Core Changes:
+
+- none.
+
+Language Improvements:
+
+- (javascript) fix JSX self-closing tag issues (#2322) [Josh Goebel][]
+- (fortran) added `block` and `endblock` keywords (#2343) [Philipp Engel][]
+- (javascript) support jsx fragments (#2333) [Josh Goebel][]
+- (ini) support TOML arrays, clean up grammar (#2335) [Josh Goebel][]
+- (vbnet) add nameof operator to the keywords (#2329) [Youssef Victor][]
+- (stan) updated with improved coverage of language keywords and patterns. (#1829) [Jeffrey Arnold][]
+- enh(cpp) Detect namespaced function types (`A::typeName func(...)`) (#2332) [Josh Goebel][]
+- enh(cpp) Detect namespaced functions also (`A::functionName`) (#2332) [Josh Goebel][]
+- enh(cpp) Properly detect decltype(auto) (#2332) [Josh Goebel][]
+- enh(cpp) recognize primitive types (`int8_t`, etc.) as function types (#2332) [Josh Goebel][]
+
+Developer Tools:
+
+- feat(developer): add button to show parsed structure (#2345) [Nils Knappmeier][]
+
+[Jeffrey Arnold]: https://github.com/jrnold
+[Josh Goebel]: https://github.com/yyyc514
+[Philipp Engel]: https://github.com/interkosmos
+[Youssef Victor]: https://github.com/Youssef1313
+[Nils Knappmeier]: https://github.com/nknapp
+
+
+## Version 9.17.1
+
+Fixes:
+
+- fix(parser): resolve IE 11 issue with Object.freeze() (#2319) [Josh Goebel][]
+
+[Josh Goebel]: https://github.com/yyyc514
+
+
+## Version 9.17.0
+
+New languages:
+
+- none.
+
+New themes:
+
+- *Gradient Dark* by [Samia Ali][]
+
+Core Improvements:
+
+- chore(parser): switch from `createElementNS` to `createElement` (#2314) [Josh Goebel][]
+- enh(parser): add better error when a language requirement is missing (#2311) [Josh Goebel][]
+- fix(parser/docs): disallow `self` mode at the top-level of a language (#2294) [Josh Goebel][]
+- enh(parser) add safe & debug modes.  Better error handling for crash conditions. (#2286) [Josh Goebel][]
+- fix(parser): Fix merger HTML attribute quoting (#2235) [Josh Goebel][]
+- fix(parser): Look-ahead regex now work for end matches also (#2237) [Josh Goebel][]
+- fix(parser): Better errors when a language is missing (#2236) [Josh Goebel][]
+- fix(parser): freeze built-in modes to prevent grammars altering them (#2271) [Josh Goebel][]
+- fix(themes): fix inconsistencies between some themes padding/spacing (#2300) [Josh Goebel][]
+- ehh(build) Add CI check for building a "use strict" safe rollup package from NPM builds (#2247) [Josh Goebel][]
+- fix(pkg): Prefix global addEventListener with window to be able to minify with closure compiler (#2305) [Kirill Saksin]()
+
+Language Improvements:
+
+- fix(sql): backslash is not used to escape in strings in standard SQL (#1748) [Mike Schall][]
+- enh(ebnf) add backticks as additional string variant (#2290) [Chris Marchesi][]
+- chore(javascript): add esm related extensions to aliases (#2298) [Rongjian Zhang][]
+- fix(kotlin): fix termination of """ string literals (#2295) [Josh Goebel][]
+- fix(mercury): don't change global STRING modes (#2271) [Josh Goebel][]
+- enh(xml) expand and improve document type highlighting (#2287) [w3suli][]
+- enh(ebnf) add underscore as allowed meta identifier character, and dot as terminator (#2281) [Chris Marchesi][]
+- fix(makefile) fix double relevance for assigns, improves auto-detection (#2278) [Josh Goebel][]
+- enh(xml) support for highlighting entities (#2260) [w3suli][]
+- enh(gml) fix naming of keyword class (consistency fix) (#2254) [Liam Nobel][]
+- enh(javascript): Add support for jsdoc comments (#2245) [Milutin Kristofic][]
+- fix(python) fix `if` getting confused as an f-string (#2200) [Josh Goebel][] and [Carl Baxter][]
+- enh(powershell) major overhaul, huge improvements (#2224)
+- enh(css) Improve @rule highlighting, including properties (#2241) [Josh Goebel][]
+- enh(css) Improve highlighting of numbers inside expr/func `calc(2px+3px)` (#2241)
+- enh(scss) Pull some of the CSS improvements back into SCSS (#2241)
+- fix(go): Fix escaped character literals (#2266) [David Benjamin][]
+- fix(objectivec): Fix various preprocessor highlighting issues (#2265) [David Benjamin][]
+- fix(objectivec): Handle multibyte character literals (#2268) [David Benjamin][]
+- enh(cpp): Add additional keywords (#2289) [Adrian Ostrowski][]
+
+[Josh Goebel]: https://github.com/yyyc514
+[Liam Nobel]: https://github.com/liamnobel
+[Carl Baxter]: https://github.com/cdbax
+[Milutin Kristofic]: https://github.com/milutin
+[w3suli]: https://github.com/w3suli
+[David Benjamin]: https://github.com/davidben
+[Chris Marchesi]: https://github.com/vancluever
+[Adrian Ostrowski]: https://github.com/aostrowski
+[Rongjian Zhang]: https://github.com/pd4d10
+[Mike Schall]: https://github.com/schallm
+[Kirill Saksin]: https://github.com/saksmt
+[Samia Ali]:https://github.com/samiaab1990
+
+
 ## Version 9.16.2
 
 New languages:
@@ -7,7 +232,7 @@ New styles:
   none.
 
 Improvements:
-- fix(arduino) Resolves issue with arduino.js not being "use strict" safe
+- fix(arduino) Resolves issue with arduino.js not being "use strict" safe (#2247)
 
 
 ## Version 9.16.1

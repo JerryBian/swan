@@ -6,7 +6,7 @@ namespace Laobian.Share.Blog.Extension
     {
         public static string GetRelativeLink(this BlogArchive archive)
         {
-            return $"#{archive.Year}/";
+            return $"#{archive.Year}";
         }
     }
 }

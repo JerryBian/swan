@@ -98,10 +98,10 @@ namespace Laobian.Blog.Controllers
                     Title = new TextSyndicationContent(blogPost.Title, TextSyndicationContentKind.Plaintext),
                     Copyright = feed.Copyright,
                     Id = blogPost.FullUrlWithBase,
-                    PublishDate = new DateTimeOffset(blogPost.PublishTime, TimeSpan.FromHours(8)),
+                    PublishDate = new DateTimeOffset(blogPost.PublishTime.Ticks, TimeSpan.FromHours(8)),
                     Summary = new TextSyndicationContent(blogPost.ExcerptHtml, TextSyndicationContentKind.Html),
                     Content = new TextSyndicationContent(blogPost.ContentHtml, TextSyndicationContentKind.Html),
-                    LastUpdatedTime = new DateTimeOffset(blogPost.LastUpdateTime, TimeSpan.FromHours(8))
+                    LastUpdatedTime = new DateTimeOffset(blogPost.LastUpdateTime.Ticks, TimeSpan.FromHours(8))
                 };
 
                 item.AddPermalink(new Uri(blogPost.FullUrlWithBase));

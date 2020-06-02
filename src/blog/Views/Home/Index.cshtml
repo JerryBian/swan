@@ -7,15 +7,16 @@
             <div class="list-group-item flex-column align-items-start post-item">
                 <div>
                     <div class="text-muted d-sm-block post-item-meta">@Html.Raw(post.GetMetadataHtml())</div>
-                    <div class="mb-1 pt-1 post-item-title">
-                        <a href="@post.FullUrl">@post.Title</a>
+                    <div class="mb-2 post-item-title">
+                        @*<a href="@post.FullUrl">@post.Title</a>*@
+                        @post.Title
                         @if (post.IsTopping)
                         {
-                            <span class="badge badge-light">置顶</span>
+                            <span class="badge badge-success">置顶</span>
                         }
                         @if (!post.IsPublic)
                         {
-                            <span class="badge badge-success">
+                            <span class="badge badge-warning">
                                 未发布
                             </span>
                         }
@@ -27,6 +28,10 @@
                     <div class="row">
                         <div class="mb-2 mt-1 post-item-excerpt">
                             @Html.Raw(post.ExcerptHtml)
+                            
+                            <p>
+                                <a href="@post.FullUrl">继续阅读 &rarr;</a>
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -38,9 +43,19 @@
 
 
 @section style{
-    <link rel="stylesheet" href="~/style/index.min.css" asp-append-version="true"/>
+    <link rel="stylesheet"
+          href="~/dist/index.min.css"
+          asp-fallback-href="https://jerrybian.github.io/blog.laobian.me/index.min.css"
+          asp-fallback-test-class="sr-only"
+          asp-fallback-test-property="position"
+          asp-fallback-test-value="absolute"
+          asp-append-version="true"/>
 }
 
 @section script{
-    <script src="~/script/index.min.js" defer asp-append-version="true"></script>
+    <script src="~/dist/index.min.js"
+            asp-fallback-src="https://jerrybian.github.io/blog.laobian.me/index.min.js"
+            asp-fallback-test="window.test"
+            asp-append-version="true">
+    </script>
 }

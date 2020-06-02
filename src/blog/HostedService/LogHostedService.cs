@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Share;
 using Laobian.Share.Blog.Alert;
+using Laobian.Share.Log;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -29,7 +30,7 @@ namespace Laobian.Blog.HostedService
             {
                 if (Global.Environment.IsDevelopment())
                 {
-                    await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
+                    await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
                     await GenerateLogReportAsync();
                 }
                 else
@@ -44,10 +45,9 @@ namespace Laobian.Blog.HostedService
                     {
                         await GenerateLogReportAsync();
                         _lastReportGeneratedAt = DateTime.Now;
-                        _logger.LogInformation("Report generated completely.");
                     }
 
-                    _logger.LogInformation("Logs flushed completely.");
+                    _logger.LogDebug("Logs flushed completely.");
                 }
                 catch (Exception ex)
                 {
@@ -73,21 +73,16 @@ namespace Laobian.Blog.HostedService
 
         private async Task GenerateLogReportAsync()
         {
-            var errorLogs = new List<BlogAlertEntry>();
-            var warnLogs = new List<BlogAlertEntry>();
-            while (Global.InMemoryLogQueue.TryPop(out var item))
+            var logs = new List<LogEntry>();
+            while (Global.InMemoryLogQueue.TryDequeue(out var item))
             {
-                if (item.Level == LogLevel.Warning)
+                if (item.Level >= LogLevel.Warning)
                 {
-                    warnLogs.Add(item);
-                }
-                else
-                {
-                    errorLogs.Add(item);
+                    logs.Add(item);
                 }
             }
 
-            await _alertService.AlertReportAsync(warnLogs, errorLogs);
+            await _alertService.AlertLogsAsync(logs);
         }
     }
 }

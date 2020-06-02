@@ -43,7 +43,7 @@
             width: 100%;
             max-width: 100%;
             table-layout: fixed;
-            font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+            font-family: Monaco,Consolas,"Liberation Mono","Courier New",monospace;
             font-size: 80%;
         }
 
@@ -92,7 +92,6 @@
 
         footer{
             margin-top: 0.5rem;
-            font-size: 70%;
             padding: 0.25rem 0;
         }
     </style>
@@ -115,8 +114,8 @@
         </div>
     </main>
     <footer>
-        <div>Generated at ##Report-Time##, by <a href="https://blog.laobian.me">https://blog.laobian.me</a>.</div>
-        <ul>##Server-State##</ul>
+        <div>Generated at ##Report-Time##.</div>
+        ##Server-State##
     </footer>
 </body>
 

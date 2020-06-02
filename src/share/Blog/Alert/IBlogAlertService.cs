@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Laobian.Share.Log;
 
 namespace Laobian.Share.Blog.Alert
 {
@@ -8,6 +9,6 @@ namespace Laobian.Share.Blog.Alert
     {
         Task AlertEventAsync(string message, Exception error = null);
 
-        Task AlertReportAsync(List<BlogAlertEntry> warnAlerts, List<BlogAlertEntry> errorAlerts);
+        Task AlertLogsAsync(List<LogEntry> logs);
     }
 }

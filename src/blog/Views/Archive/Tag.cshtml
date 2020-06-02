@@ -1,11 +1,12 @@
-﻿@model IEnumerable<BlogTag>
+﻿@using Laobian.Share.Helper
+@model IEnumerable<BlogTag>
 
 <div class="archive">
     <div class="mb-4">
         @foreach (var item in Model)
         {
             <a class="btn btn-light archive-link" href="@item.GetRelativeLink()">
-                @item.Name <span class="badge badge-dark">@item.Posts.Count.Human()</span>
+                @item.Name <span class="badge badge-info">@HumanHelper.DisplayInt(item.Posts.Count)</span>
             </a>
         }
     </div>
@@ -37,9 +38,30 @@
 </div>
 
 @section style{
-    <link rel="stylesheet" href="~/style/archive.min.css" asp-append-version="true"/>
+    <link rel="stylesheet"
+          href="~/dist/archive.min.css"
+          asp-fallback-href="https://jerrybian.github.io/blog.laobian.me/archive.min.css"
+          asp-fallback-test-class="sr-only"
+          asp-fallback-test-property="position"
+          asp-fallback-test-value="absolute"
+          asp-append-version="true" />
 }
 
 @section script{
-    <script src="~/script/index.min.js" defer asp-append-version="true"></script>
+    <script src="~/dist/archive.min.js"
+            asp-fallback-src="https://jerrybian.github.io/blog.laobian.me/archive.min.js"
+            asp-fallback-test="window.test"
+            asp-append-version="true">
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded",
+            function () {
+                anchors.options = {
+                    placement: 'right',
+                    visible: 'hover',
+                    base: '/tag'
+                };
+                anchors.add('.archive h3');
+            });
+    </script>
 }

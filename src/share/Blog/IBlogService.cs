@@ -15,15 +15,13 @@ namespace Laobian.Share.Blog
 
         List<BlogTag> GetTags(bool onlyPublic = true, bool publishTimeDesc = true, bool toppingPostsFirst = true);
 
-        string GetAboutHtml();
-
         List<BlogArchive> GetArchives(bool onlyPublic = true, bool publishTimeDesc = true,
             bool toppingPostsFirst = true);
 
-        Task InitAsync(bool clone = true);
+        Task<string> InitAsync(bool clone = true);
 
-        Task GitHookAsync(List<string> postLinks);
+        Task<string> GitHookAsync(List<string> postLinks);
 
-        Task UpdateGitHubAsync();
+        Task UpdateGitHubAsync(string commitMessage);
     }
 }

@@ -30,7 +30,7 @@ namespace Laobian.Share.Blog.Parser
                 sb.AppendLine("Warnings:");
                 foreach (var warningMessage in WarningMessages)
                 {
-                    sb.AppendLine(warningMessage);
+                    sb.AppendLine("\t" + warningMessage);
                 }
             }
 
@@ -39,7 +39,7 @@ namespace Laobian.Share.Blog.Parser
                 sb.AppendLine("Errors:");
                 foreach (var errorMessage in ErrorMessages)
                 {
-                    sb.AppendLine(errorMessage);
+                    sb.AppendLine("\t" + errorMessage);
                 }
             }
 

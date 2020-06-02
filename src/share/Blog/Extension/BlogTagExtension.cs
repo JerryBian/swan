@@ -8,12 +8,12 @@ namespace Laobian.Share.Blog.Extension
     {
         public static string GetLink(this BlogTag tag)
         {
-            return $"/tag/#{tag.Link}/";
+            return $"/tag/#{tag.Link}";
         }
 
         public static string GetRelativeLink(this BlogTag tag)
         {
-            return $"#{tag.Link}/";
+            return $"#{tag.Link}";
         }
 
         public static void Resolve(this BlogTag tag, List<BlogPost> allPosts)

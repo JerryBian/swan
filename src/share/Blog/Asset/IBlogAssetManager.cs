@@ -12,18 +12,16 @@ namespace Laobian.Share.Blog.Asset
 
         List<BlogTag> GetAllTags();
 
-        string GetAboutHtml();
+        Task PullFromGitHubAsync();
 
-        Task<bool> PullFromGitHubAsync();
+        Task<string> ParseAssetsToObjectsAsync();
 
-        Task<bool> ParseAssetsToObjectsAsync();
+        Task SerializeAssetsToFilesAsync();
 
-        Task<bool> SerializeAssetsToFilesAsync();
+        Task PushToGitHubAsync(string message);
 
-        Task<bool> PushToGitHubAsync(string message);
+        void MergePosts(List<BlogPost> oldPosts);
 
-        bool MergePosts(List<BlogPost> oldPosts);
-
-        bool UpdatePosts(IEnumerable<string> postLinks);
+        void UpdatePosts(IEnumerable<string> postLinks);
     }
 }

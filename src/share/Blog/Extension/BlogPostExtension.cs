@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using HtmlAgilityPack;
 using Laobian.Share.Blog.Model;
 using Laobian.Share.Extension;
@@ -15,28 +14,30 @@ namespace Laobian.Share.Blog.Extension
     {
         public static string GetMetadataHtml(this BlogPost post)
         {
-            var results = new List<string>();
-            results.Add(
-                $"<span title=\"{post.PublishTime.ToDateAndTime()}\">发表于 {post.PublishTimeString}</span>");
-            results.Add(
-                $"<span title=\"{post.AccessCount}\">{post.AccessCountString} 次阅读</span>");
+            var results = new List<string>
+            {
+                $"<span>发表于</span> <time class=\"muted-bolder\" datetime=\"{post.PublishTime.ToDateAndTime()}\" title=\"{post.PublishTime.ToChinaDateAndTime()}\">{post.PublishTimeString}</time>",
+                $"<span class=\"muted-bolder\" title=\"{post.AccessCount}\">{post.AccessCountString}</span> <span>次阅读</span>"
+            };
 
             return string.Join(" &middot; ", results);
         }
 
-        public static string GetCategoryAndTagHtml(this BlogPost post)
+        private static void SetCategoryAndTagHtml(BlogPost post)
         {
-            var categoryHtml = post.GetCategoryHtml();
-            var tagHtml = post.GetTagHtml();
+            var categoryHtml = GetCategoryHtml(post);
+            var tagHtml = GetTagHtml(post);
             if (!string.IsNullOrEmpty(tagHtml))
             {
-                return categoryHtml + " &middot; " + tagHtml;
+                post.CategoryAndTagHtml = categoryHtml + " &middot; " + tagHtml;
             }
-
-            return categoryHtml;
+            else
+            {
+                post.CategoryAndTagHtml = categoryHtml;
+            }
         }
 
-        public static string GetCategoryHtml(this BlogPost post)
+        private static string GetCategoryHtml(BlogPost post)
         {
             var results = new ConcurrentBag<string>();
             foreach (var blogCategory in post.Categories)
@@ -52,7 +53,7 @@ namespace Laobian.Share.Blog.Extension
             return $"分类：<span>{string.Join(", ", results)}</span>";
         }
 
-        public static string GetTagHtml(this BlogPost post)
+        private static string GetTagHtml(BlogPost post)
         {
             var results = new List<string>();
 
@@ -82,6 +83,18 @@ namespace Laobian.Share.Blog.Extension
             post.FullUrl =
                 $"/{post.PublishTime.Year}/{post.PublishTime.Month:D2}/{post.Link}{Global.Config.Common.HtmlExtension}";
             post.FullUrlWithBase = UrlHelper.Combine(Global.Config.Blog.BlogAddress, post.FullUrl);
+
+            SetCategoryAndTagHtml(post);
+            SetHeadDescription(post);
+        }
+
+        private static void SetHeadDescription(BlogPost post)
+        {
+            var maxLength = 145 - Global.Config.Blog.Description.Length;
+            var description = post.ExcerptPlain.Substring(0,
+                post.ExcerptPlain.Length < maxLength ? post.ExcerptPlain.Length : maxLength);
+            description += "...";
+            post.HeadDescription = description;
         }
 
         private static void HandleCategory(BlogPost post, List<BlogCategory> allCategories)
@@ -135,9 +148,26 @@ namespace Laobian.Share.Blog.Extension
 
                     if (!Path.IsPathRooted(src))
                     {
+                        var fileFolderName = Global.Config.Blog.FileGitPath.Split('/', StringSplitOptions.RemoveEmptyEntries).Last();
+                        var parts = new List<string>();
+                        var found = false;
+                        foreach (var item in src.Split('/', StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            if (found)
+                            {
+                                parts.Add(item);
+                                continue;
+                            }
+
+                            if (item == fileFolderName)
+                            {
+                                found = true;
+                            }
+                        }
+
+                        parts.Insert(0, Global.Config.Blog.FileRequestPath);
                         imageNode.SetAttributeValue("src",
-                            UrlHelper.Combine(Global.Config.Blog.BlogAddress, Global.Config.Blog.FileRequestPath,
-                                Path.GetFileName(src)));
+                            UrlHelper.Combine(Global.Config.Blog.StaticAddress, parts.ToArray()));
                     }
                 }
             }

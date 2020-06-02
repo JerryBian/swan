@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Share.Blog.Asset;
 using Laobian.Share.Blog.Model;
+using Laobian.Share.Git;
 using Laobian.Share.Helper;
 
 namespace Laobian.Share.Blog
@@ -137,11 +138,6 @@ namespace Laobian.Share.Blog
             return tags;
         }
 
-        public string GetAboutHtml()
-        {
-            return _blogAssetManager.GetAboutHtml();
-        }
-
         public List<BlogArchive> GetArchives(
             bool onlyPublic = true,
             bool publishTimeDesc = true,
@@ -174,31 +170,20 @@ namespace Laobian.Share.Blog
             return archives;
         }
 
-        public async Task InitAsync(bool clone = true)
+        public async Task<string> InitAsync(bool clone = true)
         {
             try
             {
                 await _semaphoreSlim.WaitAsync();
-                var shouldContinue = true;
                 if (clone)
                 {
-                    shouldContinue = await _blogAssetManager.PullFromGitHubAsync();
+                    await _blogAssetManager.PullFromGitHubAsync();
                 }
-
-                if (shouldContinue)
-                {
-                    shouldContinue = await _blogAssetManager.ParseAssetsToObjectsAsync();
-                }
-
-                if (shouldContinue)
-                {
-                    shouldContinue = await _blogAssetManager.SerializeAssetsToFilesAsync();
-                }
-
-                if (shouldContinue)
-                {
-                    await _blogAssetManager.PushToGitHubAsync(":tada: Server started");
-                }
+                
+                var messages = await _blogAssetManager.ParseAssetsToObjectsAsync();
+                await _blogAssetManager.SerializeAssetsToFilesAsync();
+                await _blogAssetManager.PushToGitHubAsync(GitCommitMessageFactory.ServerStarted());
+                return messages;
             }
             finally
             {
@@ -206,42 +191,20 @@ namespace Laobian.Share.Blog
             }
         }
 
-        public async Task GitHookAsync(List<string> postLinks)
+        public async Task<string> GitHookAsync(List<string> postLinks)
         {
             try
             {
                 await _semaphoreSlim.WaitAsync();
-                var shouldContinue = await _blogAssetManager.PullFromGitHubAsync();
-                if (shouldContinue)
-                {
-                    shouldContinue = await _blogAssetManager.PullFromGitHubAsync();
-                }
+                await _blogAssetManager.PullFromGitHubAsync();
 
                 var oldPosts = new List<BlogPost>(_blogAssetManager.GetAllPosts());
-                if (shouldContinue)
-                {
-                    shouldContinue = await _blogAssetManager.ParseAssetsToObjectsAsync();
-                }
-
-                if (shouldContinue)
-                {
-                    shouldContinue = _blogAssetManager.MergePosts(oldPosts);
-                }
-
-                if (shouldContinue)
-                {
-                    shouldContinue = _blogAssetManager.UpdatePosts(postLinks);
-                }
-
-                if (shouldContinue)
-                {
-                    shouldContinue = await _blogAssetManager.SerializeAssetsToFilesAsync();
-                }
-
-                if (shouldContinue)
-                {
-                    await _blogAssetManager.PushToGitHubAsync(":sparkles: Hook happened");
-                }
+                var messages = await _blogAssetManager.ParseAssetsToObjectsAsync();
+                _blogAssetManager.MergePosts(oldPosts);
+                _blogAssetManager.UpdatePosts(postLinks);
+                await _blogAssetManager.SerializeAssetsToFilesAsync();
+                await _blogAssetManager.PushToGitHubAsync(GitCommitMessageFactory.GitHubHook());
+                return messages;
             }
             finally
             {
@@ -249,16 +212,13 @@ namespace Laobian.Share.Blog
             }
         }
 
-        public async Task UpdateGitHubAsync()
+        public async Task UpdateGitHubAsync(string commitMessage)
         {
             try
             {
                 await _semaphoreSlim.WaitAsync();
-                var shouldContinue = await _blogAssetManager.SerializeAssetsToFilesAsync();
-                if (shouldContinue)
-                {
-                    await _blogAssetManager.PushToGitHubAsync(":wind_chime: Scheduled update or server stop");
-                }
+                await _blogAssetManager.SerializeAssetsToFilesAsync();
+                await _blogAssetManager.PushToGitHubAsync(commitMessage);
             }
             finally
             {

@@ -8,12 +8,12 @@ namespace Laobian.Share.Blog.Extension
     {
         public static string GetLink(this BlogCategory category)
         {
-            return $"/category/#{category.Link}/";
+            return $"/category#{category.Link}";
         }
 
         public static string GetRelativeLink(this BlogCategory category)
         {
-            return $"#{category.Link}/";
+            return $"#{category.Link}";
         }
 
         public static void Resolve(this BlogCategory category, List<BlogPost> allPosts)

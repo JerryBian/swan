@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Runtime.InteropServices;
-using Laobian.Share.Blog.Alert;
 using Laobian.Share.Config;
-using Laobian.Share.Extension;
+using Laobian.Share.Helper;
+using Laobian.Share.Log;
 using Microsoft.Extensions.Hosting;
 
 namespace Laobian.Share
 {
     public static class Global
     {
-        public static ConcurrentStack<BlogAlertEntry> InMemoryLogQueue = new ConcurrentStack<BlogAlertEntry>();
+        public static ConcurrentQueue<LogEntry> InMemoryLogQueue = new ConcurrentQueue<LogEntry>();
 
         public static string RuntimeVersion = RuntimeInformation.FrameworkDescription;
 
@@ -22,6 +22,6 @@ namespace Laobian.Share
 
         public static string AppVersion { get; set; }
 
-        public static string RunningInterval => (DateTime.Now - StartTime).Human();
+        public static string RunningInterval => HumanHelper.DisplayTimeSpan(DateTime.Now - StartTime);
     }
 }

@@ -8,6 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Laobian.Share.Email;
 using Laobian.Share.Extension;
+using Laobian.Share.Helper;
+using Laobian.Share.Log;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Laobian.Share.Blog.Alert
@@ -34,8 +37,8 @@ namespace Laobian.Share.Blog.Alert
                 {
                     FromName = Global.Config.Common.AlertSenderName,
                     FromAddress = Global.Config.Common.AlertSenderEmail,
-                    Subject = "New event happened",
-                    HtmlContent = $"<p>{message}</p>"
+                    Subject = "new event arrived...",
+                    HtmlContent = $"<div>{message}</div>"
                 };
 
                 if (error != null)
@@ -44,7 +47,7 @@ namespace Laobian.Share.Blog.Alert
                         $"<p><strong>Exception details: </strong></p><p><pre><code>{error}</code></pre></p>";
                 }
 
-                emailEntry.HtmlContent += $"<p><small>Host Name: {Environment.MachineName}, Timezone: {TimeZoneInfo.Local.DisplayName}({TimeZoneInfo.Local.BaseUtcOffset})</small>.</p>";
+                emailEntry.HtmlContent += GetServerStates();
                 await _emailClient.SendAsync(emailEntry);
             }
             catch (Exception ex)
@@ -54,60 +57,60 @@ namespace Laobian.Share.Blog.Alert
             }
         }
 
-        public async Task AlertReportAsync(List<BlogAlertEntry> warnAlerts, List<BlogAlertEntry> errorAlerts)
+        public async Task AlertLogsAsync(List<LogEntry> logs)
         {
-            if (!warnAlerts.Any() && !errorAlerts.Any())
+            if (!logs.Any())
             {
+                _logger.LogInformation("No need to generate log report as there is no warnings/errors during last time window.");
+                if (!Global.Environment.IsDevelopment())
+                {
+                    await AlertEventAsync("No need to generate log report as there is no warnings/errors during last time window.");
+                }
+                
                 return;
             }
 
             try
             {
+                _logger.LogInformation("Start to generate log report.");
                 var binDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
                 var fullPath = Path.Combine(binDir, "./Blog/Alert/ReportTemplate.txt");
                 var template = await File.ReadAllTextAsync(fullPath);
                 if (string.IsNullOrEmpty(template))
                 {
-                    await AlertEventAsync("Either the report template is empty or failed to find.");
+                    await AlertEventAsync("<p>Either the report template is empty or failed to find.</p>");
                     return;
                 }
 
                 var errorSb = new StringBuilder();
-                foreach (var item in errorAlerts)
+                var errors = logs.Where(l => l.Level == LogLevel.Error).OrderByDescending(l => l.When).ToList();
+                foreach (var item in errors)
                 {
-                    errorSb.AppendLine($"<section><h4>({item.When.ToDateAndTime()}) {item.Message}</h4>");
-                    if (!string.IsNullOrEmpty(item.RequestUrl))
+                    errorSb.AppendLine($"<section><h4>[{item.When.ToDateAndTime()}] {item.Message}</h4>");
+                    if (item.Exception != null)
                     {
-                        errorSb.AppendLine($"<details><summary>Exception StackTrace</summary><pre>{item.Exception}</pre></details>");
-                        errorSb.AppendLine("<table><tbody>");
-                        errorSb.AppendLine($"<tr><td>IP</td><td>{item.Ip}</td></tr>");
-                        errorSb.AppendLine($"<tr><td>Request URL</td><td>{item.RequestUrl}</td></tr>");
-                        errorSb.AppendLine($"<tr><td>User Agent</td><td>{item.UserAgent}</td></tr>");
-                        errorSb.AppendLine("</tbody></table>");
+                        errorSb.AppendLine($"<div><pre>{item.Exception}</pre></div>");
                     }
 
                     errorSb.AppendLine("</section>");
                 }
 
                 var warnSb = new StringBuilder();
-                foreach (var item in warnAlerts)
+                var warns = logs.Where(l => l.Level == LogLevel.Warning).OrderByDescending(l => l.When).ToList();
+                foreach (var item in warns)
                 {
-                    warnSb.AppendLine($"<section><h4>({item.When.ToDateAndTime()}) {item.Message}</h4>");
-                    if (!string.IsNullOrEmpty(item.RequestUrl))
+                    warnSb.AppendLine($"<section><h4>[{item.When.ToDateAndTime()}] {item.Message}</h4>");
+                    if (item.Exception != null)
                     {
-                        warnSb.AppendLine("<table><tbody>");
-                        warnSb.AppendLine($"<tr><td>IP</td><td>{item.Ip}</td></tr>");
-                        warnSb.AppendLine($"<tr><td>Request URL</td><td>{item.RequestUrl}</td></tr>");
-                        warnSb.AppendLine($"<tr><td>User Agent</td><td>{item.UserAgent}</td></tr>");
-                        warnSb.AppendLine("</tbody></table>");
+                        warnSb.AppendLine($"<div><pre>{item.Exception}</pre></div>");
                     }
 
                     warnSb.AppendLine("</section>");
                 }
 
                 template = template
-                    .Replace("##Error-Count##", errorAlerts.Count.ToString())
-                    .Replace("##Warn-Count##", warnAlerts.Count.ToString())
+                    .Replace("##Error-Count##", errors.Count.ToString())
+                    .Replace("##Warn-Count##", warns.Count.ToString())
                     .Replace("##Error-Sections##", errorSb.ToString())
                     .Replace("##Warn-Sections##", warnSb.ToString())
                     .Replace("##Report-Time##", DateTime.Now.ToDateAndTime())
@@ -117,31 +120,38 @@ namespace Laobian.Share.Blog.Alert
                     FromName = Global.Config.Common.AlertSenderName,
                     FromAddress = Global.Config.Common.AlertSenderEmail,
                     Subject = $"Report@{DateTime.Now:yyyyMMdd}",
-                    HtmlContent = $"<p>{errorAlerts.Count.Human()} Errors, {warnAlerts.Count.Human()} Warnings.</p>"
+                    HtmlContent =
+                        $"<p>There are <strong>{HumanHelper.DisplayInt(errors.Count)}</strong> Errors, <strong>{HumanHelper.DisplayInt(warns.Count)}</strong> Warnings for yesterday, please check more details in attachment.</p>"
                 };
 
                 await using var ms = new MemoryStream(Encoding.UTF8.GetBytes(template));
                 emailEntry.Attachments.Add($"report@{DateTime.Now:yyyyMMdd}.html", ms);
                 await _emailClient.SendAsync(emailEntry);
+                _logger.LogInformation("Finished generate log report.");
             }
             catch (Exception ex)
             {
-                _logger.LogInformation(ex, "[Need Attention] - Alert report failed.");
+                _logger.LogError(ex, "Generate log report failed.");
             }
         }
 
         private string GetServerStates()
         {
             var sb = new StringBuilder();
+            sb.AppendLine("<div style='font-size: 80%;background-color:e8e4e1;margin: 1rem 0;padding:1%;'>");
             using (var process = Process.GetCurrentProcess())
             {
-                sb.AppendLine($"<li>Start at {Global.StartTime.ToDateAndTime()}, it has been running for {Global.RunningInterval}.</li>");
-                sb.AppendLine($"<li>Process Id: {process.Id}, process name: {process.ProcessName}.</li>");
-                sb.AppendLine($"<li>Host name: {Environment.MachineName}, current user: {Environment.UserName}.</li>");
-                sb.AppendLine($"<li>OS version: {Environment.OSVersion}, .NET version: {Global.RuntimeVersion}, app version: {Global.AppVersion}</li>");
-                sb.AppendLine($"<li>Processor count: {Environment.ProcessorCount}, Allocated memory: {process.WorkingSet64.HumanByte()}, CPU time: {process.TotalProcessorTime.Human()}.</li>");
+                sb.AppendLine(
+                    $"<p><strong>Boot:</strong> {Global.StartTime.ToDateAndTime()}({Global.RunningInterval}).</p>");
+                sb.AppendLine(
+                    $"<p><strong>Machine:</strong> {Environment.MachineName} / {TimeZoneInfo.Local.StandardName} / {Environment.UserName}.</p>");
+                sb.AppendLine(
+                    $"<p><strong>Version:</strong> {Environment.OSVersion} / {Global.RuntimeVersion} / {Global.AppVersion}.</p>");
+                sb.AppendLine(
+                    $"<p><strong>Resource:</strong> {Environment.ProcessorCount}(processors) / {HumanHelper.DisplayBytes(process.WorkingSet64)}(memory) / {HumanHelper.DisplayTimeSpan(process.TotalProcessorTime)}(CPU).</p>");
             }
 
+            sb.AppendLine("</div>");
             return sb.ToString();
         }
     }

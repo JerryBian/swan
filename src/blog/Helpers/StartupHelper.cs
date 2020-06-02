@@ -33,7 +33,9 @@ namespace Laobian.Blog.Helpers
             services.AddSingleton<IEmailClient, SendGridEmailClient>();
             services.AddSingleton<IBlogAssetManager, BlogAssetManager>();
             services.AddSingleton<IBlogAlertService, BlogAlertService>();
+            services.AddHealthChecks();
             services.AddHttpContextAccessor();
+            services.AddSignalR();
 
             services.AddHostedService<AssetHostedService>();
             services.AddHostedService<LogHostedService>();

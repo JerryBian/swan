@@ -17,6 +17,11 @@ namespace Laobian.Share.Extension
             return time.ToString("yyyy-MM-dd HH:mm:ss");
         }
 
+        public static string ToChinaDateAndTime(this DateTime time)
+        {
+            return time.ToString("yyyy年MM月dd日 HH时mm分ss秒 CST");
+        }
+
         /// <summary>
         ///     Display time as date part
         /// </summary>
@@ -24,7 +29,7 @@ namespace Laobian.Share.Extension
         /// <returns>Date part format</returns>
         public static string ToDate(this DateTime time)
         {
-            return time.ToString("yyyy-MM-dd");
+            return time.ToString("yyyy年MM月dd日");
         }
     }
 }

@@ -3,21 +3,21 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using Laobian.Blog.Helpers;
+using Laobian.Blog.Hubs;
 using Laobian.Share;
 using Laobian.Share.Blog.Alert;
+using Laobian.Share.Extension;
+using Laobian.Share.Log;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Serilog;
-using Serilog.Context;
 
 namespace Laobian.Blog
 {
@@ -67,7 +67,7 @@ namespace Laobian.Blog
                     ExceptionHandler = async context =>
                     {
                         logger.LogError(context.Features.Get<IExceptionHandlerFeature>()?.Error,
-                            $"Something is wrong! Request Url= {context.Request.Path}");
+                            LogMessageHelper.Format($"Something is wrong! Request Url= {context.Request.Path}", context));
                         await context.Response.WriteAsync(
                             $"Something was wrong! Please contact {Global.Config.Common.AdminEmail}.");
                     }
@@ -78,45 +78,45 @@ namespace Laobian.Blog
                 app.UseDeveloperExceptionPage();
             }
 
-            app.Use(async (context, next) =>
-            {
-                using (LogContext.PushProperty(LogEntryItem.RequestUrl.ToString(), context.Request.GetDisplayUrl()))
-                using (LogContext.PushProperty(LogEntryItem.RequestIp.ToString(), context.Connection.RemoteIpAddress))
-                using (LogContext.PushProperty(LogEntryItem.RequestUserAgent.ToString(), context.Request.Headers["User-Agent"]))
-                {
-                    await next();
-                }
-            });
-
-            app.UseSerilogRequestLogging();
-
             app.UseStatusCodePages(async context =>
             {
                 var message = "Status code page, status code: " +
                               context.HttpContext.Response.StatusCode;
-                logger.LogWarning(message);
+                logger.LogWarning(LogMessageHelper.Format(message, context.HttpContext));
                 context.HttpContext.Response.ContentType = "text/plain";
                 await context.HttpContext.Response.WriteAsync(message);
             });
 
             app.UseStaticFiles();
+            app.UseHealthChecks("/health");
 
-            var fileDirFullPath = Path.Combine(Global.Config.Blog.AssetRepoLocalDir, Global.Config.Blog.FileGitPath);
-            Directory.CreateDirectory(fileDirFullPath);
-            var fileServerOptions = new FileServerOptions
+            if (Global.Environment.IsDevelopment())
             {
-                FileProvider = new PhysicalFileProvider(fileDirFullPath),
-                RequestPath = Global.Config.Blog.FileRequestPath,
-                EnableDirectoryBrowsing = true
-            };
-            app.UseFileServer(fileServerOptions);
+                var fileDirFullPath = Path.Combine(Global.Config.Blog.AssetRepoLocalDir, Global.Config.Blog.FileGitPath);
+                Directory.CreateDirectory(fileDirFullPath);
+                var fileServerOptions = new FileServerOptions
+                {
+                    FileProvider = new PhysicalFileProvider(fileDirFullPath),
+                    RequestPath = Global.Config.Blog.FileRequestPath,
+                    EnableDirectoryBrowsing = true
+                };
+                app.UseFileServer(fileServerOptions);
+            }
 
             app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints => { endpoints.MapDefaultControllerRoute(); });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapHub<LogHub>("/hub/log");
+                endpoints.MapAreaControllerRoute(
+                    "AdminArea", 
+                    "Admin",
+                    "admin/{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapDefaultControllerRoute();
+            });
         }
 
         private static void RegisterEvents(
@@ -132,7 +132,7 @@ namespace Laobian.Blog
 
                 if (!Global.Environment.IsDevelopment())
                 {
-                    await alertService.AlertEventAsync("Blog started.");
+                    await alertService.AlertEventAsync($"<p>Blog started, it's {DateTime.Now.ToDateAndTime()}.</p>");
                 }
 
                 logger.LogInformation("Application started.");
@@ -142,10 +142,20 @@ namespace Laobian.Blog
             {
                 if (!Global.Environment.IsDevelopment())
                 {
-                    await alertService.AlertEventAsync("Blog is stopping.");
+                    await alertService.AlertEventAsync($"<p>Blog is stopping, it's {DateTime.Now.ToDateAndTime()}.");
                 }
 
                 logger.LogInformation("Application is stopping.");
+            });
+
+            applicationLifetime.ApplicationStopped.Register(async () =>
+            {
+                if (!Global.Environment.IsDevelopment())
+                {
+                    await alertService.AlertEventAsync($"<p>Blog is stopped, it's {DateTime.Now.ToDateAndTime()}.");
+                }
+
+                logger.LogInformation("Application is stopped.");
             });
         }
     }

@@ -61,7 +61,7 @@ namespace Laobian.Blog.Controllers
             model.Post.NewAccess();
             ViewData[ViewDataConstant.Canonical] = model.Post.FullUrlWithBase;
             ViewData[ViewDataConstant.Title] = model.Post.Title;
-            ViewData[ViewDataConstant.Description] = model.Post.ExcerptPlain;
+            ViewData[ViewDataConstant.Description] = model.Post.HeadDescription;
 
             return View(model);
         }

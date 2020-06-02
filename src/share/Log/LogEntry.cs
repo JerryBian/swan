@@ -5,11 +5,11 @@ namespace Laobian.Share.Log
 {
     public class LogEntry
     {
+        public DateTime When { get; set; }
+
         public string Message { get; set; }
 
-        public Exception Exception { get; set; }
-
-        public DateTime When { get; set; }
+        public string Exception { get; set; }
 
         public LogLevel Level { get; set; }
     }

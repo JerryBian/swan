@@ -1,5 +1,6 @@
 ﻿using Laobian.Blog.Models;
 using Laobian.Share;
+using Microsoft.Extensions.Hosting;
 
 namespace Laobian.Blog.Helpers
 {
@@ -21,11 +22,7 @@ namespace Laobian.Blog.Helpers
             var description = string.Empty;
             if (viewData[ViewDataConstant.Description] != null)
             {
-                description = viewData[ViewDataConstant.Description].ToString();
-                description = description.TrimEnd('。');
-                var maxLength = 145 - Global.Config.Blog.Description.Length;
-                description = description.Substring(0, description.Length < maxLength ? description.Length : maxLength);
-                description += "。";
+                description = viewData[ViewDataConstant.Description];
             }
 
             description += Global.Config.Blog.Description;
@@ -46,7 +43,12 @@ namespace Laobian.Blog.Helpers
         public static string GetRobots(dynamic viewData)
         {
             var robots = "index, follow, archive";
-            if (viewData[ViewDataConstant.VisibleToSearchEngine] != null)
+
+            if (Global.Environment.IsStaging())
+            {
+                robots = "noindex, nofollow";
+            }
+            else if (viewData[ViewDataConstant.VisibleToSearchEngine] != null)
             {
                 if (!bool.TryParse(viewData[ViewDataConstant.VisibleToSearchEngine].ToString(), out bool result) ||
                     !result)
