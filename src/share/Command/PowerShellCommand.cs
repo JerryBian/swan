@@ -25,7 +25,13 @@ namespace Laobian.Share.Command
             if (result.Any())
             {
                 _logger.LogInformation(
-                    $"Executed command {command}, the output is:{Environment.NewLine}{string.Join(Environment.NewLine, result)}");
+                    $"Out Stream::Executed command {command}, the output is:{Environment.NewLine}{string.Join(Environment.NewLine, result)}");
+            }
+
+            if (ps.Streams.Error.Count > 0)
+            {
+                _logger.LogError(
+                    $"Error Stream::Executed command {command} having errors, the output is:{Environment.NewLine}{string.Join(Environment.NewLine, ps.Streams.Error)}");
             }
         }
     }
