@@ -27,13 +27,19 @@ namespace Laobian.Share.Blog.Extension
         {
             var categoryHtml = GetCategoryHtml(post);
             var tagHtml = GetTagHtml(post);
-            if (!string.IsNullOrEmpty(tagHtml))
-            {
-                post.CategoryAndTagHtml = categoryHtml + " &middot; " + tagHtml;
-            }
-            else
+            if (!string.IsNullOrEmpty(categoryHtml))
             {
                 post.CategoryAndTagHtml = categoryHtml;
+            }
+
+            if (!string.IsNullOrEmpty(tagHtml))
+            {
+                if (!string.IsNullOrEmpty(categoryHtml))
+                {
+                    post.CategoryAndTagHtml += " &middot; ";
+                }
+
+                post.CategoryAndTagHtml += tagHtml;
             }
         }
 
