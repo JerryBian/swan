@@ -1,8 +1,8 @@
-name: master
+name: stage
 
 on:
   push:
-    branches: [ master ]
+    branches: [ 4.4 ]
 
 jobs:
   build:
@@ -37,12 +37,12 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         port: ${{ secrets.PORT }}
         script: |
-          rm -rf /tmp/blog-prod 2> /dev/null
+          rm -rf /tmp/blog-stage 2> /dev/null
     - name: copy binary to server
       uses: garygrossgarten/github-action-scp@release
       with:
         local: publish
-        remote: /tmp/blog-prod
+        remote: /tmp/blog-stage
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
@@ -55,4 +55,4 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         port: ${{ secrets.PORT }}
         script: |
-          sh /ga/deploy-blog.sh
+          sh /ga/deploy-blog.sh stage
