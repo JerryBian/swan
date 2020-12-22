@@ -12,7 +12,7 @@ namespace Laobian.Share
     {
         public static ConcurrentQueue<LogEntry> InMemoryLogQueue = new ConcurrentQueue<LogEntry>();
 
-        public static string RuntimeVersion = $".NET {System.Environment.Version}";
+        public static string RuntimeVersion = RuntimeInformation.FrameworkDescription;
 
         public static AppConfig Config { get; set; }
 

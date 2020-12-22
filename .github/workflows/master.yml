@@ -13,7 +13,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 5.0.101
+        dotnet-version: 3.1.404
     - name: Install dependencies
       run: dotnet restore
     - name: Build
@@ -28,7 +28,7 @@ jobs:
         FOLDER: src/blog/wwwroot/dist # The folder the action should deploy.
         SINGLE_COMMIT: false
     - name: Publish binary
-      run: dotnet publish ./src/blog/Laobian.Blog.csproj -p:IncludeNativeLibrariesForSelfExtract=true -p:PublishTrimmed=true -p:PublishSingleFile=true -c Release -r linux-x64 -o publish --self-contained
+      run: dotnet publish ./src/blog/Laobian.Blog.csproj -p:PublishTrimmed=true -p:PublishSingleFile=true -c Release -r linux-x64 -o publish --self-contained
     - name: clean up build binary
       uses: appleboy/ssh-action@master
       with:
