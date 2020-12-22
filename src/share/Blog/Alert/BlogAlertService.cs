@@ -73,8 +73,7 @@ namespace Laobian.Share.Blog.Alert
             try
             {
                 _logger.LogInformation("Start to generate log report.");
-                var binDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                var fullPath = Path.Combine(binDir, "./Blog/Alert/ReportTemplate.txt");
+                var fullPath = Path.Combine(AppContext.BaseDirectory, "./Blog/Alert/ReportTemplate.txt");
                 var template = await File.ReadAllTextAsync(fullPath);
                 if (string.IsNullOrEmpty(template))
                 {
