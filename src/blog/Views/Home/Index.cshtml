@@ -8,8 +8,7 @@
                 <div>
                     <div class="text-muted d-sm-block post-item-meta">@Html.Raw(post.GetMetadataHtml())</div>
                     <div class="mb-2 post-item-title">
-                        @*<a href="@post.FullUrl">@post.Title</a>*@
-                        @post.Title
+                        <a href="@post.FullUrl">@post.Title</a>
                         @if (post.IsTopping)
                         {
                             <span class="badge badge-success">置顶</span>
@@ -29,9 +28,9 @@
                         <div class="mb-2 mt-1 post-item-excerpt">
                             @Html.Raw(post.ExcerptHtml)
                             
-                            <p>
-                                <a href="@post.FullUrl">继续阅读 &rarr;</a>
-                            </p>
+                            @*<p>
+                                &middot;&middot;&middot;&middot;&middot;&middot;
+                            </p>*@
                         </div>
                     </div>
                 </div>
