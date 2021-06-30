@@ -7,13 +7,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{EA8C544C-BE0
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{13445EA4-C3D1-4523-8C60-43030EF21D79}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laobian.Admin", "src\admin\Laobian.Admin\Laobian.Admin.csproj", "{77609B9D-3BF4-49B8-A16B-8D29A1738AE1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laobian.Admin", "src\admin\Laobian.Admin.csproj", "{77609B9D-3BF4-49B8-A16B-8D29A1738AE1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laobian.Blog", "src\blog\Laobian.Blog\Laobian.Blog.csproj", "{BA4BAC78-D109-4BF0-B0E9-E385030120A4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laobian.Blog", "src\blog\Laobian.Blog.csproj", "{BA4BAC78-D109-4BF0-B0E9-E385030120A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laobian.Api", "src\api\Laobian.Api\Laobian.Api.csproj", "{26162D17-4779-4EAB-92F0-4B8B577F3BC0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laobian.Api", "src\api\Laobian.Api.csproj", "{26162D17-4779-4EAB-92F0-4B8B577F3BC0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laobian.Share", "src\share\Laobian.Share\Laobian.Share.csproj", "{7EEFB79A-E61C-47E6-9675-EDE28007B8B1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laobian.Share", "src\share\Laobian.Share.csproj", "{7EEFB79A-E61C-47E6-9675-EDE28007B8B1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
