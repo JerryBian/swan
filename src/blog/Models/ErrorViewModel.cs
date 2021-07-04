@@ -1,5 +1,3 @@
-using System;
-
 namespace Laobian.Blog.Models
 {
     public class ErrorViewModel
