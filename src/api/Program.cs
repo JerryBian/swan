@@ -1,9 +1,9 @@
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+
 namespace Laobian.Api
 {
-    using Microsoft.AspNetCore.Hosting;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.Hosting;
-
     public class Program
     {
         public static void Main(string[] args)
@@ -17,7 +17,7 @@ namespace Laobian.Api
                 .ConfigureAppConfiguration((hostContext, config) =>
                 {
                     config.Sources.Clear();
-                    IHostEnvironment env = hostContext.HostingEnvironment;
+                    var env = hostContext.HostingEnvironment;
                     config.AddJsonFile("appsettings.json", true, true)
                         .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true, true);
                     config.AddEnvironmentVariables();
@@ -27,10 +27,7 @@ namespace Laobian.Api
                         config.AddCommandLine(args);
                     }
                 })
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
+                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
         }
     }
 }

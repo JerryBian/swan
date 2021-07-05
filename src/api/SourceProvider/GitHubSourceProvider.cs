@@ -16,7 +16,8 @@ namespace Laobian.Api.SourceProvider
         private readonly ICommandClient _commandClient;
         private readonly ILogger<GitHubSourceProvider> _logger;
 
-        public GitHubSourceProvider(IOptions<ApiConfig> apiConfig, ICommandClient commandClient, ILogger<GitHubSourceProvider> logger) : base(apiConfig)
+        public GitHubSourceProvider(IOptions<ApiConfig> apiConfig, ICommandClient commandClient,
+            ILogger<GitHubSourceProvider> logger) : base(apiConfig)
         {
             _logger = logger;
             _apiConfig = apiConfig.Value;
@@ -33,6 +34,26 @@ namespace Laobian.Api.SourceProvider
         {
             await base.SaveTagsAsync(tags, cancellationToken);
             await PushDbRepoAsync("Update tags");
+        }
+
+        public override async Task SaveCommentsAsync(IDictionary<string, string> comments,
+            CancellationToken cancellationToken = default)
+        {
+            await base.SaveCommentsAsync(comments, cancellationToken);
+            await PushDbRepoAsync("Update comments");
+        }
+
+        public override async Task SavePostAccessAsync(IDictionary<string, string> postAccess,
+            CancellationToken cancellationToken = default)
+        {
+            await base.SavePostAccessAsync(postAccess, cancellationToken);
+            await PushDbRepoAsync("Update post access");
+        }
+
+        public override async Task SavePostMetadataAsync(string metadata, CancellationToken cancellationToken = default)
+        {
+            await base.SavePostMetadataAsync(metadata, cancellationToken);
+            await PushDbRepoAsync("Update post metadata");
         }
 
         private async Task PushDbRepoAsync(string message)

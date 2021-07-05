@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,7 +31,9 @@ namespace Laobian.Share.Command
                 RedirectStandardError = true,
                 RedirectStandardOutput = true,
                 UseShellExecute = false,
-                Arguments = string.IsNullOrEmpty(_commonSetting.CommandLineBeginArg) ? FormatCommand(command) : $"{_commonSetting.CommandLineBeginArg} {FormatCommand(command)}"
+                Arguments = string.IsNullOrEmpty(_commonSetting.CommandLineBeginArg)
+                    ? FormatCommand(command)
+                    : $"{_commonSetting.CommandLineBeginArg} {FormatCommand(command)}"
             };
 
             _logger.LogInformation($"FileName={startInfo.FileName}, Args={startInfo.Arguments}");

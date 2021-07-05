@@ -1,7 +1,7 @@
-﻿namespace Laobian.Api
-{
-    using Share;
+﻿using Laobian.Share;
 
+namespace Laobian.Api
+{
     public class ApiConfig : CommonConfig
     {
         public SourceMode Source { get; set; }

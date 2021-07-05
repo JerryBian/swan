@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,15 +12,14 @@ namespace Laobian.Api.SourceProvider
 {
     public class LocalFileSourceProvider : ISourceProvider
     {
+        private const string PostFileExtension = "*.md";
+        private const string PostMetadataExtension = "*.json";
         private readonly ApiConfig _apiConfig;
+        private string _accessLocation;
+        private string _commentLocation;
         private string _postLocation;
         private string _postMetadataLocation;
         private string _tagLocation;
-        private string _commentLocation;
-        private string _accessLocation;
-
-        private const string PostFileExtension = "*.md";
-        private const string PostMetadataExtension = "*.json";
 
         public LocalFileSourceProvider(IOptions<ApiConfig> apiConfig)
         {
@@ -62,10 +59,12 @@ namespace Laobian.Api.SourceProvider
             await Task.CompletedTask;
         }
 
-        public virtual async Task<IDictionary<string, string>> GetPostsAsync(CancellationToken cancellationToken = default)
+        public virtual async Task<IDictionary<string, string>> GetPostsAsync(
+            CancellationToken cancellationToken = default)
         {
             var posts = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
-            foreach (var file in Directory.EnumerateFiles(_postLocation, PostFileExtension, SearchOption.AllDirectories))
+            foreach (var file in Directory.EnumerateFiles(_postLocation, PostFileExtension,
+                SearchOption.AllDirectories))
             {
                 var postLink = Path.GetFileNameWithoutExtension(file);
                 if (posts.ContainsKey(postLink))
@@ -109,10 +108,12 @@ namespace Laobian.Api.SourceProvider
             await File.WriteAllTextAsync(_postMetadataLocation, metadata, Encoding.UTF8, cancellationToken);
         }
 
-        public virtual async Task<IDictionary<string, string>> GetPostAccessAsync(CancellationToken cancellationToken = default)
+        public virtual async Task<IDictionary<string, string>> GetPostAccessAsync(
+            CancellationToken cancellationToken = default)
         {
             var access = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
-            foreach (var file in Directory.EnumerateFiles(_accessLocation, PostMetadataExtension, SearchOption.TopDirectoryOnly))
+            foreach (var file in Directory.EnumerateFiles(_accessLocation, PostMetadataExtension,
+                SearchOption.TopDirectoryOnly))
             {
                 var postLink = Path.GetFileNameWithoutExtension(file);
                 if (access.ContainsKey(postLink))
@@ -126,7 +127,8 @@ namespace Laobian.Api.SourceProvider
             return access;
         }
 
-        public virtual async Task SavePostAccessAsync(IDictionary<string, string> postAccess, CancellationToken cancellationToken = default)
+        public virtual async Task SavePostAccessAsync(IDictionary<string, string> postAccess,
+            CancellationToken cancellationToken = default)
         {
             if (postAccess == null || !postAccess.Any())
             {
@@ -142,10 +144,12 @@ namespace Laobian.Api.SourceProvider
             }
         }
 
-        public virtual async Task<IDictionary<string, string>> GetCommentsAsync(CancellationToken cancellationToken = default)
+        public virtual async Task<IDictionary<string, string>> GetCommentsAsync(
+            CancellationToken cancellationToken = default)
         {
             var comments = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
-            foreach (var file in Directory.EnumerateFiles(_commentLocation, PostMetadataExtension, SearchOption.TopDirectoryOnly))
+            foreach (var file in Directory.EnumerateFiles(_commentLocation, PostMetadataExtension,
+                SearchOption.TopDirectoryOnly))
             {
                 var postLink = Path.GetFileNameWithoutExtension(file);
                 if (comments.ContainsKey(postLink))
@@ -159,7 +163,8 @@ namespace Laobian.Api.SourceProvider
             return comments;
         }
 
-        public virtual async Task SaveCommentsAsync(IDictionary<string, string> comments, CancellationToken cancellationToken = default)
+        public virtual async Task SaveCommentsAsync(IDictionary<string, string> comments,
+            CancellationToken cancellationToken = default)
         {
             if (comments == null || !comments.Any())
             {

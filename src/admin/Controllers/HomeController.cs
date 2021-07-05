@@ -1,10 +1,10 @@
-﻿namespace Laobian.Admin.Controllers
-{
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
-    using Models;
-    using System.Diagnostics;
+﻿using System.Diagnostics;
+using Laobian.Admin.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
+namespace Laobian.Admin.Controllers
+{
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
