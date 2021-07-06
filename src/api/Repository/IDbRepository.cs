@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Laobian.Api.Store;
 using Laobian.Share.Blog;
 
 namespace Laobian.Api.Repository
@@ -9,6 +10,10 @@ namespace Laobian.Api.Repository
     public interface IDbRepository
     {
         Task LoadAsync(CancellationToken cancellationToken = default);
+
+        Task<BlogTagStore> GetBlogTagStoreAsync(CancellationToken cancellationToken = default);
+
+        Task PersistentBlogTagStoreAsync(CancellationToken cancellationToken = default);
 
         Task<List<BlogTag>> GetBlogTagsAsync(CancellationToken cancellationToken = default);
 

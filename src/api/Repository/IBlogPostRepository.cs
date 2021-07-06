@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Laobian.Api.Store;
 using Laobian.Share.Blog;
 
 namespace Laobian.Api.Repository
@@ -9,6 +10,6 @@ namespace Laobian.Api.Repository
     {
         Task LoadAsync(CancellationToken cancellationToken = default);
 
-        Task<List<BlogPost>> GetPostsAsync(CancellationToken cancellationToken = default);
+        Task<BlogPostStore> GetBlogPostStoreAsync(CancellationToken cancellationToken = default);
     }
 }

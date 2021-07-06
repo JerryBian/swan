@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Api.SourceProvider;
+using Laobian.Api.Store;
 using Laobian.Share.Blog;
 using Laobian.Share.Helper;
 using Microsoft.Extensions.Options;
@@ -19,6 +20,8 @@ namespace Laobian.Api.Repository
         private IDictionary<string, IDictionary<DateTime, int>> _blogPostsAccess;
         private IDictionary<string, BlogPostMetadata> _blogPostsMetadata;
         private List<BlogTag> _blogTags;
+
+        private BlogTagStore _blogTagStore;
 
 
         public DbRepository(ISourceProviderFactory sourceProviderFactory, IOptions<ApiConfig> apiConfig)
@@ -35,49 +38,56 @@ namespace Laobian.Api.Repository
         {
             await _sourceProvider.LoadAsync(cancellationToken);
             var tags = await _sourceProvider.GetTagsAsync(cancellationToken);
-            if (!string.IsNullOrEmpty(tags))
-            {
-                _blogTags = JsonHelper.Deserialize<List<BlogTag>>(tags);
-            }
+            _blogTagStore = new BlogTagStore(tags);
 
-            var postMetadata = await _sourceProvider.GetPostMetadataAsync(cancellationToken);
-            if (!string.IsNullOrEmpty(postMetadata))
-            {
-                var metadata = JsonHelper.Deserialize<List<BlogPostMetadata>>(postMetadata);
-                _blogPostsMetadata =
-                    new ConcurrentDictionary<string, BlogPostMetadata>(metadata.ToDictionary(x => x.Link),
-                        StringComparer.InvariantCultureIgnoreCase);
-            }
+            //var postMetadata = await _sourceProvider.GetPostMetadataAsync(cancellationToken);
+            //if (!string.IsNullOrEmpty(postMetadata))
+            //{
+            //    var metadata = JsonHelper.Deserialize<List<BlogPostMetadata>>(postMetadata);
+            //    _blogPostsMetadata =
+            //        new ConcurrentDictionary<string, BlogPostMetadata>(metadata.ToDictionary(x => x.Link),
+            //            StringComparer.InvariantCultureIgnoreCase);
+            //}
 
-            var postComments = await _sourceProvider.GetCommentsAsync(cancellationToken);
-            if (postComments != null && postComments.Any())
-            {
-                _blogPostCommentItems = new ConcurrentDictionary<Guid, BlogCommentItem>();
-                _blogPostComments =
-                    new ConcurrentDictionary<string, List<BlogCommentItem>>(StringComparer.InvariantCultureIgnoreCase);
-                foreach (var postComment in postComments)
-                {
-                    var commentItems = JsonHelper.Deserialize<List<BlogCommentItem>>(postComment.Value);
-                    _blogPostComments.TryAdd(postComment.Key, commentItems);
-                    foreach (var blogCommentItem in commentItems)
-                    {
-                        _blogPostCommentItems.TryAdd(blogCommentItem.Id, blogCommentItem);
-                    }
-                }
-            }
+            //var postComments = await _sourceProvider.GetCommentsAsync(cancellationToken);
+            //if (postComments != null && postComments.Any())
+            //{
+            //    _blogPostCommentItems = new ConcurrentDictionary<Guid, BlogCommentItem>();
+            //    _blogPostComments =
+            //        new ConcurrentDictionary<string, List<BlogCommentItem>>(StringComparer.InvariantCultureIgnoreCase);
+            //    foreach (var postComment in postComments)
+            //    {
+            //        var commentItems = JsonHelper.Deserialize<List<BlogCommentItem>>(postComment.Value);
+            //        _blogPostComments.TryAdd(postComment.Key, commentItems);
+            //        foreach (var blogCommentItem in commentItems)
+            //        {
+            //            _blogPostCommentItems.TryAdd(blogCommentItem.Id, blogCommentItem);
+            //        }
+            //    }
+            //}
 
-            var postAccess = await _sourceProvider.GetPostAccessAsync(cancellationToken);
-            if (postAccess != null && postAccess.Any())
-            {
-                _blogPostsAccess =
-                    new ConcurrentDictionary<string, IDictionary<DateTime, int>>(StringComparer
-                        .InvariantCultureIgnoreCase);
-                foreach (var item in postAccess)
-                {
-                    var access = JsonHelper.Deserialize<ConcurrentDictionary<DateTime, int>>(item.Value);
-                    _blogPostsAccess.TryAdd(item.Key, access);
-                }
-            }
+            //var postAccess = await _sourceProvider.GetPostAccessAsync(cancellationToken);
+            //if (postAccess != null && postAccess.Any())
+            //{
+            //    _blogPostsAccess =
+            //        new ConcurrentDictionary<string, IDictionary<DateTime, int>>(StringComparer
+            //            .InvariantCultureIgnoreCase);
+            //    foreach (var item in postAccess)
+            //    {
+            //        var access = JsonHelper.Deserialize<ConcurrentDictionary<DateTime, int>>(item.Value);
+            //        _blogPostsAccess.TryAdd(item.Key, access);
+            //    }
+            //}
+        }
+
+        public async Task<BlogTagStore> GetBlogTagStoreAsync(CancellationToken cancellationToken = default)
+        {
+            return await Task.FromResult(_blogTagStore);
+        }
+
+        public async Task PersistentBlogTagStoreAsync(CancellationToken cancellationToken = default)
+        {
+            await _sourceProvider.SaveTagsAsync(JsonHelper.Serialize(_blogTagStore.GetAll().OrderByDescending(x =>x.LastUpdatedAt), true), cancellationToken);
         }
 
         public async Task<List<BlogTag>> GetBlogTagsAsync(CancellationToken cancellationToken = default)
