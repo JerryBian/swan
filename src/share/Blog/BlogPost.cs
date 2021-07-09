@@ -11,20 +11,24 @@ namespace Laobian.Share.Blog
 
         public string HtmlContent { get; set; }
 
+        public int TotalAccess { get; set; }
+
         public BlogPostMetadata Metadata { get; set; }
 
-        public List<BlogTag> Tags { get; set; }
+        public List<BlogTag> Tags { get; } = new();
 
-        public List<BlogCommentItem> Comments { get; set; }
+        public List<BlogCommentItem> Comments { get; } = new();
 
-        public List<BlogPostAccess> Accesses { get; set; }
+        public List<BlogPostAccess> Accesses { get; } = new();
 
-        public void LoadAdditionalInfo()
-        {
-            if (Metadata == null)
-            {
-                throw new InvalidOperationException("Metadata is not set yet.");
-            }
-        }
+        public string FullPath { get; set; }
+
+        public string PublishTimeString { get; set; }
+
+        public bool IsPublished => Metadata.IsPublished && Metadata.PublishTime <= DateTime.Now;
+
+        public string AccessCountString { get; set; }
+
+        public string CommentCountString { get; set; }
     }
 }

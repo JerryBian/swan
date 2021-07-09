@@ -25,6 +25,6 @@ namespace Laobian.Share.Blog
 
         public string Excerpt { get; set; }
 
-        public List<string> Tags { get; set; }
+        public List<string> Tags { get; } = new();
     }
 }

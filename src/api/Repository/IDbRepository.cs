@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Api.Store;
-using Laobian.Share.Blog;
 
 namespace Laobian.Api.Repository
 {
@@ -15,26 +12,16 @@ namespace Laobian.Api.Repository
 
         Task PersistentBlogTagStoreAsync(CancellationToken cancellationToken = default);
 
-        Task<List<BlogTag>> GetBlogTagsAsync(CancellationToken cancellationToken = default);
+        Task<BlogMetadataStore> GetBlogMetadataStoreAsync(CancellationToken cancellationToken);
 
-        Task SaveBlogTagsAsync(CancellationToken cancellationToken = default);
+        Task PersistentBlogMetadataAsync(CancellationToken cancellationToken = default);
 
-        Task<IDictionary<string, BlogPostMetadata>> GetBlogPostMetadataAsync(
-            CancellationToken cancellationToken = default);
+        Task<BlogAccessStore> GetBlogAccessStoreAsync(CancellationToken cancellationToken = default);
 
-        Task SaveBlogPostMetadataAsync(CancellationToken cancellationToken = default);
+        Task PersistentBlogAccessStoreAsync(CancellationToken cancellationToken = default);
 
-        Task<IDictionary<string, IDictionary<DateTime, int>>> GetBlogPostAccessAsync(
-            CancellationToken cancellationToken = default);
+        Task<BlogCommentStore> GetBlogCommentStoreAsync(CancellationToken cancellationToken = default);
 
-        Task SaveBlogPostAccessAsync(CancellationToken cancellationToken = default);
-
-        Task<IDictionary<string, List<BlogCommentItem>>> GetBlogPostCommentsAsync(
-            CancellationToken cancellationToken = default);
-
-        Task SaveBlogPostCommentsAsync(CancellationToken cancellationToken = default);
-
-        Task<IDictionary<Guid, BlogCommentItem>> GetBlogPostCommentItemsAsync(
-            CancellationToken cancellationToken = default);
+        Task PersistentBlogCommentStoreAsync(CancellationToken cancellationToken = default);
     }
 }

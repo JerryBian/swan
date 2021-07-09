@@ -7,7 +7,8 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build_admin" : "sass src/admin/wwwroot/scss/app.scss src/admin/wwwroot/index.css"
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,7 @@
   "homepage": "https://github.com/JerryBian/laobian.me#readme",
   "devDependencies": {
     "bootstrap": "^5.0.2",
+    "sass": "^1.35.2",
     "uglify-js": "^3.13.10",
     "uglifycss": "0.0.29"
   }

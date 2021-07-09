@@ -36,6 +36,16 @@ namespace Laobian.Api.Store
             });
         }
 
+        public List<BlogCommentItem> GetByLink(string postLink)
+        {
+            if (_comments.TryGetValue(postLink, out var c))
+            {
+                return c;
+            }
+
+            return null;
+        }
+
         public void Update(string postLink, BlogCommentItem comment)
         {
             if (!_comments.TryGetValue(postLink, out var c))

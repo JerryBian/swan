@@ -20,7 +20,7 @@ namespace Laobian.Api
                     var env = hostContext.HostingEnvironment;
                     config.AddJsonFile("appsettings.json", true, true)
                         .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true, true);
-                    config.AddEnvironmentVariables();
+                    config.AddEnvironmentVariables("Env");
 
                     if (args != null)
                     {

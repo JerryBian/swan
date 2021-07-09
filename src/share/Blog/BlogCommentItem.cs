@@ -23,5 +23,7 @@ namespace Laobian.Share.Blog
         public bool IsPublished { get; set; }
 
         public DateTime LastUpdatedAt { get; set; }
+
+        public string IdString => Id.ToString("N");
     }
 }

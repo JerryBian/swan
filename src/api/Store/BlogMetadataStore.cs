@@ -49,5 +49,24 @@ namespace Laobian.Api.Store
         {
             _allMetadata.TryRemove(postLink, out _);
         }
+
+        public void Update(BlogPostMetadata metadata)
+        {
+            if (!_allMetadata.TryGetValue(metadata.Link, out var val))
+            {
+                throw new InvalidOperationException($"Metadata link not exists: {metadata.Link}");
+            }
+
+            val.IsPublished = metadata.IsPublished;
+            val.LastUpdateTime = DateTime.Now;
+            val.PublishTime = metadata.PublishTime;
+            val.Tags.Clear();
+            val.Tags.AddRange(metadata.Tags);
+            val.AllowComment = metadata.AllowComment;
+            val.ContainsMath = metadata.ContainsMath;
+            val.Excerpt = metadata.Excerpt;
+            val.IsTopping = metadata.IsTopping;
+            val.Title = metadata.Title;
+        }
     }
 }

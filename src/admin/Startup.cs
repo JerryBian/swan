@@ -1,3 +1,4 @@
+using Laobian.Admin.HttpService;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -18,6 +19,10 @@ namespace Laobian.Admin
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<AdminConfig>(Configuration);
+
+            services.AddHttpClient<ApiHttpService>();
+            services.AddHttpClient<BlogHttpService>();
             services.AddControllersWithViews();
         }
 

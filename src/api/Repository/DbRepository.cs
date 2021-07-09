@@ -15,11 +15,6 @@ namespace Laobian.Api.Repository
     public class DbRepository : IDbRepository
     {
         private readonly ISourceProvider _sourceProvider;
-        private IDictionary<Guid, BlogCommentItem> _blogPostCommentItems;
-        private IDictionary<string, List<BlogCommentItem>> _blogPostComments;
-        private IDictionary<string, IDictionary<DateTime, int>> _blogPostsAccess;
-        private IDictionary<string, BlogPostMetadata> _blogPostsMetadata;
-        private List<BlogTag> _blogTags;
 
         private BlogTagStore _blogTagStore;
         private BlogAccessStore _blogAccessStore;
@@ -30,11 +25,6 @@ namespace Laobian.Api.Repository
         public DbRepository(ISourceProviderFactory sourceProviderFactory, IOptions<ApiConfig> apiConfig)
         {
             _sourceProvider = sourceProviderFactory.Get(apiConfig.Value.Source);
-            _blogTags = new List<BlogTag>();
-            _blogPostsMetadata = new ConcurrentDictionary<string, BlogPostMetadata>();
-            _blogPostCommentItems = new ConcurrentDictionary<Guid, BlogCommentItem>();
-            _blogPostComments = new ConcurrentDictionary<string, List<BlogCommentItem>>();
-            _blogPostsAccess = new ConcurrentDictionary<string, IDictionary<DateTime, int>>();
         }
 
         public async Task LoadAsync(CancellationToken cancellationToken = default)
@@ -94,74 +84,6 @@ namespace Laobian.Api.Repository
         public async Task PersistentBlogCommentStoreAsync(CancellationToken cancellationToken = default)
         {
             await _sourceProvider.SaveCommentsAsync(_blogCommentStore.GetAll().ToDictionary(x => x.Key, x => JsonHelper.Serialize(x.Value.OrderByDescending(y => y.LastUpdatedAt), true)), cancellationToken);
-        }
-
-        public async Task<List<BlogTag>> GetBlogTagsAsync(CancellationToken cancellationToken = default)
-        {
-            return await Task.FromResult(_blogTags);
-        }
-
-        public async Task SaveBlogTagsAsync(CancellationToken cancellationToken = default)
-        {
-            await _sourceProvider.SaveTagsAsync(JsonHelper.Serialize(_blogTags, true), cancellationToken);
-        }
-
-        public async Task<IDictionary<string, BlogPostMetadata>> GetBlogPostMetadataAsync(
-            CancellationToken cancellationToken = default)
-        {
-            return await Task.FromResult(_blogPostsMetadata);
-        }
-
-        public async Task SaveBlogPostMetadataAsync(CancellationToken cancellationToken = default)
-        {
-            await _sourceProvider.SavePostMetadataAsync(JsonHelper.Serialize(_blogPostsMetadata.Values, true),
-                cancellationToken);
-        }
-
-        public async Task<IDictionary<string, IDictionary<DateTime, int>>> GetBlogPostAccessAsync(
-            CancellationToken cancellationToken = default)
-        {
-            return await Task.FromResult(_blogPostsAccess);
-        }
-
-        public async Task SaveBlogPostAccessAsync(CancellationToken cancellationToken = default)
-        {
-            var access = new Dictionary<string, string>();
-            foreach (var item in _blogPostsAccess)
-            {
-                var postAccess = new Dictionary<string, int>();
-                foreach (var i in item.Value)
-                {
-                    postAccess.Add(i.Key.ToString("yyyy-MM-dd"), i.Value);
-                }
-
-                access.Add(item.Key, JsonHelper.Serialize(postAccess));
-            }
-
-            await _sourceProvider.SavePostAccessAsync(access, cancellationToken);
-        }
-
-        public async Task<IDictionary<string, List<BlogCommentItem>>> GetBlogPostCommentsAsync(
-            CancellationToken cancellationToken = default)
-        {
-            return await Task.FromResult(_blogPostComments);
-        }
-
-        public async Task SaveBlogPostCommentsAsync(CancellationToken cancellationToken = default)
-        {
-            var comments = new Dictionary<string, string>();
-            foreach (var blogPostComment in _blogPostComments)
-            {
-                comments.Add(blogPostComment.Key, JsonHelper.Serialize(blogPostComment.Value));
-            }
-
-            await _sourceProvider.SaveCommentsAsync(comments, cancellationToken);
-        }
-
-        public async Task<IDictionary<Guid, BlogCommentItem>> GetBlogPostCommentItemsAsync(
-            CancellationToken cancellationToken = default)
-        {
-            return await Task.FromResult(_blogPostCommentItems);
         }
     }
 }

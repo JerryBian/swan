@@ -5,5 +5,13 @@
         public string CommandLineApp { get; set; }
 
         public string CommandLineBeginArg { get; set; }
+
+        public string BlogLocalEndpoint { get; set; }
+
+        public string BlogRemoteEndpoint { get; set; }
+
+        public string ApiLocalEndpoint { get; set; }
+
+        public string AdminLocalEndpoint { get; set; }
     }
 }
