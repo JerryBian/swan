@@ -103,8 +103,8 @@ namespace Laobian.Admin.HttpService
                 return false;
             }
 
-            var result = await response.Content.ReadAsStringAsync();
-            return Convert.ToBoolean(result);
+            await response.Content.ReadAsStringAsync();
+            return true;
         }
 
         public async Task<BlogTag> GetTagAsync(string link)
@@ -133,7 +133,7 @@ namespace Laobian.Admin.HttpService
                 return false;
             }
 
-            return Convert.ToBoolean(content);
+            return true;
         }
 
         public async Task<bool> UpdateTagAsync(BlogTag tag)
@@ -148,7 +148,7 @@ namespace Laobian.Admin.HttpService
                 return false;
             }
 
-            return Convert.ToBoolean(content);
+            return true;
         }
 
         public async Task<bool> DeleteTagAsync(string link)
@@ -162,7 +162,7 @@ namespace Laobian.Admin.HttpService
                 return false;
             }
 
-            return Convert.ToBoolean(content);
+            return true;
         }
 
         public async Task<bool> AddCommentAsync(string postLink, BlogCommentItem comment)
@@ -177,7 +177,7 @@ namespace Laobian.Admin.HttpService
                 return false;
             }
 
-            return Convert.ToBoolean(content);
+            return true;
         }
 
         public async Task<List<BlogCommentItem>> GetCommentsAsync()
@@ -234,7 +234,7 @@ namespace Laobian.Admin.HttpService
                 return false;
             }
 
-            return Convert.ToBoolean(content);
+            return true;
         }
     }
 }

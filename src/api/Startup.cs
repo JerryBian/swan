@@ -5,6 +5,7 @@ using Laobian.Api.Service;
 using Laobian.Api.SourceProvider;
 using Laobian.Share.Command;
 using Laobian.Share.Command.Laobian.Share.Command;
+using Laobian.Share.Converter;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -36,6 +37,12 @@ namespace Laobian.Api
 
             services.AddHostedService<BlogApiHostedService>();
             services.Configure<ApiConfig>(Configuration);
+
+            services.AddControllers().AddJsonOptions(config =>
+            {
+                var converter = new IsoDateTimeConverter();
+                config.JsonSerializerOptions.Converters.Add(converter);
+            });
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

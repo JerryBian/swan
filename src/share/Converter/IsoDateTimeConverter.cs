@@ -14,7 +14,7 @@ namespace Laobian.Share.Converter
 
         public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
         {
-            writer.WriteStringValue(value.ToString("yyyy-MM-ddThh:mm:ss"));
+            writer.WriteStringValue(value.ToString("yyyy-MM-ddTHH:mm:ss"));
         }
     }
 }

@@ -20,7 +20,7 @@
                 <tr>
                     <th>@post.PublishTimeString</th>
                     <th>
-                        <a href="@_config.Value.BlogRemoteEndpoint@post.FullPath">@post.Metadata.Title</a>
+                        <a href="@_config.Value.BlogRemoteEndpoint/@post.FullPath">@post.Metadata.Title</a>
                     </th>
                     <th>@post.IsPublished</th>
                     <th>
@@ -108,14 +108,14 @@
             fetch(`/blog/post/${link}`)
                 .then(response => response.json())
                 .then(post => {
-                    document.querySelector('#postLink').innerHTML = post.l;
-                    document.querySelector('#modalBodyTitle').value = post.m.t;
-                    document.querySelector('#modalBodyExcerpt').value = post.m.e;
-                    document.querySelector('#modalBodyIsPublished').checked = post.m.ip;
-                    document.querySelector('#modalBodyIsTopping').checked = post.m.it;
-                    document.querySelector('#modalBodyContainsMath').checked = post.m.cm;
-                    document.querySelector('#modalBodyAllowComment').checked = post.m.a;
-                    document.querySelector('#modalBodyPublishTime').value = post.m.p;
+                    document.querySelector('#postLink').innerHTML = post.metadata.link;
+                    document.querySelector('#modalBodyTitle').value = post.metadata.title;
+                    document.querySelector('#modalBodyExcerpt').value = post.metadata.excerpt;
+                    document.querySelector('#modalBodyIsPublished').checked = post.metadata.isPublished;
+                    document.querySelector('#modalBodyIsTopping').checked = post.metadata.isTopping;
+                    document.querySelector('#modalBodyContainsMath').checked = post.metadata.containsMath;
+                    document.querySelector('#modalBodyAllowComment').checked = post.metadata.allowComment;
+                    document.querySelector('#modalBodyPublishTime').value = post.metadata.publishTime;
 
                     let checkedBoxes = document.querySelectorAll('#tagsDiv input[type=checkbox]');
                     for (let i = 0; i < checkedBoxes.length; i++) {
@@ -127,7 +127,7 @@
                     }
                     modal.show();
                 })
-                .catch(err => {});
+                .catch(err => {console.log(err)});
         }
 
         function saveMetadata() {
@@ -138,15 +138,15 @@
             }
 
             let metadata = {
-                l: document.querySelector('#postLink').innerHTML,
-                t: document.querySelector('#modalBodyTitle').value,
-                e: document.querySelector('#modalBodyExcerpt').value,
-                ip: document.querySelector('#modalBodyIsPublished').checked,
-                it: document.querySelector('#modalBodyIsTopping').checked,
-                cm: document.querySelector('#modalBodyContainsMath').checked,
-                a: document.querySelector('#modalBodyAllowComment').checked,
-                p: document.querySelector('#modalBodyPublishTime').value,
-                ta: tags
+                link: document.querySelector('#postLink').innerHTML,
+                title: document.querySelector('#modalBodyTitle').value,
+                excerpt: document.querySelector('#modalBodyExcerpt').value,
+                ipAddress: document.querySelector('#modalBodyIsPublished').checked,
+                isTopping: document.querySelector('#modalBodyIsTopping').checked,
+                containsMath: document.querySelector('#modalBodyContainsMath').checked,
+                allowComment: document.querySelector('#modalBodyAllowComment').checked,
+                publishTime: document.querySelector('#modalBodyPublishTime').value,
+                tags: tags
             };
 
             fetch('/blog/post/metadata',
@@ -163,7 +163,7 @@
                         window.location.reload(true);
                     }
                 })
-                .catch(err => {});
+                .catch(err => {console.log(err)});
         }
     </script>
 }

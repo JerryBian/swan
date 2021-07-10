@@ -1,4 +1,5 @@
 using Laobian.Admin.HttpService;
+using Laobian.Share.Converter;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -23,6 +24,12 @@ namespace Laobian.Admin
 
             services.AddHttpClient<ApiHttpService>();
             services.AddHttpClient<BlogHttpService>();
+
+            services.AddControllers().AddJsonOptions(config =>
+            {
+                var converter = new IsoDateTimeConverter();
+                config.JsonSerializerOptions.Converters.Add(converter);
+            });
             services.AddControllersWithViews();
         }
 

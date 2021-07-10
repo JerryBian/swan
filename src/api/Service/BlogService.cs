@@ -101,13 +101,22 @@ namespace Laobian.Api.Service
                 if (metadata == null)
                 {
                     metadata = new BlogPostMetadata { Link = blogPost.Link};
+                    metadata.SetDefault();
                     blogMetadataStore.Add(metadata);
                 }
 
                 blogPost.Metadata = metadata;
                 var access = blogAccessStore.GetByLink(blogPost.Link);
-                blogPost.Accesses.AddRange(access);
-                blogPost.TotalAccess = access.Sum(x => x.Count);
+                if (access != null)
+                {
+                    blogPost.Accesses.AddRange(access);
+                    blogPost.TotalAccess = access.Sum(x => x.Count);
+                    blogPost.AccessCountString = blogPost.TotalAccess.ToString("N");
+                }
+                else
+                {
+                    blogPost.AccessCountString = "0";
+                }
 
                 foreach (var metadataTag in metadata.Tags)
                 {
@@ -119,7 +128,18 @@ namespace Laobian.Api.Service
                 }
 
                 var comments = blogCommentStore.GetByLink(blogPost.Link);
-                blogPost.Comments.AddRange(comments);
+                if (comments != null)
+                {
+                    blogPost.Comments.AddRange(comments);
+                    blogPost.CommentCountString = comments.Count.ToString("N");
+                }
+                else
+                {
+                    blogPost.CommentCountString = "0";
+                }
+
+                blogPost.PublishTimeString = blogPost.Metadata.PublishTime.ToString("yyyy-MM-dd HH:mm:ss");
+                blogPost.FullPath = $"{blogPost.Metadata.PublishTime.Year:D4}/{blogPost.Metadata.PublishTime.Month:D2}/{blogPost.Metadata.Link}.html";
             }
         }
     }
