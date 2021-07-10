@@ -27,15 +27,16 @@ namespace Laobian.Api.SourceProvider
         }
 
         public virtual async Task LoadAsync(CancellationToken cancellationToken = default)
+        
         {
             if (string.IsNullOrEmpty(_apiConfig.BlogPostLocation))
             {
-                throw new LaobianConfigException(_apiConfig.BlogPostLocation);
+                throw new LaobianConfigException(nameof(_apiConfig.BlogPostLocation));
             }
 
             if (string.IsNullOrEmpty(_apiConfig.DbLocation))
             {
-                throw new LaobianConfigException(_apiConfig.DbLocation);
+                throw new LaobianConfigException(nameof(_apiConfig.DbLocation));
             }
 
             Directory.CreateDirectory(_apiConfig.BlogPostLocation);

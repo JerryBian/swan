@@ -14,9 +14,12 @@ namespace Laobian.Api.Store
         public BlogMetadataStore(string metadata)
         {
             _allMetadata = new ConcurrentDictionary<string, BlogPostMetadata>(StringComparer.InvariantCultureIgnoreCase);
-            foreach (var item in JsonHelper.Deserialize<List<BlogPostMetadata>>(metadata))
+            if (!string.IsNullOrEmpty(metadata))
             {
-                _allMetadata.TryAdd(item.Link, item);
+                foreach (var item in JsonHelper.Deserialize<List<BlogPostMetadata>>(metadata))
+                {
+                    _allMetadata.TryAdd(item.Link, item);
+                }
             }
         }
 

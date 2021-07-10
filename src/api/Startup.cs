@@ -1,3 +1,10 @@
+using Laobian.Api.Controllers;
+using Laobian.Api.HostedServices;
+using Laobian.Api.Repository;
+using Laobian.Api.Service;
+using Laobian.Api.SourceProvider;
+using Laobian.Share.Command;
+using Laobian.Share.Command.Laobian.Share.Command;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -19,6 +26,17 @@ namespace Laobian.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<ICommandClient, ProcessCommandClient>();
+            services.AddSingleton<IBlogService, BlogService>();
+            services.AddSingleton<IBlogPostRepository, BlogPostRepository>();
+            services.AddSingleton<IDbRepository, DbRepository>();
+            services.AddSingleton<LocalFileSourceProvider>();
+            services.AddSingleton<GitHubSourceProvider>();
+            services.AddSingleton<ISourceProviderFactory, SourceProviderFactory>();
+
+            services.AddHostedService<BlogApiHostedService>();
+            services.Configure<ApiConfig>(Configuration);
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

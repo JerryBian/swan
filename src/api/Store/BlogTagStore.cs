@@ -14,9 +14,12 @@ namespace Laobian.Api.Store
         public BlogTagStore(string tags)
         {
             _tags = new ConcurrentDictionary<string, BlogTag>(StringComparer.InvariantCultureIgnoreCase);
-            foreach (var blogTag in JsonHelper.Deserialize<List<BlogTag>>(tags))
+            if (!string.IsNullOrEmpty(tags))
             {
-                _tags.TryAdd(blogTag.Link, blogTag);
+                foreach (var blogTag in JsonHelper.Deserialize<List<BlogTag>>(tags))
+                {
+                    _tags.TryAdd(blogTag.Link, blogTag);
+                }
             }
         }
 
