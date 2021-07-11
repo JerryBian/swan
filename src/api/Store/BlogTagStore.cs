@@ -62,8 +62,14 @@ namespace Laobian.Api.Store
                 throw new InvalidOperationException($"Tag link not exists: {tag.Link}");
             }
 
-            RemoveByLink(tag.Link);
-            Add(tag);
+            if (GetAll().Except(new []{ existingTag }).FirstOrDefault(x => StringHelper.EqualIgnoreCase(x.DisplayName, tag.DisplayName)) != null)
+            {
+                throw new InvalidOperationException($"Tag name already exists: {tag.DisplayName}");
+            }
+
+            existingTag.Description = tag.Description;
+            existingTag.DisplayName = tag.DisplayName;
+            existingTag.LastUpdatedAt = DateTime.Now;
         }
 
         public void RemoveByLink(string link)

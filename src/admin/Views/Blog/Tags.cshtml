@@ -100,26 +100,26 @@
                         window.location.reload(true);
                     }
                 })
-                .catch(err => {});
+                .catch(err => {console.log(err)});
         }
 
         function launchUpdateModal(link) {
             fetch(`/blog/tag/${link}`)
                 .then(response => response.json())
                 .then(tag => {
-                    document.querySelector('#tagLink').innerHTML = tag.l;
-                    document.querySelector('#modalBodyName').value = tag.n;
-                    document.querySelector('#modalBodyDescription').value = tag.d;
+                    document.querySelector('#tagLink').innerHTML = tag.link;
+                    document.querySelector('#modalBodyName').value = tag.displayName;
+                    document.querySelector('#modalBodyDescription').value = tag.description;
                     updateModal.show();
                 })
-                .catch(err => {});
+                .catch(err => {console.log(err)});
         }
 
         function updateTag() {
             var tag = {
-                l: document.querySelector('#tagLink').innerHTML,
-                n: document.querySelector('#modalBodyName').value,
-                d: document.querySelector('#modalBodyDescription').value
+                link: document.querySelector('#tagLink').innerHTML,
+                displayName: document.querySelector('#modalBodyName').value,
+                description: document.querySelector('#modalBodyDescription').value
             };
 
             fetch('/blog/tag',
@@ -136,7 +136,7 @@
                         window.location.reload(true);
                     }
                 })
-                .catch(err => {});
+                .catch(err => {console.log(err)});
         }
 
         function launchAddModal() {
@@ -145,9 +145,9 @@
 
         function addTag() {
             var tag = {
-                l: document.querySelector('#addModalBodyLink').value,
-                n: document.querySelector('#addModalBodyName').value,
-                d: document.querySelector('#addModalBodyDescription').value
+                link: document.querySelector('#addModalBodyLink').value,
+                displayName: document.querySelector('#addModalBodyName').value,
+                description: document.querySelector('#addModalBodyDescription').value
             };
 
             fetch('/blog/tag',
@@ -164,7 +164,7 @@
                         window.location.reload(true);
                     }
                 })
-                .catch(err => {});
+                .catch(err => {console.log(err)});
         }
     </script>
 }

@@ -29,6 +29,7 @@
         <div class="col-10 p-2">
             <p class="text-end">
                 <button class="btn btn-info" onclick="forceReloadBlogData()">Force Reload Blog Data</button>
+                <button class="btn btn-info" onclick="persistent()">Persistent</button>
             </p>
             @RenderBody()
         </div>
@@ -45,6 +46,22 @@
                     },
                     body: 'Request by Admin - Force Reload Blog Data button'
                 })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.reload(true);
+                    }
+                });
+    }
+
+        function persistent() {
+            fetch('/blog/persistent',
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'text/plain'
+                        },
+                        body: 'Request by Admin - Persistent'
+                    })
                 .then(response => {
                     if (response.ok) {
                         window.location.reload(true);

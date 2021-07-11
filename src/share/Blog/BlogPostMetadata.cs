@@ -36,8 +36,9 @@ namespace Laobian.Share.Blog
         [JsonPropertyName("excerpt")]
         public string Excerpt { get; set; }
 
+        [JsonInclude]
         [JsonPropertyName("tags")]
-        public List<string> Tags { get; } = new();
+        public List<string> Tags { get; init; } = new();
 
         public void SetDefault()
         {

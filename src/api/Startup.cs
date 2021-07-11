@@ -1,3 +1,5 @@
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
 using Laobian.Api.Controllers;
 using Laobian.Api.HostedServices;
 using Laobian.Api.Repository;
@@ -27,6 +29,8 @@ namespace Laobian.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
+
             services.AddSingleton<ICommandClient, ProcessCommandClient>();
             services.AddSingleton<IBlogService, BlogService>();
             services.AddSingleton<IBlogPostRepository, BlogPostRepository>();

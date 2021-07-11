@@ -27,6 +27,17 @@ namespace Laobian.Api.Service
             await AggregateStoreAsync(cancellationToken);
         }
 
+        public async Task PersistentAsync(string message, CancellationToken cancellationToken = default)
+        {
+            await _dbRepository.PersistentBlogAccessStoreAsync(cancellationToken);
+            await _dbRepository.PersistentBlogCommentStoreAsync(cancellationToken);
+            await _dbRepository.PersistentBlogMetadataAsync(cancellationToken);
+            await _dbRepository.PersistentBlogTagStoreAsync(cancellationToken);
+            await LoadAsync(cancellationToken);
+
+            // TODO: notify Blog site
+        }
+
         public async Task<List<BlogPost>> GetAllPostsAsync(CancellationToken cancellationToken = default)
         {
             var blogPostStore = await _blogPostRepository.GetBlogPostStoreAsync(cancellationToken);

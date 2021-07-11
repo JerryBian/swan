@@ -48,6 +48,26 @@ namespace Laobian.Api.Controllers
         //    }
         //}
 
+        [HttpPost]
+        [Route("persistent")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> PersistentAsync()
+        {
+            try
+            {
+                using var sr = new StreamReader(Request.Body, Encoding.UTF8);
+                var message = await sr.ReadToEndAsync();
+                await _blogService.PersistentAsync(message);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"{nameof(PersistentAsync)} failed.");
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
         [HttpGet]
         [Route("posts")]
         [ProducesResponseType(StatusCodes.Status200OK)]

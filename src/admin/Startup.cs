@@ -1,3 +1,5 @@
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
 using Laobian.Admin.HttpService;
 using Laobian.Share.Converter;
 using Microsoft.AspNetCore.Builder;
@@ -20,6 +22,7 @@ namespace Laobian.Admin
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
             services.Configure<AdminConfig>(Configuration);
 
             services.AddHttpClient<ApiHttpService>();

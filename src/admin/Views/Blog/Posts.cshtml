@@ -119,7 +119,7 @@
 
                     let checkedBoxes = document.querySelectorAll('#tagsDiv input[type=checkbox]');
                     for (let i = 0; i < checkedBoxes.length; i++) {
-                        for (const val of post.m.ta) {
+                        for (const val of post.metadata.tags) {
                             if (val === checkedBoxes[i].value) {
                                 checkedBoxes[i].checked = true;
                             }
@@ -141,7 +141,7 @@
                 link: document.querySelector('#postLink').innerHTML,
                 title: document.querySelector('#modalBodyTitle').value,
                 excerpt: document.querySelector('#modalBodyExcerpt').value,
-                ipAddress: document.querySelector('#modalBodyIsPublished').checked,
+                isPublished: document.querySelector('#modalBodyIsPublished').checked,
                 isTopping: document.querySelector('#modalBodyIsTopping').checked,
                 containsMath: document.querySelector('#modalBodyContainsMath').checked,
                 allowComment: document.querySelector('#modalBodyAllowComment').checked,

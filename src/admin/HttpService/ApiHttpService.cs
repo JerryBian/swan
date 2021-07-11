@@ -39,6 +39,20 @@ namespace Laobian.Admin.HttpService
             return true;
         }
 
+        public async Task<bool> PersistentAsync(string message)
+        {
+            var response = await _httpClient.PostAsync("/blog/persistent",
+                new StringContent(message, Encoding.UTF8, MediaTypeNames.Text.Plain));
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                _logger.LogError(
+                    $"{nameof(ApiHttpService)}.{nameof(PersistentAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+                return false;
+            }
+
+            return true;
+        }
+
         public async Task<List<BlogPost>> GetPostsAsync()
         {
             var response = await _httpClient.GetAsync("/blog/posts");

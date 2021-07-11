@@ -33,6 +33,15 @@ namespace Laobian.Admin.Controllers
         //    return await _apiHttpService.ReloadBlogDataAsync(message);
         //}
 
+        [HttpPost]
+        [Route("persistent")]
+        public async Task<bool> PersistentAsync()
+        {
+            using var reader = new StreamReader(Request.Body, Encoding.UTF8);
+            var message = await reader.ReadToEndAsync();
+            return await _apiHttpService.PersistentAsync(message);
+        }
+
         [Route("posts")]
         public async Task<IActionResult> GetPostsAsync()
         {
