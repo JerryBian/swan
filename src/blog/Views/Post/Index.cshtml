@@ -1,0 +1,58 @@
+﻿@using Microsoft.Extensions.Options
+@model PostViewModel
+@inject IOptions<BlogConfig> Config
+
+<div class="p-3">
+    <div class="text-muted fs-sm pb-1">@Html.Raw(Model.MetadataHtml)</div>
+    <div class="mb-2 pb-3">
+        <span class="font-post-title">@Model.Current.Metadata.Title</span>
+        @if (Model.Current.Metadata.IsTopping)
+        {
+            <span class="badge bg-success">置顶</span>
+        }
+
+        @if (!Model.Current.Metadata.IsPublished)
+        {
+            <span class="badge bg-warning">
+                未发布
+            </span>
+        }
+    </div>
+    <article class="post-content">
+        @Html.Raw(Model.Current.HtmlContent)
+        <p class="text-muted">（本文完）</p>
+    </article>
+    
+    <div class="alert alert-warning post-alert" role="alert">
+        <ul>
+            @{
+                var html = Model.TagHtml;
+                if (!string.IsNullOrEmpty(html))
+                {
+                    <li>@Html.Raw(html)</li>
+                }
+            }
+
+            @if (Model.Previous != null)
+            {
+                <li>前一篇：<a href="@Model.Previous.FullPath">@Model.Previous.Metadata.Title</a></li>
+            }
+
+            @if (Model.Next != null)
+            {
+                <li>后一篇：<a href="@Model.Next.FullPath">@Model.Next.Metadata.Title</a></li>
+            }
+            <li>最后更新于：<span title="@Model.Current.Metadata.LastUpdateTime.ToChinaDateAndTime()">@Model.Current.PublishTimeString</span></li>
+            <li>
+                文章的留言，请发送电子邮件至
+                <a href="mailto:@Config.Value.AdminEmail?subject=留言 - @Model.Current.Metadata.Title&body=Good job！">
+                    @Config.Value.AdminEmail
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+@section Style{
+    <link href="~/post.min.css" rel="stylesheet" />
+}

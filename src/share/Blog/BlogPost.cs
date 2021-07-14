@@ -15,9 +15,6 @@ namespace Laobian.Share.Blog
         [JsonPropertyName("htmlContent")]
         public string HtmlContent { get; set; }
 
-        [JsonPropertyName("totalAccess")]
-        public int TotalAccess { get; set; }
-
         [JsonPropertyName("metadata")]
         public BlogPostMetadata Metadata { get; set; }
 
@@ -42,7 +39,19 @@ namespace Laobian.Share.Blog
         [JsonPropertyName("accessCountString")]
         public string AccessCountString { get; set; }
 
+        [JsonPropertyName("accessCount")]
+        public int AccessCount { get; set; }
+
         [JsonPropertyName("commentCountString")]
         public string CommentCountString { get; set; }
+
+        [JsonPropertyName("commentCount")]
+        public int CommentCount { get; set; }
+
+        [JsonPropertyName("excerptHtml")]
+        public string ExcerptHtml { get; set; }
+
+        [JsonPropertyName("thumbnail")]
+        public string Thumbnail { get; set; }
     }
 }

@@ -1,0 +1,111 @@
+﻿// 1. Include functions first (so you can manipulate colors, SVGs, calc, etc)
+@import "../../../../node_modules/bootstrap/scss/functions";
+
+// 2. Include any default variable overrides here
+@import "./variables";
+
+// 3. Include remainder of required Bootstrap stylesheets
+@import "../../../../node_modules/bootstrap/scss/variables";
+@import "../../../../node_modules/bootstrap/scss/mixins";
+
+// 4. Include any optional Bootstrap components as you like
+@import "../../../../node_modules/bootstrap/scss/root";
+@import "../../../../node_modules/bootstrap/scss/reboot";
+@import "../../../../node_modules/bootstrap/scss/type";
+@import "../../../../node_modules/bootstrap/scss/images";
+@import "../../../../node_modules/bootstrap/scss/containers";
+@import "../../../../node_modules/bootstrap/scss/grid";
+@import "../../../../node_modules/bootstrap/scss/badge";
+@import "../../../../node_modules/bootstrap/scss/navbar";
+@import "../../../../node_modules/bootstrap/scss/nav";
+@import "../../../../node_modules/bootstrap/scss/alert";
+@import "../../../../node_modules/bootstrap/scss/buttons";
+@import "../../../../node_modules/bootstrap/scss/utilities";
+@import "../../../../node_modules/bootstrap/scss/utilities/api";
+
+// 5. Add additional custom code here
+@import "./layout";
+
+.post-content {
+    line-height: 1.6;
+
+    p {
+        margin-bottom: 1.5rem;
+    }
+
+    *:not(pre) > code {
+        padding-left: 4px;
+        padding-right: 4px;
+        background-color: #f4f3ee;
+    }
+
+    h3 {
+        background-color: #a6b1e1;
+        font-size: 1.25rem;
+        margin-bottom: 0.8rem;
+        margin-top: 1.5rem;
+        padding: 0.4rem;
+        transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+    }
+
+    h4 {
+        border-bottom: 1px solid #eaecef;
+        font-size: 1.2rem;
+        margin-bottom: 0.6rem;
+        margin-top: 1rem;
+        padding: 0.4rem;
+    }
+
+    blockquote {
+        background-color: #f8edeb;
+        border-left: 2px solid #fcd5ce;
+        margin-bottom: 1.5rem;
+        padding: 10px;
+        font-size: 97%;
+    }
+
+    blockquote p {
+        margin-bottom: 0.8rem;
+    }
+
+    blockquote *:last-child {
+        margin-bottom: 0.1rem;
+    }
+
+    pre {
+        font-size: 92%;
+    }
+
+    img {
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    img:hover {
+        opacity: 0.9;
+    }
+
+    li {
+        margin-bottom: .5rem;
+
+        p {
+            margin-bottom: 0;
+        }
+    }
+}
+
+.post-alert{
+    margin-top: 3rem;
+    font-size:92%;
+    color: unset;
+
+    li, ol {
+        margin-bottom: .25rem;
+    }
+
+    ul{
+        padding-left: 1.25rem;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+}

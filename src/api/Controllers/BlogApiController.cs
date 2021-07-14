@@ -72,11 +72,11 @@ namespace Laobian.Api.Controllers
         [Route("posts")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<List<BlogPost>>> GetPostsAsync()
+        public async Task<ActionResult<List<BlogPost>>> GetPostsAsync([FromQuery]bool onlyPublished)
         {
             try
             {
-                var posts = await _blogService.GetAllPostsAsync();
+                var posts = await _blogService.GetAllPostsAsync(onlyPublished);
                 var result = await Task.FromResult(posts);
                 return Ok(result);
             }

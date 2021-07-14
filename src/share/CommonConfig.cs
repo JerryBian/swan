@@ -13,5 +13,7 @@
         public string ApiLocalEndpoint { get; set; }
 
         public string AdminLocalEndpoint { get; set; }
+
+        public string AdminEmail { get; set; }
     }
 }
