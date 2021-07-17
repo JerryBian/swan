@@ -1,8 +1,8 @@
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
 
-COPY ./ ./
-RUN dotnet publish -c Release -o /publish --self-contained true -v normal -p:PublishTrimmed=true -p:PublishSingleFile=true -r linux-x64
+COPY ../ ./
+RUN dotnet publish -c Release -o /publish --self-contained true -v normal -p:PublishTrimmed=true -p:PublishSingleFile=true -r linux-x64 ./api/Laobian.Api.csproj
 
 FROM mcr.microsoft.com/dotnet/aspnet:5.0
 WORKDIR /app
