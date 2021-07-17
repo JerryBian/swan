@@ -1,11 +1,16 @@
+using System;
+using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using Laobian.Blog.HttpService;
+using Laobian.Share;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
 namespace Laobian.Blog
 {
@@ -23,6 +28,7 @@ namespace Laobian.Blog
         {
             services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
 
+            services.AddSingleton<ISystemInfo, SystemInfo>();
             services.Configure<BlogConfig>(Configuration);
 
             services.AddHttpClient<ApiHttpService>();
@@ -33,6 +39,7 @@ namespace Laobian.Blog
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            var config = app.ApplicationServices.GetRequiredService<IOptions<BlogConfig>>().Value;
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -43,6 +50,27 @@ namespace Laobian.Blog
             }
 
             app.UseStaticFiles();
+
+            if (config.FileServerBaseUrl == null || !config.FileServerBaseUrl.StartsWith("http", StringComparison.InvariantCultureIgnoreCase))
+            {
+                if (string.IsNullOrEmpty(config.BlogPostLocation))
+                {
+                    throw new LaobianConfigException(nameof(config.BlogPostLocation));
+                }
+
+                var fileLoc = Path.Combine(config.BlogPostLocation, "file");
+                if (!Directory.Exists(fileLoc))
+                {
+                    throw new DirectoryNotFoundException($"Directory not exist: {fileLoc}");
+                }
+
+                app.UseStaticFiles(new StaticFileOptions
+                {
+                    FileProvider = new PhysicalFileProvider(Path.GetFullPath(fileLoc)),
+                    RequestPath = ""
+                });
+            }
+            
 
             app.UseRouting();
 

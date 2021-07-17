@@ -3,7 +3,7 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="list-group list-group-flush">
+<div class="list-group list-group-flush post-item">
     @foreach (var post in Model.Posts)
     {
         <div class="list-group-item px-2 py-2">
@@ -28,23 +28,9 @@
 
             <div class="container-fluid mt-2 mb-1">
                 <div class="row mb-2 mt-1">
-                    @if (string.IsNullOrEmpty(post.Current.Thumbnail))
-                    {
-                        <div class="mb-2 mt-1">
-                            @Html.Raw(post.Current.ExcerptHtml)
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="col-10">
-                            @Html.Raw(post.Current.ExcerptHtml)
-                        </div>
-                        <div class="col-2 text-center">
-                            <img class="img-fluid img-thumbnail" src="@post.Current.Thumbnail" />
-                        </div>
-                    }
-
-
+                    <div class="mb-2 mt-1">
+                        @Html.Raw(post.Current.ExcerptHtml)
+                    </div>
                 </div>
             </div>
         </div>

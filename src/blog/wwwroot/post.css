@@ -7543,7 +7543,8 @@ main a:hover, main a:focus {
 }
 
 .post-content {
-  line-height: 1.6;
+  line-height: 1.7;
+  font-size: 1rem;
 }
 .post-content p {
   margin-bottom: 1.5rem;

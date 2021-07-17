@@ -8,8 +8,6 @@ namespace Laobian.Api
 
         public string DbLocation { get; set; }
 
-        public string BlogPostLocation { get; set; }
-
         public string GitHubDbRepoApiToken { get; set; }
 
         public string GitHubDbRepoUserName { get; set; }

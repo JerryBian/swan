@@ -10,16 +10,19 @@ using Laobian.Share.Blog;
 using Laobian.Share.Helper;
 using Markdig;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.Extensions.Options;
 
 namespace Laobian.Api.Service
 {
     public class BlogService : IBlogService
     {
+        private readonly ApiConfig _config;
         private readonly IDbRepository _dbRepository;
         private readonly IBlogPostRepository _blogPostRepository;
 
-        public BlogService(IDbRepository dbRepository, IBlogPostRepository blogPostRepository)
+        public BlogService(IOptions<ApiConfig> config, IDbRepository dbRepository, IBlogPostRepository blogPostRepository)
         {
+            _config = config.Value;
             _dbRepository = dbRepository;
             _blogPostRepository = blogPostRepository;
         }
@@ -48,7 +51,7 @@ namespace Laobian.Api.Service
             var allPosts = blogPostStore.GetAll();
             if (onlyPublished)
             {
-                return allPosts.Where(x => x.IsPublished).ToList();
+                allPosts = allPosts.Where(x => x.IsPublished).ToList();
             }
 
             return allPosts;
@@ -117,8 +120,6 @@ namespace Laobian.Api.Service
 
             foreach (var blogPost in blogPostStore.GetAll())
             {
-                
-
                 var metadata = blogMetadataStore.GetByLink(blogPost.Link);
                 if (metadata == null)
                 {
@@ -188,6 +189,7 @@ namespace Laobian.Api.Service
             htmlDoc.LoadHtml(html);
 
             // all images nodes
+            const string fileFolder = "file";
             var imageNodes = htmlDoc.DocumentNode.Descendants("img").ToList();
             foreach (var imageNode in imageNodes)
             {
@@ -197,6 +199,11 @@ namespace Laobian.Api.Service
                     parentNode?.AddClass("text-center");
 
                     var src = imageNode.Attributes["src"].Value;
+                    if (string.IsNullOrEmpty(src))
+                    {
+                        continue;
+                    }
+
                     if (Uri.TryCreate(src, UriKind.Absolute, out var uriResult) &&
                         (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps))
                     {
@@ -207,29 +214,15 @@ namespace Laobian.Api.Service
 
                     if (!Path.IsPathRooted(src))
                     {
-                        //var fileFolderName = Global.Config.Blog.FileGitPath.Split('/', StringSplitOptions.RemoveEmptyEntries).Last();
-                        //var parts = new List<string>();
-                        //var found = false;
-                        //foreach (var item in src.Split('/', StringSplitOptions.RemoveEmptyEntries))
-                        //{
-                        //    if (found)
-                        //    {
-                        //        parts.Add(item);
-                        //        continue;
-                        //    }
-
-                        //    if (item == fileFolderName)
-                        //    {
-                        //        found = true;
-                        //    }
-                        //}
-
-                        //parts.Insert(0, Global.Config.Blog.FileRequestPath);
-                        //imageNode.SetAttributeValue("src",
-                        //    UrlHelper.Combine(Global.Config.Blog.StaticAddress, parts.ToArray()));
+                        var index = src.IndexOf(fileFolder, StringComparison.InvariantCultureIgnoreCase);
+                        if (index >= 0)
+                        {
+                            var subPath = src.Substring(index+fileFolder.Length + 1).Replace("\\", "/");
+                            var fullSrc = $"{_config.FileServerBaseUrl.TrimEnd('/')}/{subPath}";
+                            imageNode.SetAttributeValue("src", fullSrc);
+                            SetPostThumbnail(post, fullSrc);
+                        }
                     }
-
-                    SetPostThumbnail(post, src);
                 }
             }
 

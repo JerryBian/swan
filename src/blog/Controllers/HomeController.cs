@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Laobian.Blog.HttpService;
 using Laobian.Blog.Models;
+using Laobian.Share.Blog;
 using Laobian.Share.Extension;
 using Laobian.Share.Helper;
 using Microsoft.AspNetCore.Mvc;
@@ -15,12 +18,14 @@ namespace Laobian.Blog.Controllers
     public class HomeController : Controller
     {
         private readonly BlogConfig _blogConfig;
+        private readonly ISystemInfo _systemInfo;
         private readonly ApiHttpService _apiHttpService;
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(IOptions<BlogConfig> config, ILogger<HomeController> logger, ApiHttpService apiHttpService)
+        public HomeController(ISystemInfo systemInfo, IOptions<BlogConfig> config, ILogger<HomeController> logger, ApiHttpService apiHttpService)
         {
             _logger = logger;
+            _systemInfo = systemInfo;
             _blogConfig = config.Value;
             _apiHttpService = apiHttpService;
         }
@@ -122,26 +127,32 @@ namespace Laobian.Blog.Controllers
         [Route("/about")]
         public async Task<IActionResult> About()
         {
-            //var posts = _blogService.GetPosts(onlyPublic: true, publishTimeDesc: true, toppingPostsFirst: false);
-            //var tags = _blogService.GetTags(onlyPublic: true, publishTimeDesc: true, toppingPostsFirst: false);
-            //var categories = _blogService.GetCategories(onlyPublic: true, publishTimeDesc: true, toppingPostsFirst: false);
-            //var model = new AboutViewModel
-            //{
-            //    LatestPost = posts.FirstOrDefault(),
-            //    PostTotalAccessCount = posts.Sum(p => p.AccessCount).ToString(),
-            //    PostTotalCount = posts.Count.ToString(),
-            //    TopPosts = posts.OrderByDescending(p => p.AccessCount).Take(Global.Config.Blog.PostsPerPage),
-            //    SystemAppVersion = Global.AppVersion,
-            //    SystemDotNetVersion = Global.RuntimeVersion,
-            //    SystemLastBoot = Global.StartTime.ToChinaDateAndTime(),
-            //    SystemRunningInterval = Global.RunningInterval,
-            //    TagTotalCount = tags.Count.ToString(),
-            //    TopTags = tags.OrderByDescending(t => t.Posts.Count).Take(Global.Config.Blog.PostsPerPage),
-            //    CategoryTotalCount = categories.Count.ToString(),
-            //    TopCategories = categories.OrderByDescending(c => c.Posts.Count).Take(Global.Config.Blog.PostsPerPage)
-            //};
+            var authenticated = User.Identity?.IsAuthenticated ?? false;
+            var posts = await _apiHttpService.GetPostsAsync(!authenticated);
+            var tags = await _apiHttpService.GetTagsAsync();
+            var topTags = new Dictionary<BlogTag, int>();
+            foreach (var tag in tags)
+            {
+                var count = posts.Count(x =>
+                    x.Metadata.Tags.Contains(tag.Link, StringComparer.InvariantCultureIgnoreCase));
+                topTags.Add(tag, count);
+            }
 
-            return View("~/Views/About/Index.csthml", new AboutViewModel());
+            var model = new AboutViewModel
+            {
+                LatestPost = posts.FirstOrDefault(),
+                PostTotalAccessCount = posts.Sum(p => p.AccessCount).ToString(),
+                PostTotalCount = posts.Count.ToString(),
+                TopPosts = posts.OrderByDescending(p => p.AccessCount).Take(_blogConfig.PostsPerPage),
+                SystemAppVersion = _systemInfo.AppVersion,
+                SystemDotNetVersion = _systemInfo.RuntimeVersion,
+                SystemLastBoot = _systemInfo.BootTime.ToChinaDateAndTime(),
+                SystemRunningInterval = (DateTime.Now - _systemInfo.BootTime).ToString(),
+                TagTotalCount = tags.Count.ToString(),
+                TopTags = topTags.OrderByDescending(x => x.Value).Take(_blogConfig.PostsPerPage).ToDictionary(x => x.Key, x=>x.Value)
+            };
+
+            return View("~/Views/About/Index.cshtml", model);
         }
 
         public IActionResult Privacy()

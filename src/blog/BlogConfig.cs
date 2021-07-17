@@ -13,5 +13,7 @@ namespace Laobian.Blog
         public string AdminChineseName { get; set; }
 
         public string AdminEnglishName { get; set; }
+
+        
     }
 }
