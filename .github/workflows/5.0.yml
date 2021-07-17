@@ -41,7 +41,7 @@ jobs:
         tags: |
           cnbian/laobian-api:latest
           cnbian/laobian-api:5.0
-          ghcr.io/JerryBian/laobian-api:latest
-          ghcr.io/JerryBian/laobian-api:5.0
+          ghcr.io/jerrybian/laobian-api:latest
+          ghcr.io/jerrybian/laobian-api:5.0
       
       
