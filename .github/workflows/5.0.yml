@@ -35,8 +35,8 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and Push
-        id: docker_build
+      - name: Build and Push API
+        id: docker_build_api
         uses: docker/build-push-action@v2
         with:
           context: .
@@ -47,5 +47,31 @@ jobs:
             cnbian/laobian-api:5.0
             ghcr.io/jerrybian/laobian-api:latest
             ghcr.io/jerrybian/laobian-api:5.0
+
+      - name: Build and Push ADMIN
+        id: docker_build_admin
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./Dockerfile.admin
+          push: true
+          tags: |
+            cnbian/laobian-admin:latest
+            cnbian/laobian-admin:5.0
+            ghcr.io/jerrybian/laobian-admin:latest
+            ghcr.io/jerrybian/laobian-admin:5.0
+
+      - name: Build and Push BLOG
+        id: docker_build_blog
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./Dockerfile.blog
+          push: true
+          tags: |
+            cnbian/laobian-blog:latest
+            cnbian/laobian-blog:5.0
+            ghcr.io/jerrybian/laobian-blog:latest
+            ghcr.io/jerrybian/laobian-blog:5.0
       
       
