@@ -11,14 +11,18 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Laobian.Blog
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly ILogger<Startup> _logger;
+
+        public Startup(IConfiguration configuration, ILogger<Startup> logger)
         {
+            _logger = logger;
             Configuration = configuration;
         }
 
@@ -30,7 +34,7 @@ namespace Laobian.Blog
             services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
 
             services.AddSingleton<ISystemInfo, SystemInfo>();
-            services.Configure<BlogConfig>(Configuration);
+            services.AddOptions<BlogConfig>().Bind(Configuration).ValidateDataAnnotations();
 
             services.AddHttpClient<ApiHttpService>();
 
@@ -55,6 +59,7 @@ namespace Laobian.Blog
             foreach (DictionaryEntry environmentVariable in Environment.GetEnvironmentVariables())
             {
                 Console.WriteLine($"{environmentVariable.Key}: {environmentVariable.Value}");
+                _logger.LogInformation($"{environmentVariable.Key}: {environmentVariable.Value}");
             }
 
             if (config.FileServerBaseUrl == null || !config.FileServerBaseUrl.StartsWith("http", StringComparison.InvariantCultureIgnoreCase))
