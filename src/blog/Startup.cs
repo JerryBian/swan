@@ -63,25 +63,25 @@ namespace Laobian.Blog
                 _logger.LogInformation($"{environmentVariable.Key}: {environmentVariable.Value}");
             }
 
-            if (config.FileServerBaseUrl == null || !config.FileServerBaseUrl.StartsWith("http", StringComparison.InvariantCultureIgnoreCase))
-            {
-                if (string.IsNullOrEmpty(config.BlogPostLocation))
-                {
-                    throw new LaobianConfigException(nameof(config.BlogPostLocation));
-                }
+            //if (config.FileServerBaseUrl == null || !config.FileServerBaseUrl.StartsWith("http", StringComparison.InvariantCultureIgnoreCase))
+            //{
+            //    if (string.IsNullOrEmpty(config.BlogPostLocation))
+            //    {
+            //        throw new LaobianConfigException(nameof(config.BlogPostLocation));
+            //    }
 
-                var fileLoc = Path.Combine(config.BlogPostLocation, "file");
-                if (!Directory.Exists(fileLoc))
-                {
-                    throw new DirectoryNotFoundException($"Directory not exist: {fileLoc}");
-                }
+            //    var fileLoc = Path.Combine(config.BlogPostLocation, "file");
+            //    if (!Directory.Exists(fileLoc))
+            //    {
+            //        throw new DirectoryNotFoundException($"Directory not exist: {fileLoc}");
+            //    }
 
-                app.UseStaticFiles(new StaticFileOptions
-                {
-                    FileProvider = new PhysicalFileProvider(Path.GetFullPath(fileLoc)),
-                    RequestPath = ""
-                });
-            }
+            //    app.UseStaticFiles(new StaticFileOptions
+            //    {
+            //        FileProvider = new PhysicalFileProvider(Path.GetFullPath(fileLoc)),
+            //        RequestPath = ""
+            //    });
+            //}
             
 
             app.UseRouting();
