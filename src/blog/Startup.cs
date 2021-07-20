@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
@@ -50,6 +51,11 @@ namespace Laobian.Blog
             }
 
             app.UseStaticFiles();
+
+            foreach (DictionaryEntry environmentVariable in Environment.GetEnvironmentVariables())
+            {
+                Console.WriteLine($"{environmentVariable.Key}: {environmentVariable.Value}");
+            }
 
             if (config.FileServerBaseUrl == null || !config.FileServerBaseUrl.StartsWith("http", StringComparison.InvariantCultureIgnoreCase))
             {
