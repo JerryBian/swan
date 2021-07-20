@@ -6,15 +6,15 @@ services:
       - ${ENV_API_DB_VOLUME}:/db
       - ${ENV_API_BLOG_POST_VOLUME}:/blog_post
     environment:
-      - ASPNETCORE_URLS=http://127.0.0.1:5010
+      - ASPNETCORE_URLS=http://0.0.0.0:5010
       - ASPNETCORE_ENVIRONMENT
       - ENV_API_Source
       - ENV_API_DbLocation=/db
-      - ENV_API_BlogPostLocation/blog_post
+      - ENV_API_BlogPostLocation=/blog_post
   admin:
     image: cnbian/laobian-admin:latest
     environment:
-      - ASPNETCORE_URLS=http://127.0.0.1:5011
+      - ASPNETCORE_URLS=http://0.0.0.0:5011
       - ASPNETCORE_ENVIRONMENT
       - ENV_ADMIN_ApiLocalEndPoint=http://api:5010
       - ENV_ADMIN_BlogRemoteEndPoint
@@ -27,9 +27,9 @@ services:
   blog:
     image: cnbian/laobian-blog:latest
     volumes:
-      - ${ENV_API_BLOG_POST_VOLUME}:/blog_post
+      - ${ENV_BLOG_BLOG_POST_VOLUME}:/blog_post
     environment:
-      - ASPNETCORE_URLS=http://127.0.0.1:5012
+      - ASPNETCORE_URLS=http://0.0.0.0:5012
       - ASPNETCORE_ENVIRONMENT
       - ENV_BLOG_ApiLocalEndPoint=http://api:5010
       - ENV_BLOG_PotsPerPage
@@ -41,5 +41,3 @@ services:
       - "5012:5012"
     depends_on:
       - api
-
-volumes: 

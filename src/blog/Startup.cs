@@ -70,7 +70,7 @@ namespace Laobian.Blog
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(Path.GetFullPath(fileLoc)),
-                RequestPath = ""
+                RequestPath = "/file"
             });
 
             app.UseRouting();
