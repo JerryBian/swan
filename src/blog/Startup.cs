@@ -18,11 +18,11 @@ namespace Laobian.Blog
 {
     public class Startup
     {
-        private readonly ILogger<Startup> _logger;
 
-        public Startup(IConfiguration configuration, ILogger<Startup> logger)
+
+        public Startup(IConfiguration configuration)
         {
-            _logger = logger;
+
             Configuration = configuration;
         }
 
@@ -56,33 +56,33 @@ namespace Laobian.Blog
 
             app.UseStaticFiles();
 
-            _logger.LogInformation($"envs: {Environment.GetEnvironmentVariables().Count}");
+            Console.WriteLine($"envs: {Environment.GetEnvironmentVariables().Count}");
             foreach (DictionaryEntry environmentVariable in Environment.GetEnvironmentVariables())
             {
                 Console.WriteLine($"{environmentVariable.Key}: {environmentVariable.Value}");
-                _logger.LogInformation($"{environmentVariable.Key}: {environmentVariable.Value}");
+                //_logger.LogInformation($"{environmentVariable.Key}: {environmentVariable.Value}");
             }
 
-            //if (config.FileServerBaseUrl == null || !config.FileServerBaseUrl.StartsWith("http", StringComparison.InvariantCultureIgnoreCase))
-            //{
-            //    if (string.IsNullOrEmpty(config.BlogPostLocation))
-            //    {
-            //        throw new LaobianConfigException(nameof(config.BlogPostLocation));
-            //    }
+            if (config.FileServerBaseUrl == null || !config.FileServerBaseUrl.StartsWith("http", StringComparison.InvariantCultureIgnoreCase))
+            {
+                if (string.IsNullOrEmpty(config.BlogPostLocation))
+                {
+                    throw new LaobianConfigException(nameof(config.BlogPostLocation));
+                }
 
-            //    var fileLoc = Path.Combine(config.BlogPostLocation, "file");
-            //    if (!Directory.Exists(fileLoc))
-            //    {
-            //        throw new DirectoryNotFoundException($"Directory not exist: {fileLoc}");
-            //    }
+                var fileLoc = Path.Combine(config.BlogPostLocation, "file");
+                if (!Directory.Exists(fileLoc))
+                {
+                    throw new DirectoryNotFoundException($"Directory not exist: {fileLoc}");
+                }
 
-            //    app.UseStaticFiles(new StaticFileOptions
-            //    {
-            //        FileProvider = new PhysicalFileProvider(Path.GetFullPath(fileLoc)),
-            //        RequestPath = ""
-            //    });
-            //}
-            
+                app.UseStaticFiles(new StaticFileOptions
+                {
+                    FileProvider = new PhysicalFileProvider(Path.GetFullPath(fileLoc)),
+                    RequestPath = ""
+                });
+            }
+
 
             app.UseRouting();
 
