@@ -56,6 +56,7 @@ namespace Laobian.Blog
 
             app.UseStaticFiles();
 
+            _logger.LogInformation($"envs: {Environment.GetEnvironmentVariables().Count}");
             foreach (DictionaryEntry environmentVariable in Environment.GetEnvironmentVariables())
             {
                 Console.WriteLine($"{environmentVariable.Key}: {environmentVariable.Value}");
