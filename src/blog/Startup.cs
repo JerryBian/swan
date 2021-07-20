@@ -56,33 +56,22 @@ namespace Laobian.Blog
 
             app.UseStaticFiles();
 
-            Console.WriteLine($"envs: {Environment.GetEnvironmentVariables().Count}");
-            foreach (DictionaryEntry environmentVariable in Environment.GetEnvironmentVariables())
+            if (string.IsNullOrEmpty(config.BlogPostLocation))
             {
-                Console.WriteLine($"{environmentVariable.Key}: {environmentVariable.Value}");
-                //_logger.LogInformation($"{environmentVariable.Key}: {environmentVariable.Value}");
+                throw new LaobianConfigException(nameof(config.BlogPostLocation));
             }
 
-            if (config.FileServerBaseUrl == null || !config.FileServerBaseUrl.StartsWith("http", StringComparison.InvariantCultureIgnoreCase))
+            var fileLoc = Path.Combine(config.BlogPostLocation, "file");
+            if (!Directory.Exists(fileLoc))
             {
-                if (string.IsNullOrEmpty(config.BlogPostLocation))
-                {
-                    throw new LaobianConfigException(nameof(config.BlogPostLocation));
-                }
-
-                var fileLoc = Path.Combine(config.BlogPostLocation, "file");
-                if (!Directory.Exists(fileLoc))
-                {
-                    throw new DirectoryNotFoundException($"Directory not exist: {fileLoc}");
-                }
-
-                app.UseStaticFiles(new StaticFileOptions
-                {
-                    FileProvider = new PhysicalFileProvider(Path.GetFullPath(fileLoc)),
-                    RequestPath = ""
-                });
+                throw new DirectoryNotFoundException($"Directory not exist: {fileLoc}");
             }
 
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.GetFullPath(fileLoc)),
+                RequestPath = ""
+            });
 
             app.UseRouting();
 

@@ -217,8 +217,8 @@ namespace Laobian.Api.Service
                         var index = src.IndexOf(fileFolder, StringComparison.InvariantCultureIgnoreCase);
                         if (index >= 0)
                         {
-                            var subPath = src.Substring(index+fileFolder.Length + 1).Replace("\\", "/");
-                            var fullSrc = $"{_config.FileServerBaseUrl.TrimEnd('/')}/{subPath}";
+                            var subPath = src.Substring(index).Replace("\\", "/");
+                            var fullSrc = $"/{subPath}";
                             imageNode.SetAttributeValue("src", fullSrc);
                             SetPostThumbnail(post, fullSrc);
                         }

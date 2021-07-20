@@ -18,8 +18,6 @@
 
         public string BlogPostLocation { get; set; }
 
-        public string FileServerBaseUrl { get; set; }
-
         public string AppVersion { get; set; }
     }
 }

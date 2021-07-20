@@ -2,13 +2,15 @@ version: "3.9"
 services:
   api:
     image: cnbian/laobian-api:latest
+    volumes:
+      - ${ENV_API_DB_VOLUME}:/db
+      - ${ENV_API_BLOG_POST_VOLUME}:/blog_post
     environment:
       - ASPNETCORE_URLS=http://127.0.0.1:5010
       - ASPNETCORE_ENVIRONMENT
       - ENV_API_Source
-      - ENV_API_DbLocation
-      - ENV_API_BlogPostLocation
-      - FileServerBaseUrl
+      - ENV_API_DbLocation=/db
+      - ENV_API_BlogPostLocation/blog_post
   admin:
     image: cnbian/laobian-admin:latest
     environment:
@@ -24,6 +26,8 @@ services:
       - api
   blog:
     image: cnbian/laobian-blog:latest
+    volumes:
+      - ${ENV_API_BLOG_POST_VOLUME}:/blog_post
     environment:
       - ASPNETCORE_URLS=http://127.0.0.1:5012
       - ASPNETCORE_ENVIRONMENT
@@ -32,9 +36,10 @@ services:
       - ENV_BLOG_AdminEmail
       - ENV_BLOG_AdminChineName
       - ENV_BLOG_AdminEnglishName
-      - ENV_BLOG_BlogPostLocation
-      - ENV_BLOG_FileServerBaseUrl
+      - ENV_BLOG_BlogPostLocation=/blog_post
     ports:
       - "5012:5012"
     depends_on:
       - api
+
+volumes: 
