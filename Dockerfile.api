@@ -7,6 +7,6 @@ RUN dotnet publish -c Release -o /publish --self-contained true -v normal -p:Pub
 FROM mcr.microsoft.com/dotnet/aspnet:5.0
 WORKDIR /app
 COPY --from=build /publish ./
-RUN chmod +x laobian.api
+RUN apt update -y && apt install git -y && chmod +x laobian.api
 
 ENTRYPOINT ["./laobian.api"]

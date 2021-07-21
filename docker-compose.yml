@@ -11,6 +11,14 @@ services:
       - ENV_API_Source
       - ENV_API_DbLocation=/db
       - ENV_API_BlogPostLocation=/blog_post
+      - ENV_API_GitHubDbRepoApiToken
+      - ENV_API_GitHubDbRepoUserName
+      - ENV_API_GitHubDbRepoName
+      - ENV_API_GitHubDbRepoBranchName
+      - ENV_API_GitHubBlogPostRepoApiToken
+      - ENV_API_GitHubBlogPostRepoUserName
+      - ENV_API_GitHubBlogPostRepoName
+      - ENV_API_GitHubBlogPostRepoBranchName
   admin:
     image: cnbian/laobian-admin:latest
     environment:
