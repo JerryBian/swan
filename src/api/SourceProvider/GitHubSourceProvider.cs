@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Laobian.Api.Command;
 using Laobian.Share;
-using Laobian.Share.Command.Laobian.Share.Command;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 

@@ -19,6 +19,8 @@ services:
       - ENV_API_GitHubBlogPostRepoUserName
       - ENV_API_GitHubBlogPostRepoName
       - ENV_API_GitHubBlogPostRepoBranchName
+      - ENV_API_CommandLineApp
+      - ENV_API_CommandLineBeginArg
   admin:
     image: cnbian/laobian-admin:latest
     environment:

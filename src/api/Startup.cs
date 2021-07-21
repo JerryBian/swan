@@ -1,12 +1,11 @@
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
+using Laobian.Api.Command;
 using Laobian.Api.Controllers;
 using Laobian.Api.HostedServices;
 using Laobian.Api.Repository;
 using Laobian.Api.Service;
 using Laobian.Api.SourceProvider;
-using Laobian.Share.Command;
-using Laobian.Share.Command.Laobian.Share.Command;
 using Laobian.Share.Converter;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

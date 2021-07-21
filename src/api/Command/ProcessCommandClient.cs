@@ -2,18 +2,17 @@
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Laobian.Share.Command.Laobian.Share.Command;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Laobian.Share.Command
+namespace Laobian.Api.Command
 {
     public class ProcessCommandClient : ICommandClient
     {
-        private readonly CommonConfig _commonSetting;
+        private readonly ApiConfig _commonSetting;
         private readonly ILogger<ProcessCommandClient> _logger;
 
-        public ProcessCommandClient(IOptions<CommonConfig> options, ILogger<ProcessCommandClient> logger)
+        public ProcessCommandClient(IOptions<ApiConfig> options, ILogger<ProcessCommandClient> logger)
         {
             _logger = logger;
             _commonSetting = options.Value;

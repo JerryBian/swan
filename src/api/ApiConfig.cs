@@ -6,6 +6,10 @@ namespace Laobian.Api
     {
         public SourceMode Source { get; set; }
 
+        public string CommandLineApp { get; set; }
+
+        public string CommandLineBeginArg { get; set; }
+
         public string DbLocation { get; set; }
 
         public string GitHubDbRepoApiToken { get; set; }
