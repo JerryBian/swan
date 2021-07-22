@@ -47,6 +47,8 @@ namespace Laobian.Api
                 config.JsonSerializerOptions.Converters.Add(converter);
             });
 
+            services.AddHealthChecks();
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
