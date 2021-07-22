@@ -56,17 +56,7 @@ namespace Laobian.Blog
 
             app.UseStaticFiles();
 
-            if (string.IsNullOrEmpty(config.BlogPostLocation))
-            {
-                throw new LaobianConfigException(nameof(config.BlogPostLocation));
-            }
-
-            var fileLoc = Path.Combine(config.BlogPostLocation, "file");
-            if (!Directory.Exists(fileLoc))
-            {
-                throw new DirectoryNotFoundException($"Directory not exist: {fileLoc}");
-            }
-
+            var fileLoc = Path.Combine(config.GetBlogPostLocation(), "file");
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(Path.GetFullPath(fileLoc)),

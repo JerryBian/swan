@@ -27,34 +27,23 @@ namespace Laobian.Api.SourceProvider
         }
 
         public virtual async Task LoadAsync(CancellationToken cancellationToken = default)
-        
         {
-            if (string.IsNullOrEmpty(_apiConfig.BlogPostLocation))
-            {
-                throw new LaobianConfigException(nameof(_apiConfig.BlogPostLocation));
-            }
+            Directory.CreateDirectory(_apiConfig.GetBlogPostLocation());
+            Directory.CreateDirectory(_apiConfig.GetDbLocation());
 
-            if (string.IsNullOrEmpty(_apiConfig.DbLocation))
-            {
-                throw new LaobianConfigException(nameof(_apiConfig.DbLocation));
-            }
-
-            Directory.CreateDirectory(_apiConfig.BlogPostLocation);
-            Directory.CreateDirectory(_apiConfig.DbLocation);
-
-            var metadataLocation = Path.Combine(_apiConfig.DbLocation, "metadata");
+            var metadataLocation = Path.Combine(_apiConfig.GetDbLocation(), "metadata");
             Directory.CreateDirectory(metadataLocation);
 
             _postMetadataLocation = Path.Combine(metadataLocation, "post.json");
             _tagLocation = Path.Combine(metadataLocation, "tag.json");
 
-            _postLocation = Path.Combine(_apiConfig.BlogPostLocation, "post");
+            _postLocation = Path.Combine(_apiConfig.GetBlogPostLocation(), "post");
             Directory.CreateDirectory(_postLocation);
 
-            _accessLocation = Path.Combine(_apiConfig.DbLocation, "access");
+            _accessLocation = Path.Combine(_apiConfig.GetDbLocation(), "access");
             Directory.CreateDirectory(_accessLocation);
 
-            _commentLocation = Path.Combine(_apiConfig.DbLocation, "comment");
+            _commentLocation = Path.Combine(_apiConfig.GetDbLocation(), "comment");
             Directory.CreateDirectory(_commentLocation);
 
             await Task.CompletedTask;

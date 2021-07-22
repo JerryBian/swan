@@ -19,7 +19,7 @@ namespace Laobian.Api.HttpService
             _logger = logger;
             _apiConfig = apiConfig.Value;
             _httpClient = httpClient;
-            _httpClient.BaseAddress = new Uri(_apiConfig.BlogPostLocation);
+            _httpClient.BaseAddress = new Uri(_apiConfig.BlogLocalEndpoint);
         }
 
         public async Task PurgeCacheAsync()

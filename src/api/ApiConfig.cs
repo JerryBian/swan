@@ -11,8 +11,6 @@ namespace Laobian.Api
 
         public string CommandLineBeginArg { get; set; }
 
-        public string DbLocation => Path.Combine(AssetLocation, "db");
-
         public string GitHubDbRepoApiToken { get; set; }
 
         public string GitHubDbRepoUserName { get; set; }
@@ -28,5 +26,15 @@ namespace Laobian.Api
         public string GitHubBlogPostRepoName { get; set; }
 
         public string GitHubBlogPostRepoBranchName { get; set; }
+
+        public string GetDbLocation()
+        {
+            if (string.IsNullOrEmpty(AssetLocation))
+            {
+                throw new LaobianConfigException(nameof(AssetLocation));
+            }
+
+            return Path.Combine(AssetLocation, Constants.DbAssetFolder);
+        }
     }
 }

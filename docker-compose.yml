@@ -44,7 +44,7 @@ services:
       - ENV_BLOG_AdminEmail
       - ENV_BLOG_AdminChineName
       - ENV_BLOG_AdminEnglishName
-      - ENV_BLOG_AssetLOcation=/asset
+      - ENV_BLOG_AssetLocation=/asset
     ports:
       - "5012:5012"
     depends_on:

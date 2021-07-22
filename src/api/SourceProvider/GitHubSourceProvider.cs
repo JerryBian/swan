@@ -58,13 +58,7 @@ namespace Laobian.Api.SourceProvider
 
         private async Task PushDbRepoAsync(string message)
         {
-            if (string.IsNullOrEmpty(_apiConfig.DbLocation))
-            {
-                _logger.LogWarning("Push DB repo failed, local dir not setup.");
-                return;
-            }
-
-            if (!Directory.Exists(_apiConfig.DbLocation))
+            if (!Directory.Exists(_apiConfig.GetDbLocation()))
             {
                 _logger.LogWarning("Push DB repo failed, local dir not exist.");
                 return;
@@ -72,7 +66,7 @@ namespace Laobian.Api.SourceProvider
 
             var commands = new List<string>
             {
-                $"cd {_apiConfig.DbLocation}", "git add .", $"git commit -m \"{message}\"", "git push"
+                $"cd {_apiConfig.GetDbLocation()}", "git add .", $"git commit -m \"{message}\"", "git push"
             };
             var command =
                 $"{string.Join(" && ", commands)}";
@@ -82,40 +76,30 @@ namespace Laobian.Api.SourceProvider
 
         private async Task PullBlogPostRepoAsync(CancellationToken cancellationToken)
         {
-            if (string.IsNullOrEmpty(_apiConfig.BlogPostLocation))
+            if (Directory.Exists(_apiConfig.GetBlogPostLocation()))
             {
-                throw new LaobianConfigException(_apiConfig.BlogPostLocation);
-            }
-
-            if (Directory.Exists(_apiConfig.BlogPostLocation))
-            {
-                Directory.Delete(_apiConfig.BlogPostLocation, true);
+                Directory.Delete(_apiConfig.GetBlogPostLocation(), true);
             }
 
             var repoUrl =
                 $"https://{_apiConfig.GitHubBlogPostRepoApiToken}@github.com/{_apiConfig.GitHubBlogPostRepoUserName}/{_apiConfig.GitHubBlogPostRepoName}.git";
             var command =
-                $"git clone -b {_apiConfig.GitHubBlogPostRepoBranchName} --single-branch {repoUrl} {_apiConfig.BlogPostLocation}";
+                $"git clone -b {_apiConfig.GitHubBlogPostRepoBranchName} --single-branch {repoUrl} {_apiConfig.GetBlogPostLocation()}";
             var output = await _commandClient.RunAsync(command, cancellationToken);
             _logger.LogInformation($"cmd: {command}{Environment.NewLine}Output: {output}");
         }
 
         private async Task PullDbRepoAsync(CancellationToken cancellationToken)
         {
-            if (string.IsNullOrEmpty(_apiConfig.DbLocation))
+            if (Directory.Exists(_apiConfig.GetDbLocation()))
             {
-                throw new LaobianConfigException(_apiConfig.DbLocation);
-            }
-
-            if (Directory.Exists(_apiConfig.DbLocation))
-            {
-                Directory.Delete(_apiConfig.DbLocation, true);
+                Directory.Delete(_apiConfig.GetDbLocation(), true);
             }
 
             var repoUrl =
                 $"https://{_apiConfig.GitHubDbRepoApiToken}@github.com/{_apiConfig.GitHubDbRepoUserName}/{_apiConfig.GitHubDbRepoName}.git";
             var command =
-                $"git clone -b {_apiConfig.GitHubDbRepoBranchName} --single-branch {repoUrl} {_apiConfig.DbLocation}";
+                $"git clone -b {_apiConfig.GitHubDbRepoBranchName} --single-branch {repoUrl} {_apiConfig.GetDbLocation()}";
             var output = await _commandClient.RunAsync(command, cancellationToken);
             _logger.LogInformation($"cmd: {command}{Environment.NewLine}Output: {output}");
         }

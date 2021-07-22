@@ -14,10 +14,18 @@ namespace Laobian.Share
 
         public string AdminEmail { get; set; }
 
-        public string BlogPostLocation => Path.Combine(AssetLocation, "blog_post");
-
         public string AppVersion { get; set; }
 
         public string AssetLocation { get; set; }
+
+        public string GetBlogPostLocation()
+        {
+            if (string.IsNullOrEmpty(AssetLocation))
+            {
+                throw new LaobianConfigException(nameof(AssetLocation));
+            }
+
+            return Path.Combine(AssetLocation, Constants.BlogPostAssetFolder);
+        }
     }
 }
