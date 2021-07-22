@@ -49,3 +49,4 @@ services:
       - "5012:5012"
     depends_on:
       - api
+    command: ["./wait-for.it.sh", "api:5010", "--", "./laobian.blog"]

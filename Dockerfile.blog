@@ -7,6 +7,7 @@ RUN dotnet publish -c Release -o /publish --self-contained true -v normal -p:Pub
 FROM mcr.microsoft.com/dotnet/aspnet:5.0
 WORKDIR /app
 COPY --from=build /publish ./
+COPY ./wait-for-it.sh ./
 RUN chmod +x laobian.blog
 
 ENTRYPOINT ["./laobian.blog"]

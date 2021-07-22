@@ -65,8 +65,12 @@ namespace Laobian.Api
             }
 
             app.UseRouting();
-
             app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapHealthChecks("/health");
+            });
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
