@@ -1,4 +1,6 @@
-﻿namespace Laobian.Share
+﻿using System.IO;
+
+namespace Laobian.Share
 {
     public abstract class CommonConfig
     {
@@ -12,8 +14,10 @@
 
         public string AdminEmail { get; set; }
 
-        public string BlogPostLocation { get; set; }
+        public string BlogPostLocation => Path.Combine(AssetLocation, "blog_post");
 
         public string AppVersion { get; set; }
+
+        public string AssetLocation { get; set; }
     }
 }

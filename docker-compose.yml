@@ -3,14 +3,12 @@ services:
   api:
     image: cnbian/laobian-api:latest
     volumes:
-      - ${ENV_API_DB_VOLUME}:/db
-      - ${ENV_API_BLOG_POST_VOLUME}:/blog_post
+      - ${ENV_API_ASSET_LOCATION}:/asset
     environment:
       - ASPNETCORE_URLS=http://0.0.0.0:5010
       - ASPNETCORE_ENVIRONMENT
       - ENV_API_Source
-      - ENV_API_DbLocation=/db
-      - ENV_API_BlogPostLocation=/blog_post
+      - ENV_API_AssetLocation=/asset
       - ENV_API_GitHubDbRepoApiToken
       - ENV_API_GitHubDbRepoUserName
       - ENV_API_GitHubDbRepoName
@@ -37,7 +35,7 @@ services:
   blog:
     image: cnbian/laobian-blog:latest
     volumes:
-      - ${ENV_BLOG_BLOG_POST_VOLUME}:/blog_post
+      - ${ENV_BLOG_ASSET_LOCATION}:/asset
     environment:
       - ASPNETCORE_URLS=http://0.0.0.0:5012
       - ASPNETCORE_ENVIRONMENT
@@ -46,7 +44,7 @@ services:
       - ENV_BLOG_AdminEmail
       - ENV_BLOG_AdminChineName
       - ENV_BLOG_AdminEnglishName
-      - ENV_BLOG_BlogPostLocation=/blog_post
+      - ENV_BLOG_AssetLOcation=/asset
     ports:
       - "5012:5012"
     depends_on:

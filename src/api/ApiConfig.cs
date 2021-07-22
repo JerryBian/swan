@@ -1,4 +1,5 @@
-﻿using Laobian.Share;
+﻿using System.IO;
+using Laobian.Share;
 
 namespace Laobian.Api
 {
@@ -10,7 +11,7 @@ namespace Laobian.Api
 
         public string CommandLineBeginArg { get; set; }
 
-        public string DbLocation { get; set; }
+        public string DbLocation => Path.Combine(AssetLocation, "db");
 
         public string GitHubDbRepoApiToken { get; set; }
 
