@@ -3,7 +3,6 @@ WORKDIR /src
 
 COPY ./src ./
 RUN dotnet publish -c Release -o /publish --self-contained true -v normal -p:PublishTrimmed=true -p:PublishSingleFile=true -r linux-x64 ./blog/Laobian.Blog.csproj
-COPY ./src/wait-for-it.sh /publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:5.0
 WORKDIR /app

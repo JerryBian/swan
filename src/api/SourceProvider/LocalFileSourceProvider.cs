@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using Laobian.Share;
 using Microsoft.Extensions.Options;
 
+using SearchOption = System.IO.SearchOption;
+
 namespace Laobian.Api.SourceProvider
 {
     public class LocalFileSourceProvider : ISourceProvider
@@ -30,6 +32,10 @@ namespace Laobian.Api.SourceProvider
         {
             Directory.CreateDirectory(_apiConfig.GetBlogPostLocation());
             Directory.CreateDirectory(_apiConfig.GetDbLocation());
+            Directory.CreateDirectory(_apiConfig.GetBlogFileLocation());
+
+            var fileFolderInBlogPostLocation = Path.Combine(_apiConfig.GetBlogPostLocation());
+            Directory.CreateDirectory(fileFolderInBlogPostLocation);
 
             var metadataLocation = Path.Combine(_apiConfig.GetDbLocation(), "metadata");
             Directory.CreateDirectory(metadataLocation);
@@ -45,6 +51,18 @@ namespace Laobian.Api.SourceProvider
 
             _commentLocation = Path.Combine(_apiConfig.GetDbLocation(), "comment");
             Directory.CreateDirectory(_commentLocation);
+
+            var di = new DirectoryInfo(_apiConfig.GetBlogFileLocation());
+            foreach (FileInfo file in di.GetFiles())
+            {
+                file.Delete();
+            }
+            foreach (DirectoryInfo dir in di.GetDirectories())
+            {
+                dir.Delete(true);
+            }
+
+            CopyFilesRecursively(new DirectoryInfo(fileFolderInBlogPostLocation), new DirectoryInfo(_apiConfig.GetBlogFileLocation()));
 
             await Task.CompletedTask;
         }
@@ -167,6 +185,19 @@ namespace Laobian.Api.SourceProvider
             {
                 var commentFile = Path.Combine(_commentLocation, key + PostMetadataExtension);
                 await File.WriteAllTextAsync(commentFile, value, Encoding.UTF8, cancellationToken);
+            }
+        }
+
+        private static void CopyFilesRecursively(DirectoryInfo source, DirectoryInfo target)
+        {
+            foreach (DirectoryInfo dir in source.GetDirectories())
+            {
+                CopyFilesRecursively(dir, target.CreateSubdirectory(dir.Name));
+            }
+
+            foreach (FileInfo file in source.GetFiles())
+            {
+                file.CopyTo(Path.Combine(target.FullName, file.Name));
             }
         }
     }

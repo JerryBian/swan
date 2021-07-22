@@ -11,5 +11,7 @@ namespace Laobian.Share
         public const string DbAssetFolder = "db";
 
         public const string BlogPostAssetFolder = "blog_post";
+
+        public const string BlogFileAssetFolder = "blog_file";
     }
 }

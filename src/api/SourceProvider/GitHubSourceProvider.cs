@@ -81,12 +81,18 @@ namespace Laobian.Api.SourceProvider
                 Directory.Delete(_apiConfig.GetBlogPostLocation(), true);
             }
 
-            var repoUrl =
-                $"https://{_apiConfig.GitHubBlogPostRepoApiToken}@github.com/{_apiConfig.GitHubBlogPostRepoUserName}/{_apiConfig.GitHubBlogPostRepoName}.git";
-            var command =
-                $"git clone -b {_apiConfig.GitHubBlogPostRepoBranchName} --single-branch {repoUrl} {_apiConfig.GetBlogPostLocation()}";
-            var output = await _commandClient.RunAsync(command, cancellationToken);
-            _logger.LogInformation($"cmd: {command}{Environment.NewLine}Output: {output}");
+            var retryTimes = 0;
+            while (retryTimes <= 3 && !Directory.Exists(_apiConfig.GetBlogPostLocation()))
+            {
+                retryTimes++;
+                var repoUrl =
+                    $"https://{_apiConfig.GitHubBlogPostRepoApiToken}@github.com/{_apiConfig.GitHubBlogPostRepoUserName}/{_apiConfig.GitHubBlogPostRepoName}.git";
+                var command =
+                    $"git clone -b {_apiConfig.GitHubBlogPostRepoBranchName} --single-branch {repoUrl} {_apiConfig.GetBlogPostLocation()}";
+                var output = await _commandClient.RunAsync(command, cancellationToken);
+                _logger.LogInformation($"cmd: {command}{Environment.NewLine}Output: {output}");
+            }
+                
         }
 
         private async Task PullDbRepoAsync(CancellationToken cancellationToken)
@@ -96,12 +102,17 @@ namespace Laobian.Api.SourceProvider
                 Directory.Delete(_apiConfig.GetDbLocation(), true);
             }
 
-            var repoUrl =
-                $"https://{_apiConfig.GitHubDbRepoApiToken}@github.com/{_apiConfig.GitHubDbRepoUserName}/{_apiConfig.GitHubDbRepoName}.git";
-            var command =
-                $"git clone -b {_apiConfig.GitHubDbRepoBranchName} --single-branch {repoUrl} {_apiConfig.GetDbLocation()}";
-            var output = await _commandClient.RunAsync(command, cancellationToken);
-            _logger.LogInformation($"cmd: {command}{Environment.NewLine}Output: {output}");
+            var retryTimes = 0;
+            while (retryTimes <= 3 && !Directory.Exists(_apiConfig.GetDbLocation()))
+            {
+                retryTimes++;
+                var repoUrl =
+                    $"https://{_apiConfig.GitHubDbRepoApiToken}@github.com/{_apiConfig.GitHubDbRepoUserName}/{_apiConfig.GitHubDbRepoName}.git";
+                var command =
+                    $"git clone -b {_apiConfig.GitHubDbRepoBranchName} --single-branch {repoUrl} {_apiConfig.GetDbLocation()}";
+                var output = await _commandClient.RunAsync(command, cancellationToken);
+                _logger.LogInformation($"cmd: {command}{Environment.NewLine}Output: {output}");
+            }
         }
     }
 }
