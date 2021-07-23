@@ -28,7 +28,7 @@ namespace Laobian.Api.SourceProvider
             _apiConfig = apiConfig.Value;
         }
 
-        public virtual async Task LoadAsync(CancellationToken cancellationToken = default)
+        public virtual async Task LoadAsync(bool init = true, CancellationToken cancellationToken = default)
         {
             Directory.CreateDirectory(_apiConfig.GetBlogPostLocation());
             Directory.CreateDirectory(_apiConfig.GetDbLocation());
@@ -52,17 +52,20 @@ namespace Laobian.Api.SourceProvider
             _commentLocation = Path.Combine(_apiConfig.GetDbLocation(), "comment");
             Directory.CreateDirectory(_commentLocation);
 
-            var di = new DirectoryInfo(_apiConfig.GetBlogFileLocation());
-            foreach (FileInfo file in di.GetFiles())
+            if (init)
             {
-                file.Delete();
-            }
-            foreach (DirectoryInfo dir in di.GetDirectories())
-            {
-                dir.Delete(true);
-            }
+                var di = new DirectoryInfo(_apiConfig.GetBlogFileLocation());
+                foreach (FileInfo file in di.GetFiles())
+                {
+                    file.Delete();
+                }
+                foreach (DirectoryInfo dir in di.GetDirectories())
+                {
+                    dir.Delete(true);
+                }
 
-            CopyFilesRecursively(new DirectoryInfo(fileFolderInBlogPostLocation), new DirectoryInfo(_apiConfig.GetBlogFileLocation()));
+                CopyFilesRecursively(new DirectoryInfo(fileFolderInBlogPostLocation), new DirectoryInfo(_apiConfig.GetBlogFileLocation()));
+            }
 
             await Task.CompletedTask;
         }

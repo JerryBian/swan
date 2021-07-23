@@ -6,7 +6,7 @@ namespace Laobian.Api.SourceProvider
 {
     public interface ISourceProvider
     {
-        Task LoadAsync(CancellationToken cancellationToken = default);
+        Task LoadAsync(bool init = true, CancellationToken cancellationToken = default);
 
         Task<IDictionary<string, string>> GetPostsAsync(CancellationToken cancellationToken = default);
 

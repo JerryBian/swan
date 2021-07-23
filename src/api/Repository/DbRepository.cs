@@ -29,7 +29,7 @@ namespace Laobian.Api.Repository
 
         public async Task LoadAsync(CancellationToken cancellationToken = default)
         {
-            await _sourceProvider.LoadAsync(cancellationToken);
+            await _sourceProvider.LoadAsync(true, cancellationToken);
 
             var tags = await _sourceProvider.GetTagsAsync(cancellationToken);
             _blogTagStore = new BlogTagStore(tags);

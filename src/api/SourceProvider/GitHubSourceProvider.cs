@@ -24,10 +24,14 @@ namespace Laobian.Api.SourceProvider
             _commandClient = commandClient;
         }
 
-        public override async Task LoadAsync(CancellationToken cancellationToken = default)
+        public override async Task LoadAsync(bool init = true, CancellationToken cancellationToken = default)
         {
-            await Task.WhenAll(PullBlogPostRepoAsync(cancellationToken), PullDbRepoAsync(cancellationToken));
-            await base.LoadAsync(cancellationToken);
+            if (init)
+            {
+                await Task.WhenAll(PullBlogPostRepoAsync(cancellationToken), PullDbRepoAsync(cancellationToken));
+            }
+            
+            await base.LoadAsync(init, cancellationToken);
         }
 
 
