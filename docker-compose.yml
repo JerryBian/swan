@@ -48,6 +48,7 @@ services:
       - ENV_BLOG_AdminChineseName
       - ENV_BLOG_AdminEnglishName
       - ENV_BLOG_AssetLocation=/asset
+      - ENV_BLOG_GitHubHookSecret
     ports:
       - "${ENV_BLOG_PORT}:5012"
     depends_on:

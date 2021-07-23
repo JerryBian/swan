@@ -14,6 +14,6 @@ namespace Laobian.Blog
 
         public string AdminEnglishName { get; set; }
 
-        
+        public string GitHubHookSecret { get; set; }
     }
 }

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Mime;
+using System.Text;
 using System.Threading.Tasks;
 using Laobian.Share.Blog;
 using Laobian.Share.Helper;
@@ -21,6 +23,20 @@ namespace Laobian.Blog.HttpService
             _logger = logger;
             _httpClient = httpClient;
             _httpClient.BaseAddress = new Uri(config.Value.ApiLocalEndpoint);
+        }
+
+        public async Task<bool> PersistentAsync(string message)
+        {
+            var response = await _httpClient.PostAsync("/blog/persistent",
+                new StringContent(message, Encoding.UTF8, MediaTypeNames.Text.Plain));
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                _logger.LogError(
+                    $"{nameof(ApiHttpService)}.{nameof(PersistentAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+                return false;
+            }
+
+            return true;
         }
 
         public async Task<List<BlogPost>> GetPostsAsync(bool onlyPublished)

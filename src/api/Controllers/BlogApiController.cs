@@ -28,7 +28,7 @@ namespace Laobian.Api.Controllers
         }
 
         //[HttpPost]
-        //[Route("reload")]
+        //[Route("per")]
         //[ProducesResponseType(StatusCodes.Status200OK)]
         //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //public async Task<IActionResult> ReloadAsync()

@@ -12,6 +12,8 @@ namespace Laobian.Share
 
         public string AdminLocalEndpoint { get; set; }
 
+        public string AdminName { get; set; }
+
         public string AdminEmail { get; set; }
 
         public string AppVersion { get; set; }
