@@ -36,10 +36,7 @@ namespace Laobian.Api.Service
 
         public async Task PersistentAsync(string message, CancellationToken cancellationToken = default)
         {
-            await _dbRepository.PersistentBlogAccessStoreAsync(cancellationToken);
-            await _dbRepository.PersistentBlogCommentStoreAsync(cancellationToken);
-            await _dbRepository.PersistentBlogMetadataAsync(cancellationToken);
-            await _dbRepository.PersistentBlogTagStoreAsync(cancellationToken);
+            await _dbRepository.PersistentAsync(cancellationToken);
             await LoadAsync(cancellationToken);
 
             // TODO: notify Blog site

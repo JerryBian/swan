@@ -25,5 +25,7 @@ namespace Laobian.Api.SourceProvider
         Task<IDictionary<string, string>> GetCommentsAsync(CancellationToken cancellationToken = default);
 
         Task SaveCommentsAsync(IDictionary<string, string> comments, CancellationToken cancellationToken = default);
+
+        Task PersistentAsync(CancellationToken cancellationToken = default);
     }
 }

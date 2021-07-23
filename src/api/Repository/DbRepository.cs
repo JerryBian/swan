@@ -49,7 +49,7 @@ namespace Laobian.Api.Repository
             return await Task.FromResult(_blogTagStore);
         }
 
-        public async Task PersistentBlogTagStoreAsync(CancellationToken cancellationToken = default)
+        private async Task PersistentBlogTagStoreAsync(CancellationToken cancellationToken = default)
         {
             await _sourceProvider.SaveTagsAsync(JsonHelper.Serialize(_blogTagStore.GetAll().OrderByDescending(x =>x.LastUpdatedAt), true), cancellationToken);
         }
@@ -59,7 +59,7 @@ namespace Laobian.Api.Repository
             return await Task.FromResult(_blogMetadataStore);
         }
 
-        public async Task PersistentBlogMetadataAsync(CancellationToken cancellationToken = default)
+        private async Task PersistentBlogMetadataAsync(CancellationToken cancellationToken = default)
         {
             await _sourceProvider.SavePostMetadataAsync(
                 JsonHelper.Serialize(_blogMetadataStore.GetAll().OrderByDescending(x => x.LastUpdateTime), true),
@@ -71,7 +71,7 @@ namespace Laobian.Api.Repository
             return await Task.FromResult(_blogAccessStore);
         }
 
-        public async Task PersistentBlogAccessStoreAsync(CancellationToken cancellationToken = default)
+        private async Task PersistentBlogAccessStoreAsync(CancellationToken cancellationToken = default)
         {
             await _sourceProvider.SavePostAccessAsync(_blogAccessStore.GetAll().ToDictionary(x => x.Key, x => JsonHelper.Serialize(x.Value.OrderByDescending(y => y.Date), true)), cancellationToken);
         }
@@ -81,7 +81,18 @@ namespace Laobian.Api.Repository
             return await Task.FromResult(_blogCommentStore);
         }
 
-        public async Task PersistentBlogCommentStoreAsync(CancellationToken cancellationToken = default)
+        public async Task PersistentAsync(CancellationToken cancellationToken = default)
+        {
+            await Task.WhenAll(
+                PersistentBlogAccessStoreAsync(cancellationToken),
+                PersistentBlogMetadataAsync(cancellationToken),
+                PersistentBlogCommentStoreAsync(cancellationToken),
+                PersistentBlogTagStoreAsync(cancellationToken)
+                );
+            await _sourceProvider.PersistentAsync(cancellationToken);
+        }
+
+        private async Task PersistentBlogCommentStoreAsync(CancellationToken cancellationToken = default)
         {
             await _sourceProvider.SaveCommentsAsync(_blogCommentStore.GetAll().ToDictionary(x => x.Key, x => JsonHelper.Serialize(x.Value.OrderByDescending(y => y.LastUpdatedAt), true)), cancellationToken);
         }

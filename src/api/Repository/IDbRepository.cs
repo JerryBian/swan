@@ -10,18 +10,12 @@ namespace Laobian.Api.Repository
 
         Task<BlogTagStore> GetBlogTagStoreAsync(CancellationToken cancellationToken = default);
 
-        Task PersistentBlogTagStoreAsync(CancellationToken cancellationToken = default);
-
         Task<BlogMetadataStore> GetBlogMetadataStoreAsync(CancellationToken cancellationToken);
-
-        Task PersistentBlogMetadataAsync(CancellationToken cancellationToken = default);
 
         Task<BlogAccessStore> GetBlogAccessStoreAsync(CancellationToken cancellationToken = default);
 
-        Task PersistentBlogAccessStoreAsync(CancellationToken cancellationToken = default);
-
         Task<BlogCommentStore> GetBlogCommentStoreAsync(CancellationToken cancellationToken = default);
 
-        Task PersistentBlogCommentStoreAsync(CancellationToken cancellationToken = default);
+        Task PersistentAsync(CancellationToken cancellationToken = default);
     }
 }

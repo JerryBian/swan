@@ -30,30 +30,10 @@ namespace Laobian.Api.SourceProvider
             await base.LoadAsync(cancellationToken);
         }
 
-        public override async Task SaveTagsAsync(string tags, CancellationToken cancellationToken = default)
-        {
-            await base.SaveTagsAsync(tags, cancellationToken);
-            await PushDbRepoAsync("Update tags");
-        }
 
-        public override async Task SaveCommentsAsync(IDictionary<string, string> comments,
-            CancellationToken cancellationToken = default)
+        public override async Task PersistentAsync(CancellationToken cancellationToken = default)
         {
-            await base.SaveCommentsAsync(comments, cancellationToken);
-            await PushDbRepoAsync("Update comments");
-        }
-
-        public override async Task SavePostAccessAsync(IDictionary<string, string> postAccess,
-            CancellationToken cancellationToken = default)
-        {
-            await base.SavePostAccessAsync(postAccess, cancellationToken);
-            await PushDbRepoAsync("Update post access");
-        }
-
-        public override async Task SavePostMetadataAsync(string metadata, CancellationToken cancellationToken = default)
-        {
-            await base.SavePostMetadataAsync(metadata, cancellationToken);
-            await PushDbRepoAsync("Update post metadata");
+            await PushDbRepoAsync("update");
         }
 
         private async Task PushDbRepoAsync(string message)
@@ -90,9 +70,8 @@ namespace Laobian.Api.SourceProvider
                 var command =
                     $"git clone -b {_apiConfig.GitHubBlogPostRepoBranchName} --single-branch {repoUrl} {_apiConfig.GetBlogPostLocation()}";
                 var output = await _commandClient.RunAsync(command, cancellationToken);
-                _logger.LogInformation($"cmd: {command}{Environment.NewLine}Output: {output}");
+                _logger.LogInformation($"Retry: {retryTimes}, cmd: {command}{Environment.NewLine}Output: {output}");
             }
-                
         }
 
         private async Task PullDbRepoAsync(CancellationToken cancellationToken)
@@ -110,8 +89,11 @@ namespace Laobian.Api.SourceProvider
                     $"https://{_apiConfig.GitHubDbRepoApiToken}@github.com/{_apiConfig.GitHubDbRepoUserName}/{_apiConfig.GitHubDbRepoName}.git";
                 var command =
                     $"git clone -b {_apiConfig.GitHubDbRepoBranchName} --single-branch {repoUrl} {_apiConfig.GetDbLocation()}";
+                command += $" && cd {_apiConfig.GetDbLocation()}";
+                command += " && git config --local user.name \"API Server\"";
+                command += $" && git config --local user.email \"{_apiConfig.AdminEmail}\"";
                 var output = await _commandClient.RunAsync(command, cancellationToken);
-                _logger.LogInformation($"cmd: {command}{Environment.NewLine}Output: {output}");
+                _logger.LogInformation($"Retry: {retryTimes}, cmd: {command}{Environment.NewLine}Output: {output}");
             }
         }
     }

@@ -188,6 +188,11 @@ namespace Laobian.Api.SourceProvider
             }
         }
 
+        public virtual async Task PersistentAsync(CancellationToken cancellationToken = default)
+        {
+            await Task.CompletedTask;
+        }
+
         private static void CopyFilesRecursively(DirectoryInfo source, DirectoryInfo target)
         {
             foreach (DirectoryInfo dir in source.GetDirectories())
