@@ -5,12 +5,9 @@ on:
     branches: [ 5.0 ]
 
 jobs:
-  publish_to_docker:
-    name: Build and Push Docker image
+  setup_env:
+    name: Setup environments for Docker
     runs-on: ubuntu-20.04
-    permissions:
-      packages: write
-      contents: read
 
     steps:
       - name: Checkout
@@ -44,7 +41,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and Push API
+  publish_api:
+    name: Publish API images
+    runs-on: ubuntu-20.04
+    needs: setup_env
+
+    steps:
+      - name: Build and push API images
         id: docker_build_api
         uses: docker/build-push-action@v2
         with:
@@ -55,7 +58,13 @@ jobs:
             cnbian/laobian-api:${{ env.APP_VERSION }}
             ghcr.io/jerrybian/laobian-api:${{ env.APP_VERSION }}
 
-      - name: Build and Push ADMIN
+  publish_admin:
+    name: Publish ADMIN images
+    runs-on: ubuntu-20.04
+    needs: setup_env
+
+    steps:
+      - name: Build and push ADMIN images
         id: docker_build_admin
         uses: docker/build-push-action@v2
         with:
@@ -66,7 +75,13 @@ jobs:
             cnbian/laobian-admin:${{ env.APP_VERSION }}
             ghcr.io/jerrybian/laobian-admin:${{ env.APP_VERSION }}
 
-      - name: Build and Push BLOG
+  publish_blog:
+    name: Publish BLOG images
+    runs-on: ubuntu-20.04
+    needs: setup_env
+
+    steps:
+      - name: Build and push BLOG images
         id: docker_build_blog
         uses: docker/build-push-action@v2
         with:
@@ -76,7 +91,13 @@ jobs:
           tags: |
             cnbian/laobian-blog:${{ env.APP_VERSION }}
             ghcr.io/jerrybian/laobian-blog:${{ env.APP_VERSION }}
-      
+
+  deploy_server:
+    name: Deploy to remote server
+    runs-on: ubuntu-20.04
+    needs: [publish_api, publish_admin, publish_blog]
+
+    steps:
       - name: deploy server
         uses: appleboy/ssh-action@master
         with:
@@ -86,3 +107,85 @@ jobs:
           port: ${{ secrets.VPS_SSH_PORT }}
           script: |
             sh /ga/deploy-laobian.sh stage ${{ env.APP_VERSION }}
+
+  # publish_to_docker:
+  #   name: Build and Push Docker image
+  #   runs-on: ubuntu-20.04
+  #   permissions:
+  #     packages: write
+  #     contents: read
+
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v2
+
+  #     - name: Install dependencies
+  #       run: |
+  #         sudo apt-get install -y libxml2-utils
+
+  #     - name: Setup environment variables
+  #       run: |
+  #         APP_VERSION=`xmllint --xpath "/Project/PropertyGroup/Version/text()" Directory.Build.props`
+  #         echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
+
+  #     - name: Set up QEMU
+  #       uses: docker/setup-qemu-action@v1
+
+  #     - name: Set up Docker Buildx
+  #       uses: docker/setup-buildx-action@v1
+
+  #     - name: Login to Docker Hub
+  #       uses: docker/login-action@v1
+  #       with:
+  #         username: ${{ secrets.DOCKER_HUB_USER }}
+  #         password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+  #     - name: Login to GitHub Container Registry
+  #       uses: docker/login-action@v1
+  #       with:
+  #         registry: ghcr.io
+  #         username: ${{ github.actor }}
+  #         password: ${{ secrets.GITHUB_TOKEN }}
+
+  #     - name: Build and Push API
+  #       id: docker_build_api
+  #       uses: docker/build-push-action@v2
+  #       with:
+  #         context: .
+  #         file: ./Dockerfile.api
+  #         push: true
+  #         tags: |
+  #           cnbian/laobian-api:${{ env.APP_VERSION }}
+  #           ghcr.io/jerrybian/laobian-api:${{ env.APP_VERSION }}
+
+  #     - name: Build and Push ADMIN
+  #       id: docker_build_admin
+  #       uses: docker/build-push-action@v2
+  #       with:
+  #         context: .
+  #         file: ./Dockerfile.admin
+  #         push: true
+  #         tags: |
+  #           cnbian/laobian-admin:${{ env.APP_VERSION }}
+  #           ghcr.io/jerrybian/laobian-admin:${{ env.APP_VERSION }}
+
+  #     - name: Build and Push BLOG
+  #       id: docker_build_blog
+  #       uses: docker/build-push-action@v2
+  #       with:
+  #         context: .
+  #         file: ./Dockerfile.blog
+  #         push: true
+  #         tags: |
+  #           cnbian/laobian-blog:${{ env.APP_VERSION }}
+  #           ghcr.io/jerrybian/laobian-blog:${{ env.APP_VERSION }}
+      
+  #     - name: deploy server
+  #       uses: appleboy/ssh-action@master
+  #       with:
+  #         host: ${{ secrets.VPS_SSH_HOST }}
+  #         username: ${{ secrets.VPS_SSH_USER }}
+  #         password: ${{ secrets.VPS_SSH_PASSWORD }}
+  #         port: ${{ secrets.VPS_SSH_PORT }}
+  #         script: |
+  #           sh /ga/deploy-laobian.sh stage ${{ env.APP_VERSION }}
