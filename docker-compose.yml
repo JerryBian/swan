@@ -19,6 +19,7 @@ services:
       - ENV_API_GitHubBlogPostRepoBranchName
       - ENV_API_CommandLineApp
       - ENV_API_CommandLineBeginArg
+      - ENV_API_AdminEmail
   admin:
     image: cnbian/laobian-admin:latest
     environment:
@@ -40,7 +41,7 @@ services:
       - ASPNETCORE_URLS=http://0.0.0.0:5012
       - ASPNETCORE_ENVIRONMENT
       - ENV_BLOG_ApiLocalEndPoint=http://api:5010
-      - ENV_BLOG_PotsPerPage
+      - ENV_BLOG_PostsPerPage
       - ENV_BLOG_AdminEmail
       - ENV_BLOG_AdminChineName
       - ENV_BLOG_AdminEnglishName
