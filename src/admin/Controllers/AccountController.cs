@@ -11,7 +11,7 @@ using Microsoft.Extensions.Options;
 
 namespace Laobian.Admin.Controllers
 {
-    
+    [AllowAnonymous]
     public class AccountController : Controller
     {
         private readonly AdminConfig _adminConfig;
@@ -24,7 +24,6 @@ namespace Laobian.Admin.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
         [Route("/login")]
         public IActionResult Login(string r)
         {
@@ -32,7 +31,6 @@ namespace Laobian.Admin.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
         [Route("/login")]
         public async Task<IActionResult> Login(string userName, string password, string r = null)
         {
@@ -68,6 +66,7 @@ namespace Laobian.Admin.Controllers
         }
 
         [Route("/logout")]
+        [Authorize]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);

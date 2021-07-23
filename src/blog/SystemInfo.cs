@@ -14,7 +14,21 @@ namespace Laobian.Blog
             RuntimeVersion = RuntimeInformation.FrameworkDescription;
         }
 
-        public string AppVersion => Assembly.GetEntryAssembly()?.GetName().Version?.Major.ToString() ?? "1.0";
+        public string AppVersion
+        {
+            get
+            {
+                var ver = Assembly.GetEntryAssembly()?.GetName().Version;
+                if (ver == null)
+                {
+                    return "1.0";
+                }
+                else
+                {
+                    return $"{ver.Major}.{ver.Minor}";
+                }
+            }
+        }
 
         public DateTime BootTime { get;  }
 

@@ -24,6 +24,7 @@ services:
     image: cnbian/laobian-admin:${ENV_APP_VERSION}
     environment:
       - ASPNETCORE_URLS=http://0.0.0.0:5011
+      - DATA_PROTECTION_KEY_PATH
       - ASPNETCORE_ENVIRONMENT
       - ENV_ADMIN_ApiLocalEndPoint=http://api:5010
       - ENV_ADMIN_BlogRemoteEndPoint
@@ -39,6 +40,7 @@ services:
       - ${ENV_BLOG_ASSET_LOCATION}:/asset
     environment:
       - ASPNETCORE_URLS=http://0.0.0.0:5012
+      - DATA_PROTECTION_KEY_PATH
       - ASPNETCORE_ENVIRONMENT
       - ENV_BLOG_ApiLocalEndPoint=http://api:5010
       - ENV_BLOG_PostsPerPage

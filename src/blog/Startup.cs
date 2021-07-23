@@ -5,7 +5,9 @@ using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using Laobian.Blog.HttpService;
 using Laobian.Share;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,11 +20,11 @@ namespace Laobian.Blog
 {
     public class Startup
     {
+        private readonly IWebHostEnvironment _env;
 
-
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
-
+            _env = env;
             Configuration = configuration;
         }
 
@@ -37,6 +39,17 @@ namespace Laobian.Blog
             services.AddOptions<BlogConfig>().Bind(Configuration).ValidateDataAnnotations();
 
             services.AddHttpClient<ApiHttpService>();
+
+            var dpFolder = Configuration.GetValue<string>("DATA_PROTECTION_KEY_PATH");
+            Directory.CreateDirectory(dpFolder);
+            services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(dpFolder))
+                .SetApplicationName("LAOBIAN");
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+                {
+                    options.Cookie.Name = "LAOBIAN_AUTH";
+                    options.Cookie.Domain = _env.IsDevelopment() ? "localhost" : ".laobian.me";
+                });
 
             services.AddControllersWithViews();
         }
@@ -70,6 +83,7 @@ namespace Laobian.Blog
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
