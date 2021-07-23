@@ -77,4 +77,12 @@ jobs:
             cnbian/laobian-blog:${{ env.APP_VERSION }}
             ghcr.io/jerrybian/laobian-blog:${{ env.APP_VERSION }}
       
-      
+      - name: deploy server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: |
+            sh /laobian/script/v5/deploy-stage.sh

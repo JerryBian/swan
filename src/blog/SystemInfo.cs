@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using Laobian.Share;
 using Microsoft.Extensions.Options;
@@ -10,11 +11,10 @@ namespace Laobian.Blog
         public SystemInfo(IOptions<BlogConfig> config)
         {
             BootTime = DateTime.Now;
-            AppVersion = config.Value.AppVersion;
             RuntimeVersion = RuntimeInformation.FrameworkDescription;
         }
 
-        public string AppVersion { get; }
+        public string AppVersion => Assembly.GetEntryAssembly()?.GetName().Version?.Major.ToString() ?? "1.0";
 
         public DateTime BootTime { get;  }
 
