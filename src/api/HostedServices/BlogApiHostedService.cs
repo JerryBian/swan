@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Api.Service;
@@ -25,7 +23,23 @@ namespace Laobian.Api.HostedServices
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            await Task.CompletedTask;
+            while (!stoppingToken.IsCancellationRequested)
+            {
+                if (DateTime.Now.Minute == 0 && DateTime.Now.Second == 0)
+                {
+                    await _blogService.PersistentAsync($"{DateTime.Now.ToLongDateString()} By Web Server", stoppingToken);
+                }
+                else
+                {
+                    await Task.Delay(TimeSpan.FromMilliseconds(300), stoppingToken);
+                }
+            }
+        }
+
+        public override async Task StopAsync(CancellationToken cancellationToken)
+        {
+            await _blogService.PersistentAsync("Web Server stopping", CancellationToken.None);
+            await base.StopAsync(cancellationToken);
         }
     }
 }
