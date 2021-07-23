@@ -2,6 +2,7 @@ FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
 
 COPY ./src ./
+COPY ./Directory.Build.props ./
 RUN dotnet publish -c Release -o /publish --self-contained true -v normal -p:PublishTrimmed=true -p:PublishSingleFile=true -r linux-x64 ./admin/Laobian.Admin.csproj
 
 FROM mcr.microsoft.com/dotnet/aspnet:5.0
