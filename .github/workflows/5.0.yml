@@ -86,4 +86,4 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             cd /laobian/script/v5
-            sh deploy-stage.sh ${{ env.APP_VERSION }}
+            sh deploy-stage.sh stage ${{ env.APP_VERSION }}

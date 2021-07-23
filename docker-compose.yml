@@ -43,7 +43,7 @@ services:
       - ENV_BLOG_ApiLocalEndPoint=http://api:5010
       - ENV_BLOG_PostsPerPage
       - ENV_BLOG_AdminEmail
-      - ENV_BLOG_AdminChineName
+      - ENV_BLOG_AdminChineseName
       - ENV_BLOG_AdminEnglishName
       - ENV_BLOG_AssetLocation=/asset
     ports:

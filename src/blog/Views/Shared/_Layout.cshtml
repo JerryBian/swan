@@ -3,6 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewData["Title"]</title>
+
     <script>
         (function(d) {
             var config = {
@@ -15,7 +17,7 @@
     </script>
     
     @await RenderSectionAsync("Style", false)
-    @await RenderSectionAsync("Title", false)
+    
 </head>
 <body class="w-100 h-100">
 <nav class="navbar w-100">
