@@ -161,6 +161,18 @@ jobs:
     needs: [publish_api, publish_admin, publish_blog]
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get install -y libxml2-utils
+
+      - name: Setup environment variables
+        run: |
+          APP_VERSION=`xmllint --xpath "/Project/PropertyGroup/Version/text()" Directory.Build.props`
+          echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
+
       - name: deploy server
         uses: appleboy/ssh-action@master
         with:
