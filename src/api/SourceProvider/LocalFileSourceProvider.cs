@@ -197,7 +197,7 @@ namespace Laobian.Api.SourceProvider
 
             foreach (FileInfo file in source.GetFiles())
             {
-                file.CopyTo(Path.Combine(target.FullName, file.Name));
+                file.CopyTo(Path.Combine(target.FullName, file.Name), true);
             }
         }
     }
