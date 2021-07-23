@@ -21,8 +21,8 @@ jobs:
           sudo apt-get install -y libxml2-utils
 
       - name: Setup environment variables
-        run: |
-          APP_VERSION=`xmllint --xpath "/Project/PropertyGroup/Version/text()" Directory.Build.props`
+        env:
+          APP_VERSION: `xmllint --xpath "/Project/PropertyGroup/Version/text()" Directory.Build.props`
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -51,8 +51,8 @@ jobs:
           file: ./Dockerfile.api
           push: true
           tags: |
-            cnbian/laobian-api:${{ APP_VERSION }}
-            ghcr.io/jerrybian/laobian-api:${{ APP_VERSION }}
+            cnbian/laobian-api:${{ env.APP_VERSION }}
+            ghcr.io/jerrybian/laobian-api:${{ env.APP_VERSION }}
 
       - name: Build and Push ADMIN
         id: docker_build_admin
@@ -62,8 +62,8 @@ jobs:
           file: ./Dockerfile.admin
           push: true
           tags: |
-            cnbian/laobian-admin:${{ APP_VERSION }}
-            ghcr.io/jerrybian/laobian-admin:${{ APP_VERSION }}
+            cnbian/laobian-admin:${{ env.APP_VERSION }}
+            ghcr.io/jerrybian/laobian-admin:${{ env.APP_VERSION }}
 
       - name: Build and Push BLOG
         id: docker_build_blog
@@ -73,7 +73,7 @@ jobs:
           file: ./Dockerfile.blog
           push: true
           tags: |
-            cnbian/laobian-blog:${{ APP_VERSION }}
-            ghcr.io/jerrybian/laobian-blog:${{ APP_VERSION }}
+            cnbian/laobian-blog:${{ env.APP_VERSION }}
+            ghcr.io/jerrybian/laobian-blog:${{ env.APP_VERSION }}
       
       
