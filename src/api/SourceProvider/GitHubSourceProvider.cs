@@ -69,6 +69,7 @@ namespace Laobian.Api.SourceProvider
                     $"https://{_apiConfig.GitHubBlogPostRepoApiToken}@github.com/{_apiConfig.GitHubBlogPostRepoUserName}/{_apiConfig.GitHubBlogPostRepoName}.git";
                 var command =
                     $"git clone -b {_apiConfig.GitHubBlogPostRepoBranchName} --single-branch {repoUrl} {_apiConfig.GetBlogPostLocation()}";
+                _logger.LogInformation($"Retry: {retryTimes}... starting to pull Blog Post repo.");
                 var output = await _commandClient.RunAsync(command, cancellationToken);
                 _logger.LogInformation($"Retry: {retryTimes}, cmd: {command}{Environment.NewLine}Output: {output}");
             }
@@ -92,6 +93,7 @@ namespace Laobian.Api.SourceProvider
                 command += $" && cd {_apiConfig.GetDbLocation()}";
                 command += " && git config --local user.name \"API Server\"";
                 command += $" && git config --local user.email \"{_apiConfig.AdminEmail}\"";
+                _logger.LogInformation($"Retry: {retryTimes}... starting to pull DB repo.");
                 var output = await _commandClient.RunAsync(command, cancellationToken);
                 _logger.LogInformation($"Retry: {retryTimes}, cmd: {command}{Environment.NewLine}Output: {output}");
             }
