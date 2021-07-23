@@ -85,5 +85,4 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           script: |
-            cd /laobian/script/v5
-            sh deploy-laobian.sh stage ${{ env.APP_VERSION }}
+            sh /ga/deploy-laobian.sh stage ${{ env.APP_VERSION }}
