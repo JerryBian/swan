@@ -30,7 +30,7 @@ services:
       - ENV_ADMIN_AdminName
       - ENV_ADMIN_AdminPassword
     ports:
-      - "5011:5011"
+      - "${ENV_ADMIN_PORT}:5011"
     depends_on:
       - api
   blog:
@@ -47,7 +47,6 @@ services:
       - ENV_BLOG_AdminEnglishName
       - ENV_BLOG_AssetLocation=/asset
     ports:
-      - "5012:5012"
+      - "${ENV_BLOG_PORT}:5012"
     depends_on:
       - api
-    command: ["./wait-for-it.sh", "api:5010", "--", "echo Api Ready"]
