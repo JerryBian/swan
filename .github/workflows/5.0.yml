@@ -22,7 +22,7 @@ jobs:
 
       - name: Setup environment variables
         env:
-          APP_VERSION: `xmllint --xpath "/Project/PropertyGroup/Version/text()" Directory.Build.props`
+          APP_VERSION: ${{ xmllint --xpath "/Project/PropertyGroup/Version/text()" Directory.Build.props }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
