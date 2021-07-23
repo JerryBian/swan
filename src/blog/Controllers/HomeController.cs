@@ -120,6 +120,8 @@ namespace Laobian.Blog.Controllers
                 Next = nextPost
             };
             model.SetAdditionalInfo();
+
+            await _apiHttpService.AddPostAccess(post.Link);
             return View("~/Views/Post/Index.cshtml", model);
         }
 

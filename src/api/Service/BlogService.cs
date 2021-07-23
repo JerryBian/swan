@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -51,6 +52,11 @@ namespace Laobian.Api.Service
                 allPosts = allPosts.Where(x => x.IsPublished).ToList();
             }
 
+            foreach (var blogPost in allPosts)
+            {
+                await SetAdditionalInfoForPost(blogPost, cancellationToken);
+            }
+
             return allPosts;
         }
 
@@ -64,7 +70,13 @@ namespace Laobian.Api.Service
         public async Task<BlogPost> GetPostAsync(string postLink, CancellationToken cancellationToken = default)
         {
             var blogPostStore = await _blogPostRepository.GetBlogPostStoreAsync(cancellationToken);
-            return blogPostStore.GetByLink(postLink);
+            var post = blogPostStore.GetByLink(postLink);
+            if (post != null)
+            {
+                await SetAdditionalInfoForPost(post, cancellationToken);
+            }
+
+            return post;
         }
 
         public async Task<BlogTag> GetTagAsync(string tagLink, CancellationToken cancellationToken = default)
@@ -104,61 +116,69 @@ namespace Laobian.Api.Service
         public async Task AddBlogAccessAsync(string postLink, CancellationToken cancellationToken = default)
         {
             var blogAccessStore = await _dbRepository.GetBlogAccessStoreAsync(cancellationToken);
-            blogAccessStore.Add(postLink, DateTime.Now, 1);
+            blogAccessStore.Add(postLink, DateTime.Now.Date, 1);
+        }
+
+        private async Task SetAdditionalInfoForPost(BlogPost blogPost, CancellationToken cancellationToken)
+        {
+            NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
+            nfi.NumberDecimalDigits = 0;
+
+            var blogAccessStore = await _dbRepository.GetBlogAccessStoreAsync(cancellationToken);
+            var access = blogAccessStore.GetByLink(blogPost.Link);
+            if (access != null)
+            {
+                blogPost.Accesses.AddRange(access);
+                blogPost.AccessCount = access.Sum(x => x.Count);
+                blogPost.AccessCountString = blogPost.AccessCount.ToString("N", nfi);
+            }
+            else
+            {
+                blogPost.AccessCountString = "0";
+            }
+
+            var blogMetadataStore = await _dbRepository.GetBlogMetadataStoreAsync(cancellationToken);
+            var metadata = blogMetadataStore.GetByLink(blogPost.Link);
+            if (metadata == null)
+            {
+                metadata = new BlogPostMetadata { Link = blogPost.Link };
+                metadata.SetDefault();
+                blogMetadataStore.Add(metadata);
+            }
+
+            blogPost.Metadata = metadata;
+
+            var blogTagStore = await _dbRepository.GetBlogTagStoreAsync(cancellationToken);
+            foreach (var metadataTag in metadata.Tags)
+            {
+                var tag = blogTagStore.GetByLink(metadataTag);
+                if (tag != null)
+                {
+                    blogPost.Tags.Add(tag);
+                }
+            }
+
+            var blogCommentStore = await _dbRepository.GetBlogCommentStoreAsync(cancellationToken);
+            var comments = blogCommentStore.GetByLink(blogPost.Link);
+            if (comments != null)
+            {
+                blogPost.Comments.AddRange(comments);
+                blogPost.CommentCount = blogPost.Comments.Count;
+                blogPost.CommentCountString = comments.Count.ToString("N", nfi);
+            }
+            else
+            {
+                blogPost.CommentCountString = "0";
+            }
         }
 
         private async Task AggregateStoreAsync(CancellationToken cancellationToken)
         {
-            var blogTagStore = await _dbRepository.GetBlogTagStoreAsync(cancellationToken);
             var blogPostStore = await _blogPostRepository.GetBlogPostStoreAsync(cancellationToken);
-            var blogAccessStore = await _dbRepository.GetBlogAccessStoreAsync(cancellationToken);
-            var blogMetadataStore = await _dbRepository.GetBlogMetadataStoreAsync(cancellationToken);
-            var blogCommentStore = await _dbRepository.GetBlogCommentStoreAsync(cancellationToken);
 
             foreach (var blogPost in blogPostStore.GetAll())
             {
-                var metadata = blogMetadataStore.GetByLink(blogPost.Link);
-                if (metadata == null)
-                {
-                    metadata = new BlogPostMetadata { Link = blogPost.Link};
-                    metadata.SetDefault();
-                    blogMetadataStore.Add(metadata);
-                }
-
-                blogPost.Metadata = metadata;
-                var access = blogAccessStore.GetByLink(blogPost.Link);
-                if (access != null)
-                {
-                    blogPost.Accesses.AddRange(access);
-                    blogPost.AccessCount = access.Sum(x => x.Count);
-                    blogPost.AccessCountString = blogPost.AccessCount.ToString("N");
-                }
-                else
-                {
-                    blogPost.AccessCountString = "0";
-                }
-
-                foreach (var metadataTag in metadata.Tags)
-                {
-                    var tag = blogTagStore.GetByLink(metadataTag);
-                    if (tag != null)
-                    {
-                        blogPost.Tags.Add(tag);
-                    }
-                }
-
-                var comments = blogCommentStore.GetByLink(blogPost.Link);
-                if (comments != null)
-                {
-                    blogPost.Comments.AddRange(comments);
-                    blogPost.CommentCount = blogPost.Comments.Count;
-                    blogPost.CommentCountString = comments.Count.ToString("N");
-                }
-                else
-                {
-                    blogPost.CommentCountString = "0";
-                }
-
+                await SetAdditionalInfoForPost(blogPost, cancellationToken);
                 blogPost.PublishTimeString = blogPost.Metadata.PublishTime.ToString("yyyy-MM-dd HH:mm:ss");
                 blogPost.FullPath = $"{blogPost.Metadata.PublishTime.Year:D4}/{blogPost.Metadata.PublishTime.Month:D2}/{blogPost.Metadata.Link}.html";
 

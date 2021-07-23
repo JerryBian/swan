@@ -34,7 +34,7 @@ namespace Laobian.Api.SourceProvider
             Directory.CreateDirectory(_apiConfig.GetDbLocation());
             Directory.CreateDirectory(_apiConfig.GetBlogFileLocation());
 
-            var fileFolderInBlogPostLocation = Path.Combine(_apiConfig.GetBlogPostLocation());
+            var fileFolderInBlogPostLocation = Path.Combine(_apiConfig.GetBlogPostLocation(), "file");
             Directory.CreateDirectory(fileFolderInBlogPostLocation);
 
             var metadataLocation = Path.Combine(_apiConfig.GetDbLocation(), "metadata");
@@ -150,7 +150,7 @@ namespace Laobian.Api.SourceProvider
             Directory.CreateDirectory(_accessLocation);
             foreach (var (key, value) in postAccess)
             {
-                var accessFile = Path.Combine(_accessLocation, key + PostMetadataExtension);
+                var accessFile = Path.Combine(_accessLocation, key + ".json");
                 await File.WriteAllTextAsync(accessFile, value, Encoding.UTF8, cancellationToken);
             }
         }
@@ -186,7 +186,7 @@ namespace Laobian.Api.SourceProvider
             Directory.CreateDirectory(_commentLocation);
             foreach (var (key, value) in comments)
             {
-                var commentFile = Path.Combine(_commentLocation, key + PostMetadataExtension);
+                var commentFile = Path.Combine(_commentLocation, key + ".json");
                 await File.WriteAllTextAsync(commentFile, value, Encoding.UTF8, cancellationToken);
             }
         }

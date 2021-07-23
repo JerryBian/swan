@@ -64,5 +64,15 @@ namespace Laobian.Blog.HttpService
             await using var stream = await response.Content.ReadAsStreamAsync();
             return await JsonHelper.DeserializeAsync<BlogPost>(stream);
         }
+
+        public async Task AddPostAccess(string link)
+        {
+            var response = await _httpClient.PostAsync($"/blog/post/access/{link}", new StringContent(""));
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                _logger.LogError(
+                    $"{nameof(ApiHttpService)}.{nameof(AddPostAccess)}({link}) failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+            }
+        }
     }
 }
