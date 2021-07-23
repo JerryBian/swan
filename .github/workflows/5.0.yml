@@ -17,11 +17,6 @@ jobs:
         run: |
           sudo apt-get install -y libxml2-utils
 
-      - name: Setup environment variables
-        run: |
-          APP_VERSION=`xmllint --xpath "/Project/PropertyGroup/Version/text()" Directory.Build.props`
-          echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
 
@@ -47,6 +42,11 @@ jobs:
     needs: setup_env
 
     steps:
+      - name: Setup environment variables
+        run: |
+          APP_VERSION=`xmllint --xpath "/Project/PropertyGroup/Version/text()" Directory.Build.props`
+          echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
+
       - name: Build and push API images
         id: docker_build_api
         uses: docker/build-push-action@v2
