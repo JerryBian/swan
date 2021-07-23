@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   api:
-    image: cnbian/laobian-api:latest
+    image: cnbian/laobian-api:${ENV_APP_VERSION}
     volumes:
       - ${ENV_API_ASSET_LOCATION}:/asset
     environment:
@@ -21,7 +21,7 @@ services:
       - ENV_API_CommandLineBeginArg
       - ENV_API_AdminEmail
   admin:
-    image: cnbian/laobian-admin:latest
+    image: cnbian/laobian-admin:${ENV_APP_VERSION}
     environment:
       - ASPNETCORE_URLS=http://0.0.0.0:5011
       - ASPNETCORE_ENVIRONMENT
@@ -34,7 +34,7 @@ services:
     depends_on:
       - api
   blog:
-    image: cnbian/laobian-blog:latest
+    image: cnbian/laobian-blog:${ENV_APP_VERSION}
     volumes:
       - ${ENV_BLOG_ASSET_LOCATION}:/asset
     environment:
