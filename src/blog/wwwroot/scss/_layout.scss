@@ -1,0 +1,54 @@
+﻿.fs-sm {
+    font-size: $font-size-sm;
+}
+
+.fs-xs {
+    font-size: $font-size-sm * 0.85;
+}
+
+.font-post-title {
+    font-size: $font-size-base * 1.3;
+    font-family: 'Trebuchet MS';
+}
+
+.muted-bolder{
+    color: #494f54;
+
+    &:hover{
+        color: #25282b;
+    }
+}
+
+a,
+a:link,
+a:hover,
+a:visited,
+a:focus{
+    outline: none;
+    color: inherit !important;
+    text-decoration: none;
+}
+
+#brand {
+    color: #342ead !important;
+
+    &:hover, &:focus {
+        color: #221e71 !important;
+    }
+}
+
+main{
+    background-color:#fff;
+}
+
+main a{
+    border-bottom: 1px double black;
+
+    &:link, &:visited {
+        color: #577590 !important;
+    }
+
+    &:hover, &:focus{
+        color: #3a4e60 !important;
+    }
+}

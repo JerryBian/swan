@@ -1,6 +1,5 @@
-﻿using System;
-using Laobian.Share.Log;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
 namespace Laobian.Blog
@@ -15,14 +14,11 @@ namespace Laobian.Blog
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
             return Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
+                .ConfigureAppConfiguration((hostContext, config) =>
                 {
-                    webBuilder.CaptureStartupErrors(true);
-                    webBuilder.UseSetting(WebHostDefaults.DetailedErrorsKey, bool.TrueString);
-                    webBuilder.UseShutdownTimeout(TimeSpan.FromMinutes(5));
-                    webBuilder.ConfigureLogging(builder => builder.AddInMemoryLogger());
-                    webBuilder.UseStartup<Startup>();
-                });
+                    config.AddEnvironmentVariables("ENV_BLOG_");
+                })
+                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
         }
     }
 }

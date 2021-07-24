@@ -1,32 +1,31 @@
-﻿using System;
-using System.Globalization;
+using System;
+using System.Collections;
 using System.IO;
-using System.Reflection;
-using Laobian.Blog.Helpers;
-using Laobian.Blog.Hubs;
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
+using Laobian.Blog.HttpService;
 using Laobian.Share;
-using Laobian.Share.Blog.Alert;
-using Laobian.Share.Extension;
-using Laobian.Share.Log;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Laobian.Blog
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
+        private readonly IWebHostEnvironment _env;
+
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
+            _env = env;
             Configuration = configuration;
-            Global.Environment = environment;
         }
 
         public IConfiguration Configuration { get; }
@@ -34,74 +33,53 @@ namespace Laobian.Blog
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            StartupHelper.RegisterService(services, Configuration);
+            services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
 
-            var builder = services.AddControllersWithViews();
-            if (Global.Environment.IsDevelopment())
-            {
-                builder.AddRazorRuntimeCompilation();
-            }
+            services.AddSingleton<ISystemInfo, SystemInfo>();
+            services.AddOptions<BlogConfig>().Bind(Configuration).ValidateDataAnnotations();
 
-            services.AddDirectoryBrowser();
+            services.AddHttpClient<ApiHttpService>();
+
+            var dpFolder = Configuration.GetValue<string>("DATA_PROTECTION_KEY_PATH");
+            Directory.CreateDirectory(dpFolder);
+            services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(dpFolder))
+                .SetApplicationName("LAOBIAN");
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+                {
+                    options.Cookie.Name = "LAOBIAN_AUTH";
+                    options.Cookie.Domain = _env.IsDevelopment() ? "localhost" : ".laobian.me";
+                });
+
+            services.AddControllersWithViews();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostApplicationLifetime applicationLifetime)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("zh-cn");
-            CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("zh-cn");
-
-            var alertService = app.ApplicationServices.GetService<IBlogAlertService>();
-            var logger = app.ApplicationServices.GetService<ILogger<Startup>>();
-
-            RegisterEvents(applicationLifetime, alertService, logger);
-            app.UseForwardedHeaders(new ForwardedHeadersOptions
-            {
-                ForwardedHeaders = ForwardedHeaders.All
-            });
-
-            if (Global.Environment.IsProduction())
-            {
-                app.UseExceptionHandler(new ExceptionHandlerOptions
-                {
-                    ExceptionHandler = async context =>
-                    {
-                        logger.LogError(context.Features.Get<IExceptionHandlerFeature>()?.Error,
-                            LogMessageHelper.Format($"Something is wrong! Request Url= {context.Request.Path}", context));
-                        await context.Response.WriteAsync(
-                            $"Something was wrong! Please contact {Global.Config.Common.AdminEmail}.");
-                    }
-                });
-            }
-            else
+            var config = app.ApplicationServices.GetRequiredService<IOptions<BlogConfig>>().Value;
+            if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.UseStatusCodePages(async context =>
+            else
             {
-                var message = "Status code page, status code: " +
-                              context.HttpContext.Response.StatusCode;
-                logger.LogWarning(LogMessageHelper.Format(message, context.HttpContext));
-                context.HttpContext.Response.ContentType = "text/plain";
-                await context.HttpContext.Response.WriteAsync(message);
-            });
+                app.UseExceptionHandler("/Home/Error");
+            }
 
             app.UseStaticFiles();
-            app.UseHealthChecks("/health");
 
-            if (Global.Environment.IsDevelopment())
+            var fileLoc = Path.Combine(config.GetBlogFileLocation());
+            if (!Directory.Exists(fileLoc))
             {
-                var fileDirFullPath = Path.Combine(Global.Config.Blog.AssetRepoLocalDir, Global.Config.Blog.FileGitPath);
-                Directory.CreateDirectory(fileDirFullPath);
-                var fileServerOptions = new FileServerOptions
-                {
-                    FileProvider = new PhysicalFileProvider(fileDirFullPath),
-                    RequestPath = Global.Config.Blog.FileRequestPath,
-                    EnableDirectoryBrowsing = true
-                };
-                app.UseFileServer(fileServerOptions);
+                Directory.CreateDirectory(fileLoc);
             }
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.GetFullPath(fileLoc)),
+                RequestPath = "/file"
+            });
 
             app.UseRouting();
 
@@ -110,52 +88,9 @@ namespace Laobian.Blog
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapHub<LogHub>("/hub/log");
-                endpoints.MapAreaControllerRoute(
-                    "AdminArea", 
-                    "Admin",
-                    "admin/{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapDefaultControllerRoute();
-            });
-        }
-
-        private static void RegisterEvents(
-            IHostApplicationLifetime applicationLifetime,
-            IBlogAlertService alertService,
-            ILogger<Startup> logger)
-        {
-            applicationLifetime.ApplicationStarted.Register(async () =>
-            {
-                Global.StartTime = DateTime.Now;
-                var appVersion = Assembly.GetEntryAssembly()?.GetName().Version;
-                Global.AppVersion = appVersion == null ? "1.0" : $"{appVersion.Major}.{appVersion.Minor}";
-
-                if (!Global.Environment.IsDevelopment())
-                {
-                    await alertService.AlertEventAsync($"<p>Blog started, it's {DateTime.Now.ToDateAndTime()}.</p>");
-                }
-
-                logger.LogInformation("Application started.");
-            });
-
-            applicationLifetime.ApplicationStopping.Register(async () =>
-            {
-                if (!Global.Environment.IsDevelopment())
-                {
-                    await alertService.AlertEventAsync($"<p>Blog is stopping, it's {DateTime.Now.ToDateAndTime()}.");
-                }
-
-                logger.LogInformation("Application is stopping.");
-            });
-
-            applicationLifetime.ApplicationStopped.Register(async () =>
-            {
-                if (!Global.Environment.IsDevelopment())
-                {
-                    await alertService.AlertEventAsync($"<p>Blog is stopped, it's {DateTime.Now.ToDateAndTime()}.");
-                }
-
-                logger.LogInformation("Application is stopped.");
+                endpoints.MapControllerRoute(
+                    "default",
+                    "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

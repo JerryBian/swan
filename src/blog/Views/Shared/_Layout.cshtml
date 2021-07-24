@@ -1,73 +1,45 @@
 ﻿<!DOCTYPE html>
-<html lang="zh">
+<html lang="zh" class="w-100 h-100">
 <head>
-    <!--meta tags-->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="msapplication-TileColor" content="#0f8da2">
-    <meta name="theme-color" content="#0f8da2">
-    <meta name="description" content="@ViewDataHelper.GetDescription(ViewData)">
-    <meta name="robots" content="@ViewDataHelper.GetRobots(ViewData)">
-    <meta name="rating" content="General">
-    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewData["Title"]</title>
 
-    <!--link tags-->
-    @RenderSection("style", false)
-    <link rel="canonical" href="@ViewDataHelper.GetCanonical(ViewData)">
-    <link rel="author" content="@Global.Config.Common.AdminChineseName" href="~/">
-    <link rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh">
-    <link rel="alternate" href="/rss/" type="application/rss+xml" title="@Global.Config.Blog.Name">
-    <link rel="alternate" href="/atom/" type="application/atom+xml" title="@Global.Config.Blog.Name">
-    <link rel="me" href="mailto:@Global.Config.Common.AdminEmail">
-    <link rel="index" href="/">
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="dns-prefetch" href="@Global.Config.Blog.StaticAddress">
-
-    <title>@ViewDataHelper.GetTitle(ViewData)</title>
+    <script>
+        (function(d) {
+            var config = {
+                    kitId: 'sip7jhf',
+                    scriptTimeout: 3000,
+                    async: true
+                },
+                h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};s.parentNode.insertBefore(tk,s)
+        })(document);
+    </script>
+    
+    @await RenderSectionAsync("Style", false)
+    
 </head>
-<body>
-<nav class="navbar">
-        <div class="container">
-            <a class="navbar-brand" href="/">@Global.Config.Blog.Name</a>
-            <ul class="nav ml-auto">
-                <li>
-                    <a class="nav-item nav-link" href="/about/">关于</a>
-                </li>
-                <li>
-                    <a class="nav-item nav-link" href="/archive/">存档</a>
-                </li>
-            </ul>
+<body class="w-100 h-100">
+<nav class="navbar w-100">
+    <div class="container px-2">
+        <a class="navbar-brand" href="/" id="brand">
+            老卞的博客
+        </a>
+        <div class="d-flex">
+            <a class="nav-link me-2" href="/archive">存档</a>
+            <a class="nav-link" href="/about">关于</a>
         </div>
-    </nav>
-<main class="container mt-2 pl-3 pr-3 pb-1 pt-3 mb-2 shadow-sm rounded">
-    @{
-        if (Context.User.Identity.IsAuthenticated)
-        {
-            <div class="text-center alert alert-secondary">
-                Signed in as <span class="text-info font-italic">@Context.User.Identity.Name</span>  &bull;
-                <a href="/logout">Sign out &rarr;</a>
-            </div>
-        }
-    }
+    </div>
+</nav>   
 
+<main class="container my-2 pb-2 shadow-sm rounded">
     @RenderBody()
 </main>
-    <footer class="text-muted">
-        <div class="container pb-3 pt-3 text-center">
-            <div>
-                &copy; @DateTime.Now.Year @Global.Config.Common.AdminChineseName &middot;
-                &hearts; &middot;
-                <a href="/about/">关于</a> | <a href="/rss/">订阅</a>
-            </div>
-        </div>
-    </footer>
 
+<footer class="text-center text-muted fs-xs w-100 pb-3 pt-4">
+    <p>&copy; @DateTime.Now.Year All rights reserved.</p>
+</footer>
 
-
-    @RenderSection("script", false)
-
-    <!--Page generated at @DateTime.Now.ToDateAndTime()-->
+@await RenderSectionAsync("Script", false)
 </body>
 </html>

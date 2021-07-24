@@ -1,6 +1,37 @@
-* text=auto
-*.cs diff=csharp
-*.sh eol=lf
-*.sln eol=crlf
+*          text=auto
 
-src/blog/wwwroot/** linguist-vendored
+*.cs       text diff=csharp
+*.cshtml   text diff=html
+*.csx      text diff=csharp
+*.sln      text eol=crlf merge=union
+*.csproj   text eol=crlf merge=union
+*.htm             text diff=html
+*.html            text diff=html
+*.js              text
+*.json            text
+*.sass            text
+*.scss            text diff=css
+*.ts              text
+*.tsx             text
+*.xml             text
+*.xhtml           text diff=html
+Dockerfile        text
+*.md              text diff=markdown
+*.txt             text
+license           text
+LICENSE           text
+readme            text
+*README*          text
+*.cnf             text
+*.conf            text
+*.config          text
+.editorconfig     text
+.env              text
+.gitattributes    text
+.gitconfig        text
+*.lock            text -diff
+package.json      text eol=lf
+package-lock.json text -diff
+*.yaml            text
+*.yml             text
+*.*ignore         text

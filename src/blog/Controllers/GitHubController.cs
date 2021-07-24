@@ -1,17 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using Laobian.Share;
-using Laobian.Share.Blog;
-using Laobian.Share.Blog.Alert;
-using Laobian.Share.Git;
+using Laobian.Blog.HttpService;
 using Laobian.Share.Helper;
-using Laobian.Share.Log;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Laobian.Blog.Controllers
 {
@@ -19,18 +17,18 @@ namespace Laobian.Blog.Controllers
     [Route("github")]
     public class GitHubController : ControllerBase
     {
-        private readonly IBlogService _blogService;
-        private readonly IBlogAlertService _blogAlertService;
+        private readonly BlogConfig _blogConfig;
+        private readonly ApiHttpService _apiHttpService;
         private readonly ILogger<GitHubController> _logger;
 
         public GitHubController(
-            IBlogService blogService,
-            ILogger<GitHubController> logger,
-            IBlogAlertService blogAlertService)
+            IOptions<BlogConfig> blogConfig,
+            ApiHttpService apiHttpService,
+            ILogger<GitHubController> logger)
         {
             _logger = logger;
-            _blogService = blogService;
-            _blogAlertService = blogAlertService;
+            _blogConfig = blogConfig.Value;
+            _apiHttpService = apiHttpService;
         }
 
         // http://michaco.net/blog/HowToValidateGitHubWebhooksInCSharpWithASPNETCoreMVC
@@ -46,20 +44,20 @@ namespace Laobian.Blog.Controllers
                 !Request.Headers.ContainsKey(signatureHeader) ||
                 !Request.Headers.ContainsKey(deliveryHeader))
             {
-                _logger.LogWarning(LogMessageHelper.Format("Headers are not completed.", HttpContext));
+                //_logger.LogWarning(LogMessageHelper.Format("Headers are not completed.", HttpContext));
                 return BadRequest("Invalid Request.");
             }
 
-            if (!CompareHelper.IgnoreCase("push", Request.Headers[eventHeader]))
+            if (!StringHelper.EqualIgnoreCase("push", Request.Headers[eventHeader]))
             {
-                _logger.LogWarning(LogMessageHelper.Format($"Invalid github event {Request.Headers[eventHeader]}"));
+                //_logger.LogWarning(LogMessageHelper.Format($"Invalid github event {Request.Headers[eventHeader]}"));
                 return BadRequest("Only support push event.");
             }
 
             var signature = Request.Headers[signatureHeader].ToString();
             if (!signature.StartsWith("sha1=", StringComparison.OrdinalIgnoreCase))
             {
-                _logger.LogWarning(LogMessageHelper.Format($"Invalid github signature {signature}", HttpContext));
+                //_logger.LogWarning(LogMessageHelper.Format($"Invalid github signature {signature}", HttpContext));
                 return BadRequest("Invalid signature.");
             }
 
@@ -67,7 +65,7 @@ namespace Laobian.Blog.Controllers
             {
                 var body = await reader.ReadToEndAsync();
                 signature = signature.Substring("sha1=".Length);
-                var secret = Encoding.UTF8.GetBytes(Global.Config.Blog.AssetGitHubHookSecret);
+                var secret = Encoding.UTF8.GetBytes(_blogConfig.GitHubHookSecret);
                 var bodyBytes = Encoding.UTF8.GetBytes(body);
 
                 using (var hmacSha1 = new HMACSHA1(secret))
@@ -83,17 +81,17 @@ namespace Laobian.Blog.Controllers
 
                     if (!hashStr.Equals(signature))
                     {
-                        _logger.LogWarning(LogMessageHelper.Format($"Invalid github signature {signature}, {hashStr}"));
+                        //_logger.LogWarning(LogMessageHelper.Format($"Invalid github signature {signature}, {hashStr}"));
                         return BadRequest("Invalid signature.");
                     }
                 }
 
-                var payload = SerializeHelper.FromJson<GitHubPayload>(body);
+                var payload = JsonHelper.Deserialize<GitHubPayload>(body);
                 if (payload.Commits.Any(c =>
-                    CompareHelper.IgnoreCase(Global.Config.Blog.AssetGitCommitEmail, c.Author.Email) &&
-                    CompareHelper.IgnoreCase(Global.Config.Blog.AssetGitCommitUser, c.Author.User)))
+                    StringHelper.EqualIgnoreCase(_blogConfig.AdminEmail, c.Author.Email) &&
+                    StringHelper.EqualIgnoreCase(_blogConfig.AdminName, c.Author.User)))
                 {
-                    _logger.LogInformation(LogMessageHelper.Format("Got request from server, no need to refresh."));
+                    //_logger.LogInformation(LogMessageHelper.Format("Got request from server, no need to refresh."));
                     return Ok("No need to refresh.");
                 }
 
@@ -105,29 +103,31 @@ namespace Laobian.Blog.Controllers
                 {
                     try
                     {
-                        var messages = await _blogService.GitHookAsync(modifiedPosts.Concat(addedPosts).ToList());
-                        if (string.IsNullOrEmpty(messages))
-                        {
-                            _logger.LogInformation("Completed GitHub Hook with no warnings/errors. Great!");
-                            await _blogAlertService.AlertEventAsync(
-                                "<p>Completed GitHub Hook with no warnings/errors. Great!</p>");
-                        }
-                        else
-                        {
-                            _logger.LogWarning($"Completed GitHub Hook with some warnings/errors.{Environment.NewLine}{messages}");
-                            await _blogAlertService.AlertEventAsync(
-                                $"<p>Completed GitHub Hook with some warnings/errors.</p><div><pre>{messages}</pre></div>");
-                        }
+                        await _apiHttpService.PersistentAsync("GitHub Hook");
+                        //_apiHttpService.
+                        //var messages = await _blogService.GitHookAsync(modifiedPosts.Concat(addedPosts).ToList());
+                        //if (string.IsNullOrEmpty(messages))
+                        //{
+                        //    _logger.LogInformation("Completed GitHub Hook with no warnings/errors. Great!");
+                        //    await _blogAlertService.AlertEventAsync(
+                        //        "<p>Completed GitHub Hook with no warnings/errors. Great!</p>");
+                        //}
+                        //else
+                        //{
+                        //    _logger.LogWarning($"Completed GitHub Hook with some warnings/errors.{Environment.NewLine}{messages}");
+                        //    await _blogAlertService.AlertEventAsync(
+                        //        $"<p>Completed GitHub Hook with some warnings/errors.</p><div><pre>{messages}</pre></div>");
+                        //}
                     }
                     catch (Exception ex)
                     {
                         _logger.LogError(ex, "Failed GitHub Hook with exception.");
-                        await _blogAlertService.AlertEventAsync(
-                            $"<p>Failed GitHub Hook with exception.</p>", ex);
+                        //await _blogAlertService.AlertEventAsync(
+                        //    $"<p>Failed GitHub Hook with exception.</p>", ex);
                     }
                 });
 
-                _logger.LogInformation(LogMessageHelper.Format("GitHub Hook executed completed(not really)."));
+                //_logger.LogInformation(LogMessageHelper.Format("GitHub Hook executed completed(not really)."));
                 return Ok("Local updated.");
             }
         }

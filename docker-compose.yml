@@ -1,0 +1,55 @@
+version: "3.9"
+services:
+  api:
+    image: cnbian/laobian-api:${ENV_APP_VERSION}
+    volumes:
+      - ${ENV_API_ASSET_LOCATION}:/asset
+    environment:
+      - ASPNETCORE_URLS=http://0.0.0.0:5010
+      - ASPNETCORE_ENVIRONMENT
+      - ENV_API_Source
+      - ENV_API_AssetLocation=/asset
+      - ENV_API_GitHubDbRepoApiToken
+      - ENV_API_GitHubDbRepoUserName
+      - ENV_API_GitHubDbRepoName
+      - ENV_API_GitHubDbRepoBranchName
+      - ENV_API_GitHubBlogPostRepoApiToken
+      - ENV_API_GitHubBlogPostRepoUserName
+      - ENV_API_GitHubBlogPostRepoName
+      - ENV_API_GitHubBlogPostRepoBranchName
+      - ENV_API_CommandLineApp
+      - ENV_API_CommandLineBeginArg
+      - ENV_API_AdminEmail
+  admin:
+    image: cnbian/laobian-admin:${ENV_APP_VERSION}
+    environment:
+      - ASPNETCORE_URLS=http://0.0.0.0:5011
+      - DATA_PROTECTION_KEY_PATH
+      - ASPNETCORE_ENVIRONMENT
+      - ENV_ADMIN_ApiLocalEndPoint=http://api:5010
+      - ENV_ADMIN_BlogRemoteEndPoint
+      - ENV_ADMIN_AdminName
+      - ENV_ADMIN_AdminPassword
+    ports:
+      - "${ENV_ADMIN_PORT}:5011"
+    depends_on:
+      - api
+  blog:
+    image: cnbian/laobian-blog:${ENV_APP_VERSION}
+    volumes:
+      - ${ENV_BLOG_ASSET_LOCATION}:/asset
+    environment:
+      - ASPNETCORE_URLS=http://0.0.0.0:5012
+      - DATA_PROTECTION_KEY_PATH
+      - ASPNETCORE_ENVIRONMENT
+      - ENV_BLOG_ApiLocalEndPoint=http://api:5010
+      - ENV_BLOG_PostsPerPage
+      - ENV_BLOG_AdminEmail
+      - ENV_BLOG_AdminChineseName
+      - ENV_BLOG_AdminEnglishName
+      - ENV_BLOG_AssetLocation=/asset
+      - ENV_BLOG_GitHubHookSecret
+    ports:
+      - "${ENV_BLOG_PORT}:5012"
+    depends_on:
+      - api

@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
-using Laobian.Share.Blog.Model;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Laobian.Share.Blog;
 
 namespace Laobian.Blog.Models
 {
@@ -28,11 +31,7 @@ namespace Laobian.Blog.Models
 
         public string TagTotalCount { get; set; }
 
-        public IEnumerable<BlogTag> TopTags { get; set; }
-
-        public string CategoryTotalCount { get; set; }
-
-        public IEnumerable<BlogCategory> TopCategories { get; set; }
+        public IDictionary<BlogTag, int> TopTags { get; set; }
 
         #endregion
     }
