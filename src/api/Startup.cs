@@ -6,7 +6,7 @@ using Laobian.Api.Repository;
 using Laobian.Api.Service;
 using Laobian.Api.SourceProvider;
 using Laobian.Share.Converter;
-using Laobian.Share.Log.File;
+using Laobian.Share.Logger.File;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
