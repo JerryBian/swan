@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Api.Store;
-using Laobian.Share.Blog;
 
 namespace Laobian.Api.Repository
 {

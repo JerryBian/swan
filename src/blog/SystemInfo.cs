@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using Laobian.Share;
 using Microsoft.Extensions.Options;
 
 namespace Laobian.Blog
@@ -23,15 +22,13 @@ namespace Laobian.Blog
                 {
                     return "1.0";
                 }
-                else
-                {
-                    return $"{ver.Major}.{ver.Minor}";
-                }
+
+                return $"{ver.Major}.{ver.Minor}";
             }
         }
 
-        public DateTime BootTime { get;  }
+        public DateTime BootTime { get; }
 
-        public string RuntimeVersion { get;  }
+        public string RuntimeVersion { get; }
     }
 }

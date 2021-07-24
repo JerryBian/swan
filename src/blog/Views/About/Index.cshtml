@@ -15,24 +15,41 @@
         </ul>
 
         <h3>关于博客系统</h3>
-        <p>该博客系统基于 <strong>@Model.SystemDotNetVersion</strong>，源代码以 <strong><a href="https://github.com/JerryBian/laobian.me/blob/master/LICENSE">MIT</a></strong> 协议发布在 <strong><a href="https://github.com/JerryBian/blog.laobian.me">JerryBian/laobian.me</a></strong>。</p>
+        <p>
+            该博客系统基于 <strong>@Model.SystemDotNetVersion</strong>，源代码以
+            <strong>
+                <a href="https://github.com/JerryBian/laobian.me/blob/master/LICENSE">MIT</a>
+            </strong> 协议发布在
+            <strong>
+                <a href="https://github.com/JerryBian/blog.laobian.me">JerryBian/laobian.me</a>
+            </strong>。
+        </p>
         <p>最后一次启动于 <strong>@Model.SystemLastBoot</strong>，迄今为止已平稳运行 <strong>@Model.SystemRunningInterval</strong>。当前系统的版本为 <strong>@Model.SystemAppVersion</strong>。</p>
         <p>目前共有 <strong>@Model.PostTotalCount</strong> 篇文章，访问总量为 <strong>@Model.PostTotalAccessCount</strong>，最受欢迎的 <strong>@Config.Value.PostsPerPage</strong> 篇文章依次为：</p>
         <ol>
             @foreach (var post in Model.TopPosts)
             {
-                <li><a href="@post.FullPath">@post.Metadata.Title</a> <i>(@post.AccessCount)</i></li>
+                <li>
+                    <a href="@post.FullPath">@post.Metadata.Title</a> <i>(@post.AccessCount)</i>
+                </li>
             }
         </ol>
         @if (Model.LatestPost != null)
         {
-            <p>最近一次的发布是于 <strong>@Model.LatestPost.PublishTimeString</strong> 发布了 <strong><a href="@Model.LatestPost">@Model.LatestPost.Metadata.Title</a></strong>。</p>
+            <p>
+                最近一次的发布是于 <strong>@Model.LatestPost.PublishTimeString</strong> 发布了
+                <strong>
+                    <a href="@Model.LatestPost">@Model.LatestPost.Metadata.Title</a>
+                </strong>。
+            </p>
         }
         <p>共有 <strong>@Model.TagTotalCount</strong> 个文章标签，拥有文章数最多的 <strong>@Config.Value.PostsPerPage</strong> 个依次为：</p>
         <ol>
             @foreach (var tag in Model.TopTags.Keys)
             {
-                <li><a href="/tag#@tag.Link">@tag.DisplayName</a> <i>(@Model.TopTags[tag])</i></li>
+                <li>
+                    <a href="/tag#@tag.Link">@tag.DisplayName</a> <i>(@Model.TopTags[tag])</i>
+                </li>
             }
         </ol>
 
@@ -51,7 +68,7 @@
           asp-fallback-test-class="sr-only"
           asp-fallback-test-property="position"
           asp-fallback-test-value="absolute"
-          asp-append-version="true" />
+          asp-append-version="true"/>
 }
 
 @section script{
@@ -62,7 +79,7 @@
     </script>
     <script>
         document.addEventListener("DOMContentLoaded",
-            function () {
+            function() {
                 anchors.options = {
                     placement: 'right',
                     visible: 'hover',

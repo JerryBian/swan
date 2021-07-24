@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Laobian.Blog.HttpService;
 using Laobian.Blog.Models;
@@ -17,12 +16,13 @@ namespace Laobian.Blog.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly BlogConfig _blogConfig;
-        private readonly ISystemInfo _systemInfo;
         private readonly ApiHttpService _apiHttpService;
+        private readonly BlogConfig _blogConfig;
         private readonly ILogger<HomeController> _logger;
+        private readonly ISystemInfo _systemInfo;
 
-        public HomeController(ISystemInfo systemInfo, IOptions<BlogConfig> config, ILogger<HomeController> logger, ApiHttpService apiHttpService)
+        public HomeController(ISystemInfo systemInfo, IOptions<BlogConfig> config, ILogger<HomeController> logger,
+            ApiHttpService apiHttpService)
         {
             _logger = logger;
             _systemInfo = systemInfo;
@@ -35,7 +35,7 @@ namespace Laobian.Blog.Controllers
         {
             var authenticated = User.Identity?.IsAuthenticated ?? false;
             var posts = await _apiHttpService.GetPostsAsync(!authenticated);
-            var model = new PagedPostViewModel(p, posts.Count, _blogConfig.PostsPerPage) { Url = Request.Path };
+            var model = new PagedPostViewModel(p, posts.Count, _blogConfig.PostsPerPage) {Url = Request.Path};
 
             foreach (var blogPost in posts.ToPaged(_blogConfig.PostsPerPage, model.CurrentPage))
             {
@@ -94,7 +94,7 @@ namespace Laobian.Blog.Controllers
 
         [HttpGet]
         [Route("/{year:int}/{month:int}/{link}.html")]
-        public async Task<IActionResult> Post([FromRoute]int year, [FromRoute] int month, [FromRoute] string link)
+        public async Task<IActionResult> Post([FromRoute] int year, [FromRoute] int month, [FromRoute] string link)
         {
             var authenticated = User.Identity?.IsAuthenticated ?? false;
             var posts = await _apiHttpService.GetPostsAsync(!authenticated);
@@ -151,7 +151,8 @@ namespace Laobian.Blog.Controllers
                 SystemLastBoot = _systemInfo.BootTime.ToChinaDateAndTime(),
                 SystemRunningInterval = (DateTime.Now - _systemInfo.BootTime).ToString(),
                 TagTotalCount = tags.Count.ToString(),
-                TopTags = topTags.OrderByDescending(x => x.Value).Take(_blogConfig.PostsPerPage).ToDictionary(x => x.Key, x=>x.Value)
+                TopTags = topTags.OrderByDescending(x => x.Value).Take(_blogConfig.PostsPerPage)
+                    .ToDictionary(x => x.Key, x => x.Value)
             };
 
             return View("~/Views/About/Index.cshtml", model);
@@ -165,7 +166,7 @@ namespace Laobian.Blog.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
         }
     }
 }

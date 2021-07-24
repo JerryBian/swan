@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -17,8 +16,8 @@ namespace Laobian.Blog.Controllers
     [Route("github")]
     public class GitHubController : ControllerBase
     {
-        private readonly BlogConfig _blogConfig;
         private readonly ApiHttpService _apiHttpService;
+        private readonly BlogConfig _blogConfig;
         private readonly ILogger<GitHubController> _logger;
 
         public GitHubController(

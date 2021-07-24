@@ -14,10 +14,7 @@ namespace Laobian.Blog
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
             return Host.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration((hostContext, config) =>
-                {
-                    config.AddEnvironmentVariables("ENV_BLOG_");
-                })
+                .ConfigureAppConfiguration((hostContext, config) => { config.AddEnvironmentVariables("ENV_BLOG_"); })
                 .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
         }
     }

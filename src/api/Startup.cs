@@ -1,17 +1,18 @@
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using Laobian.Api.Command;
-using Laobian.Api.Controllers;
 using Laobian.Api.HostedServices;
 using Laobian.Api.Repository;
 using Laobian.Api.Service;
 using Laobian.Api.SourceProvider;
 using Laobian.Share.Converter;
+using Laobian.Share.Log.File;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
 namespace Laobian.Api
@@ -41,15 +42,24 @@ namespace Laobian.Api
             services.AddHostedService<BlogApiHostedService>();
             services.Configure<ApiConfig>(Configuration);
 
+            services.AddLogging(config =>
+            {
+                config.SetMinimumLevel(LogLevel.Debug);
+                config.AddDebug();
+                config.AddConsole();
+                config.AddGitFile(c =>
+                {
+                    //c.MinLevel = 
+                });
+            });
+
+            services.AddHealthChecks();
+
             services.AddControllers().AddJsonOptions(config =>
             {
                 var converter = new IsoDateTimeConverter();
                 config.JsonSerializerOptions.Converters.Add(converter);
             });
-
-            services.AddHealthChecks();
-
-            services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "Laobian.Api", Version = "v1"});
@@ -69,10 +79,7 @@ namespace Laobian.Api
             app.UseRouting();
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapHealthChecks("/health");
-            });
+            app.UseEndpoints(endpoints => { endpoints.MapHealthChecks("/health"); });
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }

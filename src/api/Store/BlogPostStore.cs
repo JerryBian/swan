@@ -15,7 +15,7 @@ namespace Laobian.Api.Store
             _posts = new ConcurrentDictionary<string, BlogPost>(StringComparer.InvariantCultureIgnoreCase);
             foreach (var item in val)
             {
-                var post = new BlogPost { Link = item.Key, MdContent = item.Value };
+                var post = new BlogPost {Link = item.Key, MdContent = item.Value};
                 _posts.TryAdd(item.Key, post);
             }
         }

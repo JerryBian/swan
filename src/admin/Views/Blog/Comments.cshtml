@@ -1,46 +1,46 @@
 ﻿@using Microsoft.Extensions.Options
-@model List<Laobian.Admin.Models.CommentsViewModel>
+@model List<CommentsViewModel>
 @inject IOptions<AdminConfig> _config
 <div>
     <table class="table caption-top">
         <caption>Total blog comments: @Model.Count()</caption>
         <thead class="table-light">
-            <tr>
-                <th scope="col">Timestamp</th>
-                <th scope="col">Post</th>
-                <th scope="col">Published</th>
-                <th scope="col">Reviewed</th>
-                <th scope="col">User Name</th>
-                <th scope="col">IP Address</th>
-                <th scope="col">Operation</th>
-            </tr>
+        <tr>
+            <th scope="col">Timestamp</th>
+            <th scope="col">Post</th>
+            <th scope="col">Published</th>
+            <th scope="col">Reviewed</th>
+            <th scope="col">User Name</th>
+            <th scope="col">IP Address</th>
+            <th scope="col">Operation</th>
+        </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <th>@item.Comment.Timestamp</th>
-                    <th>
-                        <a href="/blog/comments?postLink=@item.Post.Link">@item.Post.Metadata.Title</a>
-                    </th>
-                    <th>
-                        <a href="/blog/comments?isPublished=@item.Comment.IsPublished">@item.Comment.IsPublished</a>
-                    </th>
-                    <th>
-                        <a href="/blog/comments?isReviewed=@item.Comment.IsReviewed">@item.Comment.IsReviewed</a>
-                    </th>
-                    <th>
-                        <a href="/blog/comments?userName=@item.Comment.UserName">@item.Comment.UserName</a>
-                    </th>
-                    <th>
-                        <a href="/blog/comments?ip=@item.Comment.IpAddress">@item.Comment.IpAddress</a>
-                    </th>
-                    <th>
-                        <a href="@_config.Value.BlogRemoteEndpoint@item.Post.FullPath#comment_item_@item.Comment.IdString">Link</a> &middot;
-                        <a href="javascript:;" onclick="launchEditCommentModal('@item.Comment.Id')">Edit</a>
-                    </th>
-                </tr>
-            }
+        @foreach (var item in Model)
+        {
+            <tr>
+                <th>@item.Comment.Timestamp</th>
+                <th>
+                    <a href="/blog/comments?postLink=@item.Post.Link">@item.Post.Metadata.Title</a>
+                </th>
+                <th>
+                    <a href="/blog/comments?isPublished=@item.Comment.IsPublished">@item.Comment.IsPublished</a>
+                </th>
+                <th>
+                    <a href="/blog/comments?isReviewed=@item.Comment.IsReviewed">@item.Comment.IsReviewed</a>
+                </th>
+                <th>
+                    <a href="/blog/comments?userName=@item.Comment.UserName">@item.Comment.UserName</a>
+                </th>
+                <th>
+                    <a href="/blog/comments?ip=@item.Comment.IpAddress">@item.Comment.IpAddress</a>
+                </th>
+                <th>
+                    <a href="@_config.Value.BlogRemoteEndpoint@item.Post.FullPath#comment_item_@item.Comment.IdString">Link</a> &middot;
+                    <a href="javascript:;" onclick="launchEditCommentModal('@item.Comment.Id')">Edit</a>
+                </th>
+            </tr>
+        }
         </tbody>
     </table>
 </div>
@@ -51,7 +51,7 @@
             <div class="modal-header">
                 <h5 class="modal-title" id="staticBackdropLabel">Comment: <span id="commentId"></span></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                <input type="hidden" value="" id="modalBodyId" />
+                <input type="hidden" value="" id="modalBodyId"/>
             </div>
             <div class="modal-body">
                 <div class="mb-3">
@@ -129,7 +129,7 @@
         }
 
         function saveComment() {
-            let comment = {
+            const comment = {
                 u: userName.value,
                 e: email.value,
                 p: ip.value,

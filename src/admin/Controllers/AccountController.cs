@@ -38,8 +38,8 @@ namespace Laobian.Admin.Controllers
             {
                 var claims = new List<Claim>
                 {
-                    new Claim("user", userName),
-                    new Claim("role", "admin")
+                    new("user", userName),
+                    new("role", "admin")
                 };
 
                 var authProperty = new AuthenticationProperties

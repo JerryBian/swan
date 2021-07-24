@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Mime;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Api.Service;
 using Laobian.Share.Blog;
@@ -72,7 +71,7 @@ namespace Laobian.Api.Controllers
         [Route("posts")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<List<BlogPost>>> GetPostsAsync([FromQuery]bool onlyPublished)
+        public async Task<ActionResult<List<BlogPost>>> GetPostsAsync([FromQuery] bool onlyPublished)
         {
             try
             {

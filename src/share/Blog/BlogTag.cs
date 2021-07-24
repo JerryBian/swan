@@ -5,16 +5,12 @@ namespace Laobian.Share.Blog
 {
     public class BlogTag
     {
-        [JsonPropertyName("displayName")]
-        public string DisplayName { get; set; }
+        [JsonPropertyName("displayName")] public string DisplayName { get; set; }
 
-        [JsonPropertyName("link")]
-        public string Link { get; set; }
+        [JsonPropertyName("link")] public string Link { get; set; }
 
-        [JsonPropertyName("description")]
-        public string Description { get; set; }
+        [JsonPropertyName("description")] public string Description { get; set; }
 
-        [JsonPropertyName("lastUpdatedAt")]
-        public DateTime LastUpdatedAt { get; set; }
+        [JsonPropertyName("lastUpdatedAt")] public DateTime LastUpdatedAt { get; set; }
     }
 }
