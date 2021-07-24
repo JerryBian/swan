@@ -1,58 +1,58 @@
-name: master
+# name: master
 
-on:
-  push:
-    branches: [ master ]
+# on:
+#   push:
+#     branches: [ master ]
 
-jobs:
-  build:
-    runs-on: ubuntu-18.04
+# jobs:
+#   build:
+#     runs-on: ubuntu-18.04
 
-    steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.1.404
-    - name: Install dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
-    - name: Test
-      run: dotnet test --no-restore --verbosity normal
-    - name: Deploy GitHub Pages 🚀
-      uses: JamesIves/github-pages-deploy-action@releases/v3
-      with:
-        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-        BRANCH: gh-pages # The branch the action should deploy to.
-        FOLDER: src/blog/wwwroot/dist # The folder the action should deploy.
-        SINGLE_COMMIT: false
-    - name: Publish binary
-      run: dotnet publish ./src/blog/Laobian.Blog.csproj -p:PublishTrimmed=true -p:PublishSingleFile=true -c Release -r linux-x64 -o publish --self-contained
-    - name: clean up build binary
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
-        port: ${{ secrets.PORT }}
-        script: |
-          rm -rf /tmp/blog-prod 2> /dev/null
-    - name: copy binary to server
-      uses: garygrossgarten/github-action-scp@release
-      with:
-        local: publish
-        remote: /tmp/blog-prod
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
-        port: ${{ secrets.PORT }}
-    - name: deploy server
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
-        port: ${{ secrets.PORT }}
-        script: |
-          sh /ga/deploy-blog.sh
+#     steps:
+#     - uses: actions/checkout@v2
+#     - name: Setup .NET Core
+#       uses: actions/setup-dotnet@v1
+#       with:
+#         dotnet-version: 3.1.404
+#     - name: Install dependencies
+#       run: dotnet restore
+#     - name: Build
+#       run: dotnet build --configuration Release --no-restore
+#     - name: Test
+#       run: dotnet test --no-restore --verbosity normal
+#     - name: Deploy GitHub Pages 🚀
+#       uses: JamesIves/github-pages-deploy-action@releases/v3
+#       with:
+#         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+#         BRANCH: gh-pages # The branch the action should deploy to.
+#         FOLDER: src/blog/wwwroot/dist # The folder the action should deploy.
+#         SINGLE_COMMIT: false
+#     - name: Publish binary
+#       run: dotnet publish ./src/blog/Laobian.Blog.csproj -p:PublishTrimmed=true -p:PublishSingleFile=true -c Release -r linux-x64 -o publish --self-contained
+#     - name: clean up build binary
+#       uses: appleboy/ssh-action@master
+#       with:
+#         host: ${{ secrets.HOST }}
+#         username: ${{ secrets.USERNAME }}
+#         password: ${{ secrets.PASSWORD }}
+#         port: ${{ secrets.PORT }}
+#         script: |
+#           rm -rf /tmp/blog-prod 2> /dev/null
+#     - name: copy binary to server
+#       uses: garygrossgarten/github-action-scp@release
+#       with:
+#         local: publish
+#         remote: /tmp/blog-prod
+#         host: ${{ secrets.HOST }}
+#         username: ${{ secrets.USERNAME }}
+#         password: ${{ secrets.PASSWORD }}
+#         port: ${{ secrets.PORT }}
+#     - name: deploy server
+#       uses: appleboy/ssh-action@master
+#       with:
+#         host: ${{ secrets.HOST }}
+#         username: ${{ secrets.USERNAME }}
+#         password: ${{ secrets.PASSWORD }}
+#         port: ${{ secrets.PORT }}
+#         script: |
+#           sh /ga/deploy-blog.sh
