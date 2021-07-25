@@ -123,12 +123,12 @@ namespace Laobian.Share.Logger.File
                     var dir = Path.Combine(_options.LoggerDir, log.TimeStamp.Year.ToString(),
                         log.TimeStamp.Month.ToString("D2"));
                     Directory.CreateDirectory(dir);
-                    System.IO.File.AppendAllLines(Path.Combine(dir, $"{log.TimeStamp:yyyy-MM-dd}.txt"),
+                    System.IO.File.AppendAllLines(Path.Combine(dir, $"{log.TimeStamp:yyyy-MM-dd}.log"),
                         new[] {JsonHelper.Serialize(log)});
                 }
-                catch
+                catch (Exception ex)
                 {
-                    // ignored
+                    Console.WriteLine($"Process Logs failed. ==> {JsonHelper.Serialize(log)}{Environment.NewLine}{ex}");
                 }
             }
         }

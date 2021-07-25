@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -140,7 +139,7 @@ namespace Laobian.Api.SourceProvider
         public virtual async Task SavePostAccessAsync(IDictionary<string, string> postAccess,
             CancellationToken cancellationToken = default)
         {
-            if (postAccess == null || !postAccess.Any())
+            if (postAccess == null)
             {
                 return;
             }
@@ -176,7 +175,7 @@ namespace Laobian.Api.SourceProvider
         public virtual async Task SaveCommentsAsync(IDictionary<string, string> comments,
             CancellationToken cancellationToken = default)
         {
-            if (comments == null || !comments.Any())
+            if (comments == null)
             {
                 return;
             }

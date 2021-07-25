@@ -7,6 +7,7 @@ namespace Laobian.Share.Logger.File
         public string LoggerName { get; set; }
 
         public string LoggerDir { get; set; }
+
         public LogLevel MinLevel { get; set; } = LogLevel.Information;
     }
 }

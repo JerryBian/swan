@@ -47,10 +47,7 @@ namespace Laobian.Api
                 config.SetMinimumLevel(LogLevel.Debug);
                 config.AddDebug();
                 config.AddConsole();
-                config.AddGitFile(c =>
-                {
-                    //c.MinLevel = 
-                });
+                config.AddGitFile(c => { c.LoggerDir = Configuration.GetValue<string>("ENV_API_LOG_DIR"); });
             });
 
             services.AddHealthChecks();
