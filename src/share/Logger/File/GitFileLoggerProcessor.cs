@@ -71,23 +71,20 @@ namespace Laobian.Share.Logger.File
             {
                 while (true)
                 {
-                    if (Directory.Exists(_options.LoggerDir))
+                    var logs = new List<LaobianLog>();
+                    while (_messageQueue.TryDequeue(out var log))
                     {
-                        var logs = new List<LaobianLog>();
-                        while (_messageQueue.TryDequeue(out var log))
-                        {
-                            logs.Add(log);
-                        }
+                        logs.Add(log);
+                    }
 
-                        if (logs.Any())
-                        {
-                            ProcessLogs(logs.ToArray());
-                        }
+                    if (logs.Any())
+                    {
+                        ProcessLogs(logs.ToArray());
+                    }
 
-                        if (_stop)
-                        {
-                            return;
-                        }
+                    if (_stop)
+                    {
+                        return;
                     }
 
                     Thread.Sleep(TimeSpan.FromSeconds(3));
@@ -120,7 +117,13 @@ namespace Laobian.Share.Logger.File
             {
                 try
                 {
-                    var dir = Path.Combine(_options.LoggerDir, log.TimeStamp.Year.ToString(),
+                    var loggerName = string.IsNullOrEmpty(log.LoggerName) ? _options.LoggerName : log.LoggerName;
+                    if (string.IsNullOrEmpty(loggerName))
+                    {
+                        loggerName = "undefined";
+                    }
+
+                    var dir = Path.Combine(_options.LoggerDir, loggerName, log.TimeStamp.Year.ToString(),
                         log.TimeStamp.Month.ToString("D2"));
                     Directory.CreateDirectory(dir);
                     System.IO.File.AppendAllLines(Path.Combine(dir, $"{log.TimeStamp:yyyy-MM-dd}.log"),

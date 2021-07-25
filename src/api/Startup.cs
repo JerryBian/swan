@@ -1,3 +1,4 @@
+using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using Laobian.Api.Command;
@@ -5,6 +6,7 @@ using Laobian.Api.HostedServices;
 using Laobian.Api.Repository;
 using Laobian.Api.Service;
 using Laobian.Api.SourceProvider;
+using Laobian.Share;
 using Laobian.Share.Converter;
 using Laobian.Share.Logger.File;
 using Microsoft.AspNetCore.Builder;
@@ -47,13 +49,26 @@ namespace Laobian.Api
                 config.SetMinimumLevel(LogLevel.Debug);
                 config.AddDebug();
                 config.AddConsole();
-                config.AddGitFile(c => { c.LoggerDir = Configuration.GetValue<string>("ENV_API_LOG_DIR"); });
+                config.AddGitFile(c =>
+                {
+                    var assetLocation = Configuration.GetValue<string>("AssetLocation");
+                    if (string.IsNullOrEmpty(assetLocation))
+                    {
+                        throw new LaobianConfigException(nameof(ApiConfig.AssetLocation));
+                    }
+
+                    var logDir = Path.Combine(assetLocation, "db", "log");
+                    Directory.CreateDirectory(logDir);
+                    c.LoggerDir = logDir;
+                    c.LoggerName = "api";
+                });
             });
 
             services.AddHealthChecks();
 
             services.AddControllers().AddJsonOptions(config =>
             {
+                config.JsonSerializerOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
                 var converter = new IsoDateTimeConverter();
                 config.JsonSerializerOptions.Converters.Add(converter);
             });

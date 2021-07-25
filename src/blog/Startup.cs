@@ -2,6 +2,7 @@ using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using Laobian.Blog.HttpService;
+using Laobian.Share.Converter;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
@@ -47,7 +48,12 @@ namespace Laobian.Blog
                     options.Cookie.Domain = _env.IsDevelopment() ? "localhost" : ".laobian.me";
                 });
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews().AddJsonOptions(config =>
+            {
+                config.JsonSerializerOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
+                var converter = new IsoDateTimeConverter();
+                config.JsonSerializerOptions.Converters.Add(converter);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -58,6 +58,7 @@ namespace Laobian.Admin
                 config.Filters.Add(new AuthorizeFilter(policy));
             }).AddJsonOptions(config =>
             {
+                config.JsonSerializerOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
                 var converter = new IsoDateTimeConverter();
                 config.JsonSerializerOptions.Converters.Add(converter);
             });
