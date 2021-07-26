@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Net.Http;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using Laobian.Blog.Cache;
@@ -21,6 +22,8 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Polly;
+using Polly.Extensions.Http;
 
 namespace Laobian.Blog
 {
@@ -36,6 +39,15 @@ namespace Laobian.Blog
 
         public IConfiguration Configuration { get; }
 
+        private static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
+        {
+            return HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .WaitAndRetryAsync(6, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2,
+                    retryAttempt)));
+        }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -46,8 +58,12 @@ namespace Laobian.Blog
             services.AddOptions<BlogConfig>().Bind(Configuration).ValidateDataAnnotations();
             services.AddOptions<CommonConfig>().Bind(Configuration).ValidateDataAnnotations();
 
-            services.AddHttpClient<ApiHttpService>();
-            services.AddHttpClient("log");
+            services.AddHttpClient<ApiHttpService>()
+                .SetHandlerLifetime(TimeSpan.FromMinutes(5))
+                .AddPolicyHandler(GetRetryPolicy());
+            services.AddHttpClient("log")
+                .SetHandlerLifetime(TimeSpan.FromHours(1))
+                .AddPolicyHandler(GetRetryPolicy());
 
             services.AddHostedService<BlogHostedService>();
 
