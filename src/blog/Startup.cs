@@ -2,6 +2,8 @@ using System;
 using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
+using Laobian.Blog.Cache;
+using Laobian.Blog.HostedService;
 using Laobian.Blog.HttpService;
 using Laobian.Blog.Logger;
 using Laobian.Share;
@@ -39,12 +41,15 @@ namespace Laobian.Blog
         {
             services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
 
-            services.AddSingleton<ISystemInfo, SystemInfo>();
+            services.AddSingleton<ISystemData, SystemData>();
+            services.AddSingleton<ICacheClient, CacheClient>();
             services.AddOptions<BlogConfig>().Bind(Configuration).ValidateDataAnnotations();
             services.AddOptions<CommonConfig>().Bind(Configuration).ValidateDataAnnotations();
 
             services.AddHttpClient<ApiHttpService>();
             services.AddHttpClient("log");
+
+            services.AddHostedService<BlogHostedService>();
 
             services.AddSingleton<IEmailNotify, EmailNotify>();
             services.AddSingleton<IRemoteLoggerSink, RemoteLoggerSink>();
