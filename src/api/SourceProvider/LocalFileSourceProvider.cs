@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Laobian.Share;
 using Microsoft.Extensions.Options;
-
-using SearchOption = System.IO.SearchOption;
 
 namespace Laobian.Api.SourceProvider
 {
@@ -55,16 +51,18 @@ namespace Laobian.Api.SourceProvider
             if (init)
             {
                 var di = new DirectoryInfo(_apiConfig.GetBlogFileLocation());
-                foreach (FileInfo file in di.GetFiles())
+                foreach (var file in di.GetFiles())
                 {
                     file.Delete();
                 }
-                foreach (DirectoryInfo dir in di.GetDirectories())
+
+                foreach (var dir in di.GetDirectories())
                 {
                     dir.Delete(true);
                 }
 
-                CopyFilesRecursively(new DirectoryInfo(fileFolderInBlogPostLocation), new DirectoryInfo(_apiConfig.GetBlogFileLocation()));
+                CopyFilesRecursively(new DirectoryInfo(fileFolderInBlogPostLocation),
+                    new DirectoryInfo(_apiConfig.GetBlogFileLocation()));
             }
 
             await Task.CompletedTask;
@@ -141,7 +139,7 @@ namespace Laobian.Api.SourceProvider
         public virtual async Task SavePostAccessAsync(IDictionary<string, string> postAccess,
             CancellationToken cancellationToken = default)
         {
-            if (postAccess == null || !postAccess.Any())
+            if (postAccess == null)
             {
                 return;
             }
@@ -177,7 +175,7 @@ namespace Laobian.Api.SourceProvider
         public virtual async Task SaveCommentsAsync(IDictionary<string, string> comments,
             CancellationToken cancellationToken = default)
         {
-            if (comments == null || !comments.Any())
+            if (comments == null)
             {
                 return;
             }
@@ -198,12 +196,12 @@ namespace Laobian.Api.SourceProvider
 
         private static void CopyFilesRecursively(DirectoryInfo source, DirectoryInfo target)
         {
-            foreach (DirectoryInfo dir in source.GetDirectories())
+            foreach (var dir in source.GetDirectories())
             {
                 CopyFilesRecursively(dir, target.CreateSubdirectory(dir.Name));
             }
 
-            foreach (FileInfo file in source.GetFiles())
+            foreach (var file in source.GetFiles())
             {
                 file.CopyTo(Path.Combine(target.FullName, file.Name), true);
             }

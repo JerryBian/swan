@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Laobian.Blog.Cache;
 using Laobian.Blog.HttpService;
 using Laobian.Blog.Models;
 using Laobian.Share.Blog;
@@ -17,112 +17,167 @@ namespace Laobian.Blog.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly BlogConfig _blogConfig;
-        private readonly ISystemInfo _systemInfo;
         private readonly ApiHttpService _apiHttpService;
+        private readonly BlogConfig _blogConfig;
         private readonly ILogger<HomeController> _logger;
+        private readonly ISystemData _systemData;
+        private readonly ICacheClient _cacheClient;
 
-        public HomeController(ISystemInfo systemInfo, IOptions<BlogConfig> config, ILogger<HomeController> logger, ApiHttpService apiHttpService)
+        public HomeController(ISystemData systemData, IOptions<BlogConfig> config, ILogger<HomeController> logger,
+            ApiHttpService apiHttpService, ICacheClient cacheClient)
         {
             _logger = logger;
-            _systemInfo = systemInfo;
+            _cacheClient = cacheClient;
+            _systemData = systemData;
             _blogConfig = config.Value;
             _apiHttpService = apiHttpService;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index([FromQuery] int p)
+        public IActionResult Index([FromQuery] int p)
         {
             var authenticated = User.Identity?.IsAuthenticated ?? false;
-            var posts = await _apiHttpService.GetPostsAsync(!authenticated);
-            var model = new PagedPostViewModel(p, posts.Count, _blogConfig.PostsPerPage) { Url = Request.Path };
+            var viewModel = _cacheClient.GetOrCreate(
+                CacheKeyBuilder.Build(nameof(HomeController), nameof(Index), p, authenticated),
+                () =>
+                {
+                    var posts = 
+                        _systemData.Posts.Where(x => authenticated || x.IsPublished)
+                        .OrderByDescending(x=>x.Metadata.PublishTime).ToList();
+                    var toppedPosts = posts.Where(x => x.Metadata.IsTopping).ToList();
+                    foreach (var blogPost in toppedPosts)
+                    {
+                        posts.Remove(blogPost);
+                    }
 
-            foreach (var blogPost in posts.ToPaged(_blogConfig.PostsPerPage, model.CurrentPage))
-            {
-                var postViewModel = new PostViewModel {Current = blogPost};
-                postViewModel.SetAdditionalInfo();
-                model.Posts.Add(postViewModel);
-            }
+                    posts.InsertRange(0, toppedPosts);
 
-            return View(model);
+                    var model = new PagedPostViewModel(p, posts.Count, _blogConfig.PostsPerPage) { Url = Request.Path };
+
+                    foreach (var blogPost in posts.ToPaged(_blogConfig.PostsPerPage, model.CurrentPage))
+                    {
+                        var postViewModel = new PostViewModel { Current = blogPost };
+                        postViewModel.SetAdditionalInfo();
+                        model.Posts.Add(postViewModel);
+                    }
+
+                    return model;
+                });
+
+            
+
+            return View(viewModel);
         }
 
         [HttpGet]
         [Route("/archive")]
-        public async Task<IActionResult> Archive()
+        public IActionResult Archive()
         {
             var authenticated = User.Identity?.IsAuthenticated ?? false;
-            var posts = await _apiHttpService.GetPostsAsync(!authenticated);
-            var model = new List<PostArchiveViewModel>();
-            foreach (var item in posts.GroupBy(x => x.Metadata.PublishTime.Year).OrderByDescending(y => y))
-            {
-                var archiveViewModel = new PostArchiveViewModel();
-                archiveViewModel.Count = item.Count();
-                archiveViewModel.Posts = item.OrderByDescending(x => x.Metadata.PublishTime).ToList();
-                archiveViewModel.Link = $"{item.Key}";
-                archiveViewModel.Name = $"{item.Key}年";
-                archiveViewModel.BaseUrl = "/archive";
-                model.Add(archiveViewModel);
-            }
+            var viewModel = _cacheClient.GetOrCreate(
+                CacheKeyBuilder.Build(nameof(HomeController), nameof(Archive), authenticated),
+                () =>
+                {
+                    var posts = _systemData.Posts.Where(x => authenticated || x.IsPublished).OrderByDescending(x => x.Metadata.PublishTime).ToList();
+                    var model = new List<PostArchiveViewModel>();
+                    foreach (var item in posts.GroupBy(x => x.Metadata.PublishTime.Year).OrderByDescending(y => y.Key))
+                    {
+                        var archiveViewModel = new PostArchiveViewModel
+                        {
+                            Count = item.Count(),
+                            Posts = item.OrderByDescending(x => x.Metadata.PublishTime).ToList(),
+                            Link = $"{item.Key}",
+                            Name = $"{item.Key}年",
+                            BaseUrl = "/archive"
+                        };
 
-            return View("~/Views/Archive/Index.cshtml", model);
+                        model.Add(archiveViewModel);
+                    }
+
+                    return model;
+                });
+            
+
+            return View("~/Views/Archive/Index.cshtml", viewModel);
         }
 
         [HttpGet]
         [Route("/tag")]
-        public async Task<IActionResult> Tag()
+        public IActionResult Tag()
         {
             var authenticated = User.Identity?.IsAuthenticated ?? false;
-            var tags = await _apiHttpService.GetTagsAsync();
-            var posts = await _apiHttpService.GetPostsAsync(!authenticated);
-            var model = new List<PostArchiveViewModel>();
+            var viewModel = _cacheClient.GetOrCreate(
+                CacheKeyBuilder.Build(nameof(HomeController), nameof(Tag), authenticated),
+                () =>
+                {
+                    var tags = _systemData.Tags;
+                    var posts = _systemData.Posts.Where(x => authenticated || x.IsPublished).OrderByDescending(x => x.Metadata.PublishTime).ToList();
+                    var model = new List<PostArchiveViewModel>();
 
-            foreach (var blogTag in tags.OrderByDescending(x => x.LastUpdatedAt))
-            {
-                var tagPosts = posts.Where(x => x.Metadata.Tags.Contains(blogTag.Link)).ToList();
-                var archiveViewModel = new PostArchiveViewModel();
-                archiveViewModel.Count = tagPosts.Count();
-                archiveViewModel.Posts = tagPosts.OrderByDescending(x => x.Metadata.PublishTime).ToList();
-                archiveViewModel.Link = $"{blogTag.Link}";
-                archiveViewModel.Name = $"{blogTag.DisplayName}";
-                archiveViewModel.BaseUrl = "/tag";
-                model.Add(archiveViewModel);
-            }
+                    foreach (var blogTag in tags.OrderByDescending(x => x.LastUpdatedAt))
+                    {
+                        var tagPosts = posts.Where(x => x.Metadata.Tags.Contains(blogTag.Link)).ToList();
+                        var archiveViewModel = new PostArchiveViewModel
+                        {
+                            Count = tagPosts.Count(),
+                            Posts = tagPosts.OrderByDescending(x => x.Metadata.PublishTime).ToList(),
+                            Link = $"{blogTag.Link}",
+                            Name = $"{blogTag.DisplayName}",
+                            BaseUrl = "/tag"
+                        };
+                        model.Add(archiveViewModel);
+                    }
 
-            return View("~/Views/Archive/Index.cshtml", model);
+                    return model;
+                });
+            
+
+            return View("~/Views/Archive/Index.cshtml", viewModel);
         }
 
         [HttpGet]
         [Route("/{year:int}/{month:int}/{link}.html")]
-        public async Task<IActionResult> Post([FromRoute]int year, [FromRoute] int month, [FromRoute] string link)
+        public async Task<IActionResult> Post([FromRoute] int year, [FromRoute] int month, [FromRoute] string link)
         {
             var authenticated = User.Identity?.IsAuthenticated ?? false;
-            var posts = await _apiHttpService.GetPostsAsync(!authenticated);
-            var post = posts.FirstOrDefault(x => StringHelper.EqualIgnoreCase(x.Link, link));
-            if (post == null)
+            var viewModel = _cacheClient.GetOrCreate(
+                CacheKeyBuilder.Build(nameof(HomeController), nameof(Post), authenticated, year, month, link),
+                () =>
+                {
+                    var post = _systemData.Posts.FirstOrDefault(x => 
+                        StringHelper.EqualIgnoreCase(x.Link, link) &&
+                        x.Metadata.PublishTime.Year == year &&
+                        x.Metadata.PublishTime.Month == month &&
+                        (x.Metadata.IsPublished || authenticated));
+                    if (post == null)
+                    {
+                        return null;
+                    }
+
+                    var previousPost = _systemData.Posts.OrderByDescending(x => x.Metadata.PublishTime)
+                        .FirstOrDefault(x => x.Metadata.PublishTime < post.Metadata.PublishTime);
+                    var nextPost = _systemData.Posts.OrderBy(x => x.Metadata.PublishTime)
+                        .FirstOrDefault(x => x.Metadata.PublishTime > post.Metadata.PublishTime);
+                    var model = new PostViewModel
+                    {
+                        Current = post,
+                        Previous = previousPost,
+                        Next = nextPost
+                    };
+                    model.SetAdditionalInfo();
+                    return model;
+                });
+
+            if (viewModel == null)
             {
                 return NotFound();
             }
 
-            if (post.Metadata.PublishTime.Year != year || post.Metadata.PublishTime.Month != month)
-            {
-                return NotFound();
-            }
+#pragma warning disable 4014
+            Task.Run(() => _apiHttpService.AddPostAccess(viewModel.Current.Link));
+#pragma warning restore 4014
 
-            var previousPost = posts.OrderByDescending(x => x.Metadata.PublishTime)
-                .FirstOrDefault(x => x.Metadata.PublishTime < post.Metadata.PublishTime);
-            var nextPost = posts.OrderBy(x => x.Metadata.PublishTime)
-                .FirstOrDefault(x => x.Metadata.PublishTime > post.Metadata.PublishTime);
-            var model = new PostViewModel
-            {
-                Current = post,
-                Previous = previousPost,
-                Next = nextPost
-            };
-            model.SetAdditionalInfo();
-
-            await _apiHttpService.AddPostAccess(post.Link);
-            return View("~/Views/Post/Index.cshtml", model);
+            return View("~/Views/Post/Index.cshtml", viewModel);
         }
 
         [HttpGet]
@@ -130,31 +185,40 @@ namespace Laobian.Blog.Controllers
         public async Task<IActionResult> About()
         {
             var authenticated = User.Identity?.IsAuthenticated ?? false;
-            var posts = await _apiHttpService.GetPostsAsync(!authenticated);
-            var tags = await _apiHttpService.GetTagsAsync();
-            var topTags = new Dictionary<BlogTag, int>();
-            foreach (var tag in tags)
-            {
-                var count = posts.Count(x =>
-                    x.Metadata.Tags.Contains(tag.Link, StringComparer.InvariantCultureIgnoreCase));
-                topTags.Add(tag, count);
-            }
+            var viewModel = _cacheClient.GetOrCreate(
+                CacheKeyBuilder.Build(nameof(HomeController), nameof(About), authenticated),
+                () =>
+                {
+                    var posts = _systemData.Posts.Where(x => authenticated || x.IsPublished).ToList();
+                    var tags = _systemData.Tags;
+                    var topTags = new Dictionary<BlogTag, int>();
+                    foreach (var tag in tags)
+                    {
+                        var count = posts.Count(x =>
+                            x.Metadata.Tags.Contains(tag.Link, StringComparer.InvariantCultureIgnoreCase));
+                        topTags.Add(tag, count);
+                    }
 
-            var model = new AboutViewModel
-            {
-                LatestPost = posts.FirstOrDefault(),
-                PostTotalAccessCount = posts.Sum(p => p.AccessCount).ToString(),
-                PostTotalCount = posts.Count.ToString(),
-                TopPosts = posts.OrderByDescending(p => p.AccessCount).Take(_blogConfig.PostsPerPage),
-                SystemAppVersion = _systemInfo.AppVersion,
-                SystemDotNetVersion = _systemInfo.RuntimeVersion,
-                SystemLastBoot = _systemInfo.BootTime.ToChinaDateAndTime(),
-                SystemRunningInterval = (DateTime.Now - _systemInfo.BootTime).ToString(),
-                TagTotalCount = tags.Count.ToString(),
-                TopTags = topTags.OrderByDescending(x => x.Value).Take(_blogConfig.PostsPerPage).ToDictionary(x => x.Key, x=>x.Value)
-            };
+                    var model = new AboutViewModel
+                    {
+                        LatestPost = posts.FirstOrDefault(),
+                        PostTotalAccessCount = posts.Sum(p => p.AccessCount).ToString(),
+                        PostTotalCount = posts.Count.ToString(),
+                        TopPosts = posts.OrderByDescending(p => p.AccessCount).Take(_blogConfig.PostsPerPage),
+                        SystemAppVersion = _systemData.AppVersion,
+                        SystemDotNetVersion = _systemData.RuntimeVersion,
+                        SystemLastBoot = _systemData.BootTime.ToChinaDateAndTime(),
+                        SystemRunningInterval = (DateTime.Now - _systemData.BootTime).ToString(),
+                        TagTotalCount = tags.Count.ToString(),
+                        TopTags = topTags.OrderByDescending(x => x.Value).Take(_blogConfig.PostsPerPage)
+                            .ToDictionary(x => x.Key, x => x.Value)
+                    };
 
-            return View("~/Views/About/Index.cshtml", model);
+                    return model;
+                });
+            
+
+            return View("~/Views/About/Index.cshtml", viewModel);
         }
 
         public IActionResult Privacy()
@@ -162,10 +226,14 @@ namespace Laobian.Blog.Controllers
             return View();
         }
 
+        [HttpGet]
+        [HttpPost]
+        [HttpPut]
+        [Route("/error")]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
         }
     }
 }

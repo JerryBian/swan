@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -17,6 +16,7 @@ namespace Laobian.Blog.Controllers
     [Route("github")]
     public class GitHubController : ControllerBase
     {
+        private readonly ISystemData _systemData;
         private readonly BlogConfig _blogConfig;
         private readonly ApiHttpService _apiHttpService;
         private readonly ILogger<GitHubController> _logger;
@@ -24,11 +24,13 @@ namespace Laobian.Blog.Controllers
         public GitHubController(
             IOptions<BlogConfig> blogConfig,
             ApiHttpService apiHttpService,
-            ILogger<GitHubController> logger)
+            ILogger<GitHubController> logger,
+            ISystemData systemData)
         {
             _logger = logger;
             _blogConfig = blogConfig.Value;
             _apiHttpService = apiHttpService;
+            _systemData = systemData;
         }
 
         // http://michaco.net/blog/HowToValidateGitHubWebhooksInCSharpWithASPNETCoreMVC
@@ -104,6 +106,7 @@ namespace Laobian.Blog.Controllers
                     try
                     {
                         await _apiHttpService.PersistentAsync("GitHub Hook");
+                        await _systemData.LoadAsync();
                         //_apiHttpService.
                         //var messages = await _blogService.GitHookAsync(modifiedPosts.Concat(addedPosts).ToList());
                         //if (string.IsNullOrEmpty(messages))

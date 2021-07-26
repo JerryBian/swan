@@ -12,12 +12,31 @@
                     scriptTimeout: 3000,
                     async: true
                 },
-                h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};s.parentNode.insertBefore(tk,s)
+                h = d.documentElement,
+                t = setTimeout(function() { h.className = h.className.replace(/\bwf-loading\b/g, "") + " wf-inactive"; }, config.scriptTimeout);
+            const tk = d.createElement("script");
+            var f = false;
+            const s = d.getElementsByTagName("script")[0];
+            var a;
+            h.className += " wf-loading";
+            tk.src = `https://use.typekit.net/${config.kitId}.js`;
+            tk.async = true;
+            tk.onload = tk.onreadystatechange = function() {
+                a = this.readyState;
+                if (f || a && a != "complete" && a != "loaded") return;
+                f = true;
+                clearTimeout(t);
+                try {
+                    Typekit.load(config);
+                } catch (e) {
+                }
+            };
+            s.parentNode.insertBefore(tk, s);
         })(document);
     </script>
-    
+
     @await RenderSectionAsync("Style", false)
-    
+
 </head>
 <body class="w-100 h-100">
 <nav class="navbar w-100">
@@ -30,7 +49,7 @@
             <a class="nav-link" href="/about">关于</a>
         </div>
     </div>
-</nav>   
+</nav>
 
 <main class="container my-2 pb-2 shadow-sm rounded">
     @RenderBody()

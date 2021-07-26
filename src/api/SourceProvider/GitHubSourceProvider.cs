@@ -4,7 +4,6 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Api.Command;
-using Laobian.Share;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -30,7 +29,7 @@ namespace Laobian.Api.SourceProvider
             {
                 await Task.WhenAll(PullBlogPostRepoAsync(cancellationToken), PullDbRepoAsync(cancellationToken));
             }
-            
+
             await base.LoadAsync(init, cancellationToken);
         }
 

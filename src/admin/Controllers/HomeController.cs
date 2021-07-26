@@ -24,6 +24,10 @@ namespace Laobian.Admin.Controllers
             return View();
         }
 
+        [HttpGet]
+        [HttpPost]
+        [HttpPut]
+        [Route("/error")]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

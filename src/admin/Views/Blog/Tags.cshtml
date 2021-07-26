@@ -8,24 +8,24 @@
     <table class="table caption-top">
         <caption>Post tags: @Model.Count()</caption>
         <thead class="table-light">
-            <tr>
-                <th scope="col">Name</th>
-                <th scope="col">Link</th>
-                <th scope="col">Operation</th>
-            </tr>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Link</th>
+            <th scope="col">Operation</th>
+        </tr>
         </thead>
         <tbody>
-            @foreach (var tag in Model)
-            {
-                <tr>
-                    <th>@tag.DisplayName</th>
-                    <th>@tag.Link</th>
-                    <th>
-                        <a href="javascript:;" onclick="launchUpdateModal('@tag.Link')">Update</a> &middot;
-                        <a href="javascript:;" onclick="deleteTag('@tag.Link')">Delete</a>
-                    </th>
-                </tr>
-            }
+        @foreach (var tag in Model)
+        {
+            <tr>
+                <th>@tag.DisplayName</th>
+                <th>@tag.Link</th>
+                <th>
+                    <a href="javascript:;" onclick="launchUpdateModal('@tag.Link')">Update</a> &middot;
+                    <a href="javascript:;" onclick="deleteTag('@tag.Link')">Delete</a>
+                </th>
+            </tr>
+        }
         </tbody>
     </table>
 </div>
@@ -100,7 +100,7 @@
                         window.location.reload(true);
                     }
                 })
-                .catch(err => {console.log(err)});
+                .catch(err => { console.log(err) });
         }
 
         function launchUpdateModal(link) {
@@ -112,11 +112,11 @@
                     document.querySelector('#modalBodyDescription').value = tag.description;
                     updateModal.show();
                 })
-                .catch(err => {console.log(err)});
+                .catch(err => { console.log(err) });
         }
 
         function updateTag() {
-            var tag = {
+            const tag = {
                 link: document.querySelector('#tagLink').innerHTML,
                 displayName: document.querySelector('#modalBodyName').value,
                 description: document.querySelector('#modalBodyDescription').value
@@ -136,7 +136,7 @@
                         window.location.reload(true);
                     }
                 })
-                .catch(err => {console.log(err)});
+                .catch(err => { console.log(err) });
         }
 
         function launchAddModal() {
@@ -144,7 +144,7 @@
         }
 
         function addTag() {
-            var tag = {
+            const tag = {
                 link: document.querySelector('#addModalBodyLink').value,
                 displayName: document.querySelector('#addModalBodyName').value,
                 description: document.querySelector('#addModalBodyDescription').value
@@ -164,7 +164,7 @@
                         window.location.reload(true);
                     }
                 })
-                .catch(err => {console.log(err)});
+                .catch(err => { console.log(err) });
         }
     </script>
 }

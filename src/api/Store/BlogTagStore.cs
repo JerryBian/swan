@@ -62,7 +62,8 @@ namespace Laobian.Api.Store
                 throw new InvalidOperationException($"Tag link not exists: {tag.Link}");
             }
 
-            if (GetAll().Except(new []{ existingTag }).FirstOrDefault(x => StringHelper.EqualIgnoreCase(x.DisplayName, tag.DisplayName)) != null)
+            if (GetAll().Except(new[] {existingTag})
+                .FirstOrDefault(x => StringHelper.EqualIgnoreCase(x.DisplayName, tag.DisplayName)) != null)
             {
                 throw new InvalidOperationException($"Tag name already exists: {tag.DisplayName}");
             }

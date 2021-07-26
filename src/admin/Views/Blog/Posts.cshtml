@@ -1,39 +1,39 @@
 ﻿@using Microsoft.Extensions.Options
-@model Laobian.Admin.Models.PostsViewModel
+@model PostsViewModel
 @inject IOptions<AdminConfig> _config
 <div>
     <table class="table caption-top">
         <caption>Total blog posts: @Model.Posts.Count()</caption>
         <thead class="table-light">
-            <tr>
-                <th scope="col">Date</th>
-                <th scope="col">Title</th>
-                <th scope="col">Published</th>
-                <th scope="col">Access</th>
-                <th scope="col">Comments</th>
-                <th scope="col">Metadata</th>
-            </tr>
+        <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Title</th>
+            <th scope="col">Published</th>
+            <th scope="col">Access</th>
+            <th scope="col">Comments</th>
+            <th scope="col">Metadata</th>
+        </tr>
         </thead>
         <tbody>
-            @foreach (var post in Model.Posts)
-            {
-                <tr>
-                    <th>@post.PublishTimeString</th>
-                    <th>
-                        <a href="@_config.Value.BlogRemoteEndpoint/@post.FullPath">@post.Metadata.Title</a>
-                    </th>
-                    <th>@post.IsPublished</th>
-                    <th>
-                        @post.AccessCountString
-                    </th>
-                    <th>
-                        @post.CommentCountString
-                    </th>
-                    <th>
-                        <a href="javascript:;" onclick="launchMetadataModal('@post.Link')">Update Metadata</a>
-                    </th>
-                </tr>
-            }
+        @foreach (var post in Model.Posts)
+        {
+            <tr>
+                <th>@post.PublishTimeString</th>
+                <th>
+                    <a href="@_config.Value.BlogRemoteEndpoint/@post.FullPath">@post.Metadata.Title</a>
+                </th>
+                <th>@post.IsPublished</th>
+                <th>
+                    @post.AccessCountString
+                </th>
+                <th>
+                    @post.CommentCountString
+                </th>
+                <th>
+                    <a href="javascript:;" onclick="launchMetadataModal('@post.Link')">Update Metadata</a>
+                </th>
+            </tr>
+        }
         </tbody>
     </table>
 </div>
@@ -117,7 +117,7 @@
                     document.querySelector('#modalBodyAllowComment').checked = post.metadata.allowComment;
                     document.querySelector('#modalBodyPublishTime').value = post.metadata.publishTime;
 
-                    let checkedBoxes = document.querySelectorAll('#tagsDiv input[type=checkbox]');
+                    const checkedBoxes = document.querySelectorAll('#tagsDiv input[type=checkbox]');
                     for (let i = 0; i < checkedBoxes.length; i++) {
                         for (const val of post.metadata.tags) {
                             if (val === checkedBoxes[i].value) {
@@ -127,17 +127,17 @@
                     }
                     modal.show();
                 })
-                .catch(err => {console.log(err)});
+                .catch(err => { console.log(err) });
         }
 
         function saveMetadata() {
-            let tags = [];
-            let checkedBoxes = document.querySelectorAll('#tagsDiv input[type=checkbox]:checked');
+            const tags = [];
+            const checkedBoxes = document.querySelectorAll('#tagsDiv input[type=checkbox]:checked');
             for (let i = 0; i < checkedBoxes.length; i++) {
                 tags.push(checkedBoxes[i].value);
             }
 
-            let metadata = {
+            const metadata = {
                 link: document.querySelector('#postLink').innerHTML,
                 title: document.querySelector('#modalBodyTitle').value,
                 excerpt: document.querySelector('#modalBodyExcerpt').value,
@@ -163,7 +163,7 @@
                         window.location.reload(true);
                     }
                 })
-                .catch(err => {console.log(err)});
+                .catch(err => { console.log(err) });
         }
     </script>
 }

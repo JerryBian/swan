@@ -27,7 +27,8 @@ namespace Laobian.Api.HostedServices
             {
                 if (DateTime.Now.Minute == 0 && DateTime.Now.Second == 0)
                 {
-                    await _blogService.PersistentAsync($"{DateTime.Now.ToLongDateString()} By Web Server", stoppingToken);
+                    await _blogService.PersistentAsync($"{DateTime.Now.ToLongDateString()} By Web Server",
+                        stoppingToken);
                 }
                 else
                 {

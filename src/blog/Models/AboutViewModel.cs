@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Laobian.Share.Blog;
 
 namespace Laobian.Blog.Models
@@ -9,6 +6,7 @@ namespace Laobian.Blog.Models
     public class AboutViewModel
     {
         #region System
+
         public string SystemLastBoot { get; set; }
 
         public string SystemRunningInterval { get; set; }

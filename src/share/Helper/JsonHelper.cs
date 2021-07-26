@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Laobian.Share.Converter;
@@ -11,7 +12,8 @@ namespace Laobian.Share.Helper
         {
             var option = new JsonSerializerOptions
             {
-                WriteIndented = writeIndented
+                WriteIndented = writeIndented,
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
             };
 
             option.Converters.Add(new IsoDateTimeConverter());

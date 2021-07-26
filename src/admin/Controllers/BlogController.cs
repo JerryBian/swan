@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -48,7 +47,7 @@ namespace Laobian.Admin.Controllers
             var posts = await _apiHttpService.GetPostsAsync();
             var tags = await _apiHttpService.GetTagsAsync();
             var viewModel = new PostsViewModel
-            { Posts = posts.OrderByDescending(x => x.Metadata.PublishTime).ToList(), Tags = tags };
+                {Posts = posts.OrderByDescending(x => x.Metadata.PublishTime).ToList(), Tags = tags};
             return View("Posts", viewModel);
         }
 

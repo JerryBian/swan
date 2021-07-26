@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Laobian.Share.Blog;
 using Laobian.Share.Helper;
 
@@ -14,7 +13,8 @@ namespace Laobian.Api.Store
 
         public BlogCommentStore(IDictionary<string, string> val)
         {
-            _comments = new ConcurrentDictionary<string, List<BlogCommentItem>>(StringComparer.InvariantCultureIgnoreCase);
+            _comments = new ConcurrentDictionary<string, List<BlogCommentItem>>(StringComparer
+                .InvariantCultureIgnoreCase);
             foreach (var item in val)
             {
                 _comments.TryAdd(item.Key, JsonHelper.Deserialize<List<BlogCommentItem>>(item.Value));
@@ -56,7 +56,7 @@ namespace Laobian.Api.Store
             var item = c.FirstOrDefault(x => x.Id == comment.Id);
             if (item == null)
             {
-                throw new InvalidOperationException($"Comment not exist.");
+                throw new InvalidOperationException("Comment not exist.");
             }
 
             item.MdContent = comment.MdContent;

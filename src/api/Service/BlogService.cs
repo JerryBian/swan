@@ -10,18 +10,18 @@ using Laobian.Api.Repository;
 using Laobian.Share.Blog;
 using Laobian.Share.Helper;
 using Markdig;
-using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.Options;
 
 namespace Laobian.Api.Service
 {
     public class BlogService : IBlogService
     {
+        private readonly IBlogPostRepository _blogPostRepository;
         private readonly ApiConfig _config;
         private readonly IDbRepository _dbRepository;
-        private readonly IBlogPostRepository _blogPostRepository;
 
-        public BlogService(IOptions<ApiConfig> config, IDbRepository dbRepository, IBlogPostRepository blogPostRepository)
+        public BlogService(IOptions<ApiConfig> config, IDbRepository dbRepository,
+            IBlogPostRepository blogPostRepository)
         {
             _config = config.Value;
             _dbRepository = dbRepository;
@@ -43,7 +43,8 @@ namespace Laobian.Api.Service
             // TODO: notify Blog site
         }
 
-        public async Task<List<BlogPost>> GetAllPostsAsync(bool onlyPublished = true, CancellationToken cancellationToken = default)
+        public async Task<List<BlogPost>> GetAllPostsAsync(bool onlyPublished = true,
+            CancellationToken cancellationToken = default)
         {
             var blogPostStore = await _blogPostRepository.GetBlogPostStoreAsync(cancellationToken);
             var allPosts = blogPostStore.GetAll();
@@ -107,7 +108,8 @@ namespace Laobian.Api.Service
             blogTagStore.RemoveByLink(tagLink);
         }
 
-        public async Task UpdateBlogPostMetadataAsync(BlogPostMetadata metadata, CancellationToken cancellationToken = default)
+        public async Task UpdateBlogPostMetadataAsync(BlogPostMetadata metadata,
+            CancellationToken cancellationToken = default)
         {
             var blogMetadataStore = await _dbRepository.GetBlogMetadataStoreAsync(cancellationToken);
             blogMetadataStore.Update(metadata);
@@ -121,7 +123,7 @@ namespace Laobian.Api.Service
 
         private async Task SetAdditionalInfoForPost(BlogPost blogPost, CancellationToken cancellationToken)
         {
-            NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
+            var nfi = new CultureInfo("en-US", false).NumberFormat;
             nfi.NumberDecimalDigits = 0;
 
             var blogAccessStore = await _dbRepository.GetBlogAccessStoreAsync(cancellationToken);
@@ -141,7 +143,7 @@ namespace Laobian.Api.Service
             var metadata = blogMetadataStore.GetByLink(blogPost.Link);
             if (metadata == null)
             {
-                metadata = new BlogPostMetadata { Link = blogPost.Link };
+                metadata = new BlogPostMetadata {Link = blogPost.Link};
                 metadata.SetDefault();
                 blogMetadataStore.Add(metadata);
             }
@@ -180,7 +182,8 @@ namespace Laobian.Api.Service
             {
                 await SetAdditionalInfoForPost(blogPost, cancellationToken);
                 blogPost.PublishTimeString = blogPost.Metadata.PublishTime.ToString("yyyy-MM-dd HH:mm:ss");
-                blogPost.FullPath = $"{blogPost.Metadata.PublishTime.Year:D4}/{blogPost.Metadata.PublishTime.Month:D2}/{blogPost.Metadata.Link}.html";
+                blogPost.FullPath =
+                    $"{blogPost.Metadata.PublishTime.Year:D4}/{blogPost.Metadata.PublishTime.Month:D2}/{blogPost.Metadata.Link}.html";
 
                 NormalizeBlogPost(blogPost);
             }
@@ -259,7 +262,8 @@ namespace Laobian.Api.Service
                         .Descendants()
                         .Where(_ =>
                             StringHelper.EqualIgnoreCase(_.Name, "p") &&
-                            _.Descendants().FirstOrDefault(c => StringHelper.EqualIgnoreCase(c.Name, "img")) == null).Take(2)
+                            _.Descendants().FirstOrDefault(c => StringHelper.EqualIgnoreCase(c.Name, "img")) == null)
+                        .Take(2)
                         .ToList();
                 if (paraNodes.Count == 1)
                 {
@@ -276,8 +280,6 @@ namespace Laobian.Api.Service
                 //post.ExcerptPlain = excerptText;
                 post.ExcerptHtml = excerpt;
             }
-
-            
         }
     }
 }

@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Laobian.Share.Blog;
 using Laobian.Share.Helper;
 
@@ -39,7 +38,7 @@ namespace Laobian.Api.Store
         public void Add(string postLink, DateTime date, int count)
         {
             _access.AddOrUpdate(postLink,
-                link => new List<BlogPostAccess> {new BlogPostAccess {Count = count, Date = date}},
+                link => new List<BlogPostAccess> {new() {Count = count, Date = date}},
                 (link, val) =>
                 {
                     var access = val.FirstOrDefault(x => x.Date == date);
@@ -52,7 +51,7 @@ namespace Laobian.Api.Store
                     {
                         access.Count += count;
                     }
-                    
+
                     return val;
                 });
         }

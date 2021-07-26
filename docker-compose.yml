@@ -20,6 +20,8 @@ services:
       - ENV_API_CommandLineApp
       - ENV_API_CommandLineBeginArg
       - ENV_API_AdminEmail
+      - ENV_API_AdminName
+      - ENV_API_SendGridApiKey
   admin:
     image: cnbian/laobian-admin:${ENV_APP_VERSION}
     environment:
@@ -29,7 +31,9 @@ services:
       - ENV_ADMIN_ApiLocalEndPoint=http://api:5010
       - ENV_ADMIN_BlogRemoteEndPoint
       - ENV_ADMIN_AdminName
+      - ENV_ADMIN_AdminEmail
       - ENV_ADMIN_AdminPassword
+      - ENV_ADMIN_SendGridApiKey
     ports:
       - "${ENV_ADMIN_PORT}:5011"
     depends_on:
@@ -45,10 +49,12 @@ services:
       - ENV_BLOG_ApiLocalEndPoint=http://api:5010
       - ENV_BLOG_PostsPerPage
       - ENV_BLOG_AdminEmail
+      - ENV_BLOG_AdminName
       - ENV_BLOG_AdminChineseName
       - ENV_BLOG_AdminEnglishName
       - ENV_BLOG_AssetLocation=/asset
       - ENV_BLOG_GitHubHookSecret
+      - ENV_BLOG_SendGridApiKey
     ports:
       - "${ENV_BLOG_PORT}:5012"
     depends_on:
