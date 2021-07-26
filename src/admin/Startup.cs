@@ -4,8 +4,11 @@ using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using Laobian.Admin.HttpService;
 using Laobian.Admin.Logger;
+using Laobian.Share;
 using Laobian.Share.Converter;
+using Laobian.Share.Extension;
 using Laobian.Share.Logger.Remote;
+using Laobian.Share.Notify;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -36,6 +39,9 @@ namespace Laobian.Admin
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
+
+            services.AddSingleton<IEmailNotify, EmailNotify>();
+            services.Configure<CommonConfig>(Configuration);
             services.Configure<AdminConfig>(Configuration);
 
             services.AddHttpClient<ApiHttpService>();
@@ -79,8 +85,39 @@ namespace Laobian.Admin
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime appLifetime)
         {
+            var emailNotify = app.ApplicationServices.GetRequiredService<IEmailNotify>();
+            appLifetime.ApplicationStarted.Register(async () =>
+            {
+                if (!env.IsDevelopment())
+                {
+                    var message = new NotifyMessage
+                    {
+                        Content = $"<p>site started at {DateTime.Now.ToChinaDateAndTime()}.</p>",
+                        Site = LaobianSite.Admin,
+                        Subject = "site started"
+                    };
+
+                    await emailNotify.SendAsync(message);
+                }
+            });
+
+            appLifetime.ApplicationStopped.Register(async () =>
+            {
+                if (!env.IsDevelopment())
+                {
+                    var message = new NotifyMessage
+                    {
+                        Content = $"<p>site stopped at {DateTime.Now.ToChinaDateAndTime()}.</p>",
+                        Site = LaobianSite.Admin,
+                        Subject = "site stopped"
+                    };
+
+                    await emailNotify.SendAsync(message);
+                }
+            });
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

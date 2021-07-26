@@ -2,7 +2,7 @@
 
 namespace Laobian.Share
 {
-    public abstract class CommonConfig
+    public class CommonConfig
     {
         public string BlogLocalEndpoint { get; set; }
 
@@ -19,6 +19,8 @@ namespace Laobian.Share
         public string AppVersion { get; set; }
 
         public string AssetLocation { get; set; }
+
+        public string SendGridApiKey { get; set; }
 
         public string GetBlogPostLocation()
         {

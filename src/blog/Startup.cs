@@ -1,10 +1,14 @@
+using System;
 using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using Laobian.Blog.HttpService;
 using Laobian.Blog.Logger;
+using Laobian.Share;
 using Laobian.Share.Converter;
+using Laobian.Share.Extension;
 using Laobian.Share.Logger.Remote;
+using Laobian.Share.Notify;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
@@ -37,10 +41,12 @@ namespace Laobian.Blog
 
             services.AddSingleton<ISystemInfo, SystemInfo>();
             services.AddOptions<BlogConfig>().Bind(Configuration).ValidateDataAnnotations();
+            services.AddOptions<CommonConfig>().Bind(Configuration).ValidateDataAnnotations();
 
             services.AddHttpClient<ApiHttpService>();
             services.AddHttpClient("log");
 
+            services.AddSingleton<IEmailNotify, EmailNotify>();
             services.AddSingleton<IRemoteLoggerSink, RemoteLoggerSink>();
 
             var dpFolder = Configuration.GetValue<string>("DATA_PROTECTION_KEY_PATH");
@@ -71,8 +77,39 @@ namespace Laobian.Blog
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime appLifetime)
         {
+            var emailNotify = app.ApplicationServices.GetRequiredService<IEmailNotify>();
+            appLifetime.ApplicationStarted.Register(async () =>
+            {
+                if (!env.IsDevelopment())
+                {
+                    var message = new NotifyMessage
+                    {
+                        Content = $"<p>site started at {DateTime.Now.ToChinaDateAndTime()}.</p>",
+                        Site = LaobianSite.Blog,
+                        Subject = "site started"
+                    };
+
+                    await emailNotify.SendAsync(message);
+                }
+            });
+
+            appLifetime.ApplicationStopped.Register(async () =>
+            {
+                if (!env.IsDevelopment())
+                {
+                    var message = new NotifyMessage
+                    {
+                        Content = $"<p>site stopped at {DateTime.Now.ToChinaDateAndTime()}.</p>",
+                        Site = LaobianSite.Blog,
+                        Subject = "site stopped"
+                    };
+
+                    await emailNotify.SendAsync(message);
+                }
+            });
+
             var config = app.ApplicationServices.GetRequiredService<IOptions<BlogConfig>>().Value;
             if (env.IsDevelopment())
             {
