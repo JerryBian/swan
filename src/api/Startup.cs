@@ -1,14 +1,12 @@
-using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using Laobian.Api.Command;
 using Laobian.Api.HostedServices;
+using Laobian.Api.Logger;
 using Laobian.Api.Repository;
 using Laobian.Api.Service;
 using Laobian.Api.SourceProvider;
-using Laobian.Share;
 using Laobian.Share.Converter;
-using Laobian.Share.Logger.File;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -33,6 +31,7 @@ namespace Laobian.Api
         {
             services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
 
+            services.AddSingleton<IGitFileLogQueue, GitFileLogQueue>();
             services.AddSingleton<ICommandClient, ProcessCommandClient>();
             services.AddSingleton<IBlogService, BlogService>();
             services.AddSingleton<IBlogPostRepository, BlogPostRepository>();
@@ -49,19 +48,7 @@ namespace Laobian.Api
                 config.SetMinimumLevel(LogLevel.Debug);
                 config.AddDebug();
                 config.AddConsole();
-                config.AddGitFile(c =>
-                {
-                    var assetLocation = Configuration.GetValue<string>("AssetLocation");
-                    if (string.IsNullOrEmpty(assetLocation))
-                    {
-                        throw new LaobianConfigException(nameof(ApiConfig.AssetLocation));
-                    }
-
-                    var logDir = Path.Combine(assetLocation, "db", "log");
-                    Directory.CreateDirectory(logDir);
-                    c.LoggerDir = logDir;
-                    c.LoggerName = "api";
-                });
+                config.AddGitFile(c => { c.LoggerName = "api"; });
             });
 
             services.AddHealthChecks();

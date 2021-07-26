@@ -1,5 +1,4 @@
 ﻿using System;
-using Laobian.Share.Logger.File;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
@@ -14,7 +13,7 @@ namespace Laobian.Share.Logger.Remote
         {
             builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ILoggerProvider, RemoteLoggerProvider>());
             LoggerProviderOptions
-                .RegisterProviderOptions<GitFileLoggerOptions, RemoteLoggerProvider>(builder.Services);
+                .RegisterProviderOptions<RemoteLoggerOptions, RemoteLoggerProvider>(builder.Services);
             if (configure != null)
             {
                 builder.Services.Configure(configure);

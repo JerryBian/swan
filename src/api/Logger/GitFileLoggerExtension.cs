@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Configuration;
 
-namespace Laobian.Share.Logger.File
+namespace Laobian.Api.Logger
 {
     public static class GitFileLoggerExtension
     {

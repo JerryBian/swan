@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
 
-namespace Laobian.Share.Logger.File
+namespace Laobian.Api.Logger
 {
     public class GitFileNullExternalScopeProvider : IExternalScopeProvider
     {

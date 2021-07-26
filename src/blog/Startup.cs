@@ -2,7 +2,9 @@ using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using Laobian.Blog.HttpService;
+using Laobian.Blog.Logger;
 using Laobian.Share.Converter;
+using Laobian.Share.Logger.Remote;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
@@ -11,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Laobian.Blog
@@ -36,6 +39,9 @@ namespace Laobian.Blog
             services.AddOptions<BlogConfig>().Bind(Configuration).ValidateDataAnnotations();
 
             services.AddHttpClient<ApiHttpService>();
+            services.AddHttpClient("log");
+
+            services.AddSingleton<IRemoteLoggerSink, RemoteLoggerSink>();
 
             var dpFolder = Configuration.GetValue<string>("DATA_PROTECTION_KEY_PATH");
             Directory.CreateDirectory(dpFolder);
@@ -47,6 +53,14 @@ namespace Laobian.Blog
                     options.Cookie.Name = "LAOBIAN_AUTH";
                     options.Cookie.Domain = _env.IsDevelopment() ? "localhost" : ".laobian.me";
                 });
+
+            services.AddLogging(config =>
+            {
+                config.SetMinimumLevel(LogLevel.Debug);
+                config.AddDebug();
+                config.AddConsole();
+                config.AddRemote(c => { c.LoggerName = "blog"; });
+            });
 
             services.AddControllersWithViews().AddJsonOptions(config =>
             {

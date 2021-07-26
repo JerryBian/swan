@@ -1,7 +1,8 @@
 ﻿using System;
+using Laobian.Share.Logger;
 using Microsoft.Extensions.Logging;
 
-namespace Laobian.Share.Logger.File
+namespace Laobian.Api.Logger
 {
     public class GitFileLogger : ILogger
     {
@@ -40,8 +41,10 @@ namespace Laobian.Share.Logger.File
                 log.TimeStamp = DateTime.Now;
                 _queueProcessor.Add(log);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                // ignored
+                Console.WriteLine(ex);
             }
         }
 

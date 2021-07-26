@@ -1,24 +1,31 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using Laobian.Share.Helper;
+using Laobian.Share.Logger;
 
-namespace Laobian.Share.Logger.File
+namespace Laobian.Api.Logger
 {
     public class GitFileLoggerProcessor : ILaobianLoggerProcessor, IDisposable
     {
-        private readonly ConcurrentQueue<LaobianLog> _messageQueue;
+        private readonly ApiConfig _config;
+        private readonly string _logDir;
+        private readonly IGitFileLogQueue _messageQueue;
         private readonly GitFileLoggerOptions _options;
         private readonly Thread _underlingThread;
+
         private bool _stop;
 
-        public GitFileLoggerProcessor(GitFileLoggerOptions options)
+        public GitFileLoggerProcessor(GitFileLoggerOptions options, ApiConfig config, IGitFileLogQueue messageQueue)
         {
+            _config = config;
             _options = options;
-            _messageQueue = new ConcurrentQueue<LaobianLog>();
+
+            _logDir = Path.Combine(config.AssetLocation, "log");
+            Directory.CreateDirectory(_logDir);
+            _messageQueue = messageQueue;
 
             _underlingThread = new Thread(Process)
             {
@@ -46,7 +53,7 @@ namespace Laobian.Share.Logger.File
             {
                 try
                 {
-                    _messageQueue.Enqueue(log);
+                    _messageQueue.Add(log);
                     return;
                 }
                 catch (Exception)
@@ -103,16 +110,6 @@ namespace Laobian.Share.Logger.File
                 return;
             }
 
-            if (string.IsNullOrEmpty(_options.LoggerDir))
-            {
-                foreach (var log in logs)
-                {
-                    Console.WriteLine(log);
-                }
-
-                return;
-            }
-
             foreach (var log in logs)
             {
                 try
@@ -123,10 +120,10 @@ namespace Laobian.Share.Logger.File
                         loggerName = "undefined";
                     }
 
-                    var dir = Path.Combine(_options.LoggerDir, loggerName, log.TimeStamp.Year.ToString(),
+                    var dir = Path.Combine(_logDir, loggerName, log.TimeStamp.Year.ToString(),
                         log.TimeStamp.Month.ToString("D2"));
                     Directory.CreateDirectory(dir);
-                    System.IO.File.AppendAllLines(Path.Combine(dir, $"{log.TimeStamp:yyyy-MM-dd}.log"),
+                    File.AppendAllLines(Path.Combine(dir, $"{log.TimeStamp:yyyy-MM-dd}.log"),
                         new[] {JsonHelper.Serialize(log)});
                 }
                 catch (Exception ex)

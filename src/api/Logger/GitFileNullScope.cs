@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Laobian.Share.Logger.File
+namespace Laobian.Api.Logger
 {
     public class GitFileNullScope : IDisposable
     {

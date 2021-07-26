@@ -3,7 +3,9 @@ using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using Laobian.Admin.HttpService;
+using Laobian.Admin.Logger;
 using Laobian.Share.Converter;
+using Laobian.Share.Logger.Remote;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -14,6 +16,7 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Laobian.Admin
 {
@@ -37,6 +40,9 @@ namespace Laobian.Admin
 
             services.AddHttpClient<ApiHttpService>();
             services.AddHttpClient<BlogHttpService>();
+            services.AddHttpClient("log");
+
+            services.AddSingleton<IRemoteLoggerSink, RemoteLoggerSink>();
 
             var dpFolder = Configuration.GetValue<string>("DATA_PROTECTION_KEY_PATH");
             Directory.CreateDirectory(dpFolder);
@@ -50,6 +56,14 @@ namespace Laobian.Admin
                 options.LoginPath = new PathString("/login");
                 options.LogoutPath = new PathString("/logout");
                 options.Cookie.Domain = _env.IsDevelopment() ? "localhost" : ".laobian.me";
+            });
+
+            services.AddLogging(config =>
+            {
+                config.SetMinimumLevel(LogLevel.Trace);
+                config.AddDebug();
+                config.AddConsole();
+                config.AddRemote(c => { c.LoggerName = "admin"; });
             });
 
             services.AddControllersWithViews(config =>

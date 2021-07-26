@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Laobian.Share.Logger.File
+namespace Laobian.Api.Logger
 {
     public class GitFileLoggerProvider : ILoggerProvider, ISupportExternalScope
     {
@@ -9,9 +9,10 @@ namespace Laobian.Share.Logger.File
         private readonly GitFileLoggerProcessor _processor;
         private IExternalScopeProvider _externalScopeProvider;
 
-        public GitFileLoggerProvider(IOptions<GitFileLoggerOptions> options)
+        public GitFileLoggerProvider(IOptions<GitFileLoggerOptions> options, IOptions<ApiConfig> config,
+            IGitFileLogQueue gitFileLogQueue)
         {
-            _processor = new GitFileLoggerProcessor(options.Value);
+            _processor = new GitFileLoggerProcessor(options.Value, config.Value, gitFileLogQueue);
             _logger = new GitFileLogger(_processor)
             {
                 Options = options.Value,

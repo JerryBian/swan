@@ -1,19 +1,20 @@
-﻿using Laobian.Share.Logger.File;
+﻿using Laobian.Share.Helper;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 
 namespace Laobian.Share.Logger.Remote
 {
     public class RemoteLoggerProvider : ILoggerProvider, ISupportExternalScope
     {
-        private readonly GitFileLogger _logger;
-        private readonly GitFileLoggerProcessor _processor;
+        private readonly RemoteLogger _logger;
+        private readonly RemoteLoggerProcessor _processor;
         private IExternalScopeProvider _externalScopeProvider;
 
-        public RemoteLoggerProvider(IOptions<GitFileLoggerOptions> options)
+        public RemoteLoggerProvider(IOptions<RemoteLoggerOptions> options, IRemoteLoggerSink sink)
         {
-            _processor = new GitFileLoggerProcessor(options.Value);
-            _logger = new GitFileLogger(_processor)
+            _processor = new RemoteLoggerProcessor(options.Value, sink);
+            _logger = new RemoteLogger(_processor)
             {
                 Options = options.Value,
                 ScopeProvider = _externalScopeProvider
@@ -23,6 +24,12 @@ namespace Laobian.Share.Logger.Remote
 
         public ILogger CreateLogger(string categoryName)
         {
+            if (StringHelper.EqualIgnoreCase("System.Net.Http.HttpClient.log.ClientHandler", categoryName) ||
+                StringHelper.EqualIgnoreCase("System.Net.Http.HttpClient.log.LogicalHandler", categoryName))
+            {
+                return NullLogger.Instance;
+            }
+
             return _logger;
         }
 
