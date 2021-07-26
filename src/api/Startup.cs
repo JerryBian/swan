@@ -74,6 +74,10 @@ namespace Laobian.Api
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Laobian.Api v1"));
             }
+            else
+            {
+                app.UseExceptionHandler("/error");
+            }
 
             app.UseRouting();
             app.UseAuthorization();

@@ -14,3 +14,7 @@ uglifyjs --compress -o $(Join-Path $WWWRootLoc archive.min.js) $(Join-Path $Node
 npx sass $(Join-Path $WWWRootLoc scss post.scss) $(Join-Path $WWWRootLoc post.css)
 uglifycss --expand-vars --ugly-comments --output $(Join-Path $WWWRootLoc post.min.css) $(Join-Path $WWWRootLoc post.css)
 uglifyjs --compress -o $(Join-Path $WWWRootLoc post.min.js) $(Join-Path $NodeModulesLoc anchor-js anchor.js)
+
+# Error page
+npx sass $(Join-Path $WWWRootLoc scss error.scss) $(Join-Path $WWWRootLoc error.css)
+uglifycss --expand-vars --ugly-comments --output $(Join-Path $WWWRootLoc error.min.css) $(Join-Path $WWWRootLoc error.css)

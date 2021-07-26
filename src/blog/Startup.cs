@@ -80,9 +80,10 @@ namespace Laobian.Blog
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/error");
             }
 
+            app.UseStatusCodePages();
             app.UseStaticFiles();
 
             var fileLoc = Path.Combine(config.GetBlogFileLocation());

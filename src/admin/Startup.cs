@@ -87,9 +87,10 @@ namespace Laobian.Admin
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/error");
             }
 
+            app.UseStatusCodePages();
             app.UseStaticFiles();
 
             app.UseRouting();
