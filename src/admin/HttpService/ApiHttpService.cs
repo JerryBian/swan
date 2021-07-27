@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
+using Laobian.Share;
 using Laobian.Share.Blog;
 using Laobian.Share.Helper;
 using Microsoft.Extensions.Logging;
@@ -248,6 +249,19 @@ namespace Laobian.Admin.HttpService
             }
 
             return true;
+        }
+
+        public async Task<string> GetLogsAsync(LaobianSite site, string level, DateTime date)
+        {
+            var response = await _httpClient.GetAsync($"/log/{site}?level={level}&date={date:yyyy-MM-dd}");
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                _logger.LogError(
+                    $"{nameof(ApiHttpService)}.{nameof(GetLogsAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+                return null;
+            }
+
+            return await response.Content.ReadAsStringAsync();
         }
     }
 }
