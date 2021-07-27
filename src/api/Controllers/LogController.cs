@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using Laobian.Api.Logger;
+using Laobian.Share;
+using Laobian.Share.Helper;
 using Laobian.Share.Logger;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Laobian.Api.Controllers
 {
@@ -14,10 +18,12 @@ namespace Laobian.Api.Controllers
     {
         private readonly IGitFileLogQueue _gitFileLogQueue;
         private readonly ILogger<LogController> _logger;
+        private readonly ApiConfig _config;
 
-        public LogController(ILogger<LogController> logger, IGitFileLogQueue gitFileLogQueue)
+        public LogController(ILogger<LogController> logger, IGitFileLogQueue gitFileLogQueue, IOptions<ApiConfig> config)
         {
             _logger = logger;
+            _config = config.Value;
             _gitFileLogQueue = gitFileLogQueue;
         }
 
@@ -40,6 +46,39 @@ namespace Laobian.Api.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"{nameof(LogController)}({nameof(AddLogs)}) failed.");
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("{loggerName}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public IActionResult GetLogs([FromRoute] LaobianSite site, [FromQuery] LogLevel level, [FromQuery]DateTime date)
+        {
+            try
+            {
+                var logDir = Path.Combine(_config.AssetLocation, "log");
+                Directory.CreateDirectory(logDir);
+
+                logDir = Path.Combine(logDir, site.ToString().ToLowerInvariant());
+                if (!Directory.Exists(logDir))
+                {
+                    return Ok(string.Empty);
+                }
+
+                var logFile = Path.Combine(logDir, date.ToString("yyyy-MM-dd"));
+                if (!System.IO.File.Exists(logFile))
+                {
+                    return Ok(string.Empty);
+                }
+
+                return Ok(JsonHelper.Serialize(System.IO.File.ReadAllText(logFile)));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"{nameof(LogController)}({nameof(GetLogs)}) failed.");
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
