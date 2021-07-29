@@ -1,8 +1,8 @@
-name: 5.2
+name: 5.4
 
 on:
   push:
-    branches: [ 5.2 ]
+    branches: [ 5.4 ]
 
 jobs:
   publish_api:
