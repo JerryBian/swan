@@ -2,21 +2,23 @@
 @model PostViewModel
 @inject IOptions<BlogConfig> Config
 
-<div class="p-3">
-    <div class="text-muted fs-sm pb-1">@Html.Raw(Model.MetadataHtml)</div>
-    <div class="mb-2 pb-3">
-        <span class="font-post-title">@Model.Current.Metadata.Title</span>
-        @if (Model.Current.Metadata.IsTopping)
-        {
-            <span class="badge bg-success">置顶</span>
-        }
+<div>
+    <div class="mb-3">
+        <div class="text-muted fs-6 pe-1">
+            @Html.Raw(Model.MetadataHtml)
+        </div>
+        <div><span class="fs-2">@Model.Current.Metadata.Title</span>
+            @if (Model.Current.Metadata.IsTopping)
+            {
+                <span class="badge bg-success">置顶</span>
+            }
 
-        @if (!Model.Current.Metadata.IsPublished)
-        {
-            <span class="badge bg-warning">
-                未发布
-            </span>
-        }
+            @if (!Model.Current.Metadata.IsPublished)
+            {
+                <span class="badge bg-warning">
+                    未发布
+                </span>
+            }</div>
     </div>
     <article class="post-content">
         @Html.Raw(Model.Current.HtmlContent)

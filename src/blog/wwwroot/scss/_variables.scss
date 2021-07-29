@@ -2,8 +2,14 @@
 $warning: #E9C46A;
 $primary: #363636;
 $secondary: #2A9D8F;
-$container-max-widths: ( sm: 540px, md: 720px, lg: 840px, xl: 960px );
 $body-bg: #f7f7f7;
 $body-color: #2d3436;
 $code-color: #714674;
-$font-family-code: Monaco, SFMono-Regular, Menlo, Consolas, "Liberation Mono", "Courier New", monospace;
+$font-size-base: 1.025rem;
+
+$h1-font-size: $font-size-base * 1.35;
+$h2-font-size: $font-size-base * 1.25;
+$h3-font-size: $font-size-base * 1.15;
+$h4-font-size: $font-size-base * 1.05;
+$h5-font-size: $font-size-base;
+$h6-font-size: $font-size-base * 0.9;

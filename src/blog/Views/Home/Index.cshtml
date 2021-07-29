@@ -1,48 +1,32 @@
 ﻿@model PagedPostViewModel
 @{
-    ViewData["Title"] = "Home Page";
+
 }
 
-<div class="list-group list-group-flush post-item">
+<section>
     @foreach (var post in Model.Posts)
     {
-        <div class="list-group-item px-2 py-2">
-            <div>
-                <div class="text-muted fs-sm pb-1">@Html.Raw(post.MetadataHtml)</div>
-                <div class="mb-2 pb-3">
-                    <a href="@post.Current.FullPath" class="font-post-title">@post.Current.Metadata.Title</a>
-                    @if (post.Current.Metadata.IsTopping)
-                    {
-                        <span class="badge bg-success">置顶</span>
-                    }
+        <div class="mt-2 mb-2">
+            <span class="text-muted me-2 fs-sm">@post.Current.Metadata.PublishTime.ToDate()</span>
+            <a href="@post.Current.FullPath">
+                <span>@post.Current.Metadata.Title</span>
+                @if (post.Current.Metadata.IsTopping)
+                {
+                    <span class="badge bg-success">置顶</span>
+                }
 
-                    @if (!post.Current.Metadata.IsPublished)
-                    {
-                        <span class="badge bg-warning">
-                            未发布
-                        </span>
-                    }
-                </div>
-            </div>
-
-
-            <div class="container-fluid mt-2 mb-1">
-                <div class="row mb-2 mt-1">
-                    <div class="mb-2 mt-1">
-                        @Html.Raw(post.Current.ExcerptHtml)
-                    </div>
-                </div>
-            </div>
+                @if (!post.Current.Metadata.IsPublished)
+                {
+                    <span class="badge bg-warning">
+                        未发布
+                    </span>
+                }
+            </a>
         </div>
     }
-</div>
+</section>
 
 <page total-pages="@Model.TotalPages" current-page="@Model.CurrentPage" url="@Model.Url"></page>
-
-@*<div class="text-center">
-        <h1 class="display-4">Welcome</h1>
-        <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    </div>*@
 
 @section Style{
     <link href="~/index.min.css" rel="stylesheet"/>
