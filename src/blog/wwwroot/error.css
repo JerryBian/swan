@@ -41,7 +41,7 @@
 body {
   margin: 0;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  font-size: 1.025rem;
+  font-size: 1.125rem;
   font-weight: 400;
   line-height: 1.5;
   color: #2d3436;
@@ -70,37 +70,42 @@ h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1 {
 }
 
 h1, .h1 {
-  font-size: calc(1.263375rem + 0.1605vw);
+  font-size: calc(1.276875rem + 0.3225vw);
 }
 @media (min-width: 1200px) {
   h1, .h1 {
-    font-size: 1.38375rem;
+    font-size: 1.51875rem;
   }
 }
 
 h2, .h2 {
-  font-size: calc(1.253125rem + 0.0375vw);
+  font-size: calc(1.265625rem + 0.1875vw);
 }
 @media (min-width: 1200px) {
   h2, .h2 {
-    font-size: 1.28125rem;
+    font-size: 1.40625rem;
   }
 }
 
 h3, .h3 {
-  font-size: 1.17875rem;
+  font-size: calc(1.254375rem + 0.0525vw);
+}
+@media (min-width: 1200px) {
+  h3, .h3 {
+    font-size: 1.29375rem;
+  }
 }
 
 h4, .h4 {
-  font-size: 1.07625rem;
+  font-size: 1.18125rem;
 }
 
 h5, .h5 {
-  font-size: 1.025rem;
+  font-size: 1.125rem;
 }
 
 h6, .h6 {
-  font-size: 0.9225rem;
+  font-size: 1.0125rem;
 }
 
 p {
@@ -433,12 +438,12 @@ progress {
 }
 
 .lead {
-  font-size: calc(1.253125rem + 0.0375vw);
+  font-size: calc(1.265625rem + 0.1875vw);
   font-weight: 300;
 }
 @media (min-width: 1200px) {
   .lead {
-    font-size: 1.28125rem;
+    font-size: 1.40625rem;
   }
 }
 
@@ -532,11 +537,11 @@ progress {
 
 .blockquote {
   margin-bottom: 1rem;
-  font-size: calc(1.253125rem + 0.0375vw);
+  font-size: calc(1.265625rem + 0.1875vw);
 }
 @media (min-width: 1200px) {
   .blockquote {
-    font-size: 1.28125rem;
+    font-size: 1.40625rem;
   }
 }
 .blockquote > :last-child {
@@ -1938,16 +1943,16 @@ progress {
   justify-content: space-between;
 }
 .navbar-brand {
-  padding-top: 0.3078125rem;
-  padding-bottom: 0.3078125rem;
+  padding-top: 0.2890625rem;
+  padding-bottom: 0.2890625rem;
   margin-right: 1rem;
-  font-size: calc(1.253125rem + 0.0375vw);
+  font-size: calc(1.265625rem + 0.1875vw);
   text-decoration: none;
   white-space: nowrap;
 }
 @media (min-width: 1200px) {
   .navbar-brand {
-    font-size: 1.28125rem;
+    font-size: 1.40625rem;
   }
 }
 .navbar-nav {
@@ -1978,7 +1983,7 @@ progress {
 
 .navbar-toggler {
   padding: 0.25rem 0.75rem;
-  font-size: calc(1.253125rem + 0.0375vw);
+  font-size: calc(1.265625rem + 0.1875vw);
   line-height: 1;
   background-color: transparent;
   border: 1px solid transparent;
@@ -1987,7 +1992,7 @@ progress {
 }
 @media (min-width: 1200px) {
   .navbar-toggler {
-    font-size: 1.28125rem;
+    font-size: 1.40625rem;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -2433,11 +2438,11 @@ progress {
 
 .pagination-lg .page-link {
   padding: 0.75rem 1.5rem;
-  font-size: calc(1.253125rem + 0.0375vw);
+  font-size: calc(1.265625rem + 0.1875vw);
 }
 @media (min-width: 1200px) {
   .pagination-lg .page-link {
-    font-size: 1.28125rem;
+    font-size: 1.40625rem;
   }
 }
 .pagination-lg .page-item:first-child .page-link {
@@ -2451,7 +2456,7 @@ progress {
 
 .pagination-sm .page-link {
   padding: 0.25rem 0.5rem;
-  font-size: 0.896875rem;
+  font-size: 0.984375rem;
 }
 .pagination-sm .page-item:first-child .page-link {
   border-top-left-radius: 0.2rem;
@@ -3401,27 +3406,27 @@ progress {
 }
 
 .fs-1 {
-  font-size: calc(1.263375rem + 0.1605vw) !important;
+  font-size: calc(1.276875rem + 0.3225vw) !important;
 }
 
 .fs-2 {
-  font-size: calc(1.253125rem + 0.0375vw) !important;
+  font-size: calc(1.265625rem + 0.1875vw) !important;
 }
 
 .fs-3 {
-  font-size: 1.17875rem !important;
+  font-size: calc(1.254375rem + 0.0525vw) !important;
 }
 
 .fs-4 {
-  font-size: 1.07625rem !important;
+  font-size: 1.18125rem !important;
 }
 
 .fs-5 {
-  font-size: 1.025rem !important;
+  font-size: 1.125rem !important;
 }
 
 .fs-6 {
-  font-size: 0.9225rem !important;
+  font-size: 1.0125rem !important;
 }
 
 .fst-italic {
@@ -6956,11 +6961,15 @@ progress {
 }
 @media (min-width: 1200px) {
   .fs-1 {
-    font-size: 1.38375rem !important;
+    font-size: 1.51875rem !important;
   }
 
   .fs-2 {
-    font-size: 1.28125rem !important;
+    font-size: 1.40625rem !important;
+  }
+
+  .fs-3 {
+    font-size: 1.29375rem !important;
   }
 }
 @media print {
@@ -7005,15 +7014,15 @@ progress {
   }
 }
 .fs-sm {
-  font-size: 0.896875rem;
+  font-size: 0.984375rem;
 }
 
 .fs-xs {
-  font-size: 0.7175rem;
+  font-size: 0.7875rem;
 }
 
 .font-post-title {
-  font-size: 1.3325rem;
+  font-size: 1.4625rem;
 }
 
 .muted-bolder {
