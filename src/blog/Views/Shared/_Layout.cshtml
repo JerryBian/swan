@@ -19,24 +19,68 @@
 
 </head>
 <body class="d-flex flex-column w-100 min-vh-100">
-<header class="navbar">
-    <nav class="container flex-column justify-content-center">
-        <div><a href="/" class="navbar-brand fs-1">Jerry Bian's blog</a></div>
-        <div class="text-muted fs-6 my-2"><a href="/about">关于</a> &middot;  <a href="/archive">存档</a> &middot;  <a href="/rss">订阅</a></div>
-    </nav>
-</header>
-<main class="container shadow-sm rounded wrapper d-flex justify-content-center py-3">
-    <div class="wrapper-content">
-        @RenderBody()
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <a class="navbar-brand" href="/">Jerry Bian's blog</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navLinks" aria-controls="navLinks" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navLinks">
+            <ul class="navbar-nav">
+                @*<li class="nav-item">
+                    <a class="nav-link active" href="#">
+                        Home
+                        <span class="visually-hidden">(current)</span>
+                    </a>
+                </li>*@
+                <li class="nav-item">
+                    <a href="/about" class="nav-link active">关于</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/archive">存档</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                
+                <li class="nav-item">
+                    <a class="nav-link" href="https://github.com/JerryBian">GitHub</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/rss">RSS</a>
+                </li>
+            </ul>
+        </div>
     </div>
-        
-</main>
+</nav>
+<div class="container py-3">
+    <div class="row gx-1">
+        <main class="col-9 d-flex wrapper justify-content-center py-3 flex-grow-1">
+            <div class="wrapper-content @*shadow-sm rounded*@">
+                @RenderBody()
+            </div>
+        </main>
+        <aside class="col-3 d-none d-lg-block">
+            <div class="card">
+                <div class="card-header">
+                    Featured
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Special title treatment</h5>
+                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+            </div>
+        </aside>
+    </div>
+    
+</div>
+
 <footer class="navbar mt-auto">
     <nav class="container justify-content-center text-muted fs-6">
-        &copy; @DateTime.Now.Year @_config.Value.AdminChineseName &middot; 
+        &copy; @DateTime.Now.Year @_config.Value.AdminChineseName &middot;
         &hearts; &middot;
     </nav>
-    
+
 </footer>
 
 @await RenderSectionAsync("Script", false)
