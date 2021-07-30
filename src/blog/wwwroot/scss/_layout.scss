@@ -47,17 +47,17 @@ main{
     background-color:#fff;
 }
 
-main a{
+/*main a{*/
     /*border-bottom: 1px double black;*/
 
-    &:link, &:visited {
+    /*&:link, &:visited {
         color: #577590 !important;
     }
 
     &:hover, &:focus{
         color: #3a4e60 !important;
     }
-}
+}*/
 
 .navbar {
     font-size: $font-size-sm;

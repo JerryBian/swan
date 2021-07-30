@@ -16,11 +16,6 @@ $h4-font-size: $font-size-base * 1.05;
 $h5-font-size: $font-size-base;
 $h6-font-size: $font-size-base * 0.9;*/
 
-// Zephyr 5.0.2
-// Bootswatch
-
-$theme: "zephyr" !default;
-
 //
 // Color system
 //
@@ -39,7 +34,7 @@ $black: #000 !default;
 
 $blue: #3459e6 !default;
 $indigo: #6610f2 !default;
-$purple: #6f42c1 !default;
+$purple: #593196 !default;
 $pink: #d63384 !default;
 $red: #da292e !default;
 $orange: #f8765f !default;
@@ -48,7 +43,7 @@ $green: #2fb380 !default;
 $teal: #20c997 !default;
 $cyan: #287bb5 !default;
 
-$primary: $blue !default;
+$primary: $purple !default;
 $secondary: $white !default;
 $success: $green !default;
 $info: $cyan !default;
@@ -70,7 +65,7 @@ $headings-color: $gray-900 !default;
 // Fonts
 
 // stylelint-disable-next-line value-keyword-case
-$font-family-sans-serif: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !default;
+$font-family-sans-serif: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !default;
 $font-size-base: 1.1rem !default; // Assumes the browser default, typically `16px`
 $font-size-sm: $font-size-base * .875 !default;
 $h1-font-size: $font-size-base * 1.35;
