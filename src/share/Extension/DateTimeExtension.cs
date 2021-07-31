@@ -31,5 +31,10 @@ namespace Laobian.Share.Extension
         {
             return time.ToString("yyyy年MM月dd日");
         }
+
+        public static string ToYearAndMonth(this DateTime time)
+        {
+            return time.ToString("yyyy-MM");
+        }
     }
 }

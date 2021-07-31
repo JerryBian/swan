@@ -159,19 +159,6 @@ namespace Laobian.Api.Service
                     blogPost.Tags.Add(tag);
                 }
             }
-
-            var blogCommentStore = await _dbRepository.GetBlogCommentStoreAsync(cancellationToken);
-            var comments = blogCommentStore.GetByLink(blogPost.Link);
-            if (comments != null)
-            {
-                blogPost.Comments.AddRange(comments);
-                blogPost.CommentCount = blogPost.Comments.Count;
-                blogPost.CommentCountString = comments.Count.ToString("N", nfi);
-            }
-            else
-            {
-                blogPost.CommentCountString = "0";
-            }
         }
 
         private async Task AggregateStoreAsync(CancellationToken cancellationToken)

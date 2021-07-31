@@ -1,14 +1,17 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Laobian.Share.Converter;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Laobian.Share.Helper
 {
     public static class JsonHelper
     {
-        public static string Serialize<T>(T obj, bool writeIndented = false)
+        public static string Serialize<T>(T obj, bool writeIndented = false, List<JsonConverter> converters = null)
         {
             var option = new JsonSerializerOptions
             {
@@ -16,7 +19,18 @@ namespace Laobian.Share.Helper
                 Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
             };
 
-            option.Converters.Add(new IsoDateTimeConverter());
+            if (converters == null)
+            {
+                option.Converters.Add(new IsoDateTimeConverter());
+            }
+            else
+            {
+                foreach (var jsonConverter in converters)
+                {
+                    option.Converters.Add(jsonConverter);
+                }
+            }
+
             return JsonSerializer.Serialize(obj, option);
         }
 

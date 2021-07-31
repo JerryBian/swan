@@ -14,7 +14,6 @@ namespace Laobian.Api.SourceProvider
         private const string PostMetadataExtension = "*.json";
         private readonly ApiConfig _apiConfig;
         private string _accessLocation;
-        private string _commentLocation;
         private string _postLocation;
         private string _postMetadataLocation;
         private string _tagLocation;
@@ -44,9 +43,6 @@ namespace Laobian.Api.SourceProvider
 
             _accessLocation = Path.Combine(_apiConfig.GetDbLocation(), "access");
             Directory.CreateDirectory(_accessLocation);
-
-            _commentLocation = Path.Combine(_apiConfig.GetDbLocation(), "comment");
-            Directory.CreateDirectory(_commentLocation);
 
             if (init)
             {
@@ -153,41 +149,6 @@ namespace Laobian.Api.SourceProvider
             }
         }
 
-        public virtual async Task<IDictionary<string, string>> GetCommentsAsync(
-            CancellationToken cancellationToken = default)
-        {
-            var comments = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
-            foreach (var file in Directory.EnumerateFiles(_commentLocation, PostMetadataExtension,
-                SearchOption.TopDirectoryOnly))
-            {
-                var postLink = Path.GetFileNameWithoutExtension(file);
-                if (comments.ContainsKey(postLink))
-                {
-                    throw new Exception($"Duplicate post link found: {postLink}");
-                }
-
-                comments.Add(postLink, await File.ReadAllTextAsync(file, Encoding.UTF8, cancellationToken));
-            }
-
-            return comments;
-        }
-
-        public virtual async Task SaveCommentsAsync(IDictionary<string, string> comments,
-            CancellationToken cancellationToken = default)
-        {
-            if (comments == null)
-            {
-                return;
-            }
-
-            Directory.Delete(_commentLocation, true);
-            Directory.CreateDirectory(_commentLocation);
-            foreach (var (key, value) in comments)
-            {
-                var commentFile = Path.Combine(_commentLocation, key + ".json");
-                await File.WriteAllTextAsync(commentFile, value, Encoding.UTF8, cancellationToken);
-            }
-        }
 
         public virtual async Task PersistentAsync(CancellationToken cancellationToken = default)
         {

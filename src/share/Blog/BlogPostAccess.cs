@@ -7,8 +7,6 @@ namespace Laobian.Share.Blog
     {
         [JsonPropertyName("date")] public DateTime Date { get; set; }
 
-        [JsonIgnore] public string DateString => Date.ToString("yyyy-MM");
-
         [JsonPropertyName("count")] public int Count { get; set; }
     }
 }

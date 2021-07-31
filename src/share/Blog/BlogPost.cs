@@ -16,8 +16,6 @@ namespace Laobian.Share.Blog
 
         [JsonPropertyName("tags")] public List<BlogTag> Tags { get; } = new();
 
-        [JsonPropertyName("comments")] public List<BlogCommentItem> Comments { get; } = new();
-
         [JsonPropertyName("accesses")] public List<BlogPostAccess> Accesses { get; } = new();
 
         [JsonPropertyName("fullPath")] public string FullPath { get; set; }

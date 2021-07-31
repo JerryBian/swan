@@ -12,7 +12,6 @@ namespace Laobian.Api.Repository
     {
         private readonly ISourceProvider _sourceProvider;
         private BlogAccessStore _blogAccessStore;
-        private BlogCommentStore _blogCommentStore;
         private BlogMetadataStore _blogMetadataStore;
 
         private BlogTagStore _blogTagStore;
@@ -33,9 +32,6 @@ namespace Laobian.Api.Repository
             var postMetadata = await _sourceProvider.GetPostMetadataAsync(cancellationToken);
             _blogMetadataStore = new BlogMetadataStore(postMetadata);
 
-            var postComments = await _sourceProvider.GetCommentsAsync(cancellationToken);
-            _blogCommentStore = new BlogCommentStore(postComments);
-
             var postAccess = await _sourceProvider.GetPostAccessAsync(cancellationToken);
             _blogAccessStore = new BlogAccessStore(postAccess);
         }
@@ -55,17 +51,11 @@ namespace Laobian.Api.Repository
             return await Task.FromResult(_blogAccessStore);
         }
 
-        public async Task<BlogCommentStore> GetBlogCommentStoreAsync(CancellationToken cancellationToken = default)
-        {
-            return await Task.FromResult(_blogCommentStore);
-        }
-
         public async Task PersistentAsync(CancellationToken cancellationToken = default)
         {
             await Task.WhenAll(
                 PersistentBlogAccessStoreAsync(cancellationToken),
                 PersistentBlogMetadataAsync(cancellationToken),
-                PersistentBlogCommentStoreAsync(cancellationToken),
                 PersistentBlogTagStoreAsync(cancellationToken)
             );
             await _sourceProvider.PersistentAsync(cancellationToken);
@@ -90,14 +80,6 @@ namespace Laobian.Api.Repository
             await _sourceProvider.SavePostAccessAsync(
                 _blogAccessStore.GetAll().ToDictionary(x => x.Key,
                     x => JsonHelper.Serialize(x.Value.OrderByDescending(y => y.Date), true)), cancellationToken);
-        }
-
-        private async Task PersistentBlogCommentStoreAsync(CancellationToken cancellationToken = default)
-        {
-            await _sourceProvider.SaveCommentsAsync(
-                _blogCommentStore.GetAll().ToDictionary(x => x.Key,
-                    x => JsonHelper.Serialize(x.Value.OrderByDescending(y => y.LastUpdatedAt), true)),
-                cancellationToken);
         }
     }
 }

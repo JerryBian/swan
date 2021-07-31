@@ -12,5 +12,10 @@ namespace Laobian.Share.Blog
         [JsonPropertyName("description")] public string Description { get; set; }
 
         [JsonPropertyName("lastUpdatedAt")] public DateTime LastUpdatedAt { get; set; }
+
+        public string GetFullPath()
+        {
+            return $"/tag/{Link}";
+        }
     }
 }
