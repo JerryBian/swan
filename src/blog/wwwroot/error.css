@@ -58,7 +58,7 @@ $h6-font-size: $font-size-base * 0.9;*/
 body {
   margin: 0;
   font-family: var(--bs-font-sans-serif);
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 400;
   line-height: 1.5;
   color: #495057;
@@ -88,42 +88,37 @@ h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1 {
 }
 
 h1, .h1 {
-  font-size: calc(1.2735rem + 0.282vw);
+  font-size: calc(1.26675rem + 0.201vw);
 }
 @media (min-width: 1200px) {
   h1, .h1 {
-    font-size: 1.485rem;
+    font-size: 1.4175rem;
   }
 }
 
 h2, .h2 {
-  font-size: calc(1.2625rem + 0.15vw);
+  font-size: calc(1.25625rem + 0.075vw);
 }
 @media (min-width: 1200px) {
   h2, .h2 {
-    font-size: 1.375rem;
+    font-size: 1.3125rem;
   }
 }
 
 h3, .h3 {
-  font-size: calc(1.2515rem + 0.018vw);
-}
-@media (min-width: 1200px) {
-  h3, .h3 {
-    font-size: 1.265rem;
-  }
+  font-size: 1.2075rem;
 }
 
 h4, .h4 {
-  font-size: 1.155rem;
+  font-size: 1.1025rem;
 }
 
 h5, .h5 {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
 }
 
 h6, .h6 {
-  font-size: 0.99rem;
+  font-size: 0.945rem;
 }
 
 p {
@@ -223,7 +218,7 @@ pre,
 code,
 kbd,
 samp {
-  font-family: var(--bs-font-monospace);
+  font-family: Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   font-size: 1em;
   direction: ltr /* rtl:ignore */;
   unicode-bidi: bidi-override;
@@ -457,12 +452,12 @@ progress {
 }
 
 .lead {
-  font-size: calc(1.2625rem + 0.15vw);
+  font-size: calc(1.25625rem + 0.075vw);
   font-weight: 300;
 }
 @media (min-width: 1200px) {
   .lead {
-    font-size: 1.375rem;
+    font-size: 1.3125rem;
   }
 }
 
@@ -556,11 +551,11 @@ progress {
 
 .blockquote {
   margin-bottom: 1rem;
-  font-size: calc(1.2625rem + 0.15vw);
+  font-size: calc(1.25625rem + 0.075vw);
 }
 @media (min-width: 1200px) {
   .blockquote {
-    font-size: 1.375rem;
+    font-size: 1.3125rem;
   }
 }
 .blockquote > :last-child {
@@ -1963,16 +1958,16 @@ progress {
   justify-content: space-between;
 }
 .navbar-brand {
-  padding-top: 0.29375rem;
-  padding-bottom: 0.29375rem;
+  padding-top: 0.303125rem;
+  padding-bottom: 0.303125rem;
   margin-right: 1rem;
-  font-size: calc(1.2625rem + 0.15vw);
+  font-size: calc(1.25625rem + 0.075vw);
   text-decoration: none;
   white-space: nowrap;
 }
 @media (min-width: 1200px) {
   .navbar-brand {
-    font-size: 1.375rem;
+    font-size: 1.3125rem;
   }
 }
 .navbar-nav {
@@ -2003,7 +1998,7 @@ progress {
 
 .navbar-toggler {
   padding: 0.25rem 0.75rem;
-  font-size: calc(1.2625rem + 0.15vw);
+  font-size: calc(1.25625rem + 0.075vw);
   line-height: 1;
   background-color: transparent;
   border: 1px solid transparent;
@@ -2012,7 +2007,7 @@ progress {
 }
 @media (min-width: 1200px) {
   .navbar-toggler {
-    font-size: 1.375rem;
+    font-size: 1.3125rem;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -2459,11 +2454,11 @@ progress {
 
 .pagination-lg .page-link {
   padding: 0.75rem 1.5rem;
-  font-size: calc(1.2625rem + 0.15vw);
+  font-size: calc(1.25625rem + 0.075vw);
 }
 @media (min-width: 1200px) {
   .pagination-lg .page-link {
-    font-size: 1.375rem;
+    font-size: 1.3125rem;
   }
 }
 .pagination-lg .page-item:first-child .page-link {
@@ -2477,7 +2472,7 @@ progress {
 
 .pagination-sm .page-link {
   padding: 0.25rem 0.5rem;
-  font-size: 0.9625rem;
+  font-size: 0.91875rem;
 }
 .pagination-sm .page-item:first-child .page-link {
   border-top-left-radius: 0.2rem;
@@ -3427,27 +3422,27 @@ progress {
 }
 
 .fs-1 {
-  font-size: calc(1.2735rem + 0.282vw) !important;
+  font-size: calc(1.26675rem + 0.201vw) !important;
 }
 
 .fs-2 {
-  font-size: calc(1.2625rem + 0.15vw) !important;
+  font-size: calc(1.25625rem + 0.075vw) !important;
 }
 
 .fs-3 {
-  font-size: calc(1.2515rem + 0.018vw) !important;
+  font-size: 1.2075rem !important;
 }
 
 .fs-4 {
-  font-size: 1.155rem !important;
+  font-size: 1.1025rem !important;
 }
 
 .fs-5 {
-  font-size: 1.1rem !important;
+  font-size: 1.05rem !important;
 }
 
 .fs-6 {
-  font-size: 0.99rem !important;
+  font-size: 0.945rem !important;
 }
 
 .fst-italic {
@@ -6982,15 +6977,11 @@ progress {
 }
 @media (min-width: 1200px) {
   .fs-1 {
-    font-size: 1.485rem !important;
+    font-size: 1.4175rem !important;
   }
 
   .fs-2 {
-    font-size: 1.375rem !important;
-  }
-
-  .fs-3 {
-    font-size: 1.265rem !important;
+    font-size: 1.3125rem !important;
   }
 }
 @media print {
@@ -7035,11 +7026,11 @@ progress {
   }
 }
 .fs-sm {
-  font-size: 0.9625rem;
+  font-size: 0.91875rem;
 }
 
 .fs-xs {
-  font-size: 0.77rem;
+  font-size: 0.735rem;
 }
 
 .muted-bolder {
@@ -7089,7 +7080,7 @@ main {
     }
 }*/
 .navbar {
-  font-size: 0.9625rem;
+  font-size: 0.91875rem;
   font-weight: 500;
 }
 .navbar .nav-item {
