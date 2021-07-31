@@ -215,8 +215,7 @@ namespace Laobian.Api.Service
             {
                 if (imageNode.Attributes.Contains("src"))
                 {
-                    var parentNode = imageNode.ParentNode;
-                    parentNode?.AddClass("text-center");
+                    imageNode.AddClass("img-thumbnail mx-auto d-block");
 
                     var src = imageNode.Attributes["src"].Value;
                     if (string.IsNullOrEmpty(src))

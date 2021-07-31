@@ -17,6 +17,7 @@
 @import "../../../../node_modules/bootstrap/scss/grid";
 @import "../../../../node_modules/bootstrap/scss/navbar";
 @import "../../../../node_modules/bootstrap/scss/nav";
+@import "../../../../node_modules/bootstrap/scss/card";
 @import "../../../../node_modules/bootstrap/scss/list-group";
 @import "../../../../node_modules/bootstrap/scss/badge";
 @import "../../../../node_modules/bootstrap/scss/pagination";
@@ -38,12 +39,7 @@
 }
 
 .post-item {
-    font-family: source-han-sans-simplified-c, sans-serif;
-    font-weight: 300;
-    font-style: normal;
-
     p {
         line-height: 1.7;
-        font-size: 1rem;
     }
 }

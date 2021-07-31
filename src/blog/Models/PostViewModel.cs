@@ -21,7 +21,7 @@ namespace Laobian.Blog.Models
         {
             var metadata = new List<string>
             {
-                $"<span>发表于</span> <time class=\"muted-bolder\" datetime=\"{Current.Metadata.PublishTime.ToDateAndTime()}\" title=\"{Current.Metadata.PublishTime.ToChinaDateAndTime()}\">{Current.PublishTimeString}</time>",
+                $"<time class=\"muted-bolder\" datetime=\"{Current.Metadata.PublishTime.ToDateAndTime()}\" title=\"{Current.Metadata.PublishTime.ToChinaDateAndTime()}\">{Current.PublishTimeString}</time>",
                 $"<span class=\"muted-bolder\" title=\"{Current.AccessCount}\">{Current.AccessCountString}</span> <span>次阅读</span>"
             };
 

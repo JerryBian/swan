@@ -1,62 +1,86 @@
-﻿<!DOCTYPE html>
-<html lang="zh" class="w-100 h-100">
+﻿@using Microsoft.Extensions.Options
+@inject IOptions<BlogConfig> _config
+<!DOCTYPE html>
+<html lang="zh" class="w-100 min-vh-100">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@ViewData["Title"]</title>
-
-    <script>
-        (function(d) {
-            var config = {
-                    kitId: 'sip7jhf',
-                    scriptTimeout: 3000,
-                    async: true
-                },
-                h = d.documentElement,
-                t = setTimeout(function() { h.className = h.className.replace(/\bwf-loading\b/g, "") + " wf-inactive"; }, config.scriptTimeout);
-            const tk = d.createElement("script");
-            var f = false;
-            const s = d.getElementsByTagName("script")[0];
-            var a;
-            h.className += " wf-loading";
-            tk.src = `https://use.typekit.net/${config.kitId}.js`;
-            tk.async = true;
-            tk.onload = tk.onreadystatechange = function() {
-                a = this.readyState;
-                if (f || a && a != "complete" && a != "loaded") return;
-                f = true;
-                clearTimeout(t);
-                try {
-                    Typekit.load(config);
-                } catch (e) {
-                }
-            };
-            s.parentNode.insertBefore(tk, s);
-        })(document);
-    </script>
-
+    <title>
+        @if (ViewData["Title"] == null)
+        {
+            <text>Jerry Bian's blog</text>
+        }
+        else
+        {
+            <text>@ViewData["Title"] &minus; Jerry Bian's blog</text>
+        }
+    </title>
     @await RenderSectionAsync("Style", false)
 
 </head>
-<body class="w-100 h-100">
-<nav class="navbar w-100">
-    <div class="container px-2">
-        <a class="navbar-brand" href="/" id="brand">
-            老卞的博客
-        </a>
-        <div class="d-flex">
-            <a class="nav-link me-2" href="/archive">存档</a>
-            <a class="nav-link" href="/about">关于</a>
+<body class="d-flex flex-column w-100 min-vh-100">
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <a class="navbar-brand" href="/">Jerry Bian's blog</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navLinks" aria-controls="navLinks" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navLinks">
+            <ul class="navbar-nav">
+                @*<li class="nav-item">
+                    <a class="nav-link active" href="#">
+                        Home
+                        <span class="visually-hidden">(current)</span>
+                    </a>
+                </li>*@
+                <li class="nav-item">
+                    <a href="/about" class="nav-link active">关于</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/archive">存档</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                
+                <li class="nav-item">
+                    <a class="nav-link" href="https://github.com/JerryBian">GitHub</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/rss">RSS</a>
+                </li>
+            </ul>
         </div>
     </div>
 </nav>
+<div class="container py-3">
+    <div class="row gx-1">
+        <main class="col-9 d-flex wrapper justify-content-center py-3 flex-grow-1">
+            <div class="wrapper-content @*shadow-sm rounded*@">
+                @RenderBody()
+            </div>
+        </main>
+        <aside class="col-3 d-none d-lg-block">
+            <div class="card">
+                <div class="card-header">
+                    Featured
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Special title treatment</h5>
+                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+            </div>
+        </aside>
+    </div>
+    
+</div>
 
-<main class="container my-2 pb-2 shadow-sm rounded">
-    @RenderBody()
-</main>
+<footer class="navbar navbar-light bg-light mt-auto">
+    <nav class="container justify-content-center text-muted fs-6">
+        &copy; @DateTime.Now.Year @_config.Value.AdminChineseName &middot;
+        &hearts; &middot;
+    </nav>
 
-<footer class="text-center text-muted fs-xs w-100 pb-3 pt-4">
-    <p>&copy; @DateTime.Now.Year All rights reserved.</p>
 </footer>
 
 @await RenderSectionAsync("Script", false)

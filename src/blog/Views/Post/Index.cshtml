@@ -2,21 +2,26 @@
 @model PostViewModel
 @inject IOptions<BlogConfig> Config
 
-<div class="p-3">
-    <div class="text-muted fs-sm pb-1">@Html.Raw(Model.MetadataHtml)</div>
-    <div class="mb-2 pb-3">
-        <span class="font-post-title">@Model.Current.Metadata.Title</span>
-        @if (Model.Current.Metadata.IsTopping)
-        {
-            <span class="badge bg-success">置顶</span>
-        }
+<div>
+    <div class="mb-3">
+        <div class="text-muted fs-sm">@Html.Raw(Model.MetadataHtml)</div>
+        <h2 class="mb-3">
+            <span>
+                @Model.Current.Metadata.Title
 
-        @if (!Model.Current.Metadata.IsPublished)
-        {
-            <span class="badge bg-warning">
-                未发布
             </span>
-        }
+            @if (Model.Current.Metadata.IsTopping)
+            {
+                <span class="badge bg-success fs-6">置顶</span>
+            }
+
+            @if (!Model.Current.Metadata.IsPublished)
+            {
+                <span class="badge bg-warning fs-6">
+                    未发布
+                </span>
+            }
+        </h2>
     </div>
     <article class="post-content">
         @Html.Raw(Model.Current.HtmlContent)
@@ -54,5 +59,12 @@
 </div>
 
 @section Style{
-    <link href="~/post.min.css" rel="stylesheet"/>
+    <link href="~/post.min.css" rel="stylesheet" asp-append-version="true"/>
+}
+
+@section Script {
+    @*<script src=""></script>
+    <script>
+        hljs.highlightAll();
+    </script>*@
 }
