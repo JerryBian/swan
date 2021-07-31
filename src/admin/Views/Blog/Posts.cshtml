@@ -1,4 +1,5 @@
-﻿@using Microsoft.Extensions.Options
+﻿@using Laobian.Share.Extension
+@using Microsoft.Extensions.Options
 @model PostsViewModel
 @inject IOptions<AdminConfig> _config
 <div>
@@ -10,7 +11,6 @@
             <th scope="col">Title</th>
             <th scope="col">Published</th>
             <th scope="col">Access</th>
-            <th scope="col">Comments</th>
             <th scope="col">Metadata</th>
         </tr>
         </thead>
@@ -18,16 +18,13 @@
         @foreach (var post in Model.Posts)
         {
             <tr>
-                <th>@post.PublishTimeString</th>
+                <th>@post.Metadata.PublishTime.ToChinaDate()</th>
                 <th>
-                    <a href="@_config.Value.BlogRemoteEndpoint/@post.FullPath">@post.Metadata.Title</a>
+                    <a href="@_config.Value.BlogRemoteEndpoint/@post.GetFullPath()">@post.Metadata.Title</a>
                 </th>
                 <th>@post.IsPublished</th>
                 <th>
-                    @post.AccessCountString
-                </th>
-                <th>
-                    @post.CommentCountString
+                    @post.Accesses.Count.ToUSThousand()
                 </th>
                 <th>
                     <a href="javascript:;" onclick="launchMetadataModal('@post.Link')">Update Metadata</a>
@@ -65,10 +62,6 @@
                 <div class="form-check form-switch mb-3">
                     <input class="form-check-input" type="checkbox" id="modalBodyContainsMath">
                     <label class="form-check-label" for="modalBodyContainsMath">Contains Math</label>
-                </div>
-                <div class="form-check form-switch mb-3">
-                    <input class="form-check-input" type="checkbox" id="modalBodyAllowComment">
-                    <label class="form-check-label" for="modalBodyAllowComment">Allow Comments</label>
                 </div>
                 <div class="mb-3">
                     <label for="modalBodyPublishTime" class="form-label">Publish Time</label>
@@ -114,7 +107,6 @@
                     document.querySelector('#modalBodyIsPublished').checked = post.metadata.isPublished;
                     document.querySelector('#modalBodyIsTopping').checked = post.metadata.isTopping;
                     document.querySelector('#modalBodyContainsMath').checked = post.metadata.containsMath;
-                    document.querySelector('#modalBodyAllowComment').checked = post.metadata.allowComment;
                     document.querySelector('#modalBodyPublishTime').value = post.metadata.publishTime;
 
                     const checkedBoxes = document.querySelectorAll('#tagsDiv input[type=checkbox]');
@@ -144,7 +136,6 @@
                 isPublished: document.querySelector('#modalBodyIsPublished').checked,
                 isTopping: document.querySelector('#modalBodyIsTopping').checked,
                 containsMath: document.querySelector('#modalBodyContainsMath').checked,
-                allowComment: document.querySelector('#modalBodyAllowComment').checked,
                 publishTime: document.querySelector('#modalBodyPublishTime').value,
                 tags: tags
             };

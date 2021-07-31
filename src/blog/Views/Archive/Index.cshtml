@@ -20,8 +20,8 @@
                 @foreach (var post in item.Posts)
                 {
                     <h4 class="mt-2 mb-2">
-                        <span class="text-muted me-2 fs-sm">@post.Metadata.PublishTime.ToDate()</span>
-                        <a href="@post.FullPath">
+                        <span class="text-muted me-2 fs-sm">@post.Metadata.PublishTime.ToChinaDate()</span>
+                        <a href="@post.GetFullPath()">
                             <span>@post.Metadata.Title</span>
                         </a>
                     </h4>

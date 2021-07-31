@@ -25,7 +25,7 @@ namespace Laobian.Api.Service
 
         Task RemoveBlogTagAsync(string tagLink, CancellationToken cancellationToken = default);
 
-        Task UpdateBlogPostMetadataAsync(BlogPostMetadata metadata, CancellationToken cancellationToken = default);
+        Task UpdateBlogPostMetadataAsync(BlogMetadata metadata, CancellationToken cancellationToken = default);
 
         Task AddBlogAccessAsync(string postLink, CancellationToken cancellationToken = default);
     }

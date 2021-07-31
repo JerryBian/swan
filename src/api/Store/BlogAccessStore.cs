@@ -9,23 +9,23 @@ namespace Laobian.Api.Store
 {
     public class BlogAccessStore
     {
-        private readonly ConcurrentDictionary<string, List<BlogPostAccess>> _access;
+        private readonly ConcurrentDictionary<string, List<BlogAccess>> _access;
 
         public BlogAccessStore(IDictionary<string, string> val)
         {
-            _access = new ConcurrentDictionary<string, List<BlogPostAccess>>(StringComparer.InvariantCultureIgnoreCase);
+            _access = new ConcurrentDictionary<string, List<BlogAccess>>(StringComparer.InvariantCultureIgnoreCase);
             foreach (var item in val)
             {
-                _access.TryAdd(item.Key, JsonHelper.Deserialize<List<BlogPostAccess>>(item.Value));
+                _access.TryAdd(item.Key, JsonHelper.Deserialize<List<BlogAccess>>(item.Value));
             }
         }
 
-        public IDictionary<string, List<BlogPostAccess>> GetAll()
+        public IDictionary<string, List<BlogAccess>> GetAll()
         {
             return _access;
         }
 
-        public List<BlogPostAccess> GetByLink(string postLink)
+        public List<BlogAccess> GetByLink(string postLink)
         {
             if (_access.TryGetValue(postLink, out var val))
             {
@@ -38,13 +38,13 @@ namespace Laobian.Api.Store
         public void Add(string postLink, DateTime date, int count)
         {
             _access.AddOrUpdate(postLink,
-                link => new List<BlogPostAccess> {new() {Count = count, Date = date}},
+                link => new List<BlogAccess> {new() {Count = count, Date = date}},
                 (link, val) =>
                 {
                     var access = val.FirstOrDefault(x => x.Date == date);
                     if (access == null)
                     {
-                        access = new BlogPostAccess {Count = count, Date = date};
+                        access = new BlogAccess {Count = count, Date = date};
                         val.Add(access);
                     }
                     else

@@ -4,8 +4,15 @@ using System.Text.Json.Serialization;
 
 namespace Laobian.Share.Blog
 {
-    public class BlogPostMetadata
+    public class BlogMetadata
     {
+        public BlogMetadata()
+        {
+            Title = Guid.NewGuid().ToString("N");
+            CreateTime = PublishTime = LastUpdateTime = DateTime.Now;
+            IsPublished = IsTopping = ContainsMath = false;
+        }
+
         [JsonPropertyName("link")] public string Link { get; set; }
 
         [JsonPropertyName("title")] public string Title { get; set; }
@@ -22,20 +29,10 @@ namespace Laobian.Share.Blog
 
         [JsonPropertyName("containsMath")] public bool ContainsMath { get; set; }
 
-        [JsonPropertyName("allowComment")] public bool AllowComment { get; set; }
-
         [JsonPropertyName("excerpt")] public string Excerpt { get; set; }
 
         [JsonInclude]
         [JsonPropertyName("tags")]
         public List<string> Tags { get; init; } = new();
-
-        public void SetDefault()
-        {
-            Title = Guid.NewGuid().ToString("N");
-            CreateTime = PublishTime = LastUpdateTime = DateTime.Now;
-            IsPublished = IsTopping = ContainsMath = false;
-            AllowComment = true;
-        }
     }
 }

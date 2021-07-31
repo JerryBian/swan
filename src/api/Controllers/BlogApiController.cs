@@ -116,7 +116,7 @@ namespace Laobian.Api.Controllers
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdatePostMetadataAsync(BlogPostMetadata metadata)
+        public async Task<IActionResult> UpdatePostMetadataAsync(BlogMetadata metadata)
         {
             try
             {

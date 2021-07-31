@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -60,7 +59,7 @@ namespace Laobian.Admin.Controllers
 
         [HttpPost]
         [Route("post/metadata")]
-        public async Task<bool> UpdatePostMetadataAsync([FromBody] BlogPostMetadata metadata)
+        public async Task<bool> UpdatePostMetadataAsync([FromBody] BlogMetadata metadata)
         {
             var result = await _apiHttpService.UpdatePostMetadataAsync(metadata);
             return result;
@@ -103,6 +102,5 @@ namespace Laobian.Admin.Controllers
             var result = await _apiHttpService.UpdateTagAsync(tag);
             return result;
         }
-
     }
 }

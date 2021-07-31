@@ -106,7 +106,7 @@ namespace Laobian.Admin.HttpService
             return await JsonHelper.DeserializeAsync<List<BlogTag>>(stream);
         }
 
-        public async Task<bool> UpdatePostMetadataAsync(BlogPostMetadata metadata)
+        public async Task<bool> UpdatePostMetadataAsync(BlogMetadata metadata)
         {
             var response = await _httpClient.PostAsync("/blog/post/metadata",
                 new StringContent(JsonHelper.Serialize(metadata), Encoding.UTF8, "application/json"));

@@ -19,9 +19,9 @@ namespace Laobian.Blog.Controllers
     {
         private readonly ApiHttpService _apiHttpService;
         private readonly BlogConfig _blogConfig;
+        private readonly ICacheClient _cacheClient;
         private readonly ILogger<HomeController> _logger;
         private readonly ISystemData _systemData;
-        private readonly ICacheClient _cacheClient;
 
         public HomeController(ISystemData systemData, IOptions<BlogConfig> config, ILogger<HomeController> logger,
             ApiHttpService apiHttpService, ICacheClient cacheClient)
@@ -41,9 +41,9 @@ namespace Laobian.Blog.Controllers
                 CacheKeyBuilder.Build(nameof(HomeController), nameof(Index), p, authenticated),
                 () =>
                 {
-                    var posts = 
+                    var posts =
                         _systemData.Posts.Where(x => authenticated || x.IsPublished)
-                        .OrderByDescending(x=>x.Metadata.PublishTime).ToList();
+                            .OrderByDescending(x => x.Metadata.PublishTime).ToList();
                     var toppedPosts = posts.Where(x => x.Metadata.IsTopping).ToList();
                     foreach (var blogPost in toppedPosts)
                     {
@@ -52,11 +52,11 @@ namespace Laobian.Blog.Controllers
 
                     posts.InsertRange(0, toppedPosts);
 
-                    var model = new PagedPostViewModel(p, posts.Count, _blogConfig.PostsPerPage) { Url = Request.Path };
+                    var model = new PagedPostViewModel(p, posts.Count, _blogConfig.PostsPerPage) {Url = Request.Path};
 
                     foreach (var blogPost in posts.ToPaged(_blogConfig.PostsPerPage, model.CurrentPage))
                     {
-                        var postViewModel = new PostViewModel { Current = blogPost };
+                        var postViewModel = new PostViewModel {Current = blogPost};
                         postViewModel.SetAdditionalInfo();
                         model.Posts.Add(postViewModel);
                     }
@@ -64,7 +64,6 @@ namespace Laobian.Blog.Controllers
                     return model;
                 });
 
-            
 
             return View(viewModel);
         }
@@ -78,7 +77,8 @@ namespace Laobian.Blog.Controllers
                 CacheKeyBuilder.Build(nameof(HomeController), nameof(Archive), authenticated),
                 () =>
                 {
-                    var posts = _systemData.Posts.Where(x => authenticated || x.IsPublished).OrderByDescending(x => x.Metadata.PublishTime).ToList();
+                    var posts = _systemData.Posts.Where(x => authenticated || x.IsPublished)
+                        .OrderByDescending(x => x.Metadata.PublishTime).ToList();
                     var model = new List<PostArchiveViewModel>();
                     foreach (var item in posts.GroupBy(x => x.Metadata.PublishTime.Year).OrderByDescending(y => y.Key))
                     {
@@ -96,7 +96,7 @@ namespace Laobian.Blog.Controllers
 
                     return model;
                 });
-            
+
 
             return View("~/Views/Archive/Index.cshtml", viewModel);
         }
@@ -111,7 +111,8 @@ namespace Laobian.Blog.Controllers
                 () =>
                 {
                     var tags = _systemData.Tags;
-                    var posts = _systemData.Posts.Where(x => authenticated || x.IsPublished).OrderByDescending(x => x.Metadata.PublishTime).ToList();
+                    var posts = _systemData.Posts.Where(x => authenticated || x.IsPublished)
+                        .OrderByDescending(x => x.Metadata.PublishTime).ToList();
                     var model = new List<PostArchiveViewModel>();
 
                     foreach (var blogTag in tags.OrderByDescending(x => x.LastUpdatedAt))
@@ -130,7 +131,7 @@ namespace Laobian.Blog.Controllers
 
                     return model;
                 });
-            
+
 
             return View("~/Views/Archive/Index.cshtml", viewModel);
         }
@@ -144,7 +145,7 @@ namespace Laobian.Blog.Controllers
                 CacheKeyBuilder.Build(nameof(HomeController), nameof(Post), authenticated, year, month, link),
                 () =>
                 {
-                    var post = _systemData.Posts.FirstOrDefault(x => 
+                    var post = _systemData.Posts.FirstOrDefault(x =>
                         StringHelper.EqualIgnoreCase(x.Link, link) &&
                         x.Metadata.PublishTime.Year == year &&
                         x.Metadata.PublishTime.Month == month &&
@@ -202,9 +203,9 @@ namespace Laobian.Blog.Controllers
                     var model = new AboutViewModel
                     {
                         LatestPost = posts.FirstOrDefault(),
-                        PostTotalAccessCount = posts.Sum(p => p.AccessCount).ToString(),
+                        PostTotalAccessCount = posts.Sum(p => p.Accesses.Count).ToUSThousand(),
                         PostTotalCount = posts.Count.ToString(),
-                        TopPosts = posts.OrderByDescending(p => p.AccessCount).Take(_blogConfig.PostsPerPage),
+                        TopPosts = posts.OrderByDescending(p => p.Accesses.Count).Take(_blogConfig.PostsPerPage),
                         SystemAppVersion = _systemData.AppVersion,
                         SystemDotNetVersion = _systemData.RuntimeVersion,
                         SystemLastBoot = _systemData.BootTime.ToChinaDateAndTime(),
@@ -216,7 +217,7 @@ namespace Laobian.Blog.Controllers
 
                     return model;
                 });
-            
+
 
             return View("~/Views/About/Index.cshtml", viewModel);
         }
