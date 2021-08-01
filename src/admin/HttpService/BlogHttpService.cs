@@ -6,7 +6,7 @@ using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
 using Laobian.Share.Blog;
-using Laobian.Share.Helper;
+using Laobian.Share.Util;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -35,7 +35,7 @@ namespace Laobian.Admin.HttpService
             }
 
             await using var stream = await response.Content.ReadAsStreamAsync();
-            return await JsonHelper.DeserializeAsync<List<BlogPost>>(stream);
+            return await JsonUtil.DeserializeAsync<List<BlogPost>>(stream);
         }
 
         public async Task<BlogPost> GetPostAsync(string link)
@@ -49,7 +49,7 @@ namespace Laobian.Admin.HttpService
             }
 
             await using var stream = await response.Content.ReadAsStreamAsync();
-            return await JsonHelper.DeserializeAsync<BlogPost>(stream);
+            return await JsonUtil.DeserializeAsync<BlogPost>(stream);
         }
 
         public async Task PostNewAccessAsync(string link)
@@ -74,13 +74,13 @@ namespace Laobian.Admin.HttpService
             }
 
             await using var stream = await response.Content.ReadAsStreamAsync();
-            return await JsonHelper.DeserializeAsync<List<BlogTag>>(stream);
+            return await JsonUtil.DeserializeAsync<List<BlogTag>>(stream);
         }
 
         public async Task<bool> UpdatePostMetadataAsync(BlogMetadata metadata)
         {
             var response = await _httpClient.PostAsync("/blog/post/metadata",
-                new StringContent(JsonHelper.Serialize(metadata), Encoding.UTF8, "application/json"));
+                new StringContent(JsonUtil.Serialize(metadata), Encoding.UTF8, "application/json"));
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 _logger.LogError(
@@ -103,13 +103,13 @@ namespace Laobian.Admin.HttpService
             }
 
             await using var stream = await response.Content.ReadAsStreamAsync();
-            return await JsonHelper.DeserializeAsync<BlogTag>(stream);
+            return await JsonUtil.DeserializeAsync<BlogTag>(stream);
         }
 
         public async Task<bool> AddTagAsync(BlogTag tag)
         {
             var response = await _httpClient.PutAsync("/blog/tag",
-                new StringContent(JsonHelper.Serialize(tag), Encoding.UTF8, MediaTypeNames.Application.Json));
+                new StringContent(JsonUtil.Serialize(tag), Encoding.UTF8, MediaTypeNames.Application.Json));
             var content = await response.Content.ReadAsStringAsync();
             if (response.StatusCode != HttpStatusCode.OK)
             {
@@ -124,7 +124,7 @@ namespace Laobian.Admin.HttpService
         public async Task<bool> UpdateTagAsync(BlogTag tag)
         {
             var response = await _httpClient.PostAsync("/blog/tag",
-                new StringContent(JsonHelper.Serialize(tag), Encoding.UTF8, MediaTypeNames.Application.Json));
+                new StringContent(JsonUtil.Serialize(tag), Encoding.UTF8, MediaTypeNames.Application.Json));
             var content = await response.Content.ReadAsStringAsync();
             if (response.StatusCode != HttpStatusCode.OK)
             {

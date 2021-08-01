@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Laobian.Blog.HttpService;
-using Laobian.Share.Helper;
+using Laobian.Share.Util;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -16,10 +16,10 @@ namespace Laobian.Blog.Controllers
     [Route("github")]
     public class GitHubController : ControllerBase
     {
-        private readonly ISystemData _systemData;
-        private readonly BlogConfig _blogConfig;
         private readonly ApiHttpService _apiHttpService;
+        private readonly BlogConfig _blogConfig;
         private readonly ILogger<GitHubController> _logger;
+        private readonly ISystemData _systemData;
 
         public GitHubController(
             IOptions<BlogConfig> blogConfig,
@@ -50,7 +50,7 @@ namespace Laobian.Blog.Controllers
                 return BadRequest("Invalid Request.");
             }
 
-            if (!StringHelper.EqualIgnoreCase("push", Request.Headers[eventHeader]))
+            if (!StringUtil.EqualsIgnoreCase("push", Request.Headers[eventHeader]))
             {
                 //_logger.LogWarning(LogMessageHelper.Format($"Invalid github event {Request.Headers[eventHeader]}"));
                 return BadRequest("Only support push event.");
@@ -88,10 +88,10 @@ namespace Laobian.Blog.Controllers
                     }
                 }
 
-                var payload = JsonHelper.Deserialize<GitHubPayload>(body);
+                var payload = JsonUtil.Deserialize<GitHubPayload>(body);
                 if (payload.Commits.Any(c =>
-                    StringHelper.EqualIgnoreCase(_blogConfig.AdminEmail, c.Author.Email) &&
-                    StringHelper.EqualIgnoreCase(_blogConfig.AdminName, c.Author.User)))
+                    StringUtil.EqualsIgnoreCase(_blogConfig.AdminEmail, c.Author.Email) &&
+                    StringUtil.EqualsIgnoreCase(_blogConfig.AdminName, c.Author.User)))
                 {
                     //_logger.LogInformation(LogMessageHelper.Format("Got request from server, no need to refresh."));
                     return Ok("No need to refresh.");

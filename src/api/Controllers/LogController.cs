@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using Laobian.Api.Logger;
 using Laobian.Share;
-using Laobian.Share.Helper;
 using Laobian.Share.Logger;
+using Laobian.Share.Util;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -16,11 +16,12 @@ namespace Laobian.Api.Controllers
     [Route("log")]
     public class LogController : ControllerBase
     {
+        private readonly ApiConfig _config;
         private readonly IGitFileLogQueue _gitFileLogQueue;
         private readonly ILogger<LogController> _logger;
-        private readonly ApiConfig _config;
 
-        public LogController(ILogger<LogController> logger, IGitFileLogQueue gitFileLogQueue, IOptions<ApiConfig> config)
+        public LogController(ILogger<LogController> logger, IGitFileLogQueue gitFileLogQueue,
+            IOptions<ApiConfig> config)
         {
             _logger = logger;
             _config = config.Value;
@@ -55,7 +56,8 @@ namespace Laobian.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public IActionResult GetLogs([FromRoute] LaobianSite site, [FromQuery] LogLevel level, [FromQuery]DateTime date)
+        public IActionResult GetLogs([FromRoute] LaobianSite site, [FromQuery] LogLevel level,
+            [FromQuery] DateTime date)
         {
             try
             {
@@ -74,7 +76,7 @@ namespace Laobian.Api.Controllers
                     return Ok(string.Empty);
                 }
 
-                return Ok(JsonHelper.Serialize(System.IO.File.ReadAllText(logFile)));
+                return Ok(JsonUtil.Serialize(System.IO.File.ReadAllText(logFile)));
             }
             catch (Exception ex)
             {

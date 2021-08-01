@@ -4,9 +4,9 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Laobian.Share.Helper;
 using Laobian.Share.Logger;
 using Laobian.Share.Logger.Remote;
+using Laobian.Share.Util;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -31,7 +31,7 @@ namespace Laobian.Admin.Logger
             httpClient.BaseAddress = new Uri(_config.ApiLocalEndpoint);
 
             var response = await httpClient.PostAsync($"/log/{loggerName}",
-                new StringContent(JsonHelper.Serialize(logs), Encoding.UTF8, "application/json"));
+                new StringContent(JsonUtil.Serialize(logs), Encoding.UTF8, "application/json"));
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 Console.WriteLine(

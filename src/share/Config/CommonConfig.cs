@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Laobian.Share
+namespace Laobian.Share.Config
 {
     public class CommonConfig
     {

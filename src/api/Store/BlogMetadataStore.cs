@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Laobian.Share.Blog;
-using Laobian.Share.Helper;
+using Laobian.Share.Util;
 
 namespace Laobian.Api.Store
 {
@@ -17,7 +17,7 @@ namespace Laobian.Api.Store
                 new ConcurrentDictionary<string, BlogMetadata>(StringComparer.InvariantCultureIgnoreCase);
             if (!string.IsNullOrEmpty(metadata))
             {
-                foreach (var item in JsonHelper.Deserialize<List<BlogMetadata>>(metadata))
+                foreach (var item in JsonUtil.Deserialize<List<BlogMetadata>>(metadata))
                 {
                     _allMetadata.TryAdd(item.Link, item);
                 }

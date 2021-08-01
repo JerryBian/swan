@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Api.SourceProvider;
 using Laobian.Api.Store;
-using Laobian.Share.Helper;
+using Laobian.Share.Util;
 using Microsoft.Extensions.Options;
 
 namespace Laobian.Api.Repository
@@ -64,14 +64,14 @@ namespace Laobian.Api.Repository
         private async Task PersistentBlogTagStoreAsync(CancellationToken cancellationToken = default)
         {
             await _sourceProvider.SaveTagsAsync(
-                JsonHelper.Serialize(_blogTagStore.GetAll().OrderByDescending(x => x.LastUpdatedAt), true),
+                JsonUtil.Serialize(_blogTagStore.GetAll().OrderByDescending(x => x.LastUpdatedAt), true),
                 cancellationToken);
         }
 
         private async Task PersistentBlogMetadataAsync(CancellationToken cancellationToken = default)
         {
             await _sourceProvider.SavePostMetadataAsync(
-                JsonHelper.Serialize(_blogMetadataStore.GetAll().OrderByDescending(x => x.LastUpdateTime), true),
+                JsonUtil.Serialize(_blogMetadataStore.GetAll().OrderByDescending(x => x.LastUpdateTime), true),
                 cancellationToken);
         }
 
@@ -79,7 +79,7 @@ namespace Laobian.Api.Repository
         {
             await _sourceProvider.SavePostAccessAsync(
                 _blogAccessStore.GetAll().ToDictionary(x => x.Key,
-                    x => JsonHelper.Serialize(x.Value.OrderByDescending(y => y.Date), true)), cancellationToken);
+                    x => JsonUtil.Serialize(x.Value.OrderByDescending(y => y.Date), true)), cancellationToken);
         }
     }
 }

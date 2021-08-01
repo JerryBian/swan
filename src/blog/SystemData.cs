@@ -38,9 +38,9 @@ namespace Laobian.Blog
 
         public string RuntimeVersion { get; }
 
-        public List<BlogPost> Posts { get; } = new List<BlogPost>();
+        public List<BlogPost> Posts { get; } = new();
 
-        public List<BlogTag> Tags { get; } = new List<BlogTag>();
+        public List<BlogTag> Tags { get; } = new();
 
         public DateTime LastLoadTimestamp { get; private set; }
 

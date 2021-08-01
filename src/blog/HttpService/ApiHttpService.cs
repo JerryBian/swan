@@ -6,7 +6,7 @@ using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
 using Laobian.Share.Blog;
-using Laobian.Share.Helper;
+using Laobian.Share.Util;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -49,7 +49,7 @@ namespace Laobian.Blog.HttpService
             }
 
             await using var stream = await response.Content.ReadAsStreamAsync();
-            return await JsonHelper.DeserializeAsync<List<BlogPost>>(stream);
+            return await JsonUtil.DeserializeAsync<List<BlogPost>>(stream);
         }
 
         public async Task<List<BlogTag>> GetTagsAsync()
@@ -63,7 +63,7 @@ namespace Laobian.Blog.HttpService
             }
 
             await using var stream = await response.Content.ReadAsStreamAsync();
-            return await JsonHelper.DeserializeAsync<List<BlogTag>>(stream);
+            return await JsonUtil.DeserializeAsync<List<BlogTag>>(stream);
         }
 
         public async Task<BlogPost> GetPostAsync(string link)
@@ -77,7 +77,7 @@ namespace Laobian.Blog.HttpService
             }
 
             await using var stream = await response.Content.ReadAsStreamAsync();
-            return await JsonHelper.DeserializeAsync<BlogPost>(stream);
+            return await JsonUtil.DeserializeAsync<BlogPost>(stream);
         }
 
         public async Task AddPostAccess(string link)

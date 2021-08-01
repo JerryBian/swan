@@ -5,6 +5,7 @@ using System.Text.Unicode;
 using Laobian.Admin.HttpService;
 using Laobian.Admin.Logger;
 using Laobian.Share;
+using Laobian.Share.Config;
 using Laobian.Share.Converter;
 using Laobian.Share.Extension;
 using Laobian.Share.Logger.Remote;

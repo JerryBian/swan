@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using Laobian.Share.Helper;
 using Laobian.Share.Logger;
+using Laobian.Share.Util;
 
 namespace Laobian.Api.Logger
 {
@@ -124,11 +124,11 @@ namespace Laobian.Api.Logger
                         log.TimeStamp.Month.ToString("D2"));
                     Directory.CreateDirectory(dir);
                     File.AppendAllLines(Path.Combine(dir, $"{log.TimeStamp:yyyy-MM-dd}.log"),
-                        new[] {JsonHelper.Serialize(log)});
+                        new[] {JsonUtil.Serialize(log)});
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Process Logs failed. ==> {JsonHelper.Serialize(log)}{Environment.NewLine}{ex}");
+                    Console.WriteLine($"Process Logs failed. ==> {JsonUtil.Serialize(log)}{Environment.NewLine}{ex}");
                 }
             }
         }

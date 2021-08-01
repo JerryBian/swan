@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Laobian.Share.Blog;
-using Laobian.Share.Helper;
+using Laobian.Share.Util;
 
 namespace Laobian.Api.Store
 {
@@ -16,7 +16,7 @@ namespace Laobian.Api.Store
             _access = new ConcurrentDictionary<string, List<BlogAccess>>(StringComparer.InvariantCultureIgnoreCase);
             foreach (var item in val)
             {
-                _access.TryAdd(item.Key, JsonHelper.Deserialize<List<BlogAccess>>(item.Value));
+                _access.TryAdd(item.Key, JsonUtil.Deserialize<List<BlogAccess>>(item.Value));
             }
         }
 

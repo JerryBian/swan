@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
@@ -8,6 +9,7 @@ using Laobian.Blog.HostedService;
 using Laobian.Blog.HttpService;
 using Laobian.Blog.Logger;
 using Laobian.Share;
+using Laobian.Share.Config;
 using Laobian.Share.Converter;
 using Laobian.Share.Extension;
 using Laobian.Share.Logger.Remote;
@@ -43,7 +45,7 @@ namespace Laobian.Blog
         {
             return HttpPolicyExtensions
                 .HandleTransientHttpError()
-                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .OrResult(msg => msg.StatusCode == HttpStatusCode.NotFound)
                 .WaitAndRetryAsync(6, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2,
                     retryAttempt)));
         }

@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Api.Repository;
 using Laobian.Share.Blog;
-using Laobian.Share.Helper;
+using Laobian.Share.Util;
 using Microsoft.Extensions.Options;
 
 namespace Laobian.Api.Service
@@ -98,7 +98,7 @@ namespace Laobian.Api.Service
         {
             var blogPostStore = await _blogPostRepository.GetBlogPostStoreAsync(cancellationToken);
             var allPosts = blogPostStore.GetAll();
-            allPosts.ForEach(x => x.Tags.RemoveAll(y => StringHelper.EqualIgnoreCase(y.Link, tagLink)));
+            allPosts.ForEach(x => x.Tags.RemoveAll(y => StringUtil.EqualsIgnoreCase(y.Link, tagLink)));
 
             var blogTagStore = await _dbRepository.GetBlogTagStoreAsync(cancellationToken);
             blogTagStore.RemoveByLink(tagLink);

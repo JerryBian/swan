@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Laobian.Share
+﻿namespace Laobian.Share
 {
     public enum LaobianSite
     {
-        Api = 0,
+        Home = 0,
 
-        Blog = 2,
+        Api = 2,
 
-        Admin = 4
+        Blog = 4,
+
+        Admin = 8
     }
 }

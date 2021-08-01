@@ -8,6 +8,7 @@ using Laobian.Api.Repository;
 using Laobian.Api.Service;
 using Laobian.Api.SourceProvider;
 using Laobian.Share;
+using Laobian.Share.Config;
 using Laobian.Share.Converter;
 using Laobian.Share.Extension;
 using Laobian.Share.Notify;

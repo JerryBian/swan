@@ -1,4 +1,4 @@
-﻿using Laobian.Share;
+﻿using Laobian.Share.Config;
 
 namespace Laobian.Blog
 {

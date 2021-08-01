@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Laobian.Share
+namespace Laobian.Share.Config
 {
     public class LaobianConfigException : Exception
     {

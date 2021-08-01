@@ -5,11 +5,10 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Laobian.Share.Converter;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
-namespace Laobian.Share.Helper
+namespace Laobian.Share.Util
 {
-    public static class JsonHelper
+    public static class JsonUtil
     {
         public static string Serialize<T>(T obj, bool writeIndented = false, List<JsonConverter> converters = null)
         {

@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json.Serialization;
 using HtmlAgilityPack;
-using Laobian.Share.Helper;
+using Laobian.Share.Util;
 using Markdig;
 
 namespace Laobian.Share.Blog
@@ -54,8 +54,8 @@ namespace Laobian.Share.Blog
                     htmlDoc.DocumentNode
                         .Descendants()
                         .Where(_ =>
-                            StringHelper.EqualIgnoreCase(_.Name, "p") &&
-                            _.Descendants().FirstOrDefault(c => StringHelper.EqualIgnoreCase(c.Name, "img")) == null)
+                            StringUtil.EqualsIgnoreCase(_.Name, "p") &&
+                            _.Descendants().FirstOrDefault(c => StringUtil.EqualsIgnoreCase(c.Name, "img")) == null)
                         .Take(2)
                         .ToList();
                 if (paraNodes.Count == 1)

@@ -8,7 +8,7 @@ using Laobian.Blog.HttpService;
 using Laobian.Blog.Models;
 using Laobian.Share.Blog;
 using Laobian.Share.Extension;
-using Laobian.Share.Helper;
+using Laobian.Share.Util;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -146,7 +146,7 @@ namespace Laobian.Blog.Controllers
                 () =>
                 {
                     var post = _systemData.Posts.FirstOrDefault(x =>
-                        StringHelper.EqualIgnoreCase(x.Link, link) &&
+                        StringUtil.EqualsIgnoreCase(x.Link, link) &&
                         x.Metadata.PublishTime.Year == year &&
                         x.Metadata.PublishTime.Month == month &&
                         (x.Metadata.IsPublished || authenticated));

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Laobian.Share.Helper;
+using Laobian.Share.Util;
 
 namespace Laobian.Share.Logger.Remote
 {
@@ -115,7 +115,7 @@ namespace Laobian.Share.Logger.Remote
                 Console.WriteLine($"Sink failed.{Environment.NewLine}{ex}");
                 foreach (var log in logs)
                 {
-                    Console.WriteLine(JsonHelper.Serialize(log));
+                    Console.WriteLine(JsonUtil.Serialize(log));
                 }
             }
         }

@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace Laobian.Share.Helper
+namespace Laobian.Share.Util
 {
-    public static class StringHelper
+    public static class StringUtil
     {
-        public static bool EqualIgnoreCase(string left, string right)
+        public static bool EqualsIgnoreCase(string left, string right)
         {
             return string.Equals(left, right, StringComparison.InvariantCultureIgnoreCase);
         }
