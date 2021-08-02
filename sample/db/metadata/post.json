@@ -8,7 +8,6 @@
     "isPublished": false,
     "isTopping": false,
     "containsMath": false,
-    "allowComment": true,
     "excerpt": "",
     "tags": []
   },
@@ -21,7 +20,6 @@
     "isPublished": true,
     "isTopping": false,
     "containsMath": false,
-    "allowComment": true,
     "excerpt": "",
     "tags": []
   },
@@ -34,7 +32,6 @@
     "isPublished": true,
     "isTopping": false,
     "containsMath": false,
-    "allowComment": true,
     "excerpt": "",
     "tags": []
   },
@@ -47,7 +44,6 @@
     "isPublished": true,
     "isTopping": false,
     "containsMath": false,
-    "allowComment": true,
     "excerpt": "",
     "tags": []
   },
@@ -60,7 +56,6 @@
     "isPublished": true,
     "isTopping": false,
     "containsMath": false,
-    "allowComment": true,
     "excerpt": "",
     "tags": []
   },
@@ -73,7 +68,6 @@
     "isPublished": true,
     "isTopping": false,
     "containsMath": false,
-    "allowComment": true,
     "excerpt": "",
     "tags": []
   },
@@ -86,7 +80,6 @@
     "isPublished": true,
     "isTopping": false,
     "containsMath": false,
-    "allowComment": true,
     "excerpt": "",
     "tags": []
   },
@@ -99,7 +92,6 @@
     "isPublished": true,
     "isTopping": false,
     "containsMath": false,
-    "allowComment": true,
     "excerpt": "",
     "tags": []
   },
@@ -112,7 +104,6 @@
     "isPublished": true,
     "isTopping": false,
     "containsMath": false,
-    "allowComment": true,
     "excerpt": "",
     "tags": []
   },
@@ -125,7 +116,6 @@
     "isPublished": true,
     "isTopping": false,
     "containsMath": false,
-    "allowComment": true,
     "excerpt": "",
     "tags": []
   },
@@ -138,7 +128,6 @@
     "isPublished": true,
     "isTopping": false,
     "containsMath": false,
-    "allowComment": true,
     "excerpt": "",
     "tags": []
   },
@@ -151,7 +140,6 @@
     "isPublished": true,
     "isTopping": false,
     "containsMath": false,
-    "allowComment": true,
     "excerpt": "",
     "tags": []
   },
@@ -164,7 +152,6 @@
     "isPublished": true,
     "isTopping": false,
     "containsMath": false,
-    "allowComment": true,
     "excerpt": "",
     "tags": []
   },
@@ -177,7 +164,6 @@
     "isPublished": true,
     "isTopping": false,
     "containsMath": false,
-    "allowComment": true,
     "excerpt": "",
     "tags": []
   },
@@ -190,7 +176,6 @@
     "isPublished": true,
     "isTopping": false,
     "containsMath": false,
-    "allowComment": true,
     "excerpt": "",
     "tags": []
   },
@@ -203,7 +188,6 @@
     "isPublished": true,
     "isTopping": false,
     "containsMath": false,
-    "allowComment": true,
     "excerpt": "",
     "tags": []
   }

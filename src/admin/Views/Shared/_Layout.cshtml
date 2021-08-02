@@ -1,14 +1,41 @@
 ﻿<!DOCTYPE html>
-<html lang="en" class="h-100">
+<html lang="en" class="w-100 min-vh-100">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>@ViewData["Title"] - Admin</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    @await RenderSectionAsync("Style", false)
 </head>
-<body class="container-fluid h-100">
-<div class="row h-100">
+<body class="d-flex flex-column w-100 min-vh-100">
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Navbar</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navLinks" aria-controls="navLinks" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navLinks">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/blog/post"><i class="fas fa-list-alt"></i> BLOG POSTS</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/blog/tag">BLOG TAGS</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/blog/post">BLOG POSTS</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/log">LOGS</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<main>
+    @RenderBody()
+</main>
+@*<div class="row h-100">
     <div class="col-2 h-100 bg-dark d-flex flex-column p-3 text-white">
         <a href="/" class="fs-4 text-decoration-none mb-3 me-auto text-white">Admin</a>
         <hr/>
@@ -33,9 +60,11 @@
         </p>
         @RenderBody()
     </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</div>*@
+<footer class="mt-auto text-center">
+    &copy; @DateTime.Now.Year
+</footer>
+<script src="/script.min.js"></script>
 <script>
     function forceReloadBlogData() {
         fetch('/blog/reload',
