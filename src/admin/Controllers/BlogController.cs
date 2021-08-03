@@ -40,7 +40,7 @@ namespace Laobian.Admin.Controllers
             return await _apiHttpService.PersistentAsync(message);
         }
 
-        [Route("posts")]
+        [Route("post")]
         public async Task<IActionResult> GetPostsAsync()
         {
             var posts = await _apiHttpService.GetPostsAsync();
@@ -65,7 +65,7 @@ namespace Laobian.Admin.Controllers
             return result;
         }
 
-        [Route("tags")]
+        [Route("tag")]
         public async Task<IActionResult> GetTagsAsync()
         {
             var tags = await _apiHttpService.GetTagsAsync();
