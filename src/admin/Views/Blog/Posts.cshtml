@@ -2,6 +2,9 @@
 @using Microsoft.Extensions.Options
 @model PostsViewModel
 @inject IOptions<AdminConfig> _config
+@{
+    ViewData["Title"] = "Blog Posts";
+}
 <div>
     <table class="table caption-top">
         <caption>Total blog posts: @Model.Posts.Count()</caption>

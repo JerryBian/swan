@@ -60,6 +60,7 @@ namespace Laobian.Admin
                 options.Cookie.Name = "LAOBIAN_AUTH";
                 options.ExpireTimeSpan = TimeSpan.FromDays(7);
                 options.Cookie.HttpOnly = true;
+                options.ReturnUrlParameter = "returnUrl";
                 options.LoginPath = new PathString("/login");
                 options.LogoutPath = new PathString("/logout");
                 options.Cookie.Domain = _env.IsDevelopment() ? "localhost" : ".laobian.me";

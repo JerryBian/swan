@@ -21,15 +21,13 @@ namespace Laobian.Admin.Controllers
             _blogHttpService = blogHttpService;
         }
 
-        //[HttpPost]
-        //[Route("reload")]
-        //public async Task<bool> ReloadAsync()
-        //{
-        //    await _blogHttpService.PurgeCacheAsync();
-        //    using var reader = new StreamReader(Request.Body, Encoding.UTF8);
-        //    var message = await reader.ReadToEndAsync();
-        //    return await _apiHttpService.ReloadBlogDataAsync(message);
-        //}
+        [HttpPost]
+        [Route("reload")]
+        public async Task<IActionResult> ReloadAsync()
+        {
+            await _blogHttpService.ReloadBlogDataAsync();
+            return Ok();
+        }
 
         [HttpPost]
         [Route("persistent")]

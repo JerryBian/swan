@@ -25,20 +25,6 @@ namespace Laobian.Admin.HttpService
             _httpClient.BaseAddress = new Uri(config.Value.ApiLocalEndpoint);
         }
 
-        public async Task<bool> ReloadBlogDataAsync(string message)
-        {
-            var response = await _httpClient.PostAsync("/blog/reload",
-                new StringContent(message, Encoding.UTF8, MediaTypeNames.Text.Plain));
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                _logger.LogError(
-                    $"{nameof(ApiHttpService)}.{nameof(ReloadBlogDataAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
-                return false;
-            }
-
-            return true;
-        }
-
         public async Task<bool> PersistentAsync(string message)
         {
             var response = await _httpClient.PostAsync("/blog/persistent",

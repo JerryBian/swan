@@ -22,6 +22,7 @@ services:
       - ENV_API_AdminEmail
       - ENV_API_AdminName
       - ENV_API_SendGridApiKey
+      - ENV_API_BlogLocalEndPoint=http://blog:5012
   admin:
     image: cnbian/laobian-admin:${ENV_APP_VERSION}
     environment:
@@ -30,6 +31,7 @@ services:
       - ASPNETCORE_ENVIRONMENT
       - ENV_ADMIN_ApiLocalEndPoint=http://api:5010
       - ENV_ADMIN_BlogRemoteEndPoint
+      - ENV_ADMIN_BlogLocalEndPoint=http://blog:5012
       - ENV_ADMIN_AdminName
       - ENV_ADMIN_AdminEmail
       - ENV_ADMIN_AdminPassword

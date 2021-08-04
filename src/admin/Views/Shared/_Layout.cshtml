@@ -3,13 +3,22 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>@ViewData["Title"] - Admin</title>
+    <title>
+        @if (ViewData["Title"] == null)
+        {
+            <text>Jerry Bian</text>
+        }
+        else
+        {
+            <text>@ViewData["Title"] &minus; Jerry Bian</text>
+        }
+    </title>
     <link rel="stylesheet" href="~/style.css" asp-append-version="true"/>
 </head>
 <body class="d-flex flex-column w-100 min-vh-100">
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
-        <a class="navbar-brand" href="#">Jerry Bian</a>
+        <a class="navbar-brand" href="/">Jerry Bian</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navLinks" aria-controls="navLinks" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -36,14 +45,12 @@
                         <a class="dropdown-item" href="/blog/post">POSTS</a>
                         <a class="dropdown-item" href="/blog/tag">TAGS</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="/blog/reload">FORCE RELOAD</a>
+                        <a class="dropdown-item" href="javascript:;" onclick="persistent()">PERSISTENT</a>
+                        <a class="dropdown-item" href="javascript:;" onclick="forceReloadBlogData()">FORCE RELOAD</a>
                     </div>
                 </li>
             </ul>
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item me-1">
-                    <button onclick="persistent()" class="btn btn-primary">PERSISTENT</button>
-                </li>
                 @if (Context.User.Identity?.IsAuthenticated == true)
                 {
                     <li class="nav-item dropdown">

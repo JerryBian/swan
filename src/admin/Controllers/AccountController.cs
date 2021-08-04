@@ -25,14 +25,15 @@ namespace Laobian.Admin.Controllers
 
         [HttpGet]
         [Route("/login")]
-        public IActionResult Login(string r)
+        public IActionResult Login([FromQuery]string returnUrl)
         {
+            ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
 
         [HttpPost]
         [Route("/login")]
-        public async Task<IActionResult> Login(string userName, string password, string r = null)
+        public async Task<IActionResult> Login(string userName, string password, string returnUrl = null)
         {
             if (userName == _adminConfig.AdminName && password == _adminConfig.AdminPassword)
             {
@@ -52,13 +53,13 @@ namespace Laobian.Admin.Controllers
                     new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme,
                         "user", "role")), authProperty);
 
-                if (string.IsNullOrEmpty(r))
+                if (string.IsNullOrEmpty(returnUrl))
                 {
-                    r = "/";
+                    returnUrl = "/";
                 }
 
                 _logger.LogInformation($"Login successfully, user={userName}.");
-                return Redirect(r);
+                return Redirect(returnUrl);
             }
 
             _logger.LogWarning($"Login failed. User Name = {userName}, Password = {password}");
