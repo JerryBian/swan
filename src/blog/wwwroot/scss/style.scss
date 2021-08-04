@@ -1,0 +1,14 @@
+﻿$font-family-sans-serif: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+$font-family-code: Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+$font-size-base: 1.15rem;
+$font-size-sm: $font-size-base * .875;
+$h1-font-size: $font-size-base * 1.35;
+$h2-font-size: $font-size-base * 1.25;
+$h3-font-size: $font-size-base * 1.15;
+$h4-font-size: $font-size-base * 1.05;
+$h5-font-size: $font-size-base;
+$h6-font-size: $font-size-base * 0.9;
+
+@import "../../../../node_modules/bootswatch/dist/zephyr/variables";
+@import "../../../../node_modules/bootstrap/scss/bootstrap";
+@import "../../../../node_modules/bootswatch/dist/zephyr/bootswatch";
