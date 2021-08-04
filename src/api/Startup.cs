@@ -8,10 +8,10 @@ using Laobian.Api.Repository;
 using Laobian.Api.Service;
 using Laobian.Api.SourceProvider;
 using Laobian.Share;
-using Laobian.Share.Config;
 using Laobian.Share.Converter;
 using Laobian.Share.Extension;
 using Laobian.Share.Notify;
+using Laobian.Share.Option;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -48,7 +48,7 @@ namespace Laobian.Api
 
             services.AddHostedService<BlogApiHostedService>();
             services.Configure<ApiConfig>(Configuration);
-            services.Configure<CommonConfig>(Configuration);
+            services.Configure<CommonOption>(Configuration);
 
             services.AddLogging(config =>
             {

@@ -18,7 +18,7 @@ namespace Laobian.Admin.HttpService
         private readonly HttpClient _httpClient;
         private readonly ILogger<ApiHttpService> _logger;
 
-        public ApiHttpService(HttpClient httpClient, ILogger<ApiHttpService> logger, IOptions<AdminConfig> config)
+        public ApiHttpService(HttpClient httpClient, ILogger<ApiHttpService> logger, IOptions<AdminOption> config)
         {
             _logger = logger;
             _httpClient = httpClient;

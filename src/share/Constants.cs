@@ -11,5 +11,9 @@
         public const string BlogPostAssetFolder = "blog_post";
 
         public const string BlogFileAssetFolder = "blog_file";
+
+        public const string DataProtectionKeyPath = "DATA_PROTECTION_KEY_PATH";
+
+        public const string ApplicationName = "laobian";
     }
 }

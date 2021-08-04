@@ -1,6 +1,6 @@
 ﻿@using Microsoft.Extensions.Options
 @model IEnumerable<Laobian.Share.Blog.BlogTag>
-@inject IOptions<AdminConfig> _config
+@inject IOptions<AdminOption> _config
 @{
     ViewData["Title"] = "Blog Tags";
 }
@@ -12,24 +12,24 @@
     <table class="table caption-top">
         <caption>Post tags: @Model.Count()</caption>
         <thead class="table-light">
-            <tr>
-                <th scope="col">Name</th>
-                <th scope="col">Link</th>
-                <th scope="col">Operation</th>
-            </tr>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Link</th>
+            <th scope="col">Operation</th>
+        </tr>
         </thead>
         <tbody>
-            @foreach (var tag in Model)
-            {
-                <tr>
-                    <th>@tag.DisplayName</th>
-                    <th>@tag.Link</th>
-                    <th>
-                        <a href="javascript:;" onclick="launchUpdateModal('@tag.Link')">Update</a> &middot;
-                        <a href="javascript:;" onclick="deleteTag('@tag.Link')">Delete</a>
-                    </th>
-                </tr>
-            }
+        @foreach (var tag in Model)
+        {
+            <tr>
+                <th>@tag.DisplayName</th>
+                <th>@tag.Link</th>
+                <th>
+                    <a href="javascript:;" onclick="launchUpdateModal('@tag.Link')">Update</a> &middot;
+                    <a href="javascript:;" onclick="deleteTag('@tag.Link')">Delete</a>
+                </th>
+            </tr>
+        }
         </tbody>
     </table>
 </div>
@@ -96,9 +96,9 @@
 
         function deleteTag(link) {
             fetch(`/blog/tag/${link}`,
-                {
-                    method: 'DELETE'
-                })
+                    {
+                        method: 'DELETE'
+                    })
                 .then(response => {
                     if (response.ok) {
                         window.location.reload(true);
@@ -127,13 +127,13 @@
             };
 
             fetch('/blog/tag',
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(tag)
-                })
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(tag)
+                    })
                 .then(response => {
                     if (response.ok) {
                         updateModal.hide();
@@ -155,13 +155,13 @@
             };
 
             fetch('/blog/tag',
-                {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(tag)
-                })
+                    {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(tag)
+                    })
                 .then(response => {
                     if (response.ok) {
                         updateModal.hide();

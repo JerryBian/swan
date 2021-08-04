@@ -1,10 +1,10 @@
 ﻿using System.IO;
 using Laobian.Share;
-using Laobian.Share.Config;
+using Laobian.Share.Option;
 
 namespace Laobian.Api
 {
-    public class ApiConfig : CommonConfig
+    public class ApiConfig : CommonOption
     {
         public SourceMode Source { get; set; }
 
@@ -32,7 +32,7 @@ namespace Laobian.Api
         {
             if (string.IsNullOrEmpty(AssetLocation))
             {
-                throw new LaobianConfigException(nameof(AssetLocation));
+                throw new LaobianOptionException(nameof(AssetLocation));
             }
 
             return Path.Combine(AssetLocation, Constants.DbAssetFolder);

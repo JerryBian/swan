@@ -36,21 +36,22 @@ namespace Laobian.Blog.Controllers
         private static bool IsLocal(string remoteAddress, string localAddress)
         {
             return !string.IsNullOrEmpty(remoteAddress) && (remoteAddress == "127.0.0.1" || remoteAddress == "::1" ||
-                                                            remoteAddress == localAddress || remoteAddress == "localhost");
+                                                            remoteAddress == localAddress ||
+                                                            remoteAddress == "localhost");
         }
 
         [HttpPost]
         [Route("/reload")]
         public async Task<IActionResult> Reload()
         {
-            var remoteAddress = Request.HttpContext.Connection.RemoteIpAddress?.ToString();
-            var localAddress = Request.HttpContext.Connection.LocalIpAddress?.ToString();
-            _logger.LogInformation($"Remote: {remoteAddress}, local: {localAddress}");
-            if (!IsLocal(remoteAddress, localAddress))
-            {
-                return BadRequest();
-            }
-
+            //var remoteAddress = Request.HttpContext.Connection.RemoteIpAddress?.ToString();
+            //var localAddress = Request.HttpContext.Connection.LocalIpAddress?.ToString();
+            //_logger.LogInformation($"Remote: {remoteAddress}, local: {localAddress}");
+            //if (!IsLocal(remoteAddress, localAddress))
+            //{
+            //    return BadRequest();
+            //}
+            //TODO: we need to verify request. Hard for containers
             await _systemData.LoadAsync();
             return Ok();
         }

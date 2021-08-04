@@ -1,8 +1,8 @@
 ﻿using System.IO;
 
-namespace Laobian.Share.Config
+namespace Laobian.Share.Option
 {
-    public class CommonConfig
+    public class CommonOption
     {
         public string BlogLocalEndpoint { get; set; }
 
@@ -26,7 +26,7 @@ namespace Laobian.Share.Config
         {
             if (string.IsNullOrEmpty(AssetLocation))
             {
-                throw new LaobianConfigException(nameof(AssetLocation));
+                throw new LaobianOptionException(nameof(AssetLocation));
             }
 
             return Path.Combine(AssetLocation, Constants.BlogPostAssetFolder);
@@ -36,7 +36,7 @@ namespace Laobian.Share.Config
         {
             if (string.IsNullOrEmpty(AssetLocation))
             {
-                throw new LaobianConfigException(nameof(AssetLocation));
+                throw new LaobianOptionException(nameof(AssetLocation));
             }
 
             return Path.Combine(AssetLocation, Constants.BlogFileAssetFolder);

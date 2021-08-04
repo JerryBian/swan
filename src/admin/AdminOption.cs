@@ -1,8 +1,8 @@
-﻿using Laobian.Share.Config;
+﻿using Laobian.Share.Option;
 
 namespace Laobian.Admin
 {
-    public class AdminConfig : CommonConfig
+    public class AdminOption : CommonOption
     {
         public string AdminPassword { get; set; }
     }

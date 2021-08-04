@@ -3,8 +3,8 @@ using System.Diagnostics;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using Laobian.Share.Config;
 using Laobian.Share.Extension;
+using Laobian.Share.Option;
 using Laobian.Share.Util;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -15,10 +15,10 @@ namespace Laobian.Share.Notify
 {
     public class EmailNotify : IEmailNotify
     {
-        private readonly CommonConfig _config;
+        private readonly CommonOption _config;
         private readonly ILogger<EmailNotify> _logger;
 
-        public EmailNotify(IOptions<CommonConfig> config, ILogger<EmailNotify> logger)
+        public EmailNotify(IOptions<CommonOption> config, ILogger<EmailNotify> logger)
         {
             _logger = logger;
             _config = config.Value;

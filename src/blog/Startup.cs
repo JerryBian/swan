@@ -9,11 +9,11 @@ using Laobian.Blog.HostedService;
 using Laobian.Blog.HttpService;
 using Laobian.Blog.Logger;
 using Laobian.Share;
-using Laobian.Share.Config;
 using Laobian.Share.Converter;
 using Laobian.Share.Extension;
 using Laobian.Share.Logger.Remote;
 using Laobian.Share.Notify;
+using Laobian.Share.Option;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
@@ -58,7 +58,7 @@ namespace Laobian.Blog
             services.AddSingleton<ISystemData, SystemData>();
             services.AddSingleton<ICacheClient, CacheClient>();
             services.AddOptions<BlogConfig>().Bind(Configuration).ValidateDataAnnotations();
-            services.AddOptions<CommonConfig>().Bind(Configuration).ValidateDataAnnotations();
+            services.AddOptions<CommonOption>().Bind(Configuration).ValidateDataAnnotations();
 
             services.AddHttpClient<ApiHttpService>()
                 .SetHandlerLifetime(TimeSpan.FromMinutes(5))

@@ -1,8 +1,8 @@
-﻿using Laobian.Share.Config;
+﻿using Laobian.Share.Option;
 
 namespace Laobian.Blog
 {
-    public class BlogConfig : CommonConfig
+    public class BlogConfig : CommonOption
     {
         public int PostsPerPage { get; set; }
 
