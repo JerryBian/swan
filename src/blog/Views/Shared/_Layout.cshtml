@@ -16,7 +16,7 @@
         }
     </title>
     <link rel="stylesheet" href="~/style.css" asp-append-version="true"/>
-
+    <script defer src="~/script.min.js" asp-append-version="true"></script>
 </head>
 <body class="d-flex flex-column w-100 min-vh-100">
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -53,9 +53,9 @@
     </div>
 </nav>
 <div class="container py-3">
-    <div class="row gx-1">
-        <main class="col-9 d-flex wrapper justify-content-center py-3 flex-grow-1">
-            <div class="wrapper-content @*shadow-sm rounded*@">
+    <div class="row gx-3">
+        <main class="col-9 d-flex justify-content-center px-2 py-3 shadow-sm rounded">
+            <div class="wrapper-content">
                 @RenderBody()
             </div>
         </main>

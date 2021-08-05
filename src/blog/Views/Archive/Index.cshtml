@@ -13,18 +13,20 @@
     <div class="archive">
         @foreach (var item in Model)
         {
-            <h3 id="@item.Link" class="mt-3 mb-2 pb-1 border-bottom">
+            <h2 id="@item.Link" class="mt-3 mb-2 pb-1 border-bottom">
                 <span>@item.Name (@item.Posts.Count)</span>
-            </h3>
+            </h2>
             <div>
                 @foreach (var post in item.Posts)
                 {
-                    <h4 class="mt-2 mb-2">
-                        <span class="text-muted me-2 fs-sm">@post.Metadata.PublishTime.ToChinaDate()</span>
-                        <a href="@post.GetFullPath()">
-                            <span>@post.Metadata.Title</span>
-                        </a>
-                    </h4>
+                    <div class="mt-2 mb-2">
+                        <h3>
+                            <a href="@post.GetFullPath()">
+                                <span>@post.Metadata.Title</span>
+                            </a> 
+                            <span class="text-muted fs-sm fst-italic">(@post.Metadata.PublishTime.ToChinaMonthAndDay())</span>
+                        </h3>
+                    </div>
                 }
             </div>
         }
@@ -32,7 +34,6 @@
 </div>
 
 @section script{
-    <script src="~/archive.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded",
             function() {
@@ -41,7 +42,7 @@
                     visible: 'hover',
                     base: '@Model.FirstOrDefault()?.BaseUrl'
                 };
-                anchors.add('.archive h4');
+                anchors.add('.archive h2');
             });
     </script>
 }
