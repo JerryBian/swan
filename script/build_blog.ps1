@@ -4,7 +4,11 @@ $NodeModulesLoc = Join-Path $PSScriptRoot .. node_modules
 npx sass $(Join-Path $WWWRootLoc scss style.scss) $(Join-Path $WWWRootLoc style.css)
 #uglifycss --expand-vars --ugly-comments --output $(Join-Path $WWWRootLoc style.min.css) $(Join-Path $WWWRootLoc style.css)
 
-uglifyjs --compress -o $(Join-Path $WWWRootLoc script.min.js) $(Join-Path $NodeModulesLoc bootstrap dist js bootstrap.js) $(Join-Path $NodeModulesLoc anchor-js anchor.js)
+uglifyjs --compress -o $(Join-Path $WWWRootLoc script.min.js) `
+    $(Join-Path $NodeModulesLoc bootstrap dist js bootstrap.js) `
+    $(Join-Path $NodeModulesLoc anchor-js anchor.js) `
+    $(Join-Path $NodeModulesLoc "@fortawesome" fontawesome-free js solid.js) `
+    $(Join-Path $NodeModulesLoc "@fortawesome" fontawesome-free js fontawesome.js)
 
 # Index page
 # npx sass $(Join-Path $WWWRootLoc scss index.scss) $(Join-Path $WWWRootLoc index.css)

@@ -43,7 +43,7 @@
             <ul class="navbar-nav ms-auto">
 
                 <li class="nav-item">
-                    <a class="nav-link" href="https://github.com/JerryBian">GitHub</a>
+                    <a class="nav-link" href="https://github.com/JerryBian">GitHub <i class="fas fa-external-link-alt"></i></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/rss">RSS</a>
@@ -53,23 +53,38 @@
     </div>
 </nav>
 <div class="container py-3">
-    <div class="row gx-3">
-        <main class="col-9 d-flex justify-content-center px-2 py-3 shadow-sm rounded">
+    <div class="row gx-4">
+        <main class="col-9 d-flex justify-content-center px-2 py-3 @*shadow-sm rounded*@">
             <div class="wrapper-content">
                 @RenderBody()
             </div>
         </main>
         <aside class="col-3 d-none d-lg-block">
-            <div class="card">
-                <div class="card-header">
-                    Featured
-                </div>
+            <div class="card mb-4">
                 <div class="card-body">
-                    <h5 class="card-title">Special title treatment</h5>
-                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                    <h5 class="card-title">Welcome!</h5>
+                    <div class="card-text fs-sm">
+                        <p>卞良忠，英文名：Jerry Bian，一个普通人。</p>
+                        <p>这里是我的个人博客，想到什么就写什么。</p>
+                    </div>
+                    <div class="d-grid">
+                        <a href="#" class="btn btn-light">关于 &rarr;</a>
+                    </div>
                 </div>
             </div>
+            <div class="position-sticky" style="top: 10px;">
+                @await RenderSectionAsync("Aside", false)
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">关于转载以及声明</h5>
+                        <div class="card-text fs-sm">
+                            <p>这里是我的个人博客，所有文章均为个人言论，除非特殊声明，均与我的雇主或者其他任何团体无关。</p>
+                            <p>遵守 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" class="link-dark text-decoration-none">“署名-非商业性使用-禁止演绎 4.0 国际(CC BY-NC-ND 4.0)</a> 协议。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
         </aside>
     </div>
 
