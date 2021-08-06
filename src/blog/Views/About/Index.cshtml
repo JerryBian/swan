@@ -62,11 +62,6 @@
 </article>
 
 @section script{
-    <script src="~/post.min.js"
-            asp-fallback-src="https://jerrybian.github.io/blog.laobian.me/post.min.js"
-            asp-fallback-test="window.test"
-            asp-append-version="true">
-    </script>
     <script>
         document.addEventListener("DOMContentLoaded",
             function() {
@@ -77,5 +72,6 @@
                 };
                 anchors.add('.post-content h3, .post-content h4');
             });
+        activeNavItem('#nav_about');
     </script>
 }
