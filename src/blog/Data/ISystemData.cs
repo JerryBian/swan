@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Laobian.Share.Blog;
 
-namespace Laobian.Blog
+namespace Laobian.Blog.Data
 {
     public interface ISystemData
     {

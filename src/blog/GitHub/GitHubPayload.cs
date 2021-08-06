@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace Laobian.Blog
+namespace Laobian.Blog.GitHub
 {
     public class GitHubPayload
     {

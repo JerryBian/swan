@@ -1,4 +1,5 @@
 ﻿using System;
+using Laobian.Blog.Data;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 

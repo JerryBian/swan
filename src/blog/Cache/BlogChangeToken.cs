@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Laobian.Blog.Data;
 using Microsoft.Extensions.Primitives;
 
 namespace Laobian.Blog.Cache
@@ -23,7 +24,7 @@ namespace Laobian.Blog.Cache
             return null;
         }
 
-        public bool ActiveChangeCallbacks { get; } = false;
+        public bool ActiveChangeCallbacks => false;
 
         public bool HasChanged
         {

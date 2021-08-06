@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using Laobian.Blog.Cache;
+using Laobian.Blog.Data;
 using Laobian.Blog.HttpService;
 using Laobian.Blog.Models;
 using Laobian.Share;
@@ -28,8 +29,12 @@ namespace Laobian.Blog.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly ISystemData _systemData;
 
-        public HomeController(ISystemData systemData, IOptions<BlogConfig> config, ILogger<HomeController> logger,
-            ApiHttpService apiHttpService, ICacheClient cacheClient)
+        public HomeController(
+            ISystemData systemData, 
+            IOptions<BlogConfig> config, 
+            ILogger<HomeController> logger,
+            ApiHttpService apiHttpService, 
+            ICacheClient cacheClient)
         {
             _logger = logger;
             _cacheClient = cacheClient;
@@ -38,24 +43,10 @@ namespace Laobian.Blog.Controllers
             _apiHttpService = apiHttpService;
         }
 
-        private static bool IsLocal(string remoteAddress, string localAddress)
-        {
-            return !string.IsNullOrEmpty(remoteAddress) && (remoteAddress == "127.0.0.1" || remoteAddress == "::1" ||
-                                                            remoteAddress == localAddress ||
-                                                            remoteAddress == "localhost");
-        }
-
         [HttpPost]
         [Route("/reload")]
         public async Task<IActionResult> Reload()
         {
-            //var remoteAddress = Request.HttpContext.Connection.RemoteIpAddress?.ToString();
-            //var localAddress = Request.HttpContext.Connection.LocalIpAddress?.ToString();
-            //_logger.LogInformation($"Remote: {remoteAddress}, local: {localAddress}");
-            //if (!IsLocal(remoteAddress, localAddress))
-            //{
-            //    return BadRequest();
-            //}
             //TODO: we need to verify request. Hard for containers
             await _systemData.LoadAsync();
             return Ok();

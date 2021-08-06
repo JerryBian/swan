@@ -4,6 +4,8 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Laobian.Blog.Data;
+using Laobian.Blog.GitHub;
 using Laobian.Blog.HttpService;
 using Laobian.Share.Util;
 using Microsoft.AspNetCore.Mvc;

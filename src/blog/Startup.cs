@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using Laobian.Blog.Cache;
+using Laobian.Blog.Data;
 using Laobian.Blog.HostedService;
 using Laobian.Blog.HttpService;
 using Laobian.Blog.Logger;
@@ -53,7 +54,7 @@ namespace Laobian.Blog
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
+            StartupHelper.ConfigureServices(services, Configuration);
 
             services.AddSingleton<ISystemData, SystemData>();
             services.AddSingleton<ICacheClient, CacheClient>();
@@ -68,14 +69,7 @@ namespace Laobian.Blog
                 .AddPolicyHandler(GetRetryPolicy());
 
             services.AddHostedService<BlogHostedService>();
-
-            services.AddSingleton<IEmailNotify, EmailNotify>();
             services.AddSingleton<IRemoteLoggerSink, RemoteLoggerSink>();
-
-            var dpFolder = Configuration.GetValue<string>("DATA_PROTECTION_KEY_PATH");
-            Directory.CreateDirectory(dpFolder);
-            services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(dpFolder))
-                .SetApplicationName("LAOBIAN");
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
                 {
