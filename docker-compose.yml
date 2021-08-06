@@ -57,7 +57,6 @@ services:
       - ENV_BLOG_AssetLocation=/asset
       - ENV_BLOG_GitHubHookSecret
       - ENV_BLOG_SendGridApiKey
-      - ENV_API_LOCAL_ENDPOINT=http://api:5010
     ports:
       - "${ENV_BLOG_PORT}:5012"
     depends_on:
