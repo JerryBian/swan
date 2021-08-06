@@ -33,6 +33,7 @@
 
     <div class="alert alert-warning post-alert fs-sm" role="alert">
         <ul>
+            <li>最后更新于：<span title="@Model.Current.Metadata.LastUpdateTime.ToChinaDateAndTime()">@Model.Current.Metadata.PublishTime.ToChinaDate()</span></li>
             @{
                 var html = Model.TagHtml;
                 if (!string.IsNullOrEmpty(html))
@@ -43,17 +44,16 @@
 
             @if (Model.Previous != null)
             {
-                <li>前一篇：<a href="@Model.Previous.GetFullPath()">@Model.Previous.Metadata.Title</a></li>
+                <li>前一篇：<a href="@Model.Previous.GetFullPath()" class="text-decoration-none">@Model.Previous.Metadata.Title</a></li>
             }
 
             @if (Model.Next != null)
             {
-                <li>后一篇：<a href="@Model.Next.GetFullPath()">@Model.Next.Metadata.Title</a></li>
+                <li>后一篇：<a href="@Model.Next.GetFullPath()" class="text-decoration-none">@Model.Next.Metadata.Title</a></li>
             }
-            <li>最后更新于：<span title="@Model.Current.Metadata.LastUpdateTime.ToChinaDateAndTime()">@Model.Current.Metadata.PublishTime.ToChinaDate()</span></li>
             <li>
                 文章的留言，请发送电子邮件至
-                <a href="mailto:@Config.Value.AdminEmail?subject=留言 - @Model.Current.Metadata.Title&body=Good job！">
+                <a href="mailto:@Config.Value.AdminEmail?subject=留言 - @Model.Current.Metadata.Title&body=Good job！" class="text-decoration-none">
                     @Config.Value.AdminEmail
                 </a>
             </li>
@@ -62,8 +62,7 @@
 </div>
 
 @section Script {
-    @*<script src=""></script>
     <script>
         hljs.highlightAll();
-    </script>*@
+    </script>
 }
