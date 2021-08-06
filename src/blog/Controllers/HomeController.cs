@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.ServiceModel.Syndication;
+using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using Laobian.Blog.Cache;
 using Laobian.Blog.HttpService;
 using Laobian.Blog.Models;
+using Laobian.Share;
 using Laobian.Share.Blog;
 using Laobian.Share.Extension;
 using Laobian.Share.Util;
@@ -245,9 +250,48 @@ namespace Laobian.Blog.Controllers
             return View("~/Views/About/Index.cshtml", viewModel);
         }
 
-        public IActionResult Privacy()
+        [Route("/rss")]
+        public IActionResult Rss()
         {
-            return View();
+            var rss = _cacheClient.GetOrCreate(CacheKeyBuilder.Build(nameof(HomeController), nameof(Rss)), () =>
+            {
+                var feed = new SyndicationFeed(Constants.BlogTitle, Constants.BlogDescription, new Uri($"{Constants.BlogAddress}/rss"),
+                    Constants.ApplicationName, DateTimeOffset.UtcNow);
+                feed.Copyright = new TextSyndicationContent($"&copy; {DateTime.Now.Year} {Constants.AdminChineseName}");
+                feed.Authors.Add(new SyndicationPerson(Constants.AdminEmail, Constants.AdminChineseName, Constants.BlogAddress));
+                feed.BaseUri = new Uri(Constants.BlogAddress);
+                feed.Language = "zh-cn";
+                var items = new List<SyndicationItem>();
+                foreach (var post in _systemData.Posts.Where(x => x.IsPublished))
+                {
+                    items.Add(new SyndicationItem(post.Metadata.Title, post.HtmlContent, new Uri(post.GetFullPath(true)), post.GetFullPath(), new DateTimeOffset(post.Metadata.LastUpdateTime, TimeSpan.FromHours(8))));
+                }
+
+                feed.Items = items;
+                var settings = new XmlWriterSettings
+                {
+                    Encoding = Encoding.UTF8,
+                    NewLineHandling = NewLineHandling.Entitize,
+                    NewLineOnAttributes = false,
+                    Async = true,
+                    Indent = true
+                };
+
+                using (var ms = new MemoryStream())
+                {
+                    using (var xmlWriter = XmlWriter.Create(ms, settings))
+                    {
+                        var rssFormatter = new Rss20FeedFormatter(feed, false);
+                        rssFormatter.WriteTo(xmlWriter);
+                        xmlWriter.Flush();
+                    }
+
+                    return Encoding.UTF8.GetString(ms.ToArray());
+                }
+            });
+
+            return Content(rss, "application/rss+xml", Encoding.UTF8);
+
         }
 
         [HttpGet]

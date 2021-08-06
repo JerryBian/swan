@@ -115,9 +115,15 @@ namespace Laobian.Share.Blog
             }
         }
 
-        public string GetFullPath()
+        public string GetFullPath(bool appendBase = false)
         {
-            return $"{Metadata.PublishTime.Year:D4}/{Metadata.PublishTime.Month:D2}/{Metadata.Link}.html";
+            var path = $"/{Metadata.PublishTime.Year:D4}/{Metadata.PublishTime.Month:D2}/{Metadata.Link}.html";
+            if (appendBase)
+            {
+                path = Constants.BlogAddress + path;
+            }
+
+            return path;
         }
 
         #region Raw data
