@@ -10,7 +10,7 @@
   --bs-blue: #3459e6;
   --bs-indigo: #6610f2;
   --bs-purple: #6f42c1;
-  --bs-pink: #d63384;
+  --bs-pink: #c44569;
   --bs-red: #cf6a87;
   --bs-orange: #f8765f;
   --bs-yellow: #f7d794;
@@ -224,7 +224,7 @@ pre {
   margin-top: 0;
   margin-bottom: 1rem;
   overflow: auto;
-  font-size: 0.875em;
+  font-size: 1.045rem;
 }
 pre code {
   font-size: inherit;
@@ -233,8 +233,8 @@ pre code {
 }
 
 code {
-  font-size: 0.875em;
-  color: #d63384;
+  font-size: 1.045rem;
+  color: #c44569;
   word-wrap: break-word;
 }
 a > code {
@@ -243,7 +243,7 @@ a > code {
 
 kbd {
   padding: 0.2rem 0.4rem;
-  font-size: 0.875em;
+  font-size: 1.045rem;
   color: #fff;
   background-color: #212529;
   border-radius: 0.2rem;
@@ -11054,7 +11054,6 @@ thead th {
 
 .post-alert {
   margin-top: 3rem;
-  font-size: 92%;
   color: unset;
 }
 .post-alert li, .post-alert ol {

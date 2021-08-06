@@ -1,6 +1,9 @@
 ﻿@using Microsoft.Extensions.Options
 @model AboutViewModel
 @inject IOptions<BlogConfig> Config
+@{
+    ViewData["Title"] = "关于";
+}
 
 <article class="post">
     <div class="post-content">

@@ -16,12 +16,12 @@
                     </a>
                     @if (post.Current.Metadata.IsTopping)
                     {
-                        <span class="badge bg-success fs-6">置顶</span>
+                        <span class="badge bg-success fs-sm">置顶</span>
                     }
 
                     @if (!post.Current.Metadata.IsPublished)
                     {
-                        <span class="badge bg-warning fs-6">
+                        <span class="badge bg-warning fs-sm">
                             未发布
                         </span>
                     }
@@ -29,7 +29,7 @@
                 <div>
                     @if (!string.IsNullOrEmpty(post.Current.Thumbnail))
                     {
-                        <img src="@post.Current.Thumbnail" class="img-fluid mb-2">
+                        <img src="@post.Current.Thumbnail" class="img-fluid mt-1 mb-3">
                     }
 
                     @Html.Raw(post.Current.ExcerptHtml)

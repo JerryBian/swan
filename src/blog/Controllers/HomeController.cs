@@ -120,7 +120,7 @@ namespace Laobian.Blog.Controllers
                     return model;
                 });
 
-
+            ViewData["Title"] = "存档";
             return View("~/Views/Archive/Index.cshtml", viewModel);
         }
 
@@ -155,7 +155,7 @@ namespace Laobian.Blog.Controllers
                     return model;
                 });
 
-
+            ViewData["Title"] = "标签";
             return View("~/Views/Archive/Index.cshtml", viewModel);
         }
 

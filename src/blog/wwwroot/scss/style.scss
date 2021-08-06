@@ -8,9 +8,11 @@ $h3-font-size: $font-size-base * 1.15;
 $h4-font-size: $font-size-base * 1.05;
 $h5-font-size: $font-size-base;
 $h6-font-size: $font-size-base * 0.9;
+$code-font-size: $font-size-base * 0.95;
 $black: #303952;
 $yellow: #f7d794;
 $red: #cf6a87;
+$pink: #c44569;
 $primary: #574b90;
 $secondary: #f1f2f6;
 
@@ -105,7 +107,6 @@ $secondary: #f1f2f6;
 
 .post-alert {
     margin-top: 3rem;
-    font-size: 92%;
     color: unset;
 
     li, ol {
