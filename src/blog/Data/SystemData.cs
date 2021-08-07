@@ -12,11 +12,11 @@ namespace Laobian.Blog.Data
 {
     public class SystemData : ISystemData
     {
-        private readonly ILogger<SystemData> _logger;
         private readonly ApiHttpService _apiHttpService;
-        private readonly List<BlogTag> _tags;
-        private readonly List<BlogPost> _posts;
+        private readonly ILogger<SystemData> _logger;
         private readonly ManualResetEventSlim _manualResetEventSlim;
+        private readonly List<BlogPost> _posts;
+        private readonly List<BlogTag> _tags;
 
         public SystemData(ILogger<SystemData> logger, ApiHttpService apiHttpService)
         {
@@ -73,11 +73,11 @@ namespace Laobian.Blog.Data
             {
                 _manualResetEventSlim.Reset();
                 _logger.LogInformation("Start to load system data.");
-                Posts.Clear();
-                Posts.AddRange(await _apiHttpService.GetPostsAsync(false));
+                _posts.Clear();
+                _posts.AddRange(await _apiHttpService.GetPostsAsync(false));
 
-                Tags.Clear();
-                Tags.AddRange(await _apiHttpService.GetTagsAsync());
+                _tags.Clear();
+                _tags.AddRange(await _apiHttpService.GetTagsAsync());
 
                 LastLoadTimestamp = DateTime.Now;
                 _logger.LogInformation("End to load system data.");

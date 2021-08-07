@@ -30,10 +30,10 @@ namespace Laobian.Blog.Controllers
         private readonly ISystemData _systemData;
 
         public HomeController(
-            ISystemData systemData, 
-            IOptions<BlogConfig> config, 
+            ISystemData systemData,
+            IOptions<BlogConfig> config,
             ILogger<HomeController> logger,
-            ApiHttpService apiHttpService, 
+            ApiHttpService apiHttpService,
             ICacheClient cacheClient)
         {
             _logger = logger;
@@ -246,16 +246,20 @@ namespace Laobian.Blog.Controllers
         {
             var rss = _cacheClient.GetOrCreate(CacheKeyBuilder.Build(nameof(HomeController), nameof(Rss)), () =>
             {
-                var feed = new SyndicationFeed(Constants.BlogTitle, Constants.BlogDescription, new Uri($"{Constants.BlogAddress}/rss"),
+                var feed = new SyndicationFeed(Constants.BlogTitle, Constants.BlogDescription,
+                    new Uri($"{Constants.BlogAddress}/rss"),
                     Constants.ApplicationName, DateTimeOffset.UtcNow);
                 feed.Copyright = new TextSyndicationContent($"&copy; {DateTime.Now.Year} {Constants.AdminChineseName}");
-                feed.Authors.Add(new SyndicationPerson(Constants.AdminEmail, Constants.AdminChineseName, Constants.BlogAddress));
+                feed.Authors.Add(new SyndicationPerson(Constants.AdminEmail, Constants.AdminChineseName,
+                    Constants.BlogAddress));
                 feed.BaseUri = new Uri(Constants.BlogAddress);
                 feed.Language = "zh-cn";
                 var items = new List<SyndicationItem>();
                 foreach (var post in _systemData.Posts.Where(x => x.IsPublished))
                 {
-                    items.Add(new SyndicationItem(post.Metadata.Title, post.HtmlContent, new Uri(post.GetFullPath(true)), post.GetFullPath(), new DateTimeOffset(post.Metadata.LastUpdateTime, TimeSpan.FromHours(8))));
+                    items.Add(new SyndicationItem(post.Metadata.Title, post.HtmlContent,
+                        new Uri(post.GetFullPath(true)), post.GetFullPath(),
+                        new DateTimeOffset(post.Metadata.LastUpdateTime, TimeSpan.FromHours(8))));
                 }
 
                 feed.Items = items;
@@ -282,7 +286,6 @@ namespace Laobian.Blog.Controllers
             });
 
             return Content(rss, "application/rss+xml", Encoding.UTF8);
-
         }
 
         [HttpGet]

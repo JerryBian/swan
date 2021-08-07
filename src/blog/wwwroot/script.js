@@ -1,3 +1,3 @@
 ﻿function activeNavItem(id) {
-    document.querySelector(id).classList.add('active');
+    document.querySelector(id).classList.add("active");
 }
