@@ -106,7 +106,7 @@ namespace Laobian.Share.Blog
                         {
                             var subPath = src.Substring(index + Constants.BlogPostFileBaseFolderName.Length + 1)
                                 .Replace("\\", "/");
-                            var fullSrc = $"/{Constants.BlogPostFileBaseUrlName}/{subPath}";
+                            var fullSrc = $"/{Constants.BlogPostFileBaseUrlName}/{subPath}"; //TODO: Use Full Path for RSS
                             imageNode.SetAttributeValue("src", fullSrc);
                             SetPostThumbnail(imageNode);
                         }

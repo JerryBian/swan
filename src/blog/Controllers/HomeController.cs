@@ -249,7 +249,7 @@ namespace Laobian.Blog.Controllers
                 var feed = new SyndicationFeed(Constants.BlogTitle, Constants.BlogDescription,
                     new Uri($"{Constants.BlogAddress}/rss"),
                     Constants.ApplicationName, DateTimeOffset.UtcNow);
-                feed.Copyright = new TextSyndicationContent($"&copy; {DateTime.Now.Year} {Constants.AdminChineseName}");
+                feed.Copyright = new TextSyndicationContent($"&#x26;amp;#169; {DateTime.Now.Year} {Constants.AdminChineseName}");
                 feed.Authors.Add(new SyndicationPerson(Constants.AdminEmail, Constants.AdminChineseName,
                     Constants.BlogAddress));
                 feed.BaseUri = new Uri(Constants.BlogAddress);
