@@ -157,7 +157,7 @@ namespace Laobian.Blog.Controllers
 
         [HttpGet]
         [Route("/{year:int}/{month:int}/{link}.html")]
-        public async Task<IActionResult> Post([FromRoute] int year, [FromRoute] int month, [FromRoute] string link)
+        public IActionResult Post([FromRoute] int year, [FromRoute] int month, [FromRoute] string link)
         {
             var authenticated = User.Identity?.IsAuthenticated ?? false;
             var viewModel = _cacheClient.GetOrCreate(

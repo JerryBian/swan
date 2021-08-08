@@ -134,9 +134,11 @@ namespace Laobian.Share.Blog
 
         [JsonPropertyName("metadata")] public BlogMetadata Metadata { get; set; }
 
-        [JsonPropertyName("tags")] public List<BlogTag> Tags { get; } = new();
+        [JsonPropertyName("tags")]
+        public List<BlogTag> Tags { get; set; } = new();
 
-        [JsonPropertyName("accesses")] public List<BlogAccess> Accesses { get; } = new();
+        [JsonPropertyName("accesses")]
+        public List<BlogAccess> Accesses { get; set; } = new();
 
         #endregion
 
