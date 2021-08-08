@@ -7,7 +7,7 @@ namespace Laobian.Share.Logger
     {
         public string Message { get; set; }
 
-        public Exception Exception { get; set; }
+        public string Exception { get; set; }
 
         public DateTime TimeStamp { get; set; }
 

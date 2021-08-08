@@ -59,11 +59,14 @@ namespace Laobian.Blog
             services.AddOptions<BlogConfig>().Bind(Configuration).ValidateDataAnnotations();
             services.AddOptions<CommonOption>().Bind(Configuration).ValidateDataAnnotations();
 
-            services.AddHttpClient<ApiHttpService>()
-                .SetHandlerLifetime(TimeSpan.FromMinutes(5))
+            services.AddHttpClient<ApiHttpService>(h =>
+                {
+                    h.Timeout = TimeSpan.FromMinutes(10);
+                })
+                .SetHandlerLifetime(TimeSpan.FromDays(1))
                 .AddPolicyHandler(GetRetryPolicy());
             services.AddHttpClient("log")
-                .SetHandlerLifetime(TimeSpan.FromHours(1))
+                .SetHandlerLifetime(TimeSpan.FromDays(1))
                 .AddPolicyHandler(GetRetryPolicy());
 
             services.AddHostedService<BlogHostedService>();
