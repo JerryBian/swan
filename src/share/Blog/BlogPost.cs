@@ -13,11 +13,11 @@ namespace Laobian.Share.Blog
     {
         [JsonIgnore] public bool IsPublished => Metadata.IsPublished && Metadata.PublishTime <= DateTime.Now;
 
-        private void SetPostThumbnail(string url)
+        private void SetPostThumbnail(HtmlNode imageNode)
         {
-            if (string.IsNullOrEmpty(Thumbnail) && !string.IsNullOrEmpty(url))
+            if (string.IsNullOrEmpty(Thumbnail) && !string.IsNullOrEmpty(imageNode.GetAttributeValue("src", null)))
             {
-                Thumbnail = url;
+                Thumbnail = imageNode.OuterHtml;
             }
         }
 
@@ -94,7 +94,7 @@ namespace Laobian.Share.Blog
                         (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps))
                     {
                         // this is Network resources, keep it as it is
-                        SetPostThumbnail(src);
+                        SetPostThumbnail(imageNode);
                         continue;
                     }
 
@@ -104,11 +104,11 @@ namespace Laobian.Share.Blog
                             StringComparison.InvariantCultureIgnoreCase);
                         if (index >= 0)
                         {
-                            var subPath = src.Substring(index + Constants.BlogPostFileBaseFolderName.Length)
+                            var subPath = src.Substring(index + Constants.BlogPostFileBaseFolderName.Length + 1)
                                 .Replace("\\", "/");
                             var fullSrc = $"/{Constants.BlogPostFileBaseUrlName}/{subPath}";
                             imageNode.SetAttributeValue("src", fullSrc);
-                            SetPostThumbnail(fullSrc);
+                            SetPostThumbnail(imageNode);
                         }
                     }
                 }

@@ -25,10 +25,10 @@
             }
         </h2>
     </div>
-    <article class="post-content">
+    <div class="post-content">
         @Html.Raw(Model.Current.HtmlContent)
         <p class="text-muted">（本文完）</p>
-    </article>
+    </div>
 
     <div class="alert alert-warning post-alert fs-sm" role="alert">
         <ul>
@@ -52,7 +52,7 @@
             }
             <li>
                 文章的留言，请发送电子邮件至
-                <a href="mailto:@Config.Value.AdminEmail?subject=留言 - @Model.Current.Metadata.Title&body=Good job！" class="text-decoration-none">
+                <a href="mailto:@Config.Value.AdminEmail?subject=RE:@Model.Current.Metadata.Title&body=Good job！" class="text-decoration-none">
                     @Config.Value.AdminEmail
                 </a>
             </li>

@@ -29,7 +29,11 @@
                 <div>
                     @if (!string.IsNullOrEmpty(post.Current.Thumbnail))
                     {
-                        <img src="@post.Current.Thumbnail" class="img-fluid mt-1 mb-3">
+                        <div class="mt-1 mb-3">
+                            @Html.Raw(post.Current.Thumbnail)
+                            @*<img src="@post.Current.Thumbnail" class="img-fluid mt-1 mb-3">*@
+                        </div>
+                        
                     }
 
                     @Html.Raw(post.Current.ExcerptHtml)
