@@ -24,14 +24,14 @@ namespace Laobian.Blog.Controllers
     public class HomeController : Controller
     {
         private readonly ApiHttpService _apiHttpService;
-        private readonly BlogConfig _blogConfig;
+        private readonly BlogOption _blogOption;
         private readonly ICacheClient _cacheClient;
         private readonly ILogger<HomeController> _logger;
         private readonly ISystemData _systemData;
 
         public HomeController(
             ISystemData systemData,
-            IOptions<BlogConfig> config,
+            IOptions<BlogOption> config,
             ILogger<HomeController> logger,
             ApiHttpService apiHttpService,
             ICacheClient cacheClient)
@@ -39,7 +39,7 @@ namespace Laobian.Blog.Controllers
             _logger = logger;
             _cacheClient = cacheClient;
             _systemData = systemData;
-            _blogConfig = config.Value;
+            _blogOption = config.Value;
             _apiHttpService = apiHttpService;
         }
 
@@ -71,9 +71,9 @@ namespace Laobian.Blog.Controllers
 
                     posts.InsertRange(0, toppedPosts);
 
-                    var model = new PagedPostViewModel(p, posts.Count, _blogConfig.PostsPerPage) {Url = Request.Path};
+                    var model = new PagedPostViewModel(p, posts.Count, _blogOption.PostsPerPage) {Url = Request.Path};
 
-                    foreach (var blogPost in posts.ToPaged(_blogConfig.PostsPerPage, model.CurrentPage))
+                    foreach (var blogPost in posts.ToPaged(_blogOption.PostsPerPage, model.CurrentPage))
                     {
                         var postViewModel = new PostViewModel {Current = blogPost};
                         postViewModel.SetAdditionalInfo();
@@ -224,13 +224,13 @@ namespace Laobian.Blog.Controllers
                         LatestPost = posts.FirstOrDefault(),
                         PostTotalAccessCount = posts.Sum(p => p.Accesses.Count).ToUSThousand(),
                         PostTotalCount = posts.Count.ToString(),
-                        TopPosts = posts.OrderByDescending(p => p.Accesses.Count).Take(_blogConfig.PostsPerPage),
+                        TopPosts = posts.OrderByDescending(p => p.Accesses.Count).Take(_blogOption.PostsPerPage),
                         SystemAppVersion = _systemData.AppVersion,
                         SystemDotNetVersion = _systemData.RuntimeVersion,
                         SystemLastBoot = _systemData.BootTime.ToChinaDateAndTime(),
                         SystemRunningInterval = (DateTime.Now - _systemData.BootTime).ToString(),
                         TagTotalCount = tags.Count.ToString(),
-                        TopTags = topTags.OrderByDescending(x => x.Value).Take(_blogConfig.PostsPerPage)
+                        TopTags = topTags.OrderByDescending(x => x.Value).Take(_blogOption.PostsPerPage)
                             .ToDictionary(x => x.Key, x => x.Value)
                     };
 
@@ -249,7 +249,8 @@ namespace Laobian.Blog.Controllers
                 var feed = new SyndicationFeed(Constants.BlogTitle, Constants.BlogDescription,
                     new Uri($"{Constants.BlogAddress}/rss"),
                     Constants.ApplicationName, DateTimeOffset.UtcNow);
-                feed.Copyright = new TextSyndicationContent($"&#x26;amp;#169; {DateTime.Now.Year} {Constants.AdminChineseName}");
+                feed.Copyright =
+                    new TextSyndicationContent($"&#x26;amp;#169; {DateTime.Now.Year} {Constants.AdminChineseName}");
                 feed.Authors.Add(new SyndicationPerson(Constants.AdminEmail, Constants.AdminChineseName,
                     Constants.BlogAddress));
                 feed.BaseUri = new Uri(Constants.BlogAddress);

@@ -10,17 +10,21 @@ namespace Laobian.Share.Option
 
         public string ApiLocalEndpoint { get; set; }
 
-        public string AdminLocalEndpoint { get; set; }
+        public string FileRemoteEndpoint { get; set; }
 
-        public string AdminName { get; set; }
+        public string AdminUserName { get; set; }
 
         public string AdminEmail { get; set; }
 
-        public string AppVersion { get; set; }
+        public string AdminChineseName { get; set; }
+
+        public string AdminEnglishName { get; set; }
 
         public string AssetLocation { get; set; }
 
         public string SendGridApiKey { get; set; }
+
+        public string DataProtectionKeyPath { get; set; }
 
         public string GetBlogPostLocation()
         {
@@ -29,7 +33,7 @@ namespace Laobian.Share.Option
                 throw new LaobianOptionException(nameof(AssetLocation));
             }
 
-            return Path.Combine(AssetLocation, Constants.BlogPostAssetFolder);
+            return Path.Combine(AssetLocation, Constants.BlogPostAssetFolder, Constants.BlogPostPostBaseFolderName);
         }
 
         public string GetBlogFileLocation()
@@ -39,7 +43,7 @@ namespace Laobian.Share.Option
                 throw new LaobianOptionException(nameof(AssetLocation));
             }
 
-            return Path.Combine(AssetLocation, Constants.BlogFileAssetFolder);
+            return Path.Combine(AssetLocation, Constants.BlogPostAssetFolder, Constants.BlogPostFileBaseFolderName);
         }
     }
 }

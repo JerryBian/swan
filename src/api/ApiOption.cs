@@ -4,7 +4,7 @@ using Laobian.Share.Option;
 
 namespace Laobian.Api
 {
-    public class ApiConfig : CommonOption
+    public class ApiOption : CommonOption
     {
         public SourceMode Source { get; set; }
 

@@ -49,7 +49,7 @@ namespace Laobian.Share.Notify
                 }
             }
 
-            msg.AddTo(new EmailAddress(_config.AdminEmail, _config.AdminName));
+            msg.AddTo(new EmailAddress(_config.AdminEmail, _config.AdminUserName));
             var response = await client.SendEmailAsync(msg).ConfigureAwait(false);
             if (response.StatusCode != HttpStatusCode.Accepted)
             {

@@ -7,7 +7,6 @@ using Laobian.Share.Converter;
 using Laobian.Share.Extension;
 using Laobian.Share.Logger.Remote;
 using Laobian.Share.Notify;
-using Laobian.Share.Option;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -36,10 +35,14 @@ namespace Laobian.Admin
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            StartupHelper.ConfigureServices(services, Configuration);
-
-            services.Configure<CommonOption>(Configuration);
-            services.Configure<AdminOption>(Configuration);
+            AdminOption option = null;
+            services.Configure<AdminOption>(o =>
+            {
+                option = o;
+                var resolver = new AdminOptionResolver();
+                resolver.Resolve(o, Configuration);
+            });
+            StartupHelper.ConfigureServices(services, option);
 
             services.AddHttpClient<ApiHttpService>();
             services.AddHttpClient<BlogHttpService>();

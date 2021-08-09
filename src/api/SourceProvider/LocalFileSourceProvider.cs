@@ -12,41 +12,41 @@ namespace Laobian.Api.SourceProvider
     {
         private const string PostFileExtension = "*.md";
         private const string PostMetadataExtension = "*.json";
-        private readonly ApiConfig _apiConfig;
+        private readonly ApiOption _apiOption;
         private string _accessLocation;
         private string _postLocation;
         private string _postMetadataLocation;
         private string _tagLocation;
 
-        public LocalFileSourceProvider(IOptions<ApiConfig> apiConfig)
+        public LocalFileSourceProvider(IOptions<ApiOption> apiConfig)
         {
-            _apiConfig = apiConfig.Value;
+            _apiOption = apiConfig.Value;
         }
 
         public virtual async Task LoadAsync(bool init = true, CancellationToken cancellationToken = default)
         {
-            Directory.CreateDirectory(_apiConfig.GetBlogPostLocation());
-            Directory.CreateDirectory(_apiConfig.GetDbLocation());
-            Directory.CreateDirectory(_apiConfig.GetBlogFileLocation());
+            Directory.CreateDirectory(_apiOption.GetBlogPostLocation());
+            Directory.CreateDirectory(_apiOption.GetDbLocation());
+            Directory.CreateDirectory(_apiOption.GetBlogFileLocation());
 
-            var fileFolderInBlogPostLocation = Path.Combine(_apiConfig.GetBlogPostLocation(), "file");
+            var fileFolderInBlogPostLocation = Path.Combine(_apiOption.GetBlogPostLocation(), "file");
             Directory.CreateDirectory(fileFolderInBlogPostLocation);
 
-            var metadataLocation = Path.Combine(_apiConfig.GetDbLocation(), "metadata");
+            var metadataLocation = Path.Combine(_apiOption.GetDbLocation(), "metadata");
             Directory.CreateDirectory(metadataLocation);
 
             _postMetadataLocation = Path.Combine(metadataLocation, "post.json");
             _tagLocation = Path.Combine(metadataLocation, "tag.json");
 
-            _postLocation = Path.Combine(_apiConfig.GetBlogPostLocation(), "post");
+            _postLocation = Path.Combine(_apiOption.GetBlogPostLocation(), "post");
             Directory.CreateDirectory(_postLocation);
 
-            _accessLocation = Path.Combine(_apiConfig.GetDbLocation(), "access");
+            _accessLocation = Path.Combine(_apiOption.GetDbLocation(), "access");
             Directory.CreateDirectory(_accessLocation);
 
             if (init)
             {
-                var di = new DirectoryInfo(_apiConfig.GetBlogFileLocation());
+                var di = new DirectoryInfo(_apiOption.GetBlogFileLocation());
                 foreach (var file in di.GetFiles())
                 {
                     file.Delete();
@@ -58,7 +58,7 @@ namespace Laobian.Api.SourceProvider
                 }
 
                 CopyFilesRecursively(new DirectoryInfo(fileFolderInBlogPostLocation),
-                    new DirectoryInfo(_apiConfig.GetBlogFileLocation()));
+                    new DirectoryInfo(_apiOption.GetBlogFileLocation()));
             }
 
             await Task.CompletedTask;

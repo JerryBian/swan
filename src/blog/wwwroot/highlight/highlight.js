@@ -30,7 +30,7 @@ var hljs = function() {
         }
 
         ignoreMatch() {
-            this.isMatchIgnored = !0
+            this.isMatchIgnored = !0;
         }
     }
 
@@ -75,7 +75,7 @@ var hljs = function() {
         }
 
         value() {
-            return this.buffer
+            return this.buffer;
         }
 
         span(e) {
@@ -114,11 +114,11 @@ var hljs = function() {
         }
 
         toJSON() {
-            return JSON.stringify(this.rootNode, null, 4)
+            return JSON.stringify(this.rootNode, null, 4);
         }
 
         walk(e) {
-            return this.constructor._walk(e, this.rootNode)
+            return this.constructor._walk(e, this.rootNode);
         }
 
         static _walk(e, t) {
@@ -142,15 +142,15 @@ var hljs = function() {
 
     class c extends l {
         constructor(e) {
-            super(), this.options = e
+            super(), this.options = e;
         }
 
         addKeyword(e, t) {
-            "" !== e && (this.openNode(t), this.addText(e), this.closeNode())
+            "" !== e && (this.openNode(t), this.addText(e), this.closeNode());
         }
 
         addText(e) {
-            "" !== e && this.add(e)
+            "" !== e && this.add(e);
         }
 
         addSublanguage(e, t) {
@@ -163,7 +163,7 @@ var hljs = function() {
         }
 
         finalize() {
-            return !0
+            return !0;
         }
     }
 
@@ -200,7 +200,7 @@ var hljs = function() {
                 const e = f.exec(i);
                 if (!e) {
                     r += i;
-                    break
+                    break;
                 }
                 r += i.substring(0, e.index),
                     i = i.substring(e.index + e[0].length), "\\" === e[0][0] && e[1]
@@ -512,7 +512,7 @@ var hljs = function() {
             }
 
             considerAll() {
-                this.regexIndex = 0
+                this.regexIndex = 0;
             }
 
             addRule(e, t) {
@@ -768,7 +768,7 @@ var hljs = function() {
                 }
                 if ("end" === s.type) {
                     const e = x(s);
-                    if (e !== q) return e
+                    if (e !== q) return e;
                 }
                 if ("illegal" === s.type && "" === a) return 1;
                 if (A > 1e5 && A > 3 * s.index)
@@ -951,7 +951,7 @@ var hljs = function() {
                 registerLanguage: (n, i) => {
                     let r = null;
                     try {
-                        r = i(e)
+                        r = i(e);
                     } catch (e) {
                         if ($("Language definition for '{}' could not be registered.".replace("{}", n)),
                             !o) throw e;
@@ -4762,17 +4762,17 @@ hljs.registerLanguage("sql", (() => {
                 $pattern: /\b[\w\.]+/, keyword: ((e, { exceptions: r, when: t } = {}) => {
                 const n = t;
         return r = r || [], e.map((e => e.match(/\|\d+$/) || r.includes(e) ? e : n(e) ? e + "|0" : e));
-    });
-    (l, { when: e => e.length < 3 }), literal:;
-    a, type:;
+    });;
+    (l, { when: e => e.length < 3 }), literal:;;
+    a, type:;;
     i,
-        built_in:;
+        built_in:;;
     [
         "current_catalog", "current_date", "current_default_transform_group", "current_path", "current_role",
         "current_schema", "current_transform_group_for_type", "current_user", "session_user", "system_time",
         "system_user", "current_time", "localtime", "current_timestamp", "localtimestamp"
     ];
-}, contains:;
+}, contains:;;
 [
     {
         begin: t(...o),
@@ -4811,7 +4811,7 @@ hljs.registerLanguage("sql", (() => {
 ]; }
 }
 })
-());;
+());;;
 hljs.registerLanguage("css",
     (() => {
         "use strict";

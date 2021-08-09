@@ -13,13 +13,13 @@ namespace Laobian.Api.Service
     public class BlogService : IBlogService
     {
         private readonly IBlogPostRepository _blogPostRepository;
-        private readonly ApiConfig _config;
         private readonly IDbRepository _dbRepository;
+        private readonly ApiOption _option;
 
-        public BlogService(IOptions<ApiConfig> config, IDbRepository dbRepository,
+        public BlogService(IOptions<ApiOption> config, IDbRepository dbRepository,
             IBlogPostRepository blogPostRepository)
         {
-            _config = config.Value;
+            _option = config.Value;
             _dbRepository = dbRepository;
             _blogPostRepository = blogPostRepository;
         }

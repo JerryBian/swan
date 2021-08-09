@@ -10,20 +10,20 @@ namespace Laobian.Api.Logger
 {
     public class GitFileLoggerProcessor : ILaobianLoggerProcessor, IDisposable
     {
-        private readonly ApiConfig _config;
         private readonly string _logDir;
         private readonly IGitFileLogQueue _messageQueue;
+        private readonly ApiOption _option;
         private readonly GitFileLoggerOptions _options;
         private readonly Thread _underlingThread;
 
         private bool _stop;
 
-        public GitFileLoggerProcessor(GitFileLoggerOptions options, ApiConfig config, IGitFileLogQueue messageQueue)
+        public GitFileLoggerProcessor(GitFileLoggerOptions options, ApiOption option, IGitFileLogQueue messageQueue)
         {
-            _config = config;
+            _option = option;
             _options = options;
 
-            _logDir = Path.Combine(config.AssetLocation, "log");
+            _logDir = Path.Combine(option.AssetLocation, "log");
             Directory.CreateDirectory(_logDir);
             _messageQueue = messageQueue;
 

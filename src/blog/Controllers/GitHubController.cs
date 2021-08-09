@@ -19,18 +19,18 @@ namespace Laobian.Blog.Controllers
     public class GitHubController : ControllerBase
     {
         private readonly ApiHttpService _apiHttpService;
-        private readonly BlogConfig _blogConfig;
+        private readonly BlogOption _blogOption;
         private readonly ILogger<GitHubController> _logger;
         private readonly ISystemData _systemData;
 
         public GitHubController(
-            IOptions<BlogConfig> blogConfig,
+            IOptions<BlogOption> blogConfig,
             ApiHttpService apiHttpService,
             ILogger<GitHubController> logger,
             ISystemData systemData)
         {
             _logger = logger;
-            _blogConfig = blogConfig.Value;
+            _blogOption = blogConfig.Value;
             _apiHttpService = apiHttpService;
             _systemData = systemData;
         }
@@ -69,7 +69,7 @@ namespace Laobian.Blog.Controllers
             {
                 var body = await reader.ReadToEndAsync();
                 signature = signature.Substring("sha1=".Length);
-                var secret = Encoding.UTF8.GetBytes(_blogConfig.GitHubHookSecret);
+                var secret = Encoding.UTF8.GetBytes(_blogOption.GitHubHookSecret);
                 var bodyBytes = Encoding.UTF8.GetBytes(body);
 
                 using (var hmacSha1 = new HMACSHA1(secret))
@@ -92,8 +92,8 @@ namespace Laobian.Blog.Controllers
 
                 var payload = JsonUtil.Deserialize<GitHubPayload>(body);
                 if (payload.Commits.Any(c =>
-                    StringUtil.EqualsIgnoreCase(_blogConfig.AdminEmail, c.Author.Email) &&
-                    StringUtil.EqualsIgnoreCase(_blogConfig.AdminName, c.Author.User)))
+                    StringUtil.EqualsIgnoreCase(_blogOption.AdminEmail, c.Author.Email) &&
+                    StringUtil.EqualsIgnoreCase(_blogOption.AdminUserName, c.Author.User)))
                 {
                     //_logger.LogInformation(LogMessageHelper.Format("Got request from server, no need to refresh."));
                     return Ok("No need to refresh.");

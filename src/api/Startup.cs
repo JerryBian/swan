@@ -1,6 +1,5 @@
 using System;
 using System.Text.Encodings.Web;
-using System.Text.Unicode;
 using Laobian.Api.Command;
 using Laobian.Api.HostedServices;
 using Laobian.Api.Logger;
@@ -11,7 +10,6 @@ using Laobian.Share;
 using Laobian.Share.Converter;
 using Laobian.Share.Extension;
 using Laobian.Share.Notify;
-using Laobian.Share.Option;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -34,7 +32,14 @@ namespace Laobian.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
+            ApiOption option = null;
+            services.Configure<ApiOption>(o =>
+            {
+                option = o;
+                var resolver = new ApiOptionResolver();
+                resolver.Resolve(o, Configuration);
+            });
+            StartupHelper.ConfigureServices(services, option);
 
             services.AddSingleton<IGitFileLogQueue, GitFileLogQueue>();
             services.AddSingleton<ICommandClient, ProcessCommandClient>();
@@ -44,11 +49,8 @@ namespace Laobian.Api
             services.AddSingleton<LocalFileSourceProvider>();
             services.AddSingleton<GitHubSourceProvider>();
             services.AddSingleton<ISourceProviderFactory, SourceProviderFactory>();
-            services.AddSingleton<IEmailNotify, EmailNotify>();
 
             services.AddHostedService<BlogApiHostedService>();
-            services.Configure<ApiConfig>(Configuration);
-            services.Configure<CommonOption>(Configuration);
 
             services.AddLogging(config =>
             {

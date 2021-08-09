@@ -13,7 +13,6 @@ using Laobian.Share.Converter;
 using Laobian.Share.Extension;
 using Laobian.Share.Logger.Remote;
 using Laobian.Share.Notify;
-using Laobian.Share.Option;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -52,17 +51,19 @@ namespace Laobian.Blog
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            StartupHelper.ConfigureServices(services, Configuration);
+            BlogOption option = null;
+            services.Configure<BlogOption>(o =>
+            {
+                option = o;
+                var resolver = new BlogOptionResolver();
+                resolver.Resolve(o, Configuration);
+            });
+            StartupHelper.ConfigureServices(services, option);
 
             services.AddSingleton<ISystemData, SystemData>();
             services.AddSingleton<ICacheClient, CacheClient>();
-            services.AddOptions<BlogConfig>().Bind(Configuration).ValidateDataAnnotations();
-            services.AddOptions<CommonOption>().Bind(Configuration).ValidateDataAnnotations();
 
-            services.AddHttpClient<ApiHttpService>(h =>
-                {
-                    h.Timeout = TimeSpan.FromMinutes(10);
-                })
+            services.AddHttpClient<ApiHttpService>(h => { h.Timeout = TimeSpan.FromMinutes(10); })
                 .SetHandlerLifetime(TimeSpan.FromDays(1))
                 .AddPolicyHandler(GetRetryPolicy());
             services.AddHttpClient("log")
@@ -128,7 +129,7 @@ namespace Laobian.Blog
                 }
             });
 
-            var config = app.ApplicationServices.GetRequiredService<IOptions<BlogConfig>>().Value;
+            var config = app.ApplicationServices.GetRequiredService<IOptions<BlogOption>>().Value;
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

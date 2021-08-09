@@ -16,15 +16,15 @@ namespace Laobian.Api.Controllers
     [Route("log")]
     public class LogController : ControllerBase
     {
-        private readonly ApiConfig _config;
         private readonly IGitFileLogQueue _gitFileLogQueue;
         private readonly ILogger<LogController> _logger;
+        private readonly ApiOption _option;
 
         public LogController(ILogger<LogController> logger, IGitFileLogQueue gitFileLogQueue,
-            IOptions<ApiConfig> config)
+            IOptions<ApiOption> config)
         {
             _logger = logger;
-            _config = config.Value;
+            _option = config.Value;
             _gitFileLogQueue = gitFileLogQueue;
         }
 
@@ -61,7 +61,7 @@ namespace Laobian.Api.Controllers
         {
             try
             {
-                var logDir = Path.Combine(_config.AssetLocation, "log");
+                var logDir = Path.Combine(_option.AssetLocation, "log");
                 Directory.CreateDirectory(logDir);
 
                 logDir = Path.Combine(logDir, site.ToString().ToLowerInvariant());

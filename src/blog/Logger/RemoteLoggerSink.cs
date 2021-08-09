@@ -14,13 +14,13 @@ namespace Laobian.Blog.Logger
 {
     public class RemoteLoggerSink : IRemoteLoggerSink
     {
-        private readonly BlogConfig _config;
+        private readonly BlogOption _option;
 
         private readonly IServiceProvider _serviceProvider;
 
-        public RemoteLoggerSink(IServiceProvider serviceProvider, IOptions<BlogConfig> config)
+        public RemoteLoggerSink(IServiceProvider serviceProvider, IOptions<BlogOption> config)
         {
-            _config = config.Value;
+            _option = config.Value;
             _serviceProvider = serviceProvider;
         }
 
@@ -28,7 +28,7 @@ namespace Laobian.Blog.Logger
         {
             var httpClientFactory = _serviceProvider.GetRequiredService<IHttpClientFactory>();
             var httpClient = httpClientFactory.CreateClient("log");
-            httpClient.BaseAddress = new Uri(_config.ApiLocalEndpoint);
+            httpClient.BaseAddress = new Uri(_option.ApiLocalEndpoint);
 
             var response = await httpClient.PostAsync($"/log/{loggerName}",
                 new StringContent(JsonUtil.Serialize(logs), Encoding.UTF8, "application/json"));

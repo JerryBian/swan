@@ -35,7 +35,7 @@ namespace Laobian.Admin.Controllers
         [Route("/login")]
         public async Task<IActionResult> Login(string userName, string password, string returnUrl = null)
         {
-            if (userName == _adminOption.AdminName && password == _adminOption.AdminPassword)
+            if (userName == _adminOption.AdminUserName && password == _adminOption.AdminPassword)
             {
                 var claims = new List<Claim>
                 {

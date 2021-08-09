@@ -17,7 +17,7 @@ namespace Laobian.Api.Repository
         private BlogTagStore _blogTagStore;
 
 
-        public DbRepository(ISourceProviderFactory sourceProviderFactory, IOptions<ApiConfig> apiConfig)
+        public DbRepository(ISourceProviderFactory sourceProviderFactory, IOptions<ApiOption> apiConfig)
         {
             _sourceProvider = sourceProviderFactory.Get(apiConfig.Value.Source);
         }

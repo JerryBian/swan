@@ -17,7 +17,7 @@ namespace Laobian.Blog.HttpService
         private readonly HttpClient _httpClient;
         private readonly ILogger<ApiHttpService> _logger;
 
-        public ApiHttpService(HttpClient httpClient, ILogger<ApiHttpService> logger, IOptions<BlogConfig> config)
+        public ApiHttpService(HttpClient httpClient, ILogger<ApiHttpService> logger, IOptions<BlogOption> config)
         {
             _logger = logger;
             _httpClient = httpClient;

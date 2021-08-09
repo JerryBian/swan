@@ -11,15 +11,15 @@ namespace Laobian.Api.SourceProvider
 {
     public class GitHubSourceProvider : LocalFileSourceProvider
     {
-        private readonly ApiConfig _apiConfig;
+        private readonly ApiOption _apiOption;
         private readonly ICommandClient _commandClient;
         private readonly ILogger<GitHubSourceProvider> _logger;
 
-        public GitHubSourceProvider(IOptions<ApiConfig> apiConfig, ICommandClient commandClient,
+        public GitHubSourceProvider(IOptions<ApiOption> apiConfig, ICommandClient commandClient,
             ILogger<GitHubSourceProvider> logger) : base(apiConfig)
         {
             _logger = logger;
-            _apiConfig = apiConfig.Value;
+            _apiOption = apiConfig.Value;
             _commandClient = commandClient;
         }
 
@@ -41,7 +41,7 @@ namespace Laobian.Api.SourceProvider
 
         private async Task PushDbRepoAsync(string message)
         {
-            if (!Directory.Exists(_apiConfig.GetDbLocation()))
+            if (!Directory.Exists(_apiOption.GetDbLocation()))
             {
                 _logger.LogWarning("Push DB repo failed, local dir not exist.");
                 return;
@@ -49,7 +49,7 @@ namespace Laobian.Api.SourceProvider
 
             var commands = new List<string>
             {
-                $"cd {_apiConfig.GetDbLocation()}", "git add .", $"git commit -m \"{message}\"", "git push"
+                $"cd {_apiOption.GetDbLocation()}", "git add .", $"git commit -m \"{message}\"", "git push"
             };
             var command =
                 $"{string.Join(" && ", commands)}";
@@ -59,19 +59,19 @@ namespace Laobian.Api.SourceProvider
 
         private async Task PullBlogPostRepoAsync(CancellationToken cancellationToken)
         {
-            if (Directory.Exists(_apiConfig.GetBlogPostLocation()))
+            if (Directory.Exists(_apiOption.GetBlogPostLocation()))
             {
-                Directory.Delete(_apiConfig.GetBlogPostLocation(), true);
+                Directory.Delete(_apiOption.GetBlogPostLocation(), true);
             }
 
             var retryTimes = 0;
-            while (retryTimes <= 3 && !Directory.Exists(_apiConfig.GetBlogPostLocation()))
+            while (retryTimes <= 3 && !Directory.Exists(_apiOption.GetBlogPostLocation()))
             {
                 retryTimes++;
                 var repoUrl =
-                    $"https://{_apiConfig.GitHubBlogPostRepoApiToken}@github.com/{_apiConfig.GitHubBlogPostRepoUserName}/{_apiConfig.GitHubBlogPostRepoName}.git";
+                    $"https://{_apiOption.GitHubBlogPostRepoApiToken}@github.com/{_apiOption.GitHubBlogPostRepoUserName}/{_apiOption.GitHubBlogPostRepoName}.git";
                 var command =
-                    $"git clone -b {_apiConfig.GitHubBlogPostRepoBranchName} --single-branch {repoUrl} {_apiConfig.GetBlogPostLocation()}";
+                    $"git clone -b {_apiOption.GitHubBlogPostRepoBranchName} --single-branch {repoUrl} {_apiOption.GetBlogPostLocation()}";
                 _logger.LogInformation($"Retry: {retryTimes}... starting to pull Blog Post repo.");
                 var output = await _commandClient.RunAsync(command, cancellationToken);
                 _logger.LogInformation($"Retry: {retryTimes}, cmd: {command}{Environment.NewLine}Output: {output}");
@@ -80,22 +80,22 @@ namespace Laobian.Api.SourceProvider
 
         private async Task PullDbRepoAsync(CancellationToken cancellationToken)
         {
-            if (Directory.Exists(_apiConfig.GetDbLocation()))
+            if (Directory.Exists(_apiOption.GetDbLocation()))
             {
-                Directory.Delete(_apiConfig.GetDbLocation(), true);
+                Directory.Delete(_apiOption.GetDbLocation(), true);
             }
 
             var retryTimes = 0;
-            while (retryTimes <= 3 && !Directory.Exists(_apiConfig.GetDbLocation()))
+            while (retryTimes <= 3 && !Directory.Exists(_apiOption.GetDbLocation()))
             {
                 retryTimes++;
                 var repoUrl =
-                    $"https://{_apiConfig.GitHubDbRepoApiToken}@github.com/{_apiConfig.GitHubDbRepoUserName}/{_apiConfig.GitHubDbRepoName}.git";
+                    $"https://{_apiOption.GitHubDbRepoApiToken}@github.com/{_apiOption.GitHubDbRepoUserName}/{_apiOption.GitHubDbRepoName}.git";
                 var command =
-                    $"git clone -b {_apiConfig.GitHubDbRepoBranchName} --single-branch {repoUrl} {_apiConfig.GetDbLocation()}";
-                command += $" && cd {_apiConfig.GetDbLocation()}";
+                    $"git clone -b {_apiOption.GitHubDbRepoBranchName} --single-branch {repoUrl} {_apiOption.GetDbLocation()}";
+                command += $" && cd {_apiOption.GetDbLocation()}";
                 command += " && git config --local user.name \"API Server\"";
-                command += $" && git config --local user.email \"{_apiConfig.AdminEmail}\"";
+                command += $" && git config --local user.email \"{_apiOption.AdminEmail}\"";
                 _logger.LogInformation($"Retry: {retryTimes}... starting to pull DB repo.");
                 var output = await _commandClient.RunAsync(command, cancellationToken);
                 _logger.LogInformation($"Retry: {retryTimes}, cmd: {command}{Environment.NewLine}Output: {output}");
