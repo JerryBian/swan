@@ -161,30 +161,30 @@ jobs:
             ghcr.io/jerrybian/laobian-blog:latest
             ghcr.io/jerrybian/laobian-blog:${{ env.APP_VERSION }}
 
-  # deploy_server:
-  #   name: Deploy to remote server
-  #   runs-on: ubuntu-20.04
-  #   needs: [publish_api, publish_admin, publish_blog]
+  deploy_server:
+    name: Deploy to remote server
+    runs-on: ubuntu-20.04
+    needs: [publish_api, publish_admin, publish_blog]
 
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v2
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
 
-  #     - name: Install dependencies
-  #       run: |
-  #         sudo apt-get install -y libxml2-utils
+      - name: Install dependencies
+        run: |
+          sudo apt-get install -y libxml2-utils
 
-  #     - name: Setup environment variables
-  #       run: |
-  #         APP_VERSION=`xmllint --xpath "/Project/PropertyGroup/Version/text()" Directory.Build.props`
-  #         echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
+      - name: Setup environment variables
+        run: |
+          APP_VERSION=`xmllint --xpath "/Project/PropertyGroup/Version/text()" Directory.Build.props`
+          echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
 
-  #     - name: deploy server
-  #       uses: appleboy/ssh-action@master
-  #       with:
-  #         host: ${{ secrets.VPS_SSH_HOST }}
-  #         username: ${{ secrets.VPS_SSH_USER }}
-  #         password: ${{ secrets.VPS_SSH_PASSWORD }}
-  #         port: ${{ secrets.VPS_SSH_PORT }}
-  #         script: |
-  #           sh /ga/deploy-laobian.sh prod ${{ env.APP_VERSION }}
+      - name: deploy server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_SSH_HOST }}
+          username: ${{ secrets.VPS_SSH_USER }}
+          password: ${{ secrets.VPS_SSH_PASSWORD }}
+          port: ${{ secrets.VPS_SSH_PORT }}
+          script: |
+            sh /ga/deploy-laobian.sh prod ${{ env.APP_VERSION }}
