@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Api.Command;
+using Laobian.Share;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -71,7 +72,7 @@ namespace Laobian.Api.SourceProvider
                 var repoUrl =
                     $"https://{_apiOption.GitHubBlogPostRepoApiToken}@github.com/{_apiOption.GitHubBlogPostRepoUserName}/{_apiOption.GitHubBlogPostRepoName}.git";
                 var command =
-                    $"git clone -b {_apiOption.GitHubBlogPostRepoBranchName} --single-branch {repoUrl} {_apiOption.GetBlogPostLocation()}";
+                    $"git clone -b {_apiOption.GitHubBlogPostRepoBranchName} --single-branch {repoUrl} {Path.Combine(_apiOption.AssetLocation, Constants.BlogPostAssetFolder)}";
                 _logger.LogInformation($"Retry: {retryTimes}... starting to pull Blog Post repo.");
                 var output = await _commandClient.RunAsync(command, cancellationToken);
                 _logger.LogInformation($"Retry: {retryTimes}, cmd: {command}{Environment.NewLine}Output: {output}");
