@@ -8,7 +8,7 @@ $ADMIN_EMAIL = "JerryBian@outlook.com"
 $ASSET_LOCATION = "../../sample"
 $ADMIN_CHINESE_NAME = "周杰伦"
 $ADMIN_ENGLISH_NAME = "Jerry Bian"
-$DATA_PROTECTION_KEY_PATH = "../../temp"
+$DATA_PROTECTION_KEY_PATH = "../../sample/data_protection"
 
 ##################
 ##              ##

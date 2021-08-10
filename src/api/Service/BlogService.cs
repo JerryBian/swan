@@ -155,7 +155,7 @@ namespace Laobian.Api.Service
             foreach (var blogPost in blogPostStore.GetAll())
             {
                 await SetPostRawData(blogPost, cancellationToken);
-                blogPost.ExtractRuntimeData();
+                blogPost.ExtractRuntimeData(_option);
             }
         }
     }

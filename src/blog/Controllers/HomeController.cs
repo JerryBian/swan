@@ -222,9 +222,9 @@ namespace Laobian.Blog.Controllers
                     var model = new AboutViewModel
                     {
                         LatestPost = posts.FirstOrDefault(),
-                        PostTotalAccessCount = posts.Sum(p => p.Accesses.Count).ToUSThousand(),
+                        PostTotalAccessCount = posts.Sum(p => p.GetAccessCount()).ToUSThousand(),
                         PostTotalCount = posts.Count.ToString(),
-                        TopPosts = posts.OrderByDescending(p => p.Accesses.Count).Take(_blogOption.PostsPerPage),
+                        TopPosts = posts.OrderByDescending(p => p.GetAccessCount()).Take(_blogOption.PostsPerPage),
                         SystemAppVersion = _systemData.AppVersion,
                         SystemDotNetVersion = _systemData.RuntimeVersion,
                         SystemLastBoot = _systemData.BootTime.ToChinaDateAndTime(),

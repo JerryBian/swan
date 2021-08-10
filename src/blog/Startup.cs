@@ -142,18 +142,21 @@ namespace Laobian.Blog
             app.UseStatusCodePages();
             app.UseStaticFiles();
 
-            var fileLoc = Path.Combine(config.GetBlogFileLocation());
-            if (!Directory.Exists(fileLoc))
+            if (env.IsDevelopment())
             {
-                Directory.CreateDirectory(fileLoc);
+                var fileLoc = Path.Combine(config.GetBlogFileLocation());
+                if (!Directory.Exists(fileLoc))
+                {
+                    Directory.CreateDirectory(fileLoc);
+                }
+
+                app.UseStaticFiles(new StaticFileOptions
+                {
+                    FileProvider = new PhysicalFileProvider(Path.GetFullPath(fileLoc)),
+                    RequestPath = "/file"
+                });
             }
-
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                FileProvider = new PhysicalFileProvider(Path.GetFullPath(fileLoc)),
-                RequestPath = "/file"
-            });
-
+            
             app.UseRouting();
 
             app.UseAuthentication();

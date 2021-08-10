@@ -27,15 +27,5 @@ namespace Laobian.Api
         public string GitHubBlogPostRepoName { get; set; }
 
         public string GitHubBlogPostRepoBranchName { get; set; }
-
-        public string GetDbLocation()
-        {
-            if (string.IsNullOrEmpty(AssetLocation))
-            {
-                throw new LaobianOptionException(nameof(AssetLocation));
-            }
-
-            return Path.Combine(AssetLocation, Constants.DbAssetFolder);
-        }
     }
 }

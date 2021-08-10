@@ -12,6 +12,7 @@ WORKDIR /app
 COPY --from=build /publish ./
 
 RUN chmod +x ./laobian.blog ./wait-for-it.sh ./start-after-api.sh
+ENV TZ=Asia/Shanghai
 
 ENTRYPOINT ["./start-after-api.sh"]
 CMD ["./laobian.blog"]

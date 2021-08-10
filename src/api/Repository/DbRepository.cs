@@ -1,8 +1,11 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Api.SourceProvider;
 using Laobian.Api.Store;
+using Laobian.Share.Converter;
 using Laobian.Share.Util;
 using Microsoft.Extensions.Options;
 
@@ -79,7 +82,7 @@ namespace Laobian.Api.Repository
         {
             await _sourceProvider.SavePostAccessAsync(
                 _blogAccessStore.GetAll().ToDictionary(x => x.Key,
-                    x => JsonUtil.Serialize(x.Value.OrderByDescending(y => y.Date), true)), cancellationToken);
+                    x => JsonUtil.Serialize(x.Value.OrderByDescending(y => y.Date), false, new List<JsonConverter>{new DateOnlyConverter()})), cancellationToken);
         }
     }
 }

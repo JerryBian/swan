@@ -337,7 +337,7 @@ sdc
 
 别忘了把硬盘自动挂载的设置给关掉。
 
-![openwrt](../file/2020/07/openwrt-setting.png)
+![openwrt](../file/2020/07/openwrt-setting.png "openwrt")
 
 当然每次重启之后，都需要手动 `mount -a`，这样虽然麻烦点，但是可以保证它们对应的 `mnt` 目录永远是固定的。
 

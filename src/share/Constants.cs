@@ -4,9 +4,9 @@
     {
         public const string BlogPostFileBaseFolderName = "file";
 
-        public const string BlogPostFileBaseUrlName = "blog";
-
         public const string BlogPostPostBaseFolderName = "post";
+
+        public const string BlogAccessBaseFolderName = "access";
 
         public const string DbAssetFolder = "db";
 

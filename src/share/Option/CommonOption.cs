@@ -47,6 +47,36 @@ namespace Laobian.Share.Option
             return Path.Combine(AssetLocation, Constants.BlogPostAssetFolder, Constants.BlogPostFileBaseFolderName);
         }
 
+        public string GetBlogMetadataLocation()
+        {
+            if (string.IsNullOrEmpty(AssetLocation))
+            {
+                throw new LaobianOptionException(nameof(AssetLocation));
+            }
+
+            return Path.Combine(AssetLocation, Constants.DbAssetFolder, "blog");
+        }
+
+        public string GetDbLocation()
+        {
+            if (string.IsNullOrEmpty(AssetLocation))
+            {
+                throw new LaobianOptionException(nameof(AssetLocation));
+            }
+
+            return Path.Combine(AssetLocation, Constants.DbAssetFolder);
+        }
+
+        public string GetBlogAccessLocation()
+        {
+            if (string.IsNullOrEmpty(AssetLocation))
+            {
+                throw new LaobianOptionException(nameof(AssetLocation));
+            }
+
+            return Path.Combine(AssetLocation, Constants.DbAssetFolder, "blog", Constants.BlogAccessBaseFolderName);
+        }
+
         public void Clone(CommonOption option)
         {
             foreach (var propertyInfo in GetType().GetProperties())

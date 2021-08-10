@@ -11,6 +11,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:5.0
 WORKDIR /app
 COPY --from=build /publish ./
 RUN chmod +x laobian.admin ./wait-for-it.sh ./start-after-api.sh
+ENV TZ=Asia/Shanghai
 
 ENTRYPOINT ["./start-after-api.sh"]
 CMD ["./laobian.admin"]

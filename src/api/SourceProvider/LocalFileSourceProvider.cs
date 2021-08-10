@@ -25,42 +25,17 @@ namespace Laobian.Api.SourceProvider
 
         public virtual async Task LoadAsync(bool init = true, CancellationToken cancellationToken = default)
         {
-            Directory.CreateDirectory(_apiOption.GetBlogPostLocation());
-            Directory.CreateDirectory(_apiOption.GetDbLocation());
-            Directory.CreateDirectory(_apiOption.GetBlogFileLocation());
+            _postLocation = _apiOption.GetBlogPostLocation();
+            Directory.CreateDirectory(_postLocation);
 
-            var fileFolderInBlogPostLocation = Path.Combine(_apiOption.GetBlogPostLocation(), "file");
-            Directory.CreateDirectory(fileFolderInBlogPostLocation);
-
-            var metadataLocation = Path.Combine(_apiOption.GetDbLocation(), "metadata");
+            var metadataLocation = _apiOption.GetBlogMetadataLocation();
             Directory.CreateDirectory(metadataLocation);
 
             _postMetadataLocation = Path.Combine(metadataLocation, "post.json");
             _tagLocation = Path.Combine(metadataLocation, "tag.json");
 
-            _postLocation = Path.Combine(_apiOption.GetBlogPostLocation(), "post");
-            Directory.CreateDirectory(_postLocation);
-
-            _accessLocation = Path.Combine(_apiOption.GetDbLocation(), "access");
+            _accessLocation = _apiOption.GetBlogAccessLocation();
             Directory.CreateDirectory(_accessLocation);
-
-            if (init)
-            {
-                var di = new DirectoryInfo(_apiOption.GetBlogFileLocation());
-                foreach (var file in di.GetFiles())
-                {
-                    file.Delete();
-                }
-
-                foreach (var dir in di.GetDirectories())
-                {
-                    dir.Delete(true);
-                }
-
-                CopyFilesRecursively(new DirectoryInfo(fileFolderInBlogPostLocation),
-                    new DirectoryInfo(_apiOption.GetBlogFileLocation()));
-            }
-
             await Task.CompletedTask;
         }
 

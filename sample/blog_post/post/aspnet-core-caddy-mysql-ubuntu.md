@@ -19,7 +19,7 @@ sudo apt-get install dotnet-dev-1.0.1
 
 We can verify your installation by `dotnet --info`, it will output version and platform information if everything is all set.
 
-![](../file/2017/04/verify-dotnet-core.png)
+![](../file/2017/04/verify-dotnet-core.png "dotnet version")
 
 ### Install MySQL
 
@@ -158,4 +158,4 @@ systemctl restart caddy
 
 Navigate to your website in browser, check the security status.
 
-![](../file/2017/04/verify-https-safari.png)
+![](../file/2017/04/verify-https-safari.png "verify site")

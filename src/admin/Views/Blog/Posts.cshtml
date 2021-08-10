@@ -27,7 +27,7 @@
                 </th>
                 <th>@post.IsPublished</th>
                 <th>
-                    @post.Accesses.Count.ToUSThousand()
+                    @post.GetAccessCount().ToUSThousand()
                 </th>
                 <th>
                     <a href="javascript:;" onclick="launchMetadataModal('@post.Link')">Update Metadata</a>

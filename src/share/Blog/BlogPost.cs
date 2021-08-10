@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json.Serialization;
 using HtmlAgilityPack;
+using Laobian.Share.Option;
 using Laobian.Share.Util;
 using Markdig;
 
@@ -21,7 +22,7 @@ namespace Laobian.Share.Blog
             }
         }
 
-        public void ExtractRuntimeData()
+        public void ExtractRuntimeData(CommonOption option)
         {
             if (string.IsNullOrEmpty(MdContent))
             {
@@ -33,7 +34,7 @@ namespace Laobian.Share.Blog
             htmlDoc.LoadHtml(html);
 
             // all images nodes
-            SetImageNodes(htmlDoc);
+            SetImageNodes(htmlDoc, option);
             HtmlContent = htmlDoc.DocumentNode.OuterHtml;
 
             // assign Excerpt
@@ -75,7 +76,7 @@ namespace Laobian.Share.Blog
             }
         }
 
-        private void SetImageNodes(HtmlDocument htmlDoc)
+        private void SetImageNodes(HtmlDocument htmlDoc, CommonOption option)
         {
             var imageNodes = htmlDoc.DocumentNode.Descendants("img").ToList();
             foreach (var imageNode in imageNodes)
@@ -106,7 +107,7 @@ namespace Laobian.Share.Blog
                         {
                             var subPath = src.Substring(index + Constants.BlogPostFileBaseFolderName.Length + 1)
                                 .Replace("\\", "/");
-                            var fullSrc = $"/{Constants.BlogPostFileBaseUrlName}/{subPath}"; //TODO: Use Full Path for RSS
+                            var fullSrc = $"{option.FileRemoteEndpoint}/{subPath}";
                             imageNode.SetAttributeValue("src", fullSrc);
                             SetPostThumbnail(imageNode);
                         }
@@ -119,6 +120,11 @@ namespace Laobian.Share.Blog
         {
             var path = $"{baseAddress}/{Metadata.PublishTime.Year:D4}/{Metadata.PublishTime.Month:D2}/{Metadata.Link}.html";
             return path;
+        }
+
+        public int GetAccessCount()
+        {
+            return Accesses.Sum(x => x.Count);
         }
 
         #region Raw data
