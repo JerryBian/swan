@@ -3,33 +3,33 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Laobian.Share.Blog;
-using Laobian.Share.Helper;
+using Laobian.Share.Util;
 
 namespace Laobian.Api.Store
 {
     public class BlogMetadataStore
     {
-        private readonly ConcurrentDictionary<string, BlogPostMetadata> _allMetadata;
+        private readonly ConcurrentDictionary<string, BlogMetadata> _allMetadata;
 
         public BlogMetadataStore(string metadata)
         {
             _allMetadata =
-                new ConcurrentDictionary<string, BlogPostMetadata>(StringComparer.InvariantCultureIgnoreCase);
+                new ConcurrentDictionary<string, BlogMetadata>(StringComparer.InvariantCultureIgnoreCase);
             if (!string.IsNullOrEmpty(metadata))
             {
-                foreach (var item in JsonHelper.Deserialize<List<BlogPostMetadata>>(metadata))
+                foreach (var item in JsonUtil.Deserialize<List<BlogMetadata>>(metadata))
                 {
                     _allMetadata.TryAdd(item.Link, item);
                 }
             }
         }
 
-        public List<BlogPostMetadata> GetAll()
+        public List<BlogMetadata> GetAll()
         {
             return _allMetadata.Values.ToList();
         }
 
-        public BlogPostMetadata GetByLink(string postLink)
+        public BlogMetadata GetByLink(string postLink)
         {
             if (_allMetadata.TryGetValue(postLink, out var metadata))
             {
@@ -39,7 +39,7 @@ namespace Laobian.Api.Store
             return null;
         }
 
-        public void Add(BlogPostMetadata metadata)
+        public void Add(BlogMetadata metadata)
         {
             if (_allMetadata.ContainsKey(metadata.Link))
             {
@@ -54,7 +54,7 @@ namespace Laobian.Api.Store
             _allMetadata.TryRemove(postLink, out _);
         }
 
-        public void Update(BlogPostMetadata metadata)
+        public void Update(BlogMetadata metadata)
         {
             if (!_allMetadata.TryGetValue(metadata.Link, out var val))
             {
@@ -66,7 +66,6 @@ namespace Laobian.Api.Store
             val.PublishTime = metadata.PublishTime;
             val.Tags.Clear();
             val.Tags.AddRange(metadata.Tags);
-            val.AllowComment = metadata.AllowComment;
             val.ContainsMath = metadata.ContainsMath;
             val.Excerpt = metadata.Excerpt;
             val.IsTopping = metadata.IsTopping;

@@ -4,9 +4,9 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Laobian.Share.Helper;
 using Laobian.Share.Logger;
 using Laobian.Share.Logger.Remote;
+using Laobian.Share.Util;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -14,13 +14,13 @@ namespace Laobian.Blog.Logger
 {
     public class RemoteLoggerSink : IRemoteLoggerSink
     {
-        private readonly BlogConfig _config;
+        private readonly BlogOption _option;
 
         private readonly IServiceProvider _serviceProvider;
 
-        public RemoteLoggerSink(IServiceProvider serviceProvider, IOptions<BlogConfig> config)
+        public RemoteLoggerSink(IServiceProvider serviceProvider, IOptions<BlogOption> config)
         {
-            _config = config.Value;
+            _option = config.Value;
             _serviceProvider = serviceProvider;
         }
 
@@ -28,10 +28,10 @@ namespace Laobian.Blog.Logger
         {
             var httpClientFactory = _serviceProvider.GetRequiredService<IHttpClientFactory>();
             var httpClient = httpClientFactory.CreateClient("log");
-            httpClient.BaseAddress = new Uri(_config.ApiLocalEndpoint);
+            httpClient.BaseAddress = new Uri(_option.ApiLocalEndpoint);
 
             var response = await httpClient.PostAsync($"/log/{loggerName}",
-                new StringContent(JsonHelper.Serialize(logs), Encoding.UTF8, "application/json"));
+                new StringContent(JsonUtil.Serialize(logs), Encoding.UTF8, "application/json"));
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 Console.WriteLine(

@@ -1,14 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <CopyRefAssembliesToPublishDirectory>false</CopyRefAssembliesToPublishDirectory>
     <AssemblyName>laobian.blog</AssemblyName>
+    <UserSecretsId>981c15de-cd77-4357-9fed-455abbb8dc19</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="5.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="5.0.8" />
     <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="5.0.1" />
+    <PackageReference Include="System.ServiceModel.Syndication" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -8,16 +8,16 @@ namespace Laobian.Api.HttpService
 {
     public class BlogHttpService
     {
-        private readonly ApiConfig _apiConfig;
+        private readonly ApiOption _apiOption;
         private readonly HttpClient _httpClient;
         private readonly ILogger<BlogHttpService> _logger;
 
-        public BlogHttpService(HttpClient httpClient, IOptions<ApiConfig> apiConfig, ILogger<BlogHttpService> logger)
+        public BlogHttpService(HttpClient httpClient, IOptions<ApiOption> apiConfig, ILogger<BlogHttpService> logger)
         {
             _logger = logger;
-            _apiConfig = apiConfig.Value;
+            _apiOption = apiConfig.Value;
             _httpClient = httpClient;
-            _httpClient.BaseAddress = new Uri(_apiConfig.BlogLocalEndpoint);
+            _httpClient.BaseAddress = new Uri(_apiOption.BlogLocalEndpoint);
         }
 
         public async Task PurgeCacheAsync()

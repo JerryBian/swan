@@ -1,6 +1,10 @@
 ﻿@using Microsoft.Extensions.Options
 @model IEnumerable<Laobian.Share.Blog.BlogTag>
-@inject IOptions<AdminConfig> _config
+@inject IOptions<AdminOption> _config
+@{
+    ViewData["Title"] = "Blog Tags";
+}
+
 <div>
     <h3 class="text-start">
         <button class="btn btn-primary" onclick="launchAddModal()">Add new tag</button>

@@ -1,18 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Laobian.Blog.Data;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Primitives;
 
 namespace Laobian.Blog.Cache
 {
     public class CacheClient : ICacheClient
     {
+        private readonly ILogger<CacheClient> _logger;
         private readonly IMemoryCache _memoryCache;
         private readonly ISystemData _systemData;
-        private readonly ILogger<CacheClient> _logger;
 
         public CacheClient(IMemoryCache memoryCache, ISystemData systemData, ILogger<CacheClient> logger)
         {
@@ -23,7 +20,7 @@ namespace Laobian.Blog.Cache
 
         public T GetOrCreate<T>(string cacheKey, Func<T> func, TimeSpan? expireAfter = null)
         {
-            return _memoryCache.GetOrCreate<T>(cacheKey, entry =>
+            return _memoryCache.GetOrCreate(cacheKey, entry =>
             {
                 var val = func();
                 entry.Value = val;

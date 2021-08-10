@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Laobian.Share.Blog;
-using Laobian.Share.Helper;
+using Laobian.Share.Util;
 
 namespace Laobian.Api.Store
 {
@@ -16,7 +16,7 @@ namespace Laobian.Api.Store
             _tags = new ConcurrentDictionary<string, BlogTag>(StringComparer.InvariantCultureIgnoreCase);
             if (!string.IsNullOrEmpty(tags))
             {
-                foreach (var blogTag in JsonHelper.Deserialize<List<BlogTag>>(tags))
+                foreach (var blogTag in JsonUtil.Deserialize<List<BlogTag>>(tags))
                 {
                     _tags.TryAdd(blogTag.Link, blogTag);
                 }
@@ -45,7 +45,7 @@ namespace Laobian.Api.Store
                 throw new InvalidOperationException($"Tag link already exists: {tag.Link}");
             }
 
-            if (GetAll().FirstOrDefault(x => StringHelper.EqualIgnoreCase(x.DisplayName, tag.DisplayName)) != null)
+            if (GetAll().FirstOrDefault(x => StringUtil.EqualsIgnoreCase(x.DisplayName, tag.DisplayName)) != null)
             {
                 throw new InvalidOperationException($"Tag name already exists: {tag.DisplayName}");
             }
@@ -63,7 +63,7 @@ namespace Laobian.Api.Store
             }
 
             if (GetAll().Except(new[] {existingTag})
-                .FirstOrDefault(x => StringHelper.EqualIgnoreCase(x.DisplayName, tag.DisplayName)) != null)
+                .FirstOrDefault(x => StringUtil.EqualsIgnoreCase(x.DisplayName, tag.DisplayName)) != null)
             {
                 throw new InvalidOperationException($"Tag name already exists: {tag.DisplayName}");
             }

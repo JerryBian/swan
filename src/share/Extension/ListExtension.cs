@@ -18,7 +18,10 @@ namespace Laobian.Share.Extension
         /// <returns>Collection for current page</returns>
         public static List<T> ToPaged<T>(this List<T> source, int chunkSize, int page)
         {
-            if (page <= 0 || page > source.Count) return source; // if page is out of range, simply return whole source
+            if (page <= 0 || page > source.Count)
+            {
+                return source; // if page is out of range, simply return whole source
+            }
 
             return source.Skip(chunkSize * (page - 1)).Take(chunkSize).ToList();
         }

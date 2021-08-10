@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Laobian.Blog.Data;
 using Microsoft.Extensions.Hosting;
 
 namespace Laobian.Blog.HostedService
@@ -24,7 +25,7 @@ namespace Laobian.Blog.HostedService
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                if (DateTime.Now.Hour == 4 && DateTime.Now.Minute == 0)
+                if (DateTime.Now.Hour == 6 && DateTime.Now.Minute == 0)
                 {
                     await _systemData.LoadAsync();
                 }

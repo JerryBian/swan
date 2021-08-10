@@ -9,5 +9,6 @@ FROM mcr.microsoft.com/dotnet/aspnet:5.0
 WORKDIR /app
 COPY --from=build /publish ./
 RUN apt update -y && apt install git -y && chmod +x laobian.api
+ENV TZ=Asia/Shanghai
 
 ENTRYPOINT ["./laobian.api"]

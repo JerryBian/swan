@@ -4,17 +4,17 @@
 
 首先去软件中心安装 Docker 的插件，或者离线安装最新的[版本](https://github.com/koolshare/ledesoft/blob/master/docker/docker.tar.gz)。
 
-![Docker Plugin](../file/2020/07/docker-plugin.png)
+![Docker Plugin](../file/2020/07/docker-plugin.png "docker plugin")
 
 接下来就是安装 Docker 包了，我们可以先尝试用这个插件的安装功能。
 
-![Openwrt Docker](../file/2020/07/openwrt-docker.png)
+![Openwrt Docker](../file/2020/07/openwrt-docker.png "openwrt docker")
 
 安装目录建议填写非系统盘的路径，因为 Docker 和镜像、容器将会占据大量的磁盘空间，建议划分 10GB 以上，而且分区格式最好为 ext4，总之 NTFS 这种是不行的。镜像库地址可以去[阿里云](https://help.aliyun.com/document_detail/60750.html)上面申请一个免费的地址，由于 Docker 官方 Hub 在国内 pull 的时候非常缓慢，一个国内的镜像库会大大的加快我们的速度。
 
 提交之后，切换到查看日志的 tab，如果顺利的话，你会看到如下的提示信息。
 
-![Openwrt Docker log](../file/2020/07/openwrt-docker-log.png)
+![Openwrt Docker log](../file/2020/07/openwrt-docker-log.png "openwrt docker log")
 
 其他的任何信息，你都可以认为安装没有成功。你可以多试几次，实在不行我们可以采用下面的办法。
 
@@ -31,7 +31,7 @@ mv /mnt/sda4/temp/docker/* /mnt/sda4/docker/bin
 
 刷新你的 Terminal，运行 `docker --version` 出现对应的版本信息即表示已经安装成功了。
 
-![Openwrt Docker Version](../file/2020/07/openwrt-docker-version.png)
+![Openwrt Docker Version](../file/2020/07/openwrt-docker-version.png "openwrt docker version")
 
 由于这个插件的不完善，Docker 在重启之后是不会自动运行的，我们需要手动到这个插件页面点击 Run 按钮。
 

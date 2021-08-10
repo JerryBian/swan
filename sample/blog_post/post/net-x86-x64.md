@@ -1,6 +1,6 @@
 构建 .NET 应用程序的时候，通常我们需要决定应用程序运行在什么目标平台上面。如果你是使用 Microsoft Visual Studio 这样的 IDE 的话，会发现类似于下面的设置界面。
 
-![VS Console App](../file/2020/05/vs-console-app.png)
+![VS Console App](../file/2020/05/vs-console-app.png "VS Console App")
 
 在 Platform target 下拉列表中，我们可以选择 `Any CPU`、`x86` 以及 `x64`。
 
@@ -14,7 +14,7 @@
 
 [CPU 的市场](https://www.cpubenchmark.net/market_share.html)一直被 Intel 和 AMD 两家公司所垄断，这两家中 Intel 又是占据较大市场份额。
 
-![Intel AMD Market Share](../file/2020/05/intel-amd-market-share.png)
+![Intel AMD Market Share](../file/2020/05/intel-amd-market-share.png "Intel AMD Market Share")
 
 [Intel 公司](https://en.wikipedia.org/wiki/X86)在 20 世纪 70 年代中后期分别发布了 [Intel 8086](https://en.wikipedia.org/wiki/Intel_8086) 和 [8088](https://en.wikipedia.org/wiki/Intel_8088) 处理器。这两款处理器被设计成 16 位的指令集。80 年代，Intel 又相继推出了 32 位指令集的 [Intel 80386](https://en.wikipedia.org/wiki/Intel_80386) 和 [80486](https://en.wikipedia.org/wiki/Intel_80486)。这些 32 位指令集的 CPU 通常被称作 *80x86*，随着时间的推移以及 Intel 的市场垄断的加剧，就被简称为 x86 系列的处理器。
 
@@ -62,7 +62,7 @@ Ok，回到我们的 .NET 应用程序上面来。
 
 顺便提一句，**Prefer 32-bit** 选项只针对于入口程序有效，在类库项目下面，这个选项是被 disable 的。
 
-![VS Class Library](../file/2020/05/vs-classlibrary.png)
+![VS Class Library](../file/2020/05/vs-classlibrary.png "VS Class Library")
 
 总结一下，应用程序的顺利运行取决于三个方面：操作系统的位数，应用程序的位数，以及应用程序依赖 DLL 的位数。
 

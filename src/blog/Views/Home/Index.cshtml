@@ -1,7 +1,5 @@
 ﻿@model PagedPostViewModel
-@{
-
-}
+@inject IOptions<BlogOption> _option;
 
 <section>
     <div class="list-group list-group-flush">
@@ -10,18 +8,18 @@
             <div class="list-group-item p-0 mb-4 pb-3">
                 <div class="text-muted fs-sm">@Html.Raw(post.MetadataHtml)</div>
                 <h2 class="mb-3">
-                    <a href="@post.Current.FullPath" class="text-decoration-none">
+                    <a href="@post.Current.GetFullPath(_option.Value.BlogRemoteEndpoint)" class="text-decoration-none">
                         @post.Current.Metadata.Title
 
                     </a>
                     @if (post.Current.Metadata.IsTopping)
                     {
-                        <span class="badge bg-success fs-6">置顶</span>
+                        <span class="badge bg-success fs-sm">置顶</span>
                     }
 
                     @if (!post.Current.Metadata.IsPublished)
                     {
-                        <span class="badge bg-warning fs-6">
+                        <span class="badge bg-warning fs-sm">
                             未发布
                         </span>
                     }
@@ -29,7 +27,10 @@
                 <div>
                     @if (!string.IsNullOrEmpty(post.Current.Thumbnail))
                     {
-                        <img src="@post.Current.Thumbnail" class="img-fluid mb-2">
+                        <div class="mt-1 mb-3">
+                            @Html.Raw(post.Current.Thumbnail)
+                            @*<img src="@post.Current.Thumbnail" class="img-fluid mt-1 mb-3">*@
+                        </div>
                     }
 
                     @Html.Raw(post.Current.ExcerptHtml)
@@ -42,10 +43,5 @@
 
 <page total-pages="@Model.TotalPages" current-page="@Model.CurrentPage" url="@Model.Url"></page>
 
-@section Style{
-    <link href="~/index.min.css" rel="stylesheet" asp-append-version="true"/>
-}
-
-@section Script {
-    <script src="~/index.min.js" asp-append-version="true"></script>
+@section Aside {
 }

@@ -1,6 +1,6 @@
 using System;
+using System.IO;
 using System.Text.Encodings.Web;
-using System.Text.Unicode;
 using Laobian.Api.Command;
 using Laobian.Api.HostedServices;
 using Laobian.Api.Logger;
@@ -33,7 +33,14 @@ namespace Laobian.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
+            ApiOption option = new ApiOption();
+            var resolver = new ApiOptionResolver();
+            resolver.Resolve(option, Configuration);
+            services.Configure<ApiOption>(o =>
+            {
+                o.Clone(option);
+            });
+            StartupHelper.ConfigureServices(services, option);
 
             services.AddSingleton<IGitFileLogQueue, GitFileLogQueue>();
             services.AddSingleton<ICommandClient, ProcessCommandClient>();
@@ -43,18 +50,17 @@ namespace Laobian.Api
             services.AddSingleton<LocalFileSourceProvider>();
             services.AddSingleton<GitHubSourceProvider>();
             services.AddSingleton<ISourceProviderFactory, SourceProviderFactory>();
-            services.AddSingleton<IEmailNotify, EmailNotify>();
 
             services.AddHostedService<BlogApiHostedService>();
-            services.Configure<ApiConfig>(Configuration);
-            services.Configure<CommonConfig>(Configuration);
 
             services.AddLogging(config =>
             {
                 config.SetMinimumLevel(LogLevel.Debug);
                 config.AddDebug();
                 config.AddConsole();
-                config.AddGitFile(c => { c.LoggerName = "api"; });
+                config.AddGitFile(c => { c.LoggerName = "api";
+                    c.BaseDir = Path.Combine(option.GetDbLocation(), "log");
+                });
             });
 
             services.AddHealthChecks();

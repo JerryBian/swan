@@ -1,9 +1,12 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Api.SourceProvider;
 using Laobian.Api.Store;
-using Laobian.Share.Helper;
+using Laobian.Share.Converter;
+using Laobian.Share.Util;
 using Microsoft.Extensions.Options;
 
 namespace Laobian.Api.Repository
@@ -12,13 +15,12 @@ namespace Laobian.Api.Repository
     {
         private readonly ISourceProvider _sourceProvider;
         private BlogAccessStore _blogAccessStore;
-        private BlogCommentStore _blogCommentStore;
         private BlogMetadataStore _blogMetadataStore;
 
         private BlogTagStore _blogTagStore;
 
 
-        public DbRepository(ISourceProviderFactory sourceProviderFactory, IOptions<ApiConfig> apiConfig)
+        public DbRepository(ISourceProviderFactory sourceProviderFactory, IOptions<ApiOption> apiConfig)
         {
             _sourceProvider = sourceProviderFactory.Get(apiConfig.Value.Source);
         }
@@ -32,9 +34,6 @@ namespace Laobian.Api.Repository
 
             var postMetadata = await _sourceProvider.GetPostMetadataAsync(cancellationToken);
             _blogMetadataStore = new BlogMetadataStore(postMetadata);
-
-            var postComments = await _sourceProvider.GetCommentsAsync(cancellationToken);
-            _blogCommentStore = new BlogCommentStore(postComments);
 
             var postAccess = await _sourceProvider.GetPostAccessAsync(cancellationToken);
             _blogAccessStore = new BlogAccessStore(postAccess);
@@ -55,17 +54,11 @@ namespace Laobian.Api.Repository
             return await Task.FromResult(_blogAccessStore);
         }
 
-        public async Task<BlogCommentStore> GetBlogCommentStoreAsync(CancellationToken cancellationToken = default)
-        {
-            return await Task.FromResult(_blogCommentStore);
-        }
-
         public async Task PersistentAsync(CancellationToken cancellationToken = default)
         {
             await Task.WhenAll(
                 PersistentBlogAccessStoreAsync(cancellationToken),
                 PersistentBlogMetadataAsync(cancellationToken),
-                PersistentBlogCommentStoreAsync(cancellationToken),
                 PersistentBlogTagStoreAsync(cancellationToken)
             );
             await _sourceProvider.PersistentAsync(cancellationToken);
@@ -74,14 +67,14 @@ namespace Laobian.Api.Repository
         private async Task PersistentBlogTagStoreAsync(CancellationToken cancellationToken = default)
         {
             await _sourceProvider.SaveTagsAsync(
-                JsonHelper.Serialize(_blogTagStore.GetAll().OrderByDescending(x => x.LastUpdatedAt), true),
+                JsonUtil.Serialize(_blogTagStore.GetAll().OrderByDescending(x => x.LastUpdatedAt), true),
                 cancellationToken);
         }
 
         private async Task PersistentBlogMetadataAsync(CancellationToken cancellationToken = default)
         {
             await _sourceProvider.SavePostMetadataAsync(
-                JsonHelper.Serialize(_blogMetadataStore.GetAll().OrderByDescending(x => x.LastUpdateTime), true),
+                JsonUtil.Serialize(_blogMetadataStore.GetAll().OrderByDescending(x => x.LastUpdateTime), true),
                 cancellationToken);
         }
 
@@ -89,15 +82,7 @@ namespace Laobian.Api.Repository
         {
             await _sourceProvider.SavePostAccessAsync(
                 _blogAccessStore.GetAll().ToDictionary(x => x.Key,
-                    x => JsonHelper.Serialize(x.Value.OrderByDescending(y => y.Date), true)), cancellationToken);
-        }
-
-        private async Task PersistentBlogCommentStoreAsync(CancellationToken cancellationToken = default)
-        {
-            await _sourceProvider.SaveCommentsAsync(
-                _blogCommentStore.GetAll().ToDictionary(x => x.Key,
-                    x => JsonHelper.Serialize(x.Value.OrderByDescending(y => y.LastUpdatedAt), true)),
-                cancellationToken);
+                    x => JsonUtil.Serialize(x.Value.OrderByDescending(y => y.Date), false, new List<JsonConverter>{new DateOnlyConverter()})), cancellationToken);
         }
     }
 }

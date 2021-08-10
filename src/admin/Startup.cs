@@ -1,7 +1,5 @@
 using System;
-using System.IO;
 using System.Text.Encodings.Web;
-using System.Text.Unicode;
 using Laobian.Admin.HttpService;
 using Laobian.Admin.Logger;
 using Laobian.Share;
@@ -12,7 +10,6 @@ using Laobian.Share.Notify;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -38,11 +35,14 @@ namespace Laobian.Admin
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
-
-            services.AddSingleton<IEmailNotify, EmailNotify>();
-            services.Configure<CommonConfig>(Configuration);
-            services.Configure<AdminConfig>(Configuration);
+            AdminOption option = new AdminOption();
+            var resolver = new AdminOptionResolver();
+            resolver.Resolve(option, Configuration);
+            services.Configure<AdminOption>(o =>
+            {
+                o.Clone(option);
+            });
+            StartupHelper.ConfigureServices(services, option);
 
             services.AddHttpClient<ApiHttpService>();
             services.AddHttpClient<BlogHttpService>();
@@ -50,15 +50,12 @@ namespace Laobian.Admin
 
             services.AddSingleton<IRemoteLoggerSink, RemoteLoggerSink>();
 
-            var dpFolder = Configuration.GetValue<string>("DATA_PROTECTION_KEY_PATH");
-            Directory.CreateDirectory(dpFolder);
-            services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(dpFolder))
-                .SetApplicationName("LAOBIAN");
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
             {
                 options.Cookie.Name = "LAOBIAN_AUTH";
                 options.ExpireTimeSpan = TimeSpan.FromDays(7);
                 options.Cookie.HttpOnly = true;
+                options.ReturnUrlParameter = "returnUrl";
                 options.LoginPath = new PathString("/login");
                 options.LogoutPath = new PathString("/logout");
                 options.Cookie.Domain = _env.IsDevelopment() ? "localhost" : ".laobian.me";

@@ -1,6 +1,8 @@
-﻿@using Microsoft.Extensions.Options
-@model PostViewModel
-@inject IOptions<BlogConfig> Config
+﻿@model PostViewModel
+@inject IOptions<BlogOption> Config
+@{
+    ViewData["Title"] = Model.Current.Metadata.Title;
+}
 
 <div>
     <div class="mb-3">
@@ -12,24 +14,25 @@
             </span>
             @if (Model.Current.Metadata.IsTopping)
             {
-                <span class="badge bg-success fs-6">置顶</span>
+                <span class="badge bg-success fs-sm">置顶</span>
             }
 
             @if (!Model.Current.Metadata.IsPublished)
             {
-                <span class="badge bg-warning fs-6">
+                <span class="badge bg-warning fs-sm">
                     未发布
                 </span>
             }
         </h2>
     </div>
-    <article class="post-content">
+    <div class="post-content">
         @Html.Raw(Model.Current.HtmlContent)
         <p class="text-muted">（本文完）</p>
-    </article>
+    </div>
 
-    <div class="alert alert-warning post-alert" role="alert">
+    <div class="alert alert-warning post-alert fs-sm" role="alert">
         <ul>
+            <li>最后更新于：<span title="@Model.Current.Metadata.LastUpdateTime.ToChinaDateAndTime()">@Model.Current.Metadata.PublishTime.ToChinaDate()</span></li>
             @{
                 var html = Model.TagHtml;
                 if (!string.IsNullOrEmpty(html))
@@ -40,17 +43,16 @@
 
             @if (Model.Previous != null)
             {
-                <li>前一篇：<a href="@Model.Previous.FullPath">@Model.Previous.Metadata.Title</a></li>
+                <li>前一篇：<a href="@Model.Previous.GetFullPath(Config.Value.BlogRemoteEndpoint)" class="text-decoration-none">@Model.Previous.Metadata.Title</a></li>
             }
 
             @if (Model.Next != null)
             {
-                <li>后一篇：<a href="@Model.Next.FullPath">@Model.Next.Metadata.Title</a></li>
+                <li>后一篇：<a href="@Model.Next.GetFullPath(Config.Value.BlogRemoteEndpoint)" class="text-decoration-none">@Model.Next.Metadata.Title</a></li>
             }
-            <li>最后更新于：<span title="@Model.Current.Metadata.LastUpdateTime.ToChinaDateAndTime()">@Model.Current.PublishTimeString</span></li>
             <li>
                 文章的留言，请发送电子邮件至
-                <a href="mailto:@Config.Value.AdminEmail?subject=留言 - @Model.Current.Metadata.Title&body=Good job！">
+                <a href="mailto:@Config.Value.AdminEmail?subject=RE:@Model.Current.Metadata.Title&body=Good job！" class="text-decoration-none">
                     @Config.Value.AdminEmail
                 </a>
             </li>
@@ -58,13 +60,8 @@
     </div>
 </div>
 
-@section Style{
-    <link href="~/post.min.css" rel="stylesheet" asp-append-version="true"/>
-}
-
 @section Script {
-    @*<script src=""></script>
     <script>
         hljs.highlightAll();
-    </script>*@
+    </script>
 }

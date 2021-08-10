@@ -2,7 +2,7 @@
 
 上个月一次偶然发现，我的 VPS 带宽基本都是浪费掉的，在一个计费周期内甚至 1% 的容量都没有用到。这些带宽每过一个月就会被重置，即使你当月没有用完也不会顺延到下个月。
 
-![VPS bandwidth usage](../file/2020/03/vps-usage.png)
+![VPS bandwidth usage](../file/2020/03/vps-usage.png "VPS bandwidth usage")
 
 这让我想到我的一个常规需求：观看 Youtube 上面各种技术视频。
 
@@ -129,7 +129,7 @@ server {
 
 Nginx 生效之后我们就可以直接在浏览器中看到我们下载好的内容了。
 
-![浏览器查看列表](../file/2020/03/youtube-dl-download.png)
+![浏览器查看列表](../file/2020/03/youtube-dl-download.png "浏览器查看列表")
 
 ### 五、本地下载
 
@@ -137,7 +137,7 @@ Nginx 生效之后我们就可以直接在浏览器中看到我们下载好的�
 
 [FDM](https://www.freedownloadmanager.org/) 可以很好的完成我们的需求，当下载资源需要认证的时候会有额外的输入框提示我们需要输入登录账号和密码。
 
-![FDM](../file/2020/03/fdm-basic-auth.png)
+![FDM](../file/2020/03/fdm-basic-auth.png "FDM")
 
 ### 六、结束语
 

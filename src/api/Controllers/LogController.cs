@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using Laobian.Api.Logger;
 using Laobian.Share;
-using Laobian.Share.Helper;
 using Laobian.Share.Logger;
+using Laobian.Share.Util;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -18,12 +18,13 @@ namespace Laobian.Api.Controllers
     {
         private readonly IGitFileLogQueue _gitFileLogQueue;
         private readonly ILogger<LogController> _logger;
-        private readonly ApiConfig _config;
+        private readonly ApiOption _option;
 
-        public LogController(ILogger<LogController> logger, IGitFileLogQueue gitFileLogQueue, IOptions<ApiConfig> config)
+        public LogController(ILogger<LogController> logger, IGitFileLogQueue gitFileLogQueue,
+            IOptions<ApiOption> config)
         {
             _logger = logger;
-            _config = config.Value;
+            _option = config.Value;
             _gitFileLogQueue = gitFileLogQueue;
         }
 
@@ -55,11 +56,12 @@ namespace Laobian.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public IActionResult GetLogs([FromRoute] LaobianSite site, [FromQuery] LogLevel level, [FromQuery]DateTime date)
+        public IActionResult GetLogs([FromRoute] LaobianSite site, [FromQuery] LogLevel level,
+            [FromQuery] DateTime date)
         {
             try
             {
-                var logDir = Path.Combine(_config.AssetLocation, "log");
+                var logDir = Path.Combine(_option.AssetLocation, "log");
                 Directory.CreateDirectory(logDir);
 
                 logDir = Path.Combine(logDir, site.ToString().ToLowerInvariant());
@@ -74,7 +76,7 @@ namespace Laobian.Api.Controllers
                     return Ok(string.Empty);
                 }
 
-                return Ok(JsonHelper.Serialize(System.IO.File.ReadAllText(logFile)));
+                return Ok(JsonUtil.Serialize(System.IO.File.ReadAllText(logFile)));
             }
             catch (Exception ex)
             {

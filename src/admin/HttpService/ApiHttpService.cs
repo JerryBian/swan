@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Laobian.Share;
 using Laobian.Share.Blog;
-using Laobian.Share.Helper;
+using Laobian.Share.Util;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -18,25 +18,11 @@ namespace Laobian.Admin.HttpService
         private readonly HttpClient _httpClient;
         private readonly ILogger<ApiHttpService> _logger;
 
-        public ApiHttpService(HttpClient httpClient, ILogger<ApiHttpService> logger, IOptions<AdminConfig> config)
+        public ApiHttpService(HttpClient httpClient, ILogger<ApiHttpService> logger, IOptions<AdminOption> config)
         {
             _logger = logger;
             _httpClient = httpClient;
             _httpClient.BaseAddress = new Uri(config.Value.ApiLocalEndpoint);
-        }
-
-        public async Task<bool> ReloadBlogDataAsync(string message)
-        {
-            var response = await _httpClient.PostAsync("/blog/reload",
-                new StringContent(message, Encoding.UTF8, MediaTypeNames.Text.Plain));
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                _logger.LogError(
-                    $"{nameof(ApiHttpService)}.{nameof(ReloadBlogDataAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
-                return false;
-            }
-
-            return true;
         }
 
         public async Task<bool> PersistentAsync(string message)
@@ -64,7 +50,7 @@ namespace Laobian.Admin.HttpService
             }
 
             await using var stream = await response.Content.ReadAsStreamAsync();
-            return await JsonHelper.DeserializeAsync<List<BlogPost>>(stream);
+            return await JsonUtil.DeserializeAsync<List<BlogPost>>(stream);
         }
 
         public async Task<BlogPost> GetPostAsync(string link)
@@ -78,7 +64,7 @@ namespace Laobian.Admin.HttpService
             }
 
             await using var stream = await response.Content.ReadAsStreamAsync();
-            return await JsonHelper.DeserializeAsync<BlogPost>(stream);
+            return await JsonUtil.DeserializeAsync<BlogPost>(stream);
         }
 
         public async Task PostNewAccessAsync(string link)
@@ -103,13 +89,13 @@ namespace Laobian.Admin.HttpService
             }
 
             await using var stream = await response.Content.ReadAsStreamAsync();
-            return await JsonHelper.DeserializeAsync<List<BlogTag>>(stream);
+            return await JsonUtil.DeserializeAsync<List<BlogTag>>(stream);
         }
 
-        public async Task<bool> UpdatePostMetadataAsync(BlogPostMetadata metadata)
+        public async Task<bool> UpdatePostMetadataAsync(BlogMetadata metadata)
         {
             var response = await _httpClient.PostAsync("/blog/post/metadata",
-                new StringContent(JsonHelper.Serialize(metadata), Encoding.UTF8, "application/json"));
+                new StringContent(JsonUtil.Serialize(metadata), Encoding.UTF8, "application/json"));
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 _logger.LogError(
@@ -132,13 +118,13 @@ namespace Laobian.Admin.HttpService
             }
 
             await using var stream = await response.Content.ReadAsStreamAsync();
-            return await JsonHelper.DeserializeAsync<BlogTag>(stream);
+            return await JsonUtil.DeserializeAsync<BlogTag>(stream);
         }
 
         public async Task<bool> AddTagAsync(BlogTag tag)
         {
             var response = await _httpClient.PutAsync("/blog/tag",
-                new StringContent(JsonHelper.Serialize(tag), Encoding.UTF8, MediaTypeNames.Application.Json));
+                new StringContent(JsonUtil.Serialize(tag), Encoding.UTF8, MediaTypeNames.Application.Json));
             var content = await response.Content.ReadAsStringAsync();
             if (response.StatusCode != HttpStatusCode.OK)
             {
@@ -153,7 +139,7 @@ namespace Laobian.Admin.HttpService
         public async Task<bool> UpdateTagAsync(BlogTag tag)
         {
             var response = await _httpClient.PostAsync("/blog/tag",
-                new StringContent(JsonHelper.Serialize(tag), Encoding.UTF8, MediaTypeNames.Application.Json));
+                new StringContent(JsonUtil.Serialize(tag), Encoding.UTF8, MediaTypeNames.Application.Json));
             var content = await response.Content.ReadAsStringAsync();
             if (response.StatusCode != HttpStatusCode.OK)
             {
@@ -173,78 +159,6 @@ namespace Laobian.Admin.HttpService
             {
                 _logger.LogError(
                     $"{nameof(ApiHttpService)}.{nameof(DeleteTagAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
-                return false;
-            }
-
-            return true;
-        }
-
-        public async Task<bool> AddCommentAsync(string postLink, BlogCommentItem comment)
-        {
-            var response = await _httpClient.PutAsync($"/blog/comment/{postLink}",
-                new StringContent(JsonHelper.Serialize(comment), Encoding.UTF8, MediaTypeNames.Application.Json));
-            var content = await response.Content.ReadAsStringAsync();
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                _logger.LogError(
-                    $"{nameof(ApiHttpService)}.{nameof(AddCommentAsync)} failed. Status: {response.StatusCode}. Content: {content}");
-                return false;
-            }
-
-            return true;
-        }
-
-        public async Task<List<BlogCommentItem>> GetCommentsAsync()
-        {
-            var response = await _httpClient.GetAsync("/blog/comments");
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                _logger.LogError(
-                    $"{nameof(ApiHttpService)}.{nameof(GetCommentsAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
-                return new List<BlogCommentItem>();
-            }
-
-            await using var stream = await response.Content.ReadAsStreamAsync();
-            return await JsonHelper.DeserializeAsync<List<BlogCommentItem>>(stream);
-        }
-
-        public async Task<BlogCommentItem> GetCommentAsync(string postLink)
-        {
-            var response = await _httpClient.GetAsync($"/blog/comment/{postLink}");
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                _logger.LogError(
-                    $"{nameof(ApiHttpService)}.{nameof(GetCommentAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
-                return null;
-            }
-
-            await using var stream = await response.Content.ReadAsStreamAsync();
-            return await JsonHelper.DeserializeAsync<BlogCommentItem>(stream);
-        }
-
-        public async Task<BlogCommentItem> GetCommentItemAsync(Guid id)
-        {
-            var response = await _httpClient.GetAsync($"/blog/comment/item/{id}");
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                _logger.LogError(
-                    $"{nameof(ApiHttpService)}.{nameof(GetCommentItemAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
-                return null;
-            }
-
-            await using var stream = await response.Content.ReadAsStreamAsync();
-            return await JsonHelper.DeserializeAsync<BlogCommentItem>(stream);
-        }
-
-        public async Task<bool> UpdateCommentAsync(BlogCommentItem comment)
-        {
-            var response = await _httpClient.PostAsync("/blog/comment",
-                new StringContent(JsonHelper.Serialize(comment), Encoding.UTF8, MediaTypeNames.Application.Json));
-            var content = await response.Content.ReadAsStringAsync();
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                _logger.LogError(
-                    $"{nameof(ApiHttpService)}.{nameof(UpdateCommentAsync)} failed. Status: {response.StatusCode}. Content: {content}");
                 return false;
             }
 

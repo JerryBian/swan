@@ -27,9 +27,14 @@ namespace Laobian.Share.Extension
         /// </summary>
         /// <param name="time">The given time</param>
         /// <returns>Date part format</returns>
-        public static string ToDate(this DateTime time)
+        public static string ToChinaDate(this DateTime time)
         {
             return time.ToString("yyyy年MM月dd日");
+        }
+
+        public static string ToChinaMonthAndDay(this DateTime time)
+        {
+            return time.ToString("MM月dd日");
         }
     }
 }

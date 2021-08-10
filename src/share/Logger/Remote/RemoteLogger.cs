@@ -35,7 +35,7 @@ namespace Laobian.Share.Logger.Remote
             {
                 var log = GetScopeInfo();
                 log.Message = formatter(state, exception);
-                log.Exception = exception;
+                log.Exception = exception?.ToString();
                 log.Level = logLevel;
                 log.TimeStamp = DateTime.Now;
                 _queueProcessor.Add(log);

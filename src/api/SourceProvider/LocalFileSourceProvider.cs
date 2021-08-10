@@ -12,59 +12,30 @@ namespace Laobian.Api.SourceProvider
     {
         private const string PostFileExtension = "*.md";
         private const string PostMetadataExtension = "*.json";
-        private readonly ApiConfig _apiConfig;
+        private readonly ApiOption _apiOption;
         private string _accessLocation;
-        private string _commentLocation;
         private string _postLocation;
         private string _postMetadataLocation;
         private string _tagLocation;
 
-        public LocalFileSourceProvider(IOptions<ApiConfig> apiConfig)
+        public LocalFileSourceProvider(IOptions<ApiOption> apiConfig)
         {
-            _apiConfig = apiConfig.Value;
+            _apiOption = apiConfig.Value;
         }
 
         public virtual async Task LoadAsync(bool init = true, CancellationToken cancellationToken = default)
         {
-            Directory.CreateDirectory(_apiConfig.GetBlogPostLocation());
-            Directory.CreateDirectory(_apiConfig.GetDbLocation());
-            Directory.CreateDirectory(_apiConfig.GetBlogFileLocation());
+            _postLocation = _apiOption.GetBlogPostLocation();
+            Directory.CreateDirectory(_postLocation);
 
-            var fileFolderInBlogPostLocation = Path.Combine(_apiConfig.GetBlogPostLocation(), "file");
-            Directory.CreateDirectory(fileFolderInBlogPostLocation);
-
-            var metadataLocation = Path.Combine(_apiConfig.GetDbLocation(), "metadata");
+            var metadataLocation = _apiOption.GetBlogMetadataLocation();
             Directory.CreateDirectory(metadataLocation);
 
             _postMetadataLocation = Path.Combine(metadataLocation, "post.json");
             _tagLocation = Path.Combine(metadataLocation, "tag.json");
 
-            _postLocation = Path.Combine(_apiConfig.GetBlogPostLocation(), "post");
-            Directory.CreateDirectory(_postLocation);
-
-            _accessLocation = Path.Combine(_apiConfig.GetDbLocation(), "access");
+            _accessLocation = _apiOption.GetBlogAccessLocation();
             Directory.CreateDirectory(_accessLocation);
-
-            _commentLocation = Path.Combine(_apiConfig.GetDbLocation(), "comment");
-            Directory.CreateDirectory(_commentLocation);
-
-            if (init)
-            {
-                var di = new DirectoryInfo(_apiConfig.GetBlogFileLocation());
-                foreach (var file in di.GetFiles())
-                {
-                    file.Delete();
-                }
-
-                foreach (var dir in di.GetDirectories())
-                {
-                    dir.Delete(true);
-                }
-
-                CopyFilesRecursively(new DirectoryInfo(fileFolderInBlogPostLocation),
-                    new DirectoryInfo(_apiConfig.GetBlogFileLocation()));
-            }
-
             await Task.CompletedTask;
         }
 
@@ -153,41 +124,6 @@ namespace Laobian.Api.SourceProvider
             }
         }
 
-        public virtual async Task<IDictionary<string, string>> GetCommentsAsync(
-            CancellationToken cancellationToken = default)
-        {
-            var comments = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
-            foreach (var file in Directory.EnumerateFiles(_commentLocation, PostMetadataExtension,
-                SearchOption.TopDirectoryOnly))
-            {
-                var postLink = Path.GetFileNameWithoutExtension(file);
-                if (comments.ContainsKey(postLink))
-                {
-                    throw new Exception($"Duplicate post link found: {postLink}");
-                }
-
-                comments.Add(postLink, await File.ReadAllTextAsync(file, Encoding.UTF8, cancellationToken));
-            }
-
-            return comments;
-        }
-
-        public virtual async Task SaveCommentsAsync(IDictionary<string, string> comments,
-            CancellationToken cancellationToken = default)
-        {
-            if (comments == null)
-            {
-                return;
-            }
-
-            Directory.Delete(_commentLocation, true);
-            Directory.CreateDirectory(_commentLocation);
-            foreach (var (key, value) in comments)
-            {
-                var commentFile = Path.Combine(_commentLocation, key + ".json");
-                await File.WriteAllTextAsync(commentFile, value, Encoding.UTF8, cancellationToken);
-            }
-        }
 
         public virtual async Task PersistentAsync(CancellationToken cancellationToken = default)
         {

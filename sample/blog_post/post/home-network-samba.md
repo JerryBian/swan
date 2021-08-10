@@ -60,6 +60,6 @@ docker run -d --name "samba" \
 
 macOS 下面 `Finder - Go - Connect to server ...`：
 
-![macOS SMB](../file/2020/07/smb-macos.png)
+![macOS SMB](../file/2020/07/smb-macos.png "macOS SMB")
 
 Windows 下面直接在文件管理器中输入 `\\192.168.2.1\disk1` 即可。

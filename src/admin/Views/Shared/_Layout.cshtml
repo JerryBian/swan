@@ -1,41 +1,76 @@
 ﻿<!DOCTYPE html>
-<html lang="en" class="h-100">
+<html lang="en" class="w-100 min-vh-100">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>@ViewData["Title"] - Admin</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <title>
+        @if (ViewData["Title"] == null)
+        {
+            <text>Jerry Bian</text>
+        }
+        else
+        {
+            <text>@ViewData["Title"] &minus; Jerry Bian</text>
+        }
+    </title>
+    <link rel="stylesheet" href="~/style.css" asp-append-version="true"/>
 </head>
-<body class="container-fluid h-100">
-<div class="row h-100">
-    <div class="col-2 h-100 bg-dark d-flex flex-column p-3 text-white">
-        <a href="/" class="fs-4 text-decoration-none mb-3 me-auto text-white">Admin</a>
-        <hr/>
-        <ul class="nav flex-column mb-auto">
-            <li>
-                <a href="/blog/posts" class="nav-link text-white">Blog > Posts</a>
-            </li>
-            <li>
-                <a href="/blog/tags" class="nav-link text-white">Blog > Tags</a>
-            </li>
-            <li>
-                <a href="/blog/comments" class="nav-link text-white">Blog > Comments</a>
-            </li>
-        </ul>
-        <hr/>
-        <a href="/logout" class="fs-6 text-decoration-none mb-3 me-auto ms-auto text-white">Sign out</a>
-    </div>
-    <div class="col-10 p-2">
-        <p class="text-end">
-            <button class="btn btn-info" onclick="forceReloadBlogData()">Force Reload Blog Data</button>
-            <button class="btn btn-info" onclick="persistent()">Persistent</button>
-        </p>
-        @RenderBody()
-    </div>
-</div>
+<body class="d-flex flex-column w-100 min-vh-100">
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand" href="/">Jerry Bian</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navLinks" aria-controls="navLinks" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+        <div class="collapse navbar-collapse" id="navLinks">
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">API</a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="/blog/log">LOG</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">ADMIN</a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="/blog/log">LOG</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">BLOG</a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="/blog/log">LOG</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="/blog/post">POSTS</a>
+                        <a class="dropdown-item" href="/blog/tag">TAGS</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="javascript:;" onclick="persistent()">PERSISTENT</a>
+                        <a class="dropdown-item" href="javascript:;" onclick="forceReloadBlogData()">FORCE RELOAD</a>
+                    </div>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                @if (Context.User.Identity?.IsAuthenticated == true)
+                {
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">@Context.User.Identity.Name</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="/logout">LOGOUT</a>
+                        </div>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</nav>
+<main class="container p-2 my-3">
+    @RenderBody()
+</main>
+<footer class="mt-auto text-center p-2">
+    &copy; @DateTime.Now.Year
+</footer>
+<script src="/script.min.js"></script>
 <script>
     function forceReloadBlogData() {
         fetch('/blog/reload',

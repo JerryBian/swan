@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Laobian.Api.Service;
 using Laobian.Share.Blog;
-using Laobian.Share.Helper;
+using Laobian.Share.Util;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -116,7 +116,7 @@ namespace Laobian.Api.Controllers
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdatePostMetadataAsync(BlogPostMetadata metadata)
+        public async Task<IActionResult> UpdatePostMetadataAsync(BlogMetadata metadata)
         {
             try
             {
@@ -125,7 +125,7 @@ namespace Laobian.Api.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"{nameof(UpdatePostMetadataAsync)}({JsonHelper.Serialize(metadata)}) failed.");
+                _logger.LogError(ex, $"{nameof(UpdatePostMetadataAsync)}({JsonUtil.Serialize(metadata)}) failed.");
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }

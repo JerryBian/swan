@@ -43,11 +43,11 @@ Then, I started to use Wireshark to help me analyze the packet. To achieve this,
 
 Client(port: 60035)
 
-![](../file/2015/12/wireshark-client.png)
+![](../file/2015/12/wireshark-client.png "wireshark client")
 
 Server(port: 8777)
 
-![](../file/2015/12/wireshark-server.png)
+![](../file/2015/12/wireshark-server.png "wireshark server")
 
 From the screen shot, we can see the last normal send from client to server is located at `Seq=409`, it sent `PSH`, `ACK` flags to server, however the server didn't captured this communication. Therefore, the client thought some error might happened, it started to resend that package with OS built-in error handling strategy. After five times failed, it realized the connection has lost that it had to reset the connection, see the red highlight line `RST`, `ACK` flag.
 

@@ -12,7 +12,7 @@ namespace Laobian.Api.Repository
         private readonly ISourceProvider _sourceProvider;
         private Lazy<BlogPostStore> _blogPostStore;
 
-        public BlogPostRepository(ISourceProviderFactory sourceProviderFactory, IOptions<ApiConfig> apiConfig)
+        public BlogPostRepository(ISourceProviderFactory sourceProviderFactory, IOptions<ApiOption> apiConfig)
         {
             _sourceProvider = sourceProviderFactory.Get(apiConfig.Value.Source);
         }

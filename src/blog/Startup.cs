@@ -1,9 +1,10 @@
 using System;
 using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Text.Encodings.Web;
-using System.Text.Unicode;
 using Laobian.Blog.Cache;
+using Laobian.Blog.Data;
 using Laobian.Blog.HostedService;
 using Laobian.Blog.HttpService;
 using Laobian.Blog.Logger;
@@ -14,7 +15,6 @@ using Laobian.Share.Logger.Remote;
 using Laobian.Share.Notify;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -43,7 +43,7 @@ namespace Laobian.Blog
         {
             return HttpPolicyExtensions
                 .HandleTransientHttpError()
-                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .OrResult(msg => msg.StatusCode == HttpStatusCode.NotFound)
                 .WaitAndRetryAsync(6, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2,
                     retryAttempt)));
         }
@@ -51,29 +51,27 @@ namespace Laobian.Blog
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
+            BlogOption option = new BlogOption();
+            var resolver = new BlogOptionResolver();
+            resolver.Resolve(option, Configuration);
+            services.Configure<BlogOption>(o =>
+            {
+                o.Clone(option);
+            });
+            StartupHelper.ConfigureServices(services, option);
 
             services.AddSingleton<ISystemData, SystemData>();
             services.AddSingleton<ICacheClient, CacheClient>();
-            services.AddOptions<BlogConfig>().Bind(Configuration).ValidateDataAnnotations();
-            services.AddOptions<CommonConfig>().Bind(Configuration).ValidateDataAnnotations();
 
-            services.AddHttpClient<ApiHttpService>()
-                .SetHandlerLifetime(TimeSpan.FromMinutes(5))
+            services.AddHttpClient<ApiHttpService>(h => { h.Timeout = TimeSpan.FromMinutes(10); })
+                .SetHandlerLifetime(TimeSpan.FromDays(1))
                 .AddPolicyHandler(GetRetryPolicy());
             services.AddHttpClient("log")
-                .SetHandlerLifetime(TimeSpan.FromHours(1))
+                .SetHandlerLifetime(TimeSpan.FromDays(1))
                 .AddPolicyHandler(GetRetryPolicy());
 
             services.AddHostedService<BlogHostedService>();
-
-            services.AddSingleton<IEmailNotify, EmailNotify>();
             services.AddSingleton<IRemoteLoggerSink, RemoteLoggerSink>();
-
-            var dpFolder = Configuration.GetValue<string>("DATA_PROTECTION_KEY_PATH");
-            Directory.CreateDirectory(dpFolder);
-            services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(dpFolder))
-                .SetApplicationName("LAOBIAN");
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
                 {
@@ -131,7 +129,7 @@ namespace Laobian.Blog
                 }
             });
 
-            var config = app.ApplicationServices.GetRequiredService<IOptions<BlogConfig>>().Value;
+            var config = app.ApplicationServices.GetRequiredService<IOptions<BlogOption>>().Value;
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -144,18 +142,21 @@ namespace Laobian.Blog
             app.UseStatusCodePages();
             app.UseStaticFiles();
 
-            var fileLoc = Path.Combine(config.GetBlogFileLocation());
-            if (!Directory.Exists(fileLoc))
+            if (env.IsDevelopment())
             {
-                Directory.CreateDirectory(fileLoc);
+                var fileLoc = config.GetBlogFileLocation();
+                if (!Directory.Exists(fileLoc))
+                {
+                    Directory.CreateDirectory(fileLoc);
+                }
+
+                app.UseStaticFiles(new StaticFileOptions
+                {
+                    FileProvider = new PhysicalFileProvider(Path.GetFullPath(fileLoc)),
+                    RequestPath = "/blog"
+                });
             }
-
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                FileProvider = new PhysicalFileProvider(Path.GetFullPath(fileLoc)),
-                RequestPath = "/file"
-            });
-
+            
             app.UseRouting();
 
             app.UseAuthentication();

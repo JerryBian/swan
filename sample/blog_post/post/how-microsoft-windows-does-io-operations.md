@@ -2,7 +2,7 @@
 
 假设有一台装了 Windows 的 PC，有一个硬盘连接着系统。
 
-![同步流程](../file/2013/10/windows-sync-process.png)
+![同步流程](../file/2013/10/windows-sync-process.png "同步流程")
 
 上图是 Microsoft Windows 处理同步 I/O 的流程，下面做一些简单的解释：
 
@@ -28,7 +28,7 @@
 
 解决这一困境的最有利方法便是尽量让 Windows 异步的处理 I/O 请求。
 
-![异步流程](../file/2013/10/windows-async-process.png)
+![异步流程](../file/2013/10/windows-async-process.png "异步流程")
 
 与同步的代码类似，从硬盘中打开一个文件，并且返回它的字节流。只是不同的是这次传递了 `FileOptions.Asynchronous` 标志位，以告诉 Windows 将读写操作都异步来执行。
 

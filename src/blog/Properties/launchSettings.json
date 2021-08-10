@@ -3,12 +3,11 @@
     "Laobian.Blog": {
       "commandName": "Project",
       "environmentVariables": {
-        "ENV_BLOG_BlogPostLocation": "C:\\",
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ASPNETCORE_HOSTINGSTARTUPASSEMBLIES": "Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation"
       },
       "dotnetRunMessages": "true",
-      "applicationUrl": "http://localhost:5012"
+      "applicationUrl": "http://localhost:5013"
     }
   }
 }

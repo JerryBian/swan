@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
-using Laobian.Share.Helper;
+using Laobian.Share.Extension;
+using Laobian.Share.Option;
+using Laobian.Share.Util;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SendGrid;
@@ -11,10 +15,10 @@ namespace Laobian.Share.Notify
 {
     public class EmailNotify : IEmailNotify
     {
-        private readonly CommonConfig _config;
+        private readonly CommonOption _config;
         private readonly ILogger<EmailNotify> _logger;
 
-        public EmailNotify(IOptions<CommonConfig> config, ILogger<EmailNotify> logger)
+        public EmailNotify(IOptions<CommonOption> config, ILogger<EmailNotify> logger)
         {
             _logger = logger;
             _config = config.Value;
@@ -24,16 +28,17 @@ namespace Laobian.Share.Notify
         {
             if (string.IsNullOrEmpty(_config.SendGridApiKey))
             {
-                Console.WriteLine($"No Api Key provided. ==> {JsonHelper.Serialize(message)}");
+                Console.WriteLine($"No Api Key provided. ==> {JsonUtil.Serialize(message)}");
                 return false;
             }
 
             var client = new SendGridClient(_config.SendGridApiKey);
-            var msg = new SendGridMessage()
+            var msg = new SendGridMessage
             {
-                From = new EmailAddress($"{message.Site.ToString().ToLowerInvariant()}@laobian.me", $"{message.Site} Notify"),
+                From = new EmailAddress($"{message.Site.ToString().ToLowerInvariant()}@laobian.me",
+                    $"{message.Site} Notify"),
                 Subject = message.Subject,
-                HtmlContent = message.Content
+                HtmlContent = GetHtmlContent(message)
             };
 
             foreach (var messageAttachment in message.Attachments)
@@ -44,7 +49,7 @@ namespace Laobian.Share.Notify
                 }
             }
 
-            msg.AddTo(new EmailAddress(_config.AdminEmail, _config.AdminName));
+            msg.AddTo(new EmailAddress(_config.AdminEmail, _config.AdminUserName));
             var response = await client.SendEmailAsync(msg).ConfigureAwait(false);
             if (response.StatusCode != HttpStatusCode.Accepted)
             {
@@ -54,6 +59,18 @@ namespace Laobian.Share.Notify
 
             _logger.LogInformation($"Email notify sent, subject = {message.Subject}.");
             return true;
+        }
+
+        private string GetHtmlContent(NotifyMessage message)
+        {
+            using var process = Process.GetCurrentProcess();
+            var info = new StringBuilder();
+            info.AppendLine($"<li>Timestamp: {message.Timestamp.ToChinaDateAndTime()}</li>");
+            info.AppendLine($"<li>Process: {process.ProcessName}({process.Id})</li>");
+            info.AppendLine($"<li>CPU time: {process.TotalProcessorTime.ToDisplayString()}</li>");
+
+            var footer = $"<div style='margin-top:1rem;font-size:smaller;color:grey;'><ul>{info}</ul></div>";
+            return footer;
         }
     }
 }
