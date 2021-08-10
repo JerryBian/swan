@@ -2,7 +2,7 @@
 $BLOG_LOCAL_ENDPOINT = "http://localhost:5013"
 $BLOG_REMOTE_ENDPOINT = "http://localhost:5013"
 $API_LOCAL_ENDPOINT = "http://localhost:5011"
-$FILE_REMOTE_ENDPOINT = "http://localhost:5013/file"
+$FILE_REMOTE_ENDPOINT = "http://localhost:5013"
 $ADMIN_USER_NAME = "test"
 $ADMIN_EMAIL = "JerryBian@outlook.com"
 $ASSET_LOCATION = "../../sample"

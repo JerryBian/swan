@@ -107,7 +107,7 @@ namespace Laobian.Share.Blog
                         {
                             var subPath = src.Substring(index + Constants.BlogPostFileBaseFolderName.Length + 1)
                                 .Replace("\\", "/");
-                            var fullSrc = $"{option.FileRemoteEndpoint}/{subPath}";
+                            var fullSrc = $"{option.FileRemoteEndpoint}/blog/{subPath}";
                             imageNode.SetAttributeValue("src", fullSrc);
                             SetPostThumbnail(imageNode);
                         }

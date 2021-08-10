@@ -144,7 +144,7 @@ namespace Laobian.Blog
 
             if (env.IsDevelopment())
             {
-                var fileLoc = Path.Combine(config.GetBlogFileLocation());
+                var fileLoc = config.GetBlogFileLocation();
                 if (!Directory.Exists(fileLoc))
                 {
                     Directory.CreateDirectory(fileLoc);
@@ -153,7 +153,7 @@ namespace Laobian.Blog
                 app.UseStaticFiles(new StaticFileOptions
                 {
                     FileProvider = new PhysicalFileProvider(Path.GetFullPath(fileLoc)),
-                    RequestPath = "/file"
+                    RequestPath = "/blog"
                 });
             }
             
