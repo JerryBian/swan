@@ -1,8 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <AssemblyName>laobian.api</AssemblyName>
+    <UserSecretsId>d0d1c480-148f-40e7-a309-668b4bb9d811</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

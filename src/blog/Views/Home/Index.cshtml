@@ -1,7 +1,5 @@
 ﻿@model PagedPostViewModel
-@{
-
-}
+@inject IOptions<BlogOption> _option;
 
 <section>
     <div class="list-group list-group-flush">
@@ -10,7 +8,7 @@
             <div class="list-group-item p-0 mb-4 pb-3">
                 <div class="text-muted fs-sm">@Html.Raw(post.MetadataHtml)</div>
                 <h2 class="mb-3">
-                    <a href="@post.Current.GetFullPath()" class="text-decoration-none">
+                    <a href="@post.Current.GetFullPath(_option.Value.BlogRemoteEndpoint)" class="text-decoration-none">
                         @post.Current.Metadata.Title
 
                     </a>

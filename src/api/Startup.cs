@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Text.Encodings.Web;
 using Laobian.Api.Command;
 using Laobian.Api.HostedServices;
@@ -32,12 +33,12 @@ namespace Laobian.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            ApiOption option = null;
+            ApiOption option = new ApiOption();
+            var resolver = new ApiOptionResolver();
+            resolver.Resolve(option, Configuration);
             services.Configure<ApiOption>(o =>
             {
-                option = o;
-                var resolver = new ApiOptionResolver();
-                resolver.Resolve(o, Configuration);
+                o.Clone(option);
             });
             StartupHelper.ConfigureServices(services, option);
 
@@ -57,7 +58,9 @@ namespace Laobian.Api
                 config.SetMinimumLevel(LogLevel.Debug);
                 config.AddDebug();
                 config.AddConsole();
-                config.AddGitFile(c => { c.LoggerName = "api"; });
+                config.AddGitFile(c => { c.LoggerName = "api";
+                    c.BaseDir = Path.Combine(option.GetDbLocation(), "log");
+                });
             });
 
             services.AddHealthChecks();

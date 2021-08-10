@@ -51,12 +51,12 @@ namespace Laobian.Blog
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            BlogOption option = null;
+            BlogOption option = new BlogOption();
+            var resolver = new BlogOptionResolver();
+            resolver.Resolve(option, Configuration);
             services.Configure<BlogOption>(o =>
             {
-                option = o;
-                var resolver = new BlogOptionResolver();
-                resolver.Resolve(o, Configuration);
+                o.Clone(option);
             });
             StartupHelper.ConfigureServices(services, option);
 

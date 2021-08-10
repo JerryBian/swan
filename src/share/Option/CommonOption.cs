@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace Laobian.Share.Option
 {
@@ -44,6 +45,14 @@ namespace Laobian.Share.Option
             }
 
             return Path.Combine(AssetLocation, Constants.BlogPostAssetFolder, Constants.BlogPostFileBaseFolderName);
+        }
+
+        public void Clone(CommonOption option)
+        {
+            foreach (var propertyInfo in GetType().GetProperties())
+            {
+                propertyInfo.SetValue(this, propertyInfo.GetValue(option));
+            }
         }
     }
 }

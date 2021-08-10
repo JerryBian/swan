@@ -14,7 +14,7 @@ namespace Laobian.Api
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
             return Host.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration((hostContext, config) => { config.AddEnvironmentVariables("ENV_API_"); })
+                .ConfigureAppConfiguration((hostContext, config) => { config.AddEnvironmentVariables("ENV_"); })
                 .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
         }
     }

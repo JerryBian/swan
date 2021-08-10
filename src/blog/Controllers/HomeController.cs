@@ -247,19 +247,19 @@ namespace Laobian.Blog.Controllers
             var rss = _cacheClient.GetOrCreate(CacheKeyBuilder.Build(nameof(HomeController), nameof(Rss)), () =>
             {
                 var feed = new SyndicationFeed(Constants.BlogTitle, Constants.BlogDescription,
-                    new Uri($"{Constants.BlogAddress}/rss"),
+                    new Uri($"{_blogOption.BlogRemoteEndpoint}/rss"),
                     Constants.ApplicationName, DateTimeOffset.UtcNow);
                 feed.Copyright =
-                    new TextSyndicationContent($"&#x26;amp;#169; {DateTime.Now.Year} {Constants.AdminChineseName}");
-                feed.Authors.Add(new SyndicationPerson(Constants.AdminEmail, Constants.AdminChineseName,
-                    Constants.BlogAddress));
-                feed.BaseUri = new Uri(Constants.BlogAddress);
+                    new TextSyndicationContent($"&#x26;amp;#169; {DateTime.Now.Year} {_blogOption.AdminChineseName}");
+                feed.Authors.Add(new SyndicationPerson(_blogOption.AdminEmail, _blogOption.AdminChineseName,
+                    _blogOption.BlogRemoteEndpoint));
+                feed.BaseUri = new Uri(_blogOption.BlogRemoteEndpoint);
                 feed.Language = "zh-cn";
                 var items = new List<SyndicationItem>();
                 foreach (var post in _systemData.Posts.Where(x => x.IsPublished))
                 {
                     items.Add(new SyndicationItem(post.Metadata.Title, post.HtmlContent,
-                        new Uri(post.GetFullPath(true)), post.GetFullPath(),
+                        new Uri(post.GetFullPath(_blogOption.BlogRemoteEndpoint)), post.GetFullPath(_blogOption.BlogRemoteEndpoint),
                         new DateTimeOffset(post.Metadata.LastUpdateTime, TimeSpan.FromHours(8))));
                 }
 

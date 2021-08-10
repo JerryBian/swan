@@ -9,10 +9,10 @@ namespace Laobian.Api.Logger
         private readonly GitFileLoggerProcessor _processor;
         private IExternalScopeProvider _externalScopeProvider;
 
-        public GitFileLoggerProvider(IOptions<GitFileLoggerOptions> options, IOptions<ApiOption> config,
+        public GitFileLoggerProvider(IOptions<GitFileLoggerOptions> options,
             IGitFileLogQueue gitFileLogQueue)
         {
-            _processor = new GitFileLoggerProcessor(options.Value, config.Value, gitFileLogQueue);
+            _processor = new GitFileLoggerProcessor(options.Value, gitFileLogQueue);
             _logger = new GitFileLogger(_processor)
             {
                 Options = options.Value,

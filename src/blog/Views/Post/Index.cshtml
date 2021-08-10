@@ -43,12 +43,12 @@
 
             @if (Model.Previous != null)
             {
-                <li>前一篇：<a href="@Model.Previous.GetFullPath()" class="text-decoration-none">@Model.Previous.Metadata.Title</a></li>
+                <li>前一篇：<a href="@Model.Previous.GetFullPath(Config.Value.BlogRemoteEndpoint)" class="text-decoration-none">@Model.Previous.Metadata.Title</a></li>
             }
 
             @if (Model.Next != null)
             {
-                <li>后一篇：<a href="@Model.Next.GetFullPath()" class="text-decoration-none">@Model.Next.Metadata.Title</a></li>
+                <li>后一篇：<a href="@Model.Next.GetFullPath(Config.Value.BlogRemoteEndpoint)" class="text-decoration-none">@Model.Next.Metadata.Title</a></li>
             }
             <li>
                 文章的留言，请发送电子邮件至

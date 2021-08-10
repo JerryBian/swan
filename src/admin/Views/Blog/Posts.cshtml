@@ -23,7 +23,7 @@
             <tr>
                 <th>@post.Metadata.PublishTime.ToChinaDate()</th>
                 <th>
-                    <a href="@_config.Value.BlogRemoteEndpoint/@post.GetFullPath()">@post.Metadata.Title</a>
+                    <a href="@post.GetFullPath(_config.Value.BlogRemoteEndpoint)">@post.Metadata.Title</a>
                 </th>
                 <th>@post.IsPublished</th>
                 <th>

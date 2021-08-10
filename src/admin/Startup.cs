@@ -35,12 +35,12 @@ namespace Laobian.Admin
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            AdminOption option = null;
+            AdminOption option = new AdminOption();
+            var resolver = new AdminOptionResolver();
+            resolver.Resolve(option, Configuration);
             services.Configure<AdminOption>(o =>
             {
-                option = o;
-                var resolver = new AdminOptionResolver();
-                resolver.Resolve(o, Configuration);
+                o.Clone(option);
             });
             StartupHelper.ConfigureServices(services, option);
 

@@ -10,21 +10,16 @@ namespace Laobian.Api.Logger
 {
     public class GitFileLoggerProcessor : ILaobianLoggerProcessor, IDisposable
     {
-        private readonly string _logDir;
         private readonly IGitFileLogQueue _messageQueue;
-        private readonly ApiOption _option;
         private readonly GitFileLoggerOptions _options;
         private readonly Thread _underlingThread;
 
         private bool _stop;
 
-        public GitFileLoggerProcessor(GitFileLoggerOptions options, ApiOption option, IGitFileLogQueue messageQueue)
+        public GitFileLoggerProcessor(GitFileLoggerOptions options, IGitFileLogQueue messageQueue)
         {
-            _option = option;
             _options = options;
-
-            _logDir = Path.Combine(option.AssetLocation, "log");
-            Directory.CreateDirectory(_logDir);
+            Directory.CreateDirectory(options.BaseDir);
             _messageQueue = messageQueue;
 
             _underlingThread = new Thread(Process)
@@ -120,7 +115,7 @@ namespace Laobian.Api.Logger
                         loggerName = "undefined";
                     }
 
-                    var dir = Path.Combine(_logDir, loggerName, log.TimeStamp.Year.ToString(),
+                    var dir = Path.Combine(_options.BaseDir, loggerName, log.TimeStamp.Year.ToString(),
                         log.TimeStamp.Month.ToString("D2"));
                     Directory.CreateDirectory(dir);
                     File.AppendAllLines(Path.Combine(dir, $"{log.TimeStamp:yyyy-MM-dd}.log"),

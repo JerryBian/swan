@@ -1,9 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <CopyRefAssembliesToPublishDirectory>false</CopyRefAssembliesToPublishDirectory>
     <AssemblyName>laobian.blog</AssemblyName>
+    <UserSecretsId>981c15de-cd77-4357-9fed-455abbb8dc19</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

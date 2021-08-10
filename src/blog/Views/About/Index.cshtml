@@ -33,7 +33,7 @@
         @foreach (var post in Model.TopPosts)
         {
             <li>
-                <a href="@post.GetFullPath()">@post.Metadata.Title</a> <i>(@post.Accesses.Count.ToUSThousand())</i>
+                <a href="@post.GetFullPath(Config.Value.BlogRemoteEndpoint)">@post.Metadata.Title</a> <i>(@post.Accesses.Count.ToUSThousand())</i>
             </li>
         }
     </ol>
@@ -42,7 +42,7 @@
         <p>
             最近一次的发布是于 <strong>@Model.LatestPost.Metadata.PublishTime.ToChinaDate()</strong> 发布了
             <strong>
-                <a href="@Model.LatestPost.GetFullPath()">@Model.LatestPost.Metadata.Title</a>
+                <a href="@Model.LatestPost.GetFullPath(Config.Value.BlogRemoteEndpoint)">@Model.LatestPost.Metadata.Title</a>
             </strong>。
         </p>
     }

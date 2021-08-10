@@ -3,41 +3,50 @@ services:
   api:
     image: cnbian/laobian-api:${ENV_APP_VERSION}
     volumes:
-      - ${ENV_API_ASSET_LOCATION}:/asset
+      - ${ENV_ASSET_LOCATION}:/asset
     environment:
-      - ASPNETCORE_URLS=http://0.0.0.0:5010
+      - ASPNETCORE_URLS=http://0.0.0.0:5011
       - ASPNETCORE_ENVIRONMENT
-      - ENV_API_Source
-      - ENV_API_AssetLocation=/asset
-      - ENV_API_GitHubDbRepoApiToken
-      - ENV_API_GitHubDbRepoUserName
-      - ENV_API_GitHubDbRepoName
-      - ENV_API_GitHubDbRepoBranchName
-      - ENV_API_GitHubBlogPostRepoApiToken
-      - ENV_API_GitHubBlogPostRepoUserName
-      - ENV_API_GitHubBlogPostRepoName
-      - ENV_API_GitHubBlogPostRepoBranchName
-      - ENV_API_CommandLineApp
-      - ENV_API_CommandLineBeginArg
-      - ENV_API_AdminEmail
-      - ENV_API_AdminName
-      - ENV_API_SendGridApiKey
-      - ENV_API_BlogLocalEndPoint=http://blog:5012
+      - ENV_BLOG_LOCAL_ENDPOINT=http://blog:5013
+      - ENV_BLOG_REMOTE_ENDPOINT
+      - ENV_FILE_REMOTE_ENDPOINT
+      - ENV_ADMIN_USER_NAME
+      - ENV_ADMIN_EMAIL
+      - ENV_ASSET_LOCATION=/asset
+      - ENV_ADMIN_CHINESE_NAME
+      - ENV_ADMIN_ENGLISH_NAME
+      - ENV_SEND_GRID_API_KEY
+      - ENV_DATA_PROTECTION_KEY_PATH=/asset/data_protection
+      - ENV_SOURCE
+      - ENV_COMMAND_LINE_APP
+      - ENV_COMMAND_LINE_BEGIN_ARG
+      - ENV_GITHUB_BLOG_POST_REPO_API_TOKEN
+      - ENV_GITHUB_BLOG_POST_REPO_BRANCH_NAME
+      - ENV_GITHUB_BLOG_POST_REPO_NAME
+      - ENV_GITHUB_BLOG_POST_REPO_USER_NAME
+      - ENV_GITHUB_DB_REPO_API_TOKEN
+      - ENV_GITHUB_DB_REPO_BRANCH_NAME
+      - ENV_GITHUB_DB_REPO_NAME
+      - ENV_GITHUB_DB_REPO_USER_NAME
   admin:
     image: cnbian/laobian-admin:${ENV_APP_VERSION}
     environment:
-      - ASPNETCORE_URLS=http://0.0.0.0:5011
-      - DATA_PROTECTION_KEY_PATH
+      - ASPNETCORE_URLS=http://0.0.0.0:5012
       - ASPNETCORE_ENVIRONMENT
-      - ENV_ADMIN_ApiLocalEndPoint=http://api:5010
-      - ENV_ADMIN_BlogRemoteEndPoint
-      - ENV_ADMIN_BlogLocalEndPoint=http://blog:5012
-      - ENV_ADMIN_AdminName
-      - ENV_ADMIN_AdminEmail
-      - ENV_ADMIN_AdminPassword
-      - ENV_ADMIN_SendGridApiKey
+      - ENV_BLOG_LOCAL_ENDPOINT=http://blog:5013
+      - ENV_API_LOCAL_ENDPOINT=http://api:5011
+      - ENV_BLOG_REMOTE_ENDPOINT
+      - ENV_FILE_REMOTE_ENDPOINT
+      - ENV_ADMIN_USER_NAME
+      - ENV_ADMIN_EMAIL
+      - ENV_ASSET_LOCATION=/asset
+      - ENV_ADMIN_CHINESE_NAME
+      - ENV_ADMIN_ENGLISH_NAME
+      - ENV_SEND_GRID_API_KEY
+      - ENV_DATA_PROTECTION_KEY_PATH=/asset/data_protection
+      - ENV_ADMIN_PASSWORD
     ports:
-      - "${ENV_ADMIN_PORT}:5011"
+      - "${ENV_ADMIN_PORT}:5012"
     depends_on:
       - api
   blog:
@@ -45,19 +54,21 @@ services:
     volumes:
       - ${ENV_BLOG_ASSET_LOCATION}:/asset
     environment:
-      - ASPNETCORE_URLS=http://0.0.0.0:5012
-      - DATA_PROTECTION_KEY_PATH
+      - ASPNETCORE_URLS=http://0.0.0.0:5013
       - ASPNETCORE_ENVIRONMENT
-      - ENV_BLOG_ApiLocalEndPoint=http://api:5010
-      - ENV_BLOG_PostsPerPage
-      - ENV_BLOG_AdminEmail
-      - ENV_BLOG_AdminName
-      - ENV_BLOG_AdminChineseName
-      - ENV_BLOG_AdminEnglishName
-      - ENV_BLOG_AssetLocation=/asset
-      - ENV_BLOG_GitHubHookSecret
-      - ENV_BLOG_SendGridApiKey
+      - ENV_API_LOCAL_ENDPOINT=http://api:5011
+      - ENV_BLOG_REMOTE_ENDPOINT
+      - ENV_FILE_REMOTE_ENDPOINT
+      - ENV_ADMIN_USER_NAME
+      - ENV_ADMIN_EMAIL
+      - ENV_ASSET_LOCATION=/asset
+      - ENV_ADMIN_CHINESE_NAME
+      - ENV_ADMIN_ENGLISH_NAME
+      - ENV_SEND_GRID_API_KEY
+      - ENV_DATA_PROTECTION_KEY_PATH=/asset/data_protection
+      - ENV_POSTS_PER_PAGE
+      - ENV_GITHUB_HOOK_SECRET
     ports:
-      - "${ENV_BLOG_PORT}:5012"
+      - "${ENV_BLOG_PORT}:5013"
     depends_on:
       - api
