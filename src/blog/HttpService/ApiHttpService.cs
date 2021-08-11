@@ -39,9 +39,9 @@ namespace Laobian.Blog.HttpService
             return true;
         }
 
-        public async Task<List<BlogPost>> GetPostsAsync(bool onlyPublished)
+        public async Task<List<BlogPost>> GetPostsAsync()
         {
-            var response = await _httpClient.GetAsync($"/blog/posts?onlyPublished={onlyPublished}");
+            var response = await _httpClient.GetAsync($"/blog/posts");
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 _logger.LogError(

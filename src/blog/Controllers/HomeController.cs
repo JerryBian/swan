@@ -211,14 +211,14 @@ namespace Laobian.Blog.Controllers
 
         [HttpGet]
         [Route("/about")]
-        public async Task<IActionResult> About()
+        public IActionResult About()
         {
             var authenticated = User.Identity?.IsAuthenticated ?? false;
             var viewModel = _cacheClient.GetOrCreate(
                 CacheKeyBuilder.Build(nameof(HomeController), nameof(About), authenticated),
                 () =>
                 {
-                    var posts = _systemData.Posts.Where(x => authenticated || x.IsPublished).ToList();
+                    var posts = _systemData.Posts.Where(x => authenticated || x.IsPublished).OrderByDescending(x =>x.Metadata.PublishTime).ToList();
                     var tags = _systemData.Tags;
                     var topTags = new Dictionary<BlogTag, int>();
                     foreach (var tag in tags)

@@ -75,7 +75,7 @@ namespace Laobian.Api.Controllers
         {
             try
             {
-                var posts = await _blogService.GetAllPostsAsync(onlyPublished);
+                var posts = await _blogService.GetAllPostsAsync();
                 var result = await Task.FromResult(posts);
                 return Ok(result);
             }

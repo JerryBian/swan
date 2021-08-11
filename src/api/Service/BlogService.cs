@@ -40,16 +40,10 @@ namespace Laobian.Api.Service
             await LoadAsync(cancellationToken);
         }
 
-        public async Task<List<BlogPost>> GetAllPostsAsync(bool onlyPublished = true,
-            CancellationToken cancellationToken = default)
+        public async Task<List<BlogPost>> GetAllPostsAsync(CancellationToken cancellationToken = default)
         {
             var blogPostStore = await _blogPostRepository.GetBlogPostStoreAsync(cancellationToken);
             var allPosts = blogPostStore.GetAll();
-            if (onlyPublished)
-            {
-                allPosts = allPosts.Where(x => x.IsPublished).ToList();
-            }
-
             foreach (var blogPost in allPosts)
             {
                 await SetPostRawData(blogPost, cancellationToken);
