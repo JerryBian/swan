@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Api.Command;
 using Laobian.Share;
+using Laobian.Share.Extension;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -35,9 +36,9 @@ namespace Laobian.Api.SourceProvider
         }
 
 
-        public override async Task PersistentAsync(CancellationToken cancellationToken = default)
+        public override async Task PersistentAsync(string message, CancellationToken cancellationToken = default)
         {
-            await PushDbRepoAsync("update");
+            await PushDbRepoAsync(message);
         }
 
         private async Task PushDbRepoAsync(string message)
@@ -50,7 +51,7 @@ namespace Laobian.Api.SourceProvider
 
             var commands = new List<string>
             {
-                $"cd {_apiOption.GetDbLocation()}", "git add .", $"git commit -m \"{message}\"", "git push"
+                $"cd {_apiOption.GetDbLocation()}", "git add .", $"git commit -m \"{message} [{DateTime.Now.ToDateAndTime()}]\"", "git push"
             };
             var command =
                 $"{string.Join(" && ", commands)}";

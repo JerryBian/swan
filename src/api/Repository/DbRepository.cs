@@ -54,14 +54,14 @@ namespace Laobian.Api.Repository
             return await Task.FromResult(_blogAccessStore);
         }
 
-        public async Task PersistentAsync(CancellationToken cancellationToken = default)
+        public async Task PersistentAsync(string message, CancellationToken cancellationToken = default)
         {
             await Task.WhenAll(
                 PersistentBlogAccessStoreAsync(cancellationToken),
                 PersistentBlogMetadataAsync(cancellationToken),
                 PersistentBlogTagStoreAsync(cancellationToken)
             );
-            await _sourceProvider.PersistentAsync(cancellationToken);
+            await _sourceProvider.PersistentAsync(message, cancellationToken);
         }
 
         private async Task PersistentBlogTagStoreAsync(CancellationToken cancellationToken = default)
