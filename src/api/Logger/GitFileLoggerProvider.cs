@@ -11,9 +11,9 @@ namespace Laobian.Api.Logger
         private IExternalScopeProvider _externalScopeProvider;
 
         public GitFileLoggerProvider(IOptions<GitFileLoggerOptions> options,
-            ILaobianLogQueue laobianLogQueue)
+            ILaobianLogQueue laobianLogQueue, SystemLocker systemLocker)
         {
-            _processor = new GitFileLoggerProcessor(options.Value, laobianLogQueue);
+            _processor = new GitFileLoggerProcessor(options.Value, laobianLogQueue, systemLocker);
             _logger = new GitFileLogger(_processor)
             {
                 Options = options.Value,

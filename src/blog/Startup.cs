@@ -83,7 +83,6 @@ namespace Laobian.Blog
             services.AddControllersWithViews().AddJsonOptions(config =>
             {
                 config.JsonSerializerOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
-                config.JsonSerializerOptions.IgnoreNullValues = true;
                 var converter = new IsoDateTimeConverter();
                 config.JsonSerializerOptions.Converters.Add(converter);
             });

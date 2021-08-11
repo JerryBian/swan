@@ -13,12 +13,14 @@ namespace Laobian.Api.Logger
         private readonly ILaobianLogQueue _messageQueue;
         private readonly GitFileLoggerOptions _options;
         private readonly Thread _underlingThread;
+        private readonly SystemLocker _systemLocker;
 
         private bool _stop;
 
-        public GitFileLoggerProcessor(GitFileLoggerOptions options, ILaobianLogQueue messageQueue)
+        public GitFileLoggerProcessor(GitFileLoggerOptions options, ILaobianLogQueue messageQueue, SystemLocker systemLocker)
         {
             _options = options;
+            _systemLocker = systemLocker;
             Directory.CreateDirectory(options.BaseDir);
             _messageQueue = messageQueue;
 
@@ -117,7 +119,9 @@ namespace Laobian.Api.Logger
 
                     var dir = Path.Combine(_options.BaseDir, loggerName, log.TimeStamp.Year.ToString(),
                         log.TimeStamp.Month.ToString("D2"));
+                    _systemLocker.Acquire();
                     Directory.CreateDirectory(dir);
+                    _systemLocker.Acquire();
                     File.AppendAllLines(Path.Combine(dir, $"{log.TimeStamp:yyyy-MM-dd}.log"),
                         new[] {JsonUtil.Serialize(log)});
                 }

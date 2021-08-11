@@ -67,6 +67,7 @@ namespace Laobian.Api
             services.AddSingleton<LocalFileSourceProvider>();
             services.AddSingleton<GitHubSourceProvider>();
             services.AddSingleton<ISourceProviderFactory, SourceProviderFactory>();
+            services.AddSingleton<SystemLocker>();
 
             services.AddHttpClient<BlogHttpService>(h =>
                 {
@@ -94,7 +95,6 @@ namespace Laobian.Api
                 .AddJsonOptions(config =>
                 {
                     config.JsonSerializerOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
-                    config.JsonSerializerOptions.IgnoreNullValues = true;
                     var converter = new IsoDateTimeConverter();
                     config.JsonSerializerOptions.Converters.Add(converter);
                 });
