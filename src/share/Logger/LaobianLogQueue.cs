@@ -1,13 +1,12 @@
 ﻿using System.Collections.Concurrent;
-using Laobian.Share.Logger;
 
-namespace Laobian.Api.Logger
+namespace Laobian.Share.Logger
 {
-    public class GitFileLogQueue : IGitFileLogQueue
+    public class LaobianLogQueue : ILaobianLogQueue
     {
         private readonly ConcurrentQueue<LaobianLog> _logs;
 
-        public GitFileLogQueue()
+        public LaobianLogQueue()
         {
             _logs = new ConcurrentQueue<LaobianLog>();
         }

@@ -15,7 +15,8 @@ namespace Laobian.Share.Util
             var option = new JsonSerializerOptions
             {
                 WriteIndented = writeIndented,
-                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                IgnoreNullValues = true
             };
 
             if (converters == null)

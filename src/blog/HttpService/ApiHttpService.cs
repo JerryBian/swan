@@ -6,6 +6,7 @@ using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
 using Laobian.Share.Blog;
+using Laobian.Share.Logger;
 using Laobian.Share.Util;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -87,6 +88,17 @@ namespace Laobian.Blog.HttpService
             {
                 _logger.LogError(
                     $"{nameof(ApiHttpService)}.{nameof(AddPostAccess)}({link}) failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+            }
+        }
+
+        public async Task SendLogsAsync(IEnumerable<LaobianLog> logs)
+        {
+            var response = await _httpClient.PostAsync("/log/blog",
+                new StringContent(JsonUtil.Serialize(logs), Encoding.UTF8, "application/json"));
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                Console.WriteLine(
+                    $"{nameof(ApiHttpService)}.{nameof(SendLogsAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
             }
         }
     }

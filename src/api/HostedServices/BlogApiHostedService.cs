@@ -39,7 +39,8 @@ namespace Laobian.Api.HostedServices
 
         public override async Task StopAsync(CancellationToken cancellationToken)
         {
-            await _blogService.PersistentAsync(":small_red_triangle_down: triggered by server stopping", CancellationToken.None);
+            await _blogService.PersistentAsync(":small_red_triangle_down: triggered by server stopping",
+                CancellationToken.None);
             await base.StopAsync(cancellationToken);
         }
     }

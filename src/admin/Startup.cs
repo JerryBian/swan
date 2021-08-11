@@ -1,23 +1,26 @@
 using System;
+using System.Net;
+using System.Net.Http;
 using System.Text.Encodings.Web;
+using Laobian.Admin.HostedService;
 using Laobian.Admin.HttpService;
-using Laobian.Admin.Logger;
 using Laobian.Share;
 using Laobian.Share.Converter;
 using Laobian.Share.Extension;
+using Laobian.Share.Logger;
 using Laobian.Share.Logger.Remote;
 using Laobian.Share.Notify;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Polly;
+using Polly.Extensions.Http;
 
 namespace Laobian.Admin
 {
@@ -33,35 +36,32 @@ namespace Laobian.Admin
 
         public IConfiguration Configuration { get; }
 
+        private static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
+        {
+            return HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .OrResult(msg => msg.StatusCode == HttpStatusCode.NotFound)
+                .WaitAndRetryAsync(6, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2,
+                    retryAttempt)));
+        }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            AdminOption option = new AdminOption();
+            var option = new AdminOption();
             var resolver = new AdminOptionResolver();
             resolver.Resolve(option, Configuration);
-            services.Configure<AdminOption>(o =>
+            services.Configure<AdminOption>(o => { o.Clone(option); });
+            StartupHelper.ConfigureServices(services, _env, option);
+
+            services.AddHttpClient<ApiHttpService>(x =>
             {
-                o.Clone(option);
+                x.DefaultRequestHeaders.Add(Constants.ApiRequestHeaderToken, option.HttpRequestToken);
             });
-            StartupHelper.ConfigureServices(services, option);
-
-            services.AddHttpClient<ApiHttpService>();
-            services.AddHttpClient<BlogHttpService>();
-            services.AddHttpClient("log");
-
-            services.AddSingleton<IRemoteLoggerSink, RemoteLoggerSink>();
-
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
+            services.AddHttpClient<BlogHttpService>(x =>
             {
-                options.Cookie.Name = "LAOBIAN_AUTH";
-                options.ExpireTimeSpan = TimeSpan.FromDays(7);
-                options.Cookie.HttpOnly = true;
-                options.ReturnUrlParameter = "returnUrl";
-                options.LoginPath = new PathString("/login");
-                options.LogoutPath = new PathString("/logout");
-                options.Cookie.Domain = _env.IsDevelopment() ? "localhost" : ".laobian.me";
+                x.DefaultRequestHeaders.Add(Constants.ApiRequestHeaderToken, option.HttpRequestToken);
             });
-
             services.AddLogging(config =>
             {
                 config.SetMinimumLevel(LogLevel.Trace);
@@ -70,6 +70,8 @@ namespace Laobian.Admin
                 config.AddRemote(c => { c.LoggerName = "admin"; });
             });
 
+            services.AddSingleton<ILaobianLogQueue, LaobianLogQueue>();
+            services.AddHostedService<LogHostedService>();
             services.AddControllersWithViews(config =>
             {
                 var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
@@ -77,6 +79,7 @@ namespace Laobian.Admin
             }).AddJsonOptions(config =>
             {
                 config.JsonSerializerOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
+                config.JsonSerializerOptions.IgnoreNullValues = true;
                 var converter = new IsoDateTimeConverter();
                 config.JsonSerializerOptions.Converters.Add(converter);
             });
@@ -128,7 +131,7 @@ namespace Laobian.Admin
             app.UseStatusCodePages();
             var fileContentTypeProvider = new FileExtensionContentTypeProvider();
             fileContentTypeProvider.Mappings[".webmanifest"] = "application/manifest+json";
-            app.UseStaticFiles(new StaticFileOptions { ContentTypeProvider = fileContentTypeProvider });
+            app.UseStaticFiles(new StaticFileOptions {ContentTypeProvider = fileContentTypeProvider});
 
             app.UseRouting();
             app.UseAuthentication();

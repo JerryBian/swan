@@ -17,6 +17,7 @@ services:
       - ENV_ADMIN_ENGLISH_NAME
       - ENV_SEND_GRID_API_KEY
       - ENV_DATA_PROTECTION_KEY_PATH=/asset/data_protection
+      - ENV_HTTP_REQUEST_TOKEN
       - ENV_SOURCE
       - ENV_COMMAND_LINE_APP
       - ENV_COMMAND_LINE_BEGIN_ARG
@@ -44,6 +45,7 @@ services:
       - ENV_ADMIN_ENGLISH_NAME
       - ENV_SEND_GRID_API_KEY
       - ENV_DATA_PROTECTION_KEY_PATH=/asset/data_protection
+      - ENV_HTTP_REQUEST_TOKEN
       - ENV_ADMIN_PASSWORD
     ports:
       - "${ENV_ADMIN_PORT}:5012"
@@ -52,7 +54,7 @@ services:
   blog:
     image: cnbian/laobian-blog:${ENV_APP_VERSION}
     volumes:
-      - ${ENV_BLOG_ASSET_LOCATION}:/asset
+      - ${ENV_ASSET_LOCATION}:/asset
     environment:
       - ASPNETCORE_URLS=http://0.0.0.0:5013
       - ASPNETCORE_ENVIRONMENT
@@ -66,6 +68,7 @@ services:
       - ENV_ADMIN_ENGLISH_NAME
       - ENV_SEND_GRID_API_KEY
       - ENV_DATA_PROTECTION_KEY_PATH=/asset/data_protection
+      - ENV_HTTP_REQUEST_TOKEN
       - ENV_POSTS_PER_PAGE
       - ENV_GITHUB_HOOK_SECRET
     ports:

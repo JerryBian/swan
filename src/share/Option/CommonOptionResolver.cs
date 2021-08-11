@@ -17,6 +17,7 @@ namespace Laobian.Share.Option
             option.AdminChineseName = configuration.GetValue<string>("ADMIN_CHINESE_NAME");
             option.AdminEnglishName = configuration.GetValue<string>("ADMIN_ENGLISH_NAME");
             option.DataProtectionKeyPath = configuration.GetValue<string>("DATA_PROTECTION_KEY_PATH");
+            option.HttpRequestToken = configuration.GetValue<string>("HTTP_REQUEST_TOKEN");
         }
     }
 }

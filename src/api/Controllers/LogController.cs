@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Laobian.Api.Logger;
 using Laobian.Share;
 using Laobian.Share.Logger;
 using Laobian.Share.Util;
@@ -16,16 +15,16 @@ namespace Laobian.Api.Controllers
     [Route("log")]
     public class LogController : ControllerBase
     {
-        private readonly IGitFileLogQueue _gitFileLogQueue;
+        private readonly ILaobianLogQueue _laobianLogQueue;
         private readonly ILogger<LogController> _logger;
         private readonly ApiOption _option;
 
-        public LogController(ILogger<LogController> logger, IGitFileLogQueue gitFileLogQueue,
+        public LogController(ILogger<LogController> logger, ILaobianLogQueue laobianLogQueue,
             IOptions<ApiOption> config)
         {
             _logger = logger;
             _option = config.Value;
-            _gitFileLogQueue = gitFileLogQueue;
+            _laobianLogQueue = laobianLogQueue;
         }
 
         [HttpPost]
@@ -39,7 +38,7 @@ namespace Laobian.Api.Controllers
                 foreach (var log in logs)
                 {
                     log.LoggerName = loggerName;
-                    _gitFileLogQueue.Add(log);
+                    _laobianLogQueue.Add(log);
                 }
 
                 return Ok();

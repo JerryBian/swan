@@ -82,7 +82,8 @@ namespace Laobian.Api.Repository
         {
             await _sourceProvider.SavePostAccessAsync(
                 _blogAccessStore.GetAll().ToDictionary(x => x.Key,
-                    x => JsonUtil.Serialize(x.Value.OrderByDescending(y => y.Date), false, new List<JsonConverter>{new DateOnlyConverter()})), cancellationToken);
+                    x => JsonUtil.Serialize(x.Value.OrderByDescending(y => y.Date), false,
+                        new List<JsonConverter> {new DateOnlyConverter()})), cancellationToken);
         }
     }
 }

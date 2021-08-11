@@ -4,7 +4,6 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Api.Command;
-using Laobian.Share;
 using Laobian.Share.Extension;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -51,7 +50,8 @@ namespace Laobian.Api.SourceProvider
 
             var commands = new List<string>
             {
-                $"cd {_apiOption.GetDbLocation()}", "git add .", $"git commit -m \"{message} [{DateTime.Now.ToDateAndTime()}]\"", "git push"
+                $"cd {_apiOption.GetDbLocation()}", "git add .",
+                $"git commit -m \"{message} [{DateTime.Now.ToDateAndTime()}]\"", "git push"
             };
             var command =
                 $"{string.Join(" && ", commands)}";

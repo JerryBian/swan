@@ -7,13 +7,12 @@ using Laobian.Blog.Cache;
 using Laobian.Blog.Data;
 using Laobian.Blog.HostedService;
 using Laobian.Blog.HttpService;
-using Laobian.Blog.Logger;
 using Laobian.Share;
 using Laobian.Share.Converter;
 using Laobian.Share.Extension;
+using Laobian.Share.Logger;
 using Laobian.Share.Logger.Remote;
 using Laobian.Share.Notify;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.StaticFiles;
@@ -52,33 +51,26 @@ namespace Laobian.Blog
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            BlogOption option = new BlogOption();
+            var option = new BlogOption();
             var resolver = new BlogOptionResolver();
             resolver.Resolve(option, Configuration);
-            services.Configure<BlogOption>(o =>
-            {
-                o.Clone(option);
-            });
-            StartupHelper.ConfigureServices(services, option);
+            services.Configure<BlogOption>(o => { o.Clone(option); });
+            StartupHelper.ConfigureServices(services, _env, option);
 
+            services.AddSingleton<ILaobianLogQueue, LaobianLogQueue>();
             services.AddSingleton<ISystemData, SystemData>();
             services.AddSingleton<ICacheClient, CacheClient>();
 
-            services.AddHttpClient<ApiHttpService>(h => { h.Timeout = TimeSpan.FromMinutes(10); })
-                .SetHandlerLifetime(TimeSpan.FromDays(1))
-                .AddPolicyHandler(GetRetryPolicy());
-            services.AddHttpClient("log")
+            services.AddHttpClient<ApiHttpService>(h =>
+                {
+                    h.Timeout = TimeSpan.FromMinutes(10);
+                    h.DefaultRequestHeaders.Add(Constants.ApiRequestHeaderToken, option.HttpRequestToken);
+                })
                 .SetHandlerLifetime(TimeSpan.FromDays(1))
                 .AddPolicyHandler(GetRetryPolicy());
 
             services.AddHostedService<BlogHostedService>();
-            services.AddSingleton<IRemoteLoggerSink, RemoteLoggerSink>();
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
-                {
-                    options.Cookie.Name = "LAOBIAN_AUTH";
-                    options.Cookie.Domain = _env.IsDevelopment() ? "localhost" : ".laobian.me";
-                });
+            services.AddHostedService<LogHostedService>();
 
             services.AddLogging(config =>
             {
@@ -91,6 +83,7 @@ namespace Laobian.Blog
             services.AddControllersWithViews().AddJsonOptions(config =>
             {
                 config.JsonSerializerOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
+                config.JsonSerializerOptions.IgnoreNullValues = true;
                 var converter = new IsoDateTimeConverter();
                 config.JsonSerializerOptions.Converters.Add(converter);
             });
@@ -144,7 +137,7 @@ namespace Laobian.Blog
 
             var fileContentTypeProvider = new FileExtensionContentTypeProvider();
             fileContentTypeProvider.Mappings[".webmanifest"] = "application/manifest+json";
-            app.UseStaticFiles(new StaticFileOptions { ContentTypeProvider = fileContentTypeProvider });
+            app.UseStaticFiles(new StaticFileOptions {ContentTypeProvider = fileContentTypeProvider});
 
             if (env.IsDevelopment())
             {

@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 namespace Laobian.Share.Option
 {
@@ -26,6 +25,8 @@ namespace Laobian.Share.Option
         public string SendGridApiKey { get; set; }
 
         public string DataProtectionKeyPath { get; set; }
+
+        public string HttpRequestToken { get; set; }
 
         public string GetBlogBaseLocation()
         {

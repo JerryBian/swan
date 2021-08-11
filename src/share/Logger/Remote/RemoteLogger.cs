@@ -5,11 +5,11 @@ namespace Laobian.Share.Logger.Remote
 {
     public class RemoteLogger : ILogger
     {
-        private readonly ILaobianLoggerProcessor _queueProcessor;
+        private readonly ILaobianLogQueue _logQueue;
 
-        public RemoteLogger(ILaobianLoggerProcessor queueProcessor)
+        public RemoteLogger(ILaobianLogQueue logQueue)
         {
-            _queueProcessor = queueProcessor;
+            _logQueue = logQueue;
         }
 
         public IExternalScopeProvider ScopeProvider { get; set; }
@@ -38,7 +38,7 @@ namespace Laobian.Share.Logger.Remote
                 log.Exception = exception?.ToString();
                 log.Level = logLevel;
                 log.TimeStamp = DateTime.Now;
-                _queueProcessor.Add(log);
+                _logQueue.Add(log);
             }
             catch (Exception)
             {

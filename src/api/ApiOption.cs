@@ -1,6 +1,4 @@
-﻿using System.IO;
-using Laobian.Share;
-using Laobian.Share.Option;
+﻿using Laobian.Share.Option;
 
 namespace Laobian.Api
 {

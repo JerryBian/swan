@@ -12,6 +12,8 @@
 
         public const string BlogPostAssetFolder = "blog_post";
 
+        public const string ApiRequestHeaderToken = "laobian_api_token";
+
         #region Personalization
 
         public const string ApplicationName = "laobian";

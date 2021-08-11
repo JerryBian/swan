@@ -47,7 +47,16 @@ namespace Laobian.Blog.Controllers
         [Route("/reload")]
         public async Task<IActionResult> Reload()
         {
-            //TODO: we need to verify request. Hard for containers
+            if (!HttpContext.Request.Headers.ContainsKey(Constants.ApiRequestHeaderToken))
+            {
+                return BadRequest("No API token set.");
+            }
+
+            if (_blogOption.HttpRequestToken != HttpContext.Request.Headers[Constants.ApiRequestHeaderToken])
+            {
+                return BadRequest($"Invalid API token set: {HttpContext.Request.Headers[Constants.ApiRequestHeaderToken]}");
+            }
+
             await _systemData.LoadAsync();
             return Ok();
         }
@@ -259,7 +268,8 @@ namespace Laobian.Blog.Controllers
                 foreach (var post in _systemData.Posts.Where(x => x.IsPublished))
                 {
                     items.Add(new SyndicationItem(post.Metadata.Title, post.HtmlContent,
-                        new Uri(post.GetFullPath(_blogOption.BlogRemoteEndpoint)), post.GetFullPath(_blogOption.BlogRemoteEndpoint),
+                        new Uri(post.GetFullPath(_blogOption.BlogRemoteEndpoint)),
+                        post.GetFullPath(_blogOption.BlogRemoteEndpoint),
                         new DateTimeOffset(post.Metadata.LastUpdateTime, TimeSpan.FromHours(8))));
                 }
 
