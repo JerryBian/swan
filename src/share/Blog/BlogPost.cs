@@ -118,7 +118,8 @@ namespace Laobian.Share.Blog
 
         public string GetFullPath(string baseAddress)
         {
-            var path = $"{baseAddress}/{Metadata.PublishTime.Year:D4}/{Metadata.PublishTime.Month:D2}/{Metadata.Link}.html";
+            var path =
+                $"{baseAddress}/{Metadata.PublishTime.Year:D4}/{Metadata.PublishTime.Month:D2}/{Metadata.Link}.html";
             return path;
         }
 
@@ -135,11 +136,9 @@ namespace Laobian.Share.Blog
 
         [JsonPropertyName("metadata")] public BlogMetadata Metadata { get; set; }
 
-        [JsonPropertyName("tags")]
-        public List<BlogTag> Tags { get; set; } = new();
+        [JsonPropertyName("tags")] public List<BlogTag> Tags { get; set; } = new();
 
-        [JsonPropertyName("accesses")]
-        public List<BlogAccess> Accesses { get; set; } = new();
+        [JsonPropertyName("accesses")] public List<BlogAccess> Accesses { get; set; } = new();
 
         #endregion
 

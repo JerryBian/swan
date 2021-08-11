@@ -9,6 +9,7 @@ $ASSET_LOCATION = "../../sample"
 $ADMIN_CHINESE_NAME = "周杰伦"
 $ADMIN_ENGLISH_NAME = "Jerry Bian"
 $DATA_PROTECTION_KEY_PATH = "../../sample/data_protection"
+$HTTP_REQUEST_TOKEN = "token_dev"
 
 ##################
 ##              ##
@@ -25,6 +26,7 @@ dotnet user-secrets set "ASSET_LOCATION" "$ASSET_LOCATION" --project $BLOG_PROJE
 dotnet user-secrets set "ADMIN_CHINESE_NAME" "$ADMIN_CHINESE_NAME" --project $BLOG_PROJECT
 dotnet user-secrets set "ADMIN_ENGLISH_NAME" "$ADMIN_ENGLISH_NAME" --project $BLOG_PROJECT
 dotnet user-secrets set "DATA_PROTECTION_KEY_PATH" "$DATA_PROTECTION_KEY_PATH" --project $BLOG_PROJECT
+dotnet user-secrets set "HTTP_REQUEST_TOKEN" "$HTTP_REQUEST_TOKEN" --project $BLOG_PROJECT
 
 $POSTS_PER_PAGE = "8"
 dotnet user-secrets set "POSTS_PER_PAGE" "$POSTS_PER_PAGE" --project $BLOG_PROJECT
@@ -44,6 +46,7 @@ dotnet user-secrets set "ASSET_LOCATION" "$ASSET_LOCATION" --project $API_PROJEC
 dotnet user-secrets set "ADMIN_CHINESE_NAME" "$ADMIN_CHINESE_NAME" --project $API_PROJECT
 dotnet user-secrets set "ADMIN_ENGLISH_NAME" "$ADMIN_ENGLISH_NAME" --project $API_PROJECT
 dotnet user-secrets set "DATA_PROTECTION_KEY_PATH" "$DATA_PROTECTION_KEY_PATH" --project $API_PROJECT
+dotnet user-secrets set "HTTP_REQUEST_TOKEN" "$HTTP_REQUEST_TOKEN" --project $API_PROJECT
 
 $SOURCE = "Local"
 dotnet user-secrets set "SOURCE" "$SOURCE" --project $API_PROJECT
@@ -63,6 +66,7 @@ dotnet user-secrets set "ASSET_LOCATION" "$ASSET_LOCATION" --project $ADMIN_PROJ
 dotnet user-secrets set "ADMIN_CHINESE_NAME" "$ADMIN_CHINESE_NAME" --project $ADMIN_PROJECT
 dotnet user-secrets set "ADMIN_ENGLISH_NAME" "$ADMIN_ENGLISH_NAME" --project $ADMIN_PROJECT
 dotnet user-secrets set "DATA_PROTECTION_KEY_PATH" "$DATA_PROTECTION_KEY_PATH" --project $ADMIN_PROJECT
+dotnet user-secrets set "HTTP_REQUEST_TOKEN" "$HTTP_REQUEST_TOKEN" --project $ADMIN_PROJECT
 
 $ADMIN_PASSWORD = "test"
 dotnet user-secrets set "ADMIN_PASSWORD" "$ADMIN_PASSWORD" --project $ADMIN_PROJECT

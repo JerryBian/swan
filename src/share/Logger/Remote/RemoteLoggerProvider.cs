@@ -8,13 +8,11 @@ namespace Laobian.Share.Logger.Remote
     public class RemoteLoggerProvider : ILoggerProvider, ISupportExternalScope
     {
         private readonly RemoteLogger _logger;
-        private readonly RemoteLoggerProcessor _processor;
         private IExternalScopeProvider _externalScopeProvider;
 
-        public RemoteLoggerProvider(IOptions<RemoteLoggerOptions> options, IRemoteLoggerSink sink)
+        public RemoteLoggerProvider(IOptions<RemoteLoggerOptions> options, ILaobianLogQueue logQueue)
         {
-            _processor = new RemoteLoggerProcessor(options.Value, sink);
-            _logger = new RemoteLogger(_processor)
+            _logger = new RemoteLogger(logQueue)
             {
                 Options = options.Value,
                 ScopeProvider = _externalScopeProvider
@@ -35,7 +33,6 @@ namespace Laobian.Share.Logger.Remote
 
         public void Dispose()
         {
-            _processor?.Dispose();
         }
 
         public void SetScopeProvider(IExternalScopeProvider scopeProvider)

@@ -11,12 +11,6 @@ namespace Laobian.Share.Logger
 
         public DateTime TimeStamp { get; set; }
 
-        public string UserAgent { get; set; }
-
-        public string RequestIp { get; set; }
-
-        public string RequestUrl { get; set; }
-
         public LogLevel Level { get; set; }
 
         public string LoggerName { get; set; }

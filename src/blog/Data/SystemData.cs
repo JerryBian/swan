@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -73,11 +74,14 @@ namespace Laobian.Blog.Data
             {
                 _manualResetEventSlim.Reset();
                 _logger.LogInformation("Start to load system data.");
+                var posts = await _apiHttpService.GetPostsAsync();
+                var tags = await _apiHttpService.GetTagsAsync();
+
                 _posts.Clear();
-                _posts.AddRange(await _apiHttpService.GetPostsAsync(false));
+                _posts.AddRange(posts.OrderByDescending(x => x.Metadata.PublishTime));
 
                 _tags.Clear();
-                _tags.AddRange(await _apiHttpService.GetTagsAsync());
+                _tags.AddRange(tags);
 
                 LastLoadTimestamp = DateTime.Now;
                 _logger.LogInformation("End to load system data.");

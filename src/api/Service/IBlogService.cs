@@ -11,7 +11,7 @@ namespace Laobian.Api.Service
 
         Task PersistentAsync(string message, CancellationToken cancellationToken = default);
 
-        Task<List<BlogPost>> GetAllPostsAsync(bool onlyPublished = true, CancellationToken cancellationToken = default);
+        Task<List<BlogPost>> GetAllPostsAsync(CancellationToken cancellationToken = default);
 
         Task<List<BlogTag>> GetAllTagsAsync(CancellationToken cancellationToken = default);
 

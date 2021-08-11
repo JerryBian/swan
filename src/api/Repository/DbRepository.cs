@@ -54,14 +54,14 @@ namespace Laobian.Api.Repository
             return await Task.FromResult(_blogAccessStore);
         }
 
-        public async Task PersistentAsync(CancellationToken cancellationToken = default)
+        public async Task PersistentAsync(string message, CancellationToken cancellationToken = default)
         {
             await Task.WhenAll(
                 PersistentBlogAccessStoreAsync(cancellationToken),
                 PersistentBlogMetadataAsync(cancellationToken),
                 PersistentBlogTagStoreAsync(cancellationToken)
             );
-            await _sourceProvider.PersistentAsync(cancellationToken);
+            await _sourceProvider.PersistentAsync(message, cancellationToken);
         }
 
         private async Task PersistentBlogTagStoreAsync(CancellationToken cancellationToken = default)
@@ -82,7 +82,8 @@ namespace Laobian.Api.Repository
         {
             await _sourceProvider.SavePostAccessAsync(
                 _blogAccessStore.GetAll().ToDictionary(x => x.Key,
-                    x => JsonUtil.Serialize(x.Value.OrderByDescending(y => y.Date), false, new List<JsonConverter>{new DateOnlyConverter()})), cancellationToken);
+                    x => JsonUtil.Serialize(x.Value.OrderByDescending(y => y.Date), false,
+                        new List<JsonConverter> {new DateOnlyConverter()})), cancellationToken);
         }
     }
 }

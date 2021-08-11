@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Laobian.Api.HttpService;
 using Laobian.Api.Repository;
 using Laobian.Share.Blog;
 using Laobian.Share.Util;
@@ -12,15 +13,17 @@ namespace Laobian.Api.Service
 {
     public class BlogService : IBlogService
     {
+        private readonly BlogHttpService _blogHttpService;
         private readonly IBlogPostRepository _blogPostRepository;
         private readonly IDbRepository _dbRepository;
         private readonly ApiOption _option;
 
         public BlogService(IOptions<ApiOption> config, IDbRepository dbRepository,
-            IBlogPostRepository blogPostRepository)
+            IBlogPostRepository blogPostRepository, BlogHttpService blogHttpService)
         {
             _option = config.Value;
             _dbRepository = dbRepository;
+            _blogHttpService = blogHttpService;
             _blogPostRepository = blogPostRepository;
         }
 
@@ -33,22 +36,14 @@ namespace Laobian.Api.Service
 
         public async Task PersistentAsync(string message, CancellationToken cancellationToken = default)
         {
-            await _dbRepository.PersistentAsync(cancellationToken);
+            await _dbRepository.PersistentAsync(message, cancellationToken);
             await LoadAsync(cancellationToken);
-
-            // TODO: notify Blog site
         }
 
-        public async Task<List<BlogPost>> GetAllPostsAsync(bool onlyPublished = true,
-            CancellationToken cancellationToken = default)
+        public async Task<List<BlogPost>> GetAllPostsAsync(CancellationToken cancellationToken = default)
         {
             var blogPostStore = await _blogPostRepository.GetBlogPostStoreAsync(cancellationToken);
             var allPosts = blogPostStore.GetAll();
-            if (onlyPublished)
-            {
-                allPosts = allPosts.Where(x => x.IsPublished).ToList();
-            }
-
             foreach (var blogPost in allPosts)
             {
                 await SetPostRawData(blogPost, cancellationToken);
@@ -92,6 +87,7 @@ namespace Laobian.Api.Service
         {
             var blogTagStore = await _dbRepository.GetBlogTagStoreAsync(cancellationToken);
             blogTagStore.Update(tag);
+            await _blogHttpService.ReloadBlogDataAsync();
         }
 
         public async Task RemoveBlogTagAsync(string tagLink, CancellationToken cancellationToken = default)
@@ -102,6 +98,7 @@ namespace Laobian.Api.Service
 
             var blogTagStore = await _dbRepository.GetBlogTagStoreAsync(cancellationToken);
             blogTagStore.RemoveByLink(tagLink);
+            await _blogHttpService.ReloadBlogDataAsync();
         }
 
         public async Task UpdateBlogPostMetadataAsync(BlogMetadata metadata,
@@ -109,6 +106,7 @@ namespace Laobian.Api.Service
         {
             var blogMetadataStore = await _dbRepository.GetBlogMetadataStoreAsync(cancellationToken);
             blogMetadataStore.Update(metadata);
+            await _blogHttpService.ReloadBlogDataAsync();
         }
 
         public async Task AddBlogAccessAsync(string postLink, CancellationToken cancellationToken = default)

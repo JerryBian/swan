@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Blog.Data;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Laobian.Blog.HostedService
 {

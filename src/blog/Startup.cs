@@ -7,15 +7,15 @@ using Laobian.Blog.Cache;
 using Laobian.Blog.Data;
 using Laobian.Blog.HostedService;
 using Laobian.Blog.HttpService;
-using Laobian.Blog.Logger;
 using Laobian.Share;
 using Laobian.Share.Converter;
 using Laobian.Share.Extension;
+using Laobian.Share.Logger;
 using Laobian.Share.Logger.Remote;
 using Laobian.Share.Notify;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -51,33 +51,26 @@ namespace Laobian.Blog
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            BlogOption option = new BlogOption();
+            var option = new BlogOption();
             var resolver = new BlogOptionResolver();
             resolver.Resolve(option, Configuration);
-            services.Configure<BlogOption>(o =>
-            {
-                o.Clone(option);
-            });
-            StartupHelper.ConfigureServices(services, option);
+            services.Configure<BlogOption>(o => { o.Clone(option); });
+            StartupHelper.ConfigureServices(services, _env, option);
 
+            services.AddSingleton<ILaobianLogQueue, LaobianLogQueue>();
             services.AddSingleton<ISystemData, SystemData>();
             services.AddSingleton<ICacheClient, CacheClient>();
 
-            services.AddHttpClient<ApiHttpService>(h => { h.Timeout = TimeSpan.FromMinutes(10); })
-                .SetHandlerLifetime(TimeSpan.FromDays(1))
-                .AddPolicyHandler(GetRetryPolicy());
-            services.AddHttpClient("log")
+            services.AddHttpClient<ApiHttpService>(h =>
+                {
+                    h.Timeout = TimeSpan.FromMinutes(10);
+                    h.DefaultRequestHeaders.Add(Constants.ApiRequestHeaderToken, option.HttpRequestToken);
+                })
                 .SetHandlerLifetime(TimeSpan.FromDays(1))
                 .AddPolicyHandler(GetRetryPolicy());
 
             services.AddHostedService<BlogHostedService>();
-            services.AddSingleton<IRemoteLoggerSink, RemoteLoggerSink>();
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
-                {
-                    options.Cookie.Name = "LAOBIAN_AUTH";
-                    options.Cookie.Domain = _env.IsDevelopment() ? "localhost" : ".laobian.me";
-                });
+            services.AddHostedService<LogHostedService>();
 
             services.AddLogging(config =>
             {
@@ -90,6 +83,7 @@ namespace Laobian.Blog
             services.AddControllersWithViews().AddJsonOptions(config =>
             {
                 config.JsonSerializerOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
+                config.JsonSerializerOptions.IgnoreNullValues = true;
                 var converter = new IsoDateTimeConverter();
                 config.JsonSerializerOptions.Converters.Add(converter);
             });
@@ -98,6 +92,7 @@ namespace Laobian.Blog
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime appLifetime)
         {
+            var config = app.ApplicationServices.GetRequiredService<IOptions<BlogOption>>().Value;
             var emailNotify = app.ApplicationServices.GetRequiredService<IEmailNotify>();
             appLifetime.ApplicationStarted.Register(async () =>
             {
@@ -107,7 +102,10 @@ namespace Laobian.Blog
                     {
                         Content = $"<p>site started at {DateTime.Now.ToChinaDateAndTime()}.</p>",
                         Site = LaobianSite.Blog,
-                        Subject = "site started"
+                        Subject = "site started",
+                        SendGridApiKey = config.SendGridApiKey,
+                        ToEmailAddress = config.AdminEmail,
+                        ToName = config.AdminEnglishName
                     };
 
                     await emailNotify.SendAsync(message);
@@ -122,14 +120,17 @@ namespace Laobian.Blog
                     {
                         Content = $"<p>site stopped at {DateTime.Now.ToChinaDateAndTime()}.</p>",
                         Site = LaobianSite.Blog,
-                        Subject = "site stopped"
+                        Subject = "site stopped",
+                        SendGridApiKey = config.SendGridApiKey,
+                        ToEmailAddress = config.AdminEmail,
+                        ToName = config.AdminEnglishName
                     };
 
                     await emailNotify.SendAsync(message);
                 }
             });
 
-            var config = app.ApplicationServices.GetRequiredService<IOptions<BlogOption>>().Value;
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -140,7 +141,10 @@ namespace Laobian.Blog
             }
 
             app.UseStatusCodePages();
-            app.UseStaticFiles();
+
+            var fileContentTypeProvider = new FileExtensionContentTypeProvider();
+            fileContentTypeProvider.Mappings[".webmanifest"] = "application/manifest+json";
+            app.UseStaticFiles(new StaticFileOptions {ContentTypeProvider = fileContentTypeProvider});
 
             if (env.IsDevelopment())
             {
@@ -156,7 +160,7 @@ namespace Laobian.Blog
                     RequestPath = "/blog"
                 });
             }
-            
+
             app.UseRouting();
 
             app.UseAuthentication();

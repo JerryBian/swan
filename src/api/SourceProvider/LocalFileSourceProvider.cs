@@ -125,7 +125,7 @@ namespace Laobian.Api.SourceProvider
         }
 
 
-        public virtual async Task PersistentAsync(CancellationToken cancellationToken = default)
+        public virtual async Task PersistentAsync(string message, CancellationToken cancellationToken = default)
         {
             await Task.CompletedTask;
         }
