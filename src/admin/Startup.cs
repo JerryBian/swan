@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -125,7 +126,9 @@ namespace Laobian.Admin
             }
 
             app.UseStatusCodePages();
-            app.UseStaticFiles();
+            var fileContentTypeProvider = new FileExtensionContentTypeProvider();
+            fileContentTypeProvider.Mappings[".webmanifest"] = "application/manifest+json";
+            app.UseStaticFiles(new StaticFileOptions { ContentTypeProvider = fileContentTypeProvider });
 
             app.UseRouting();
             app.UseAuthentication();

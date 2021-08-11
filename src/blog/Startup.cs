@@ -16,6 +16,7 @@ using Laobian.Share.Notify;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -140,7 +141,10 @@ namespace Laobian.Blog
             }
 
             app.UseStatusCodePages();
-            app.UseStaticFiles();
+
+            var fileContentTypeProvider = new FileExtensionContentTypeProvider();
+            fileContentTypeProvider.Mappings[".webmanifest"] = "application/manifest+json";
+            app.UseStaticFiles(new StaticFileOptions { ContentTypeProvider = fileContentTypeProvider });
 
             if (env.IsDevelopment())
             {
@@ -156,7 +160,7 @@ namespace Laobian.Blog
                     RequestPath = "/blog"
                 });
             }
-            
+
             app.UseRouting();
 
             app.UseAuthentication();
