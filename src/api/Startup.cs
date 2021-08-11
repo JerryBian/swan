@@ -22,6 +22,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Polly;
 using Polly.Extensions.Http;
@@ -106,6 +107,7 @@ namespace Laobian.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime appLifetime)
         {
+            var config = app.ApplicationServices.GetRequiredService<IOptions<ApiOption>>().Value;
             var emailNotify = app.ApplicationServices.GetRequiredService<IEmailNotify>();
             appLifetime.ApplicationStarted.Register(async () =>
             {
@@ -115,7 +117,10 @@ namespace Laobian.Api
                     {
                         Content = $"<p>site started at {DateTime.Now.ToChinaDateAndTime()}.</p>",
                         Site = LaobianSite.Api,
-                        Subject = "site started"
+                        Subject = "site started",
+                        SendGridApiKey = config.SendGridApiKey,
+                        ToEmailAddress = config.AdminEmail,
+                        ToName = config.AdminEnglishName
                     };
 
                     await emailNotify.SendAsync(message);
@@ -130,7 +135,10 @@ namespace Laobian.Api
                     {
                         Content = $"<p>site stopped at {DateTime.Now.ToChinaDateAndTime()}.</p>",
                         Site = LaobianSite.Api,
-                        Subject = "site stopped"
+                        Subject = "site stopped",
+                        SendGridApiKey = config.SendGridApiKey,
+                        ToEmailAddress = config.AdminEmail,
+                        ToName = config.AdminEnglishName
                     };
 
                     await emailNotify.SendAsync(message);

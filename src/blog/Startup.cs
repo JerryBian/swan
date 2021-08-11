@@ -92,6 +92,7 @@ namespace Laobian.Blog
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime appLifetime)
         {
+            var config = app.ApplicationServices.GetRequiredService<IOptions<BlogOption>>().Value;
             var emailNotify = app.ApplicationServices.GetRequiredService<IEmailNotify>();
             appLifetime.ApplicationStarted.Register(async () =>
             {
@@ -101,7 +102,10 @@ namespace Laobian.Blog
                     {
                         Content = $"<p>site started at {DateTime.Now.ToChinaDateAndTime()}.</p>",
                         Site = LaobianSite.Blog,
-                        Subject = "site started"
+                        Subject = "site started",
+                        SendGridApiKey = config.SendGridApiKey,
+                        ToEmailAddress = config.AdminEmail,
+                        ToName = config.AdminEnglishName
                     };
 
                     await emailNotify.SendAsync(message);
@@ -116,14 +120,17 @@ namespace Laobian.Blog
                     {
                         Content = $"<p>site stopped at {DateTime.Now.ToChinaDateAndTime()}.</p>",
                         Site = LaobianSite.Blog,
-                        Subject = "site stopped"
+                        Subject = "site stopped",
+                        SendGridApiKey = config.SendGridApiKey,
+                        ToEmailAddress = config.AdminEmail,
+                        ToName = config.AdminEnglishName
                     };
 
                     await emailNotify.SendAsync(message);
                 }
             });
 
-            var config = app.ApplicationServices.GetRequiredService<IOptions<BlogOption>>().Value;
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

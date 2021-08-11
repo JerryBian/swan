@@ -3,11 +3,10 @@ using System.Diagnostics;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using ByteSizeLib;
 using Laobian.Share.Extension;
-using Laobian.Share.Option;
 using Laobian.Share.Util;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 
@@ -15,24 +14,22 @@ namespace Laobian.Share.Notify
 {
     public class EmailNotify : IEmailNotify
     {
-        private readonly CommonOption _config;
         private readonly ILogger<EmailNotify> _logger;
 
-        public EmailNotify(IOptions<CommonOption> config, ILogger<EmailNotify> logger)
+        public EmailNotify(ILogger<EmailNotify> logger)
         {
             _logger = logger;
-            _config = config.Value;
         }
 
         public async Task<bool> SendAsync(NotifyMessage message)
         {
-            if (string.IsNullOrEmpty(_config.SendGridApiKey))
+            if (string.IsNullOrEmpty(message.SendGridApiKey))
             {
-                Console.WriteLine($"No Api Key provided. ==> {JsonUtil.Serialize(message)}");
+                Console.WriteLine($"No SendGrid Api Key provided. ==> {JsonUtil.Serialize(message)}");
                 return false;
             }
 
-            var client = new SendGridClient(_config.SendGridApiKey);
+            var client = new SendGridClient(message.SendGridApiKey);
             var msg = new SendGridMessage
             {
                 From = new EmailAddress($"{message.Site.ToString().ToLowerInvariant()}@laobian.me",
@@ -49,7 +46,7 @@ namespace Laobian.Share.Notify
                 }
             }
 
-            msg.AddTo(new EmailAddress(_config.AdminEmail, _config.AdminUserName));
+            msg.AddTo(new EmailAddress(message.ToEmailAddress, message.ToName));
             var response = await client.SendEmailAsync(msg).ConfigureAwait(false);
             if (response.StatusCode != HttpStatusCode.Accepted)
             {
@@ -65,11 +62,11 @@ namespace Laobian.Share.Notify
         {
             using var process = Process.GetCurrentProcess();
             var info = new StringBuilder();
-            info.AppendLine($"<li>Timestamp: {message.Timestamp.ToChinaDateAndTime()}</li>");
-            info.AppendLine($"<li>Process: {process.ProcessName}({process.Id})</li>");
-            info.AppendLine($"<li>CPU time: {process.TotalProcessorTime.ToDisplayString()}</li>");
+            info.AppendLine($"<p>Timestamp: {message.Timestamp.ToChinaDateAndTime()}</p>");
+            info.AppendLine($"<p>Memory: {ByteSize.FromBytes(process.PrivateMemorySize64).ToString("#.## MB")}</p>");
+            info.AppendLine($"<p>CPU time: {process.TotalProcessorTime.ToDisplayString()}</p>");
 
-            var footer = $"<div style='margin-top:1rem;font-size:smaller;color:grey;'><ul>{info}</ul></div>";
+            var footer = $"<div style='margin-top:1rem;font-size:smaller;color:grey;'>{info}</div>";
             return footer;
         }
     }
