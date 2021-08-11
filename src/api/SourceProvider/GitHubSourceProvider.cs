@@ -60,19 +60,19 @@ namespace Laobian.Api.SourceProvider
 
         private async Task PullBlogPostRepoAsync(CancellationToken cancellationToken)
         {
-            if (Directory.Exists(_apiOption.GetBlogPostLocation()))
+            if (Directory.Exists(_apiOption.GetBlogBaseLocation()))
             {
-                Directory.Delete(_apiOption.GetBlogPostLocation(), true);
+                Directory.Delete(_apiOption.GetBlogBaseLocation(), true);
             }
 
             var retryTimes = 0;
-            while (retryTimes <= 3 && !Directory.Exists(_apiOption.GetBlogPostLocation()))
+            while (retryTimes <= 3 && !Directory.Exists(_apiOption.GetBlogBaseLocation()))
             {
                 retryTimes++;
                 var repoUrl =
                     $"https://{_apiOption.GitHubBlogPostRepoApiToken}@github.com/{_apiOption.GitHubBlogPostRepoUserName}/{_apiOption.GitHubBlogPostRepoName}.git";
                 var command =
-                    $"git clone -b {_apiOption.GitHubBlogPostRepoBranchName} --single-branch {repoUrl} {Path.Combine(_apiOption.AssetLocation, Constants.BlogPostAssetFolder)}";
+                    $"git clone -b {_apiOption.GitHubBlogPostRepoBranchName} --single-branch {repoUrl} {_apiOption.GetBlogBaseLocation()}";
                 _logger.LogInformation($"Retry: {retryTimes}... starting to pull Blog Post repo.");
                 var output = await _commandClient.RunAsync(command, cancellationToken);
                 _logger.LogInformation($"Retry: {retryTimes}, cmd: {command}{Environment.NewLine}Output: {output}");

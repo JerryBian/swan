@@ -27,14 +27,19 @@ namespace Laobian.Share.Option
 
         public string DataProtectionKeyPath { get; set; }
 
-        public string GetBlogPostLocation()
+        public string GetBlogBaseLocation()
         {
             if (string.IsNullOrEmpty(AssetLocation))
             {
                 throw new LaobianOptionException(nameof(AssetLocation));
             }
 
-            return Path.Combine(AssetLocation, Constants.BlogPostAssetFolder, Constants.BlogPostPostBaseFolderName);
+            return Path.Combine(AssetLocation, Constants.BlogPostAssetFolder);
+        }
+
+        public string GetBlogPostLocation()
+        {
+            return Path.Combine(GetBlogBaseLocation(), Constants.BlogPostPostBaseFolderName);
         }
 
         public string GetBlogFileLocation()
