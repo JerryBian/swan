@@ -54,7 +54,8 @@ namespace Laobian.Blog.Controllers
 
             if (_blogOption.HttpRequestToken != HttpContext.Request.Headers[Constants.ApiRequestHeaderToken])
             {
-                return BadRequest($"Invalid API token set: {HttpContext.Request.Headers[Constants.ApiRequestHeaderToken]}");
+                return BadRequest(
+                    $"Invalid API token set: {HttpContext.Request.Headers[Constants.ApiRequestHeaderToken]}");
             }
 
             await _systemData.LoadAsync();
@@ -218,7 +219,8 @@ namespace Laobian.Blog.Controllers
                 CacheKeyBuilder.Build(nameof(HomeController), nameof(About), authenticated),
                 () =>
                 {
-                    var posts = _systemData.Posts.Where(x => authenticated || x.IsPublished).OrderByDescending(x =>x.Metadata.PublishTime).ToList();
+                    var posts = _systemData.Posts.Where(x => authenticated || x.IsPublished)
+                        .OrderByDescending(x => x.Metadata.PublishTime).ToList();
                     var tags = _systemData.Tags;
                     var topTags = new Dictionary<BlogTag, int>();
                     foreach (var tag in tags)
@@ -237,7 +239,7 @@ namespace Laobian.Blog.Controllers
                         SystemAppVersion = _systemData.AppVersion,
                         SystemDotNetVersion = _systemData.RuntimeVersion,
                         SystemLastBoot = _systemData.BootTime.ToChinaDateAndTime(),
-                        SystemRunningInterval = (DateTime.Now - _systemData.BootTime).ToString(),
+                        SystemRunningInterval = (DateTime.Now - _systemData.BootTime).ToDisplayString(),
                         TagTotalCount = tags.Count.ToString(),
                         TopTags = topTags.OrderByDescending(x => x.Value).Take(_blogOption.PostsPerPage)
                             .ToDictionary(x => x.Key, x => x.Value)

@@ -12,12 +12,13 @@ namespace Laobian.Api.Logger
     {
         private readonly ILaobianLogQueue _messageQueue;
         private readonly GitFileLoggerOptions _options;
-        private readonly Thread _underlingThread;
         private readonly SystemLocker _systemLocker;
+        private readonly Thread _underlingThread;
 
         private bool _stop;
 
-        public GitFileLoggerProcessor(GitFileLoggerOptions options, ILaobianLogQueue messageQueue, SystemLocker systemLocker)
+        public GitFileLoggerProcessor(GitFileLoggerOptions options, ILaobianLogQueue messageQueue,
+            SystemLocker systemLocker)
         {
             _options = options;
             _systemLocker = systemLocker;
@@ -119,11 +120,19 @@ namespace Laobian.Api.Logger
 
                     var dir = Path.Combine(_options.BaseDir, loggerName, log.TimeStamp.Year.ToString(),
                         log.TimeStamp.Month.ToString("D2"));
-                    _systemLocker.Acquire();
-                    Directory.CreateDirectory(dir);
-                    _systemLocker.Acquire();
-                    File.AppendAllLines(Path.Combine(dir, $"{log.TimeStamp:yyyy-MM-dd}.log"),
-                        new[] {JsonUtil.Serialize(log)});
+
+                    try
+                    {
+                        _systemLocker.FileLockResetEvent.Wait();
+                        _systemLocker.FileLockResetEvent.Reset();
+                        Directory.CreateDirectory(dir);
+                        File.AppendAllLines(Path.Combine(dir, $"{log.TimeStamp:yyyy-MM-dd}.log"),
+                            new[] {JsonUtil.Serialize(log)});
+                    }
+                    finally
+                    {
+                        _systemLocker.FileLockResetEvent.Set();
+                    }
                 }
                 catch (Exception ex)
                 {

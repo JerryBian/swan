@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Api.HttpService;
@@ -16,7 +15,9 @@ namespace Laobian.Api.Service
         private readonly BlogHttpService _blogHttpService;
         private readonly IBlogPostRepository _blogPostRepository;
         private readonly IDbRepository _dbRepository;
+        private readonly ManualResetEventSlim _manualResetEventSlim;
         private readonly ApiOption _option;
+        private readonly SemaphoreSlim _semaphoreSlim;
         private readonly SystemLocker _systemLocker;
 
         public BlogService(IOptions<ApiOption> config, IDbRepository dbRepository,
@@ -26,27 +27,44 @@ namespace Laobian.Api.Service
             _systemLocker = systemLocker;
             _dbRepository = dbRepository;
             _blogHttpService = blogHttpService;
+            _semaphoreSlim = new SemaphoreSlim(1, 1);
             _blogPostRepository = blogPostRepository;
+            _manualResetEventSlim = new ManualResetEventSlim(true);
         }
 
         public async Task LoadAsync(CancellationToken cancellationToken = default)
         {
-            _systemLocker.Acquire();
-            await Task.WhenAll(_blogPostRepository.LoadAsync(cancellationToken),
-                _dbRepository.LoadAsync(cancellationToken));
-            await AggregateStoreAsync(cancellationToken);
+            try
+            {
+                await _semaphoreSlim.WaitAsync(cancellationToken);
+                _systemLocker.FileLockResetEvent.Wait(cancellationToken);
+                _systemLocker.FileLockResetEvent.Reset();
+                _manualResetEventSlim.Reset();
+                await Task.WhenAll(_blogPostRepository.LoadAsync(cancellationToken),
+                    _dbRepository.LoadAsync(cancellationToken));
+                await AggregateStoreAsync(cancellationToken);
+            }
+            finally
+            {
+                _semaphoreSlim.Release();
+                _systemLocker.FileLockResetEvent.Set();
+                _manualResetEventSlim.Set();
+            }
         }
 
         public async Task PersistentAsync(string message, CancellationToken cancellationToken = default)
         {
             try
             {
-                _systemLocker.Pause();
+                await _semaphoreSlim.WaitAsync(cancellationToken);
+                _systemLocker.FileLockResetEvent.Wait(cancellationToken);
+                _systemLocker.FileLockResetEvent.Reset();
                 await _dbRepository.PersistentAsync(message, cancellationToken);
             }
             finally
             {
-                _systemLocker.Resume();
+                _semaphoreSlim.Release();
+                _systemLocker.FileLockResetEvent.Set();
             }
 
             await LoadAsync(cancellationToken);
@@ -54,7 +72,7 @@ namespace Laobian.Api.Service
 
         public async Task<List<BlogPost>> GetAllPostsAsync(CancellationToken cancellationToken = default)
         {
-            _systemLocker.Acquire();
+            _manualResetEventSlim.Wait(cancellationToken);
             var blogPostStore = await _blogPostRepository.GetBlogPostStoreAsync(cancellationToken);
             var allPosts = blogPostStore.GetAll();
             foreach (var blogPost in allPosts)
@@ -67,7 +85,7 @@ namespace Laobian.Api.Service
 
         public async Task<List<BlogTag>> GetAllTagsAsync(CancellationToken cancellationToken = default)
         {
-            _systemLocker.Acquire();
+            _manualResetEventSlim.Wait(cancellationToken);
             var blogTagStore = await _dbRepository.GetBlogTagStoreAsync(cancellationToken);
             var allBlogs = blogTagStore.GetAll();
             return allBlogs;
@@ -75,7 +93,7 @@ namespace Laobian.Api.Service
 
         public async Task<BlogPost> GetPostAsync(string postLink, CancellationToken cancellationToken = default)
         {
-            _systemLocker.Acquire();
+            _manualResetEventSlim.Wait(cancellationToken);
             var blogPostStore = await _blogPostRepository.GetBlogPostStoreAsync(cancellationToken);
             var post = blogPostStore.GetByLink(postLink);
             if (post != null)
@@ -88,23 +106,15 @@ namespace Laobian.Api.Service
 
         public async Task<BlogTag> GetTagAsync(string tagLink, CancellationToken cancellationToken = default)
         {
-            _systemLocker.Acquire();
+            _manualResetEventSlim.Wait(cancellationToken);
             var blogTagStore = await _dbRepository.GetBlogTagStoreAsync(cancellationToken);
             return blogTagStore.GetByLink(tagLink);
         }
 
         public async Task AddBlogTagAsync(BlogTag tag, CancellationToken cancellationToken = default)
         {
-            try
-            {
-                _systemLocker.Pause();
-                var blogTagStore = await _dbRepository.GetBlogTagStoreAsync(cancellationToken);
-                blogTagStore.Add(tag);
-            }
-            finally
-            {
-                _systemLocker.Resume();
-            }
+            var blogTagStore = await _dbRepository.GetBlogTagStoreAsync(cancellationToken);
+            blogTagStore.Add(tag);
         }
 
         public async Task UpdateBlogTagAsync(BlogTag tag, CancellationToken cancellationToken = default)
