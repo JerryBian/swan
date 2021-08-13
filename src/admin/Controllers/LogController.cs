@@ -42,7 +42,7 @@ namespace Laobian.Admin.Controllers
                 var theme = "info";
                 if (log.Level == LogLevel.Warning)
                 {
-                    theme = "warn";
+                    theme = "warning";
                 }
 
                 if (log.Level == LogLevel.Critical || log.Level == LogLevel.Error)

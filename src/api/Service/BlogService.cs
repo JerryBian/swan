@@ -175,6 +175,7 @@ namespace Laobian.Api.Service
                 var tag = blogTagStore.GetByLink(metadataTag);
                 if (tag != null)
                 {
+                    blogPost.Tags.Clear();
                     blogPost.Tags.Add(tag);
                 }
             }
