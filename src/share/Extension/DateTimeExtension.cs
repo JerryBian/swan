@@ -32,6 +32,16 @@ namespace Laobian.Share.Extension
             return time.ToString("yyyy年MM月dd日");
         }
 
+        public static string ToDate(this DateTime time)
+        {
+            return time.ToString("yyyy-MM-dd");
+        }
+
+        public static string ToTime(this DateTime time)
+        {
+            return time.ToString("hh:mm:ss");
+        }
+
         public static string ToChinaMonthAndDay(this DateTime time)
         {
             return time.ToString("MM月dd日");

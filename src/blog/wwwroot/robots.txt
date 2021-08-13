@@ -1,0 +1,4 @@
+﻿User-agent: *
+Allow: /
+
+Sitemap: http://blog.laobian.me/sitemap.xml

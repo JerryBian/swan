@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.ServiceModel.Syndication;
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using System.Xml;
 using Laobian.Blog.Cache;
@@ -299,6 +300,32 @@ namespace Laobian.Blog.Controllers
             });
 
             return Content(rss, "application/rss+xml", Encoding.UTF8);
+        }
+
+        [Route("/sitemap")]
+        [Route("/sitemap.xml")]
+        public IActionResult Sitemap()
+        {
+            var sitemap = _cacheClient.GetOrCreate(CacheKeyBuilder.Build(nameof(HomeController), nameof(Sitemap)),
+                () =>
+                {
+                    var sb = new StringBuilder();
+                    sb.AppendLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+                    sb.AppendLine("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">");
+                    sb.AppendLine($"<url><loc>{_blogOption.BlogRemoteEndpoint}</loc><lastmod>{DateTime.Now.ToDate()}</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>");
+                    sb.AppendLine($"<url><loc>{_blogOption.BlogRemoteEndpoint}/about</loc><lastmod>{DateTime.Now.ToDate()}</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>");
+                    sb.AppendLine($"<url><loc>{_blogOption.BlogRemoteEndpoint}/archive</loc><lastmod>{DateTime.Now.ToDate()}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>");
+                    sb.AppendLine($"<url><loc>{_blogOption.BlogRemoteEndpoint}/tag</loc><lastmod>{DateTime.Now.ToDate()}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>");
+
+                    foreach (var post in _systemData.Posts.Where(x => x.IsPublished))
+                    {
+                        sb.AppendLine($"<url><loc>{post.GetFullPath(_blogOption.BlogRemoteEndpoint)}</loc><lastmod>{post.Metadata.LastUpdateTime.ToDate()}</lastmod><changefreq>daily</changefreq><priority>0.6</priority></url>");
+                    }
+
+                    sb.AppendLine("</urlset>");
+                    return sb.ToString();
+                });
+            return Content(sitemap, "text/xml", Encoding.UTF8);
         }
 
         [HttpGet]

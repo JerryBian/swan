@@ -51,7 +51,7 @@ namespace Laobian.Api.SourceProvider
             var commands = new List<string>
             {
                 $"cd {_apiOption.GetDbLocation()}", "git add .",
-                $"git commit -m \"{message} [{DateTime.Now.ToDateAndTime()}]\"", "git push"
+                $"git commit -m \"{message} [{DateTime.Now.ToTime()}]\"", "git push"
             };
             var command =
                 $"{string.Join(" && ", commands)}";
