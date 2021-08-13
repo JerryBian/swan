@@ -107,7 +107,7 @@ namespace Laobian.Blog.Controllers
                 {
                     try
                     {
-                        await _apiHttpService.PersistentAsync("GitHub Hook");
+                        await _apiHttpService.PersistentAsync(":memo: blog post update");
                         await _systemData.LoadAsync();
                         //_apiHttpService.
                         //var messages = await _blogService.GitHookAsync(modifiedPosts.Concat(addedPosts).ToList());

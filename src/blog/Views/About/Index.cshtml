@@ -2,6 +2,7 @@
 @inject IOptions<BlogOption> Config
 @{
     ViewData["Title"] = "关于";
+    ViewData["Image"] = $"{Config.Value.BlogRemoteEndpoint}/information.png";
 }
 
 <div class="post-content">

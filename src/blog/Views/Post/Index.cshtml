@@ -2,6 +2,9 @@
 @inject IOptions<BlogOption> Config
 @{
     ViewData["Title"] = Model.Current.Metadata.Title;
+    ViewData["Image"] = Model.Current.ThumbnailUrl;
+    ViewData["DatePublished"] = Model.Current.Metadata.PublishTime;
+    ViewData["DateModified"] = Model.Current.Metadata.LastUpdateTime;
 }
 
 <div>

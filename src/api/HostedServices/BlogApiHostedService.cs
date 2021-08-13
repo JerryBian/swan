@@ -27,7 +27,7 @@ namespace Laobian.Api.HostedServices
             {
                 if (DateTime.Now.Minute == 0 && DateTime.Now.Second == 0)
                 {
-                    await _blogService.PersistentAsync(":alarm_clock: triggered by server automatically",
+                    await _blogService.PersistentAsync(":alarm_clock: sever schedule",
                         stoppingToken);
                 }
                 else
@@ -39,7 +39,7 @@ namespace Laobian.Api.HostedServices
 
         public override async Task StopAsync(CancellationToken cancellationToken)
         {
-            await _blogService.PersistentAsync(":small_red_triangle_down: triggered by server stopping",
+            await _blogService.PersistentAsync(":small_red_triangle_down: server stopping",
                 CancellationToken.None);
             await base.StopAsync(cancellationToken);
         }

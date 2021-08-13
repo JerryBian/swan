@@ -1,5 +1,8 @@
 ﻿@model IEnumerable<PostArchiveViewModel>
 @inject IOptions<BlogOption> _option
+@{
+    ViewData["Image"] = $"{_option.Value.BlogRemoteEndpoint}/archive.png";
+}
 
 <div>
     <div class="mb-4">

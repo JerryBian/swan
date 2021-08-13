@@ -103,7 +103,7 @@
                     headers: {
                         'Content-Type': 'text/plain'
                     },
-                    body: ':meat_on_bone: Force persistent by Admin'
+                    body: ':meat_on_bone: forced by @Context.User.Identity?.Name'
                 })
             .then(response => {
                 if (response.ok) {

@@ -19,6 +19,7 @@ namespace Laobian.Share.Blog
             if (string.IsNullOrEmpty(Thumbnail) && !string.IsNullOrEmpty(imageNode.GetAttributeValue("src", null)))
             {
                 Thumbnail = imageNode.OuterHtml;
+                ThumbnailUrl = imageNode.GetAttributeValue("src", null);
             }
         }
 
@@ -151,6 +152,8 @@ namespace Laobian.Share.Blog
         [JsonPropertyName("excerptPlainText")] public string ExcerptPlainText { get; set; }
 
         [JsonPropertyName("thumbnail")] public string Thumbnail { get; set; }
+
+        [JsonPropertyName("thumbnailUrl")] public string ThumbnailUrl { get; set; }
 
         #endregion
     }

@@ -18,6 +18,7 @@ namespace Laobian.Share.Option
             option.AdminEnglishName = configuration.GetValue<string>("ADMIN_ENGLISH_NAME");
             option.DataProtectionKeyPath = configuration.GetValue<string>("DATA_PROTECTION_KEY_PATH");
             option.HttpRequestToken = configuration.GetValue<string>("HTTP_REQUEST_TOKEN");
+            option.HomePageEndpoint = configuration.GetValue("HOME_PAGE_ENDPOINT", "https://laobian.me");
         }
     }
 }

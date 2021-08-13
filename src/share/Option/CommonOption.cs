@@ -28,6 +28,8 @@ namespace Laobian.Share.Option
 
         public string HttpRequestToken { get; set; }
 
+        public string HomePageEndpoint { get; set; }
+
         public string GetBlogBaseLocation()
         {
             if (string.IsNullOrEmpty(AssetLocation))
