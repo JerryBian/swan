@@ -112,13 +112,8 @@ namespace Laobian.Api.Logger
             {
                 try
                 {
-                    var loggerName = string.IsNullOrEmpty(log.LoggerName) ? _options.LoggerName : log.LoggerName;
-                    if (string.IsNullOrEmpty(loggerName))
-                    {
-                        loggerName = "undefined";
-                    }
-
-                    var dir = Path.Combine(_options.BaseDir, loggerName, log.TimeStamp.Year.ToString(),
+                    log.LoggerName = string.IsNullOrEmpty(log.LoggerName) ? _options.LoggerName : log.LoggerName;
+                    var dir = Path.Combine(_options.BaseDir, log.LoggerName, log.TimeStamp.Year.ToString(),
                         log.TimeStamp.Month.ToString("D2"));
 
                     try

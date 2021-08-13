@@ -33,27 +33,18 @@
 
         <div class="collapse navbar-collapse" id="navLinks">
             <ul class="navbar-nav">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">API</a>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="/blog/log">LOG</a>
-                    </div>
+                <li class="nav-item">
+                    <a class="nav-link" href="log">LOG</a>
                 </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">ADMIN</a>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="/blog/log">LOG</a>
-                    </div>
+                <li class="nav-item">
+                    <a class="nav-link" href="javascript:;" onclick="persistent()">PERSISTENT</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">BLOG</a>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="/blog/log">LOG</a>
+                        <a class="dropdown-item" href="/blog/post">ALL POSTS</a>
+                        <a class="dropdown-item" href="/blog/tag">ALL TAGS</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="/blog/post">POSTS</a>
-                        <a class="dropdown-item" href="/blog/tag">TAGS</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="javascript:;" onclick="persistent()">PERSISTENT</a>
                         <a class="dropdown-item" href="javascript:;" onclick="forceReloadBlogData()">FORCE RELOAD</a>
                     </div>
                 </li>
@@ -113,15 +104,5 @@
     }
 </script>
 @await RenderSectionAsync("Scripts", false)
-
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-97849167-1"></script>
-<script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'UA-97849167-1');
-</script>
-
 </body>
 </html>

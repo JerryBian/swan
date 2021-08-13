@@ -166,19 +166,6 @@ namespace Laobian.Admin.HttpService
             return true;
         }
 
-        public async Task<string> GetLogsAsync(LaobianSite site, string level, DateTime date)
-        {
-            var response = await _httpClient.GetAsync($"/log/{site}?level={level}&date={date:yyyy-MM-dd}");
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                _logger.LogError(
-                    $"{nameof(ApiHttpService)}.{nameof(GetLogsAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
-                return null;
-            }
-
-            return await response.Content.ReadAsStringAsync();
-        }
-
         public async Task SendLogsAsync(IEnumerable<LaobianLog> logs)
         {
             var response = await _httpClient.PostAsync("/log/admin",
@@ -188,6 +175,20 @@ namespace Laobian.Admin.HttpService
                 Console.WriteLine(
                     $"{nameof(ApiHttpService)}.{nameof(SendLogsAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
             }
+        }
+
+        public async Task<List<LaobianLog>> GetLogsAsync(string site, int days)
+        {
+            var response = await _httpClient.GetAsync($"/log/{site}?days={days}");
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                _logger.LogError(
+                    $"{nameof(ApiHttpService)}.{nameof(GetLogsAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+                return new List<LaobianLog>();
+            }
+
+            await using var stream = await response.Content.ReadAsStreamAsync();
+            return await JsonUtil.DeserializeAsync<List<LaobianLog>>(stream);
         }
     }
 }
