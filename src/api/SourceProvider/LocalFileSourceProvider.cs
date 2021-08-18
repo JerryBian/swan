@@ -10,13 +10,14 @@ namespace Laobian.Api.SourceProvider
 {
     public class LocalFileSourceProvider : ISourceProvider
     {
-        private const string PostFileExtension = "*.md";
-        private const string PostMetadataExtension = "*.json";
+        private const string MarkdownExtension = "*.md";
+        private const string JsonExtension = "*.json";
         private readonly ApiOption _apiOption;
         private string _accessLocation;
         private string _postLocation;
         private string _postMetadataLocation;
         private string _tagLocation;
+        private string _readLocation;
 
         public LocalFileSourceProvider(IOptions<ApiOption> apiConfig)
         {
@@ -36,6 +37,9 @@ namespace Laobian.Api.SourceProvider
 
             _accessLocation = _apiOption.GetBlogAccessLocation();
             Directory.CreateDirectory(_accessLocation);
+
+            _readLocation = _apiOption.GetReadLocation();
+            Directory.CreateDirectory(_readLocation);
             await Task.CompletedTask;
         }
 
@@ -43,7 +47,7 @@ namespace Laobian.Api.SourceProvider
             CancellationToken cancellationToken = default)
         {
             var posts = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
-            foreach (var file in Directory.EnumerateFiles(_postLocation, PostFileExtension,
+            foreach (var file in Directory.EnumerateFiles(_postLocation, MarkdownExtension,
                 SearchOption.AllDirectories))
             {
                 var postLink = Path.GetFileNameWithoutExtension(file);
@@ -88,11 +92,24 @@ namespace Laobian.Api.SourceProvider
             await File.WriteAllTextAsync(_postMetadataLocation, metadata, Encoding.UTF8, cancellationToken);
         }
 
+        public virtual async Task<IDictionary<int, string>> GetReadItemsAsync(
+            CancellationToken cancellationToken = default)
+        {
+            var items = new Dictionary<int, string>();
+            foreach (var file in Directory.EnumerateFiles(_readLocation, JsonExtension,
+                SearchOption.TopDirectoryOnly))
+            {
+                items.Add(Convert.ToInt32(Path.GetFileNameWithoutExtension(file)), await File.ReadAllTextAsync(file, Encoding.UTF8, cancellationToken));
+            }
+
+            return items;
+        }
+
         public virtual async Task<IDictionary<string, string>> GetPostAccessAsync(
             CancellationToken cancellationToken = default)
         {
             var access = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
-            foreach (var file in Directory.EnumerateFiles(_accessLocation, PostMetadataExtension,
+            foreach (var file in Directory.EnumerateFiles(_accessLocation, JsonExtension,
                 SearchOption.TopDirectoryOnly))
             {
                 var postLink = Path.GetFileNameWithoutExtension(file);
@@ -124,23 +141,27 @@ namespace Laobian.Api.SourceProvider
             }
         }
 
+        public virtual async Task SaveReadItemsAsync(IDictionary<int, string> items,
+            CancellationToken cancellationToken = default)
+        {
+            if (items == null)
+            {
+                return;
+            }
+
+            Directory.Delete(_readLocation, true);
+            Directory.CreateDirectory(_readLocation);
+            foreach (var (key, value) in items)
+            {
+                var readItemFile = Path.Combine(_readLocation, key + ".json");
+                await File.WriteAllTextAsync(readItemFile, value, Encoding.UTF8, cancellationToken);
+            }
+        }
+
 
         public virtual async Task PersistentAsync(string message, CancellationToken cancellationToken = default)
         {
             await Task.CompletedTask;
-        }
-
-        private static void CopyFilesRecursively(DirectoryInfo source, DirectoryInfo target)
-        {
-            foreach (var dir in source.GetDirectories())
-            {
-                CopyFilesRecursively(dir, target.CreateSubdirectory(dir.Name));
-            }
-
-            foreach (var file in source.GetFiles())
-            {
-                file.CopyTo(Path.Combine(target.FullName, file.Name), true);
-            }
         }
     }
 }

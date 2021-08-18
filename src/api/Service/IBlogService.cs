@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Share.Blog;
+using Laobian.Share.Read;
 
 namespace Laobian.Api.Service
 {
@@ -28,5 +29,15 @@ namespace Laobian.Api.Service
         Task UpdateBlogPostMetadataAsync(BlogMetadata metadata, CancellationToken cancellationToken = default);
 
         Task AddBlogAccessAsync(string postLink, CancellationToken cancellationToken = default);
+
+        Task<ReadItem> GetReadItemAsync(string id, CancellationToken cancellationToken = default);
+
+        Task AddReadItemAsync(ReadItem readItem, CancellationToken cancellationToken = default);
+
+        Task UpdateReadItemAsync(ReadItem readItem, CancellationToken cancellationToken = default);
+
+        Task RemoveReadItemAsync(string id, CancellationToken cancellationToken = default);
+
+        Task<List<ReadItem>> GetReadItemsAsync(CancellationToken cancellationToken = default);
     }
 }

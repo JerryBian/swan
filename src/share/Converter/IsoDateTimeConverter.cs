@@ -9,6 +9,11 @@ namespace Laobian.Share.Converter
         public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             var str = reader.GetString();
+            if (string.IsNullOrEmpty(str))
+            {
+                return DateTime.MinValue;
+            }
+
             return DateTime.Parse(str ?? string.Empty);
         }
 

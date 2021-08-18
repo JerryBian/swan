@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Api.HttpService;
 using Laobian.Api.Repository;
 using Laobian.Share.Blog;
+using Laobian.Share.Read;
 using Laobian.Share.Util;
 using Microsoft.Extensions.Options;
 
@@ -133,6 +135,36 @@ namespace Laobian.Api.Service
             var blogTagStore = await _dbRepository.GetBlogTagStoreAsync(cancellationToken);
             blogTagStore.RemoveByLink(tagLink);
             await _blogHttpService.ReloadBlogDataAsync();
+        }
+
+        public async Task<List<ReadItem>> GetReadItemsAsync(CancellationToken cancellationToken = default)
+        {
+            var readItemStore = await _dbRepository.GetReadItemsStoreAsync(cancellationToken);
+            return await Task.FromResult(readItemStore.GetAll().SelectMany(x => x.Value).ToList());
+        }
+
+        public async Task<ReadItem> GetReadItemAsync(string id, CancellationToken cancellationToken = default)
+        {
+            var readItemStore = await _dbRepository.GetReadItemsStoreAsync(cancellationToken);
+            return await Task.FromResult(readItemStore.GetAll().SelectMany(x => x.Value).FirstOrDefault(x => x.Id == id));
+        }
+
+        public async Task AddReadItemAsync(ReadItem readItem, CancellationToken cancellationToken = default)
+        {
+            var readItemStore = await _dbRepository.GetReadItemsStoreAsync(cancellationToken);
+            readItemStore.Add(readItem);
+        }
+
+        public async Task UpdateReadItemAsync(ReadItem readItem, CancellationToken cancellationToken = default)
+        {
+            var readItemStore = await _dbRepository.GetReadItemsStoreAsync(cancellationToken);
+            readItemStore.Update(readItem);
+        }
+
+        public async Task RemoveReadItemAsync(string id, CancellationToken cancellationToken = default)
+        {
+            var readItemStore = await _dbRepository.GetReadItemsStoreAsync(cancellationToken);
+            readItemStore.Remove(id);
         }
 
         public async Task UpdateBlogPostMetadataAsync(BlogMetadata metadata,

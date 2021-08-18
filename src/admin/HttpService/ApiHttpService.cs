@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Laobian.Share;
 using Laobian.Share.Blog;
 using Laobian.Share.Logger;
+using Laobian.Share.Read;
 using Laobian.Share.Util;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -189,6 +190,67 @@ namespace Laobian.Admin.HttpService
 
             await using var stream = await response.Content.ReadAsStreamAsync();
             return await JsonUtil.DeserializeAsync<List<LaobianLog>>(stream);
+        }
+
+        public async Task<List<ReadItem>> GetReadItemsAsync()
+        {
+            var response = await _httpClient.GetAsync($"/read");
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                _logger.LogError(
+                    $"{nameof(ApiHttpService)}.{nameof(GetReadItemsAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+                return null;
+            }
+
+            await using var stream = await response.Content.ReadAsStreamAsync();
+            return await JsonUtil.DeserializeAsync<List<ReadItem>>(stream);
+        }
+
+        public async Task<ReadItem> GetReadItemAsync(string id)
+        {
+            var response = await _httpClient.GetAsync($"/read/{id}");
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                _logger.LogError(
+                    $"{nameof(ApiHttpService)}.{nameof(GetReadItemAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+                return null;
+            }
+
+            await using var stream = await response.Content.ReadAsStreamAsync();
+            return await JsonUtil.DeserializeAsync<ReadItem>(stream);
+        }
+
+        public async Task AddReadItemAsync(ReadItem readItem)
+        {
+            var response = await _httpClient.PutAsync("/read",
+                new StringContent(JsonUtil.Serialize(readItem), Encoding.UTF8, "application/json"));
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                Console.WriteLine(
+                    $"{nameof(ApiHttpService)}.{nameof(AddReadItemAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+            }
+        }
+
+        public async Task UpdateReadItemAsync(ReadItem readItem)
+        {
+            var response = await _httpClient.PostAsync("/read",
+                new StringContent(JsonUtil.Serialize(readItem), Encoding.UTF8, "application/json"));
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                Console.WriteLine(
+                    $"{nameof(ApiHttpService)}.{nameof(UpdateReadItemAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+            }
+        }
+
+        public async Task DeleteReadItemAsync(string id)
+        {
+            var response = await _httpClient.DeleteAsync($"/read/{id}");
+            var content = await response.Content.ReadAsStringAsync();
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                _logger.LogError(
+                    $"{nameof(ApiHttpService)}.{nameof(DeleteTagAsync)} failed. Status: {response.StatusCode}. Content: {content}");
+            }
         }
     }
 }

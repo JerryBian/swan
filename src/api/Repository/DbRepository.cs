@@ -16,7 +16,7 @@ namespace Laobian.Api.Repository
         private readonly ISourceProvider _sourceProvider;
         private BlogAccessStore _blogAccessStore;
         private BlogMetadataStore _blogMetadataStore;
-
+        private ReadItemStore _readItemStore;
         private BlogTagStore _blogTagStore;
 
 
@@ -37,6 +37,14 @@ namespace Laobian.Api.Repository
 
             var postAccess = await _sourceProvider.GetPostAccessAsync(cancellationToken);
             _blogAccessStore = new BlogAccessStore(postAccess);
+
+            var readItems = await _sourceProvider.GetReadItemsAsync(cancellationToken);
+            _readItemStore = new ReadItemStore(readItems);
+        }
+
+        public async Task<ReadItemStore> GetReadItemsStoreAsync(CancellationToken cancellationToken = default)
+        {
+            return await Task.FromResult(_readItemStore);
         }
 
         public async Task<BlogTagStore> GetBlogTagStoreAsync(CancellationToken cancellationToken = default)
@@ -59,7 +67,8 @@ namespace Laobian.Api.Repository
             await Task.WhenAll(
                 PersistentBlogAccessStoreAsync(cancellationToken),
                 PersistentBlogMetadataAsync(cancellationToken),
-                PersistentBlogTagStoreAsync(cancellationToken)
+                PersistentBlogTagStoreAsync(cancellationToken),
+                PersistentReadItemsStoreAsync(cancellationToken)
             );
             await _sourceProvider.PersistentAsync(message, cancellationToken);
         }
@@ -84,6 +93,13 @@ namespace Laobian.Api.Repository
                 _blogAccessStore.GetAll().ToDictionary(x => x.Key,
                     x => JsonUtil.Serialize(x.Value.OrderByDescending(y => y.Date), false,
                         new List<JsonConverter> {new DateOnlyConverter()})), cancellationToken);
+        }
+
+        private async Task PersistentReadItemsStoreAsync(CancellationToken cancellationToken)
+        {
+            await _sourceProvider.SaveReadItemsAsync(_readItemStore.GetAll().ToDictionary(x => x.Key,
+                x => JsonUtil.Serialize(x.Value.OrderByDescending(y => y.EndTime), true,
+                    new List<JsonConverter> {new DateOnlyConverter()})), cancellationToken);
         }
     }
 }

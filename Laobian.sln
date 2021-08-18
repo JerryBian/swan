@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laobian.Api", "src\api\Laob
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laobian.Share", "src\share\Laobian.Share.csproj", "{7EEFB79A-E61C-47E6-9675-EDE28007B8B1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laobian.Read", "src\read\Laobian.Read.csproj", "{02C5A2D1-904F-46E9-9C87-A7AD6A62AB3A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{7EEFB79A-E61C-47E6-9675-EDE28007B8B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7EEFB79A-E61C-47E6-9675-EDE28007B8B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7EEFB79A-E61C-47E6-9675-EDE28007B8B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02C5A2D1-904F-46E9-9C87-A7AD6A62AB3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02C5A2D1-904F-46E9-9C87-A7AD6A62AB3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02C5A2D1-904F-46E9-9C87-A7AD6A62AB3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02C5A2D1-904F-46E9-9C87-A7AD6A62AB3A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -44,6 +50,7 @@ Global
 		{BA4BAC78-D109-4BF0-B0E9-E385030120A4} = {EA8C544C-BE05-477F-990F-E5C011BAD590}
 		{26162D17-4779-4EAB-92F0-4B8B577F3BC0} = {EA8C544C-BE05-477F-990F-E5C011BAD590}
 		{7EEFB79A-E61C-47E6-9675-EDE28007B8B1} = {EA8C544C-BE05-477F-990F-E5C011BAD590}
+		{02C5A2D1-904F-46E9-9C87-A7AD6A62AB3A} = {EA8C544C-BE05-477F-990F-E5C011BAD590}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5FB44028-B8CE-4E75-AC6B-ACED23D2F62E}

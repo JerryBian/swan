@@ -8,6 +8,8 @@
 
         public const string BlogAccessBaseFolderName = "access";
 
+        public const string ReadBaseFolderName = "read";
+
         public const string DbAssetFolder = "db";
 
         public const string BlogPostAssetFolder = "blog_post";

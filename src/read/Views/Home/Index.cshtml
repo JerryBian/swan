@@ -1,0 +1,35 @@
+﻿@model IEnumerable<GroupedReadItems>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+@foreach (var item in Model)
+{
+    <h3>@item.Title</h3>
+    @*<ol class="list-group list-group-numbered">
+        @foreach (var book in item.Items)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                    <div class="fw-bold">@book.BookName</div>
+                    @book.BookName2 / @book.PublisherName
+                </div>
+                <span class="badge bg-primary rounded-pill">14</span>
+            </li>
+        }
+        
+    </ol>*@
+    <div class="list-group">
+        @foreach (var book in item.Items)
+        {
+            <div class="list-group-item">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">@book.BookName</h5>
+                    <small>3 days ago</small>
+                </div>
+                <p class="mb-1">@book.ShortComment</p>
+                <small>@book.PublisherName / @book.BookName2</small>
+            </div>
+        }
+    </div>
+}

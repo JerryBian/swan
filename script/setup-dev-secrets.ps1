@@ -70,3 +70,20 @@ dotnet user-secrets set "HTTP_REQUEST_TOKEN" "$HTTP_REQUEST_TOKEN" --project $AD
 
 $ADMIN_PASSWORD = "test"
 dotnet user-secrets set "ADMIN_PASSWORD" "$ADMIN_PASSWORD" --project $ADMIN_PROJECT
+
+##################
+##              ##
+##################
+$READ_PROJECT = Join-Path $PSScriptRoot .. src read
+dotnet user-secrets init --project $READ_PROJECT
+dotnet user-secrets set "BLOG_LOCAL_ENDPOINT" "$BLOG_LOCAL_ENDPOINT" --project $READ_PROJECT
+dotnet user-secrets set "BLOG_REMOTE_ENDPOINT" "$BLOG_REMOTE_ENDPOINT" --project $READ_PROJECT
+dotnet user-secrets set "API_LOCAL_ENDPOINT" "$API_LOCAL_ENDPOINT" --project $READ_PROJECT
+dotnet user-secrets set "ADMIN_USER_NAME" "$ADMIN_USER_NAME" --project $READ_PROJECT
+dotnet user-secrets set "FILE_REMOTE_ENDPOINT" "$FILE_REMOTE_ENDPOINT" --project $READ_PROJECT
+dotnet user-secrets set "ADMIN_EMAIL" "$ADMIN_EMAIL" --project $READ_PROJECT
+dotnet user-secrets set "ASSET_LOCATION" "$ASSET_LOCATION" --project $READ_PROJECT
+dotnet user-secrets set "ADMIN_CHINESE_NAME" "$ADMIN_CHINESE_NAME" --project $READ_PROJECT
+dotnet user-secrets set "ADMIN_ENGLISH_NAME" "$ADMIN_ENGLISH_NAME" --project $READ_PROJECT
+dotnet user-secrets set "DATA_PROTECTION_KEY_PATH" "$DATA_PROTECTION_KEY_PATH" --project $READ_PROJECT
+dotnet user-secrets set "HTTP_REQUEST_TOKEN" "$HTTP_REQUEST_TOKEN" --project $READ_PROJECT

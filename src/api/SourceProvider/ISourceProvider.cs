@@ -23,5 +23,11 @@ namespace Laobian.Api.SourceProvider
         Task SavePostAccessAsync(IDictionary<string, string> postAccess, CancellationToken cancellationToken = default);
 
         Task PersistentAsync(string message, CancellationToken cancellationToken = default);
+
+        Task<IDictionary<int, string>> GetReadItemsAsync(
+            CancellationToken cancellationToken = default);
+
+        Task SaveReadItemsAsync(IDictionary<int, string> items,
+            CancellationToken cancellationToken = default);
     }
 }

@@ -55,6 +55,16 @@ namespace Laobian.Share.Option
             return Path.Combine(AssetLocation, Constants.BlogPostAssetFolder, Constants.BlogPostFileBaseFolderName);
         }
 
+        public string GetReadLocation()
+        {
+            if (string.IsNullOrEmpty(AssetLocation))
+            {
+                throw new LaobianOptionException(nameof(AssetLocation));
+            }
+
+            return Path.Combine(AssetLocation, Constants.ReadBaseFolderName);
+        }
+
         public string GetBlogMetadataLocation()
         {
             if (string.IsNullOrEmpty(AssetLocation))
