@@ -2,9 +2,9 @@ using System;
 using System.IO;
 using System.Text.Encodings.Web;
 using Laobian.Blog.Cache;
-using Laobian.Blog.Data;
 using Laobian.Blog.HostedService;
 using Laobian.Blog.HttpClients;
+using Laobian.Blog.Service;
 using Laobian.Share;
 using Laobian.Share.Converter;
 using Laobian.Share.Logger.Remote;
@@ -33,8 +33,8 @@ namespace Laobian.Blog
             base.ConfigureServices(services);
             services.Configure<BlogOption>(o => { o.FetchFromEnv(Configuration); });
 
-            services.AddSingleton<ISystemData, SystemData>();
             services.AddSingleton<ICacheClient, CacheClient>();
+            services.AddSingleton<IBlogService, BlogService>();
 
             var httpRequestToken = Configuration.GetValue<string>(Constants.EnvHttpRequestToken);
             services.AddHttpClient<ApiSiteHttpClient>(h =>
@@ -45,8 +45,9 @@ namespace Laobian.Blog
                 .SetHandlerLifetime(TimeSpan.FromDays(1))
                 .AddPolicyHandler(GetHttpClientRetryPolicy());
 
-            services.AddHostedService<BlogHostedService>();
             services.AddHostedService<RemoteLogHostedService>();
+            services.AddHostedService<BlogHostedService>();
+            
 
             services.AddLogging(config =>
             {
