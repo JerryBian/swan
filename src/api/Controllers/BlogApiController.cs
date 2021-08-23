@@ -18,11 +18,12 @@ namespace Laobian.Api.Controllers
     [Route("blog")]
     public class BlogApiController : ControllerBase
     {
-        private readonly LaobianApiOption _laobianApiOption;
         private readonly IFileRepository _fileRepository;
+        private readonly LaobianApiOption _laobianApiOption;
         private readonly ILogger<BlogApiController> _logger;
 
-        public BlogApiController(IOptions<LaobianApiOption> apiOption, IFileRepository fileRepository, ILogger<BlogApiController> logger)
+        public BlogApiController(IOptions<LaobianApiOption> apiOption, IFileRepository fileRepository,
+            ILogger<BlogApiController> logger)
         {
             _logger = logger;
             _laobianApiOption = apiOption.Value;
@@ -64,6 +65,7 @@ namespace Laobian.Api.Controllers
                     var blogPostRuntime = await GetBlogPostRuntimeAsync(blogPost);
                     result.Add(blogPostRuntime);
                 }
+
                 return Ok(result);
             }
             catch (Exception ex)

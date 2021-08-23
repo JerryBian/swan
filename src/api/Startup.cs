@@ -1,30 +1,20 @@
 using System;
-using System.IO;
-using System.Net;
-using System.Net.Http;
 using System.Text.Encodings.Web;
-using Laobian.Api._2.Source;
 using Laobian.Api.Command;
-using Laobian.Api.Filter;
+using Laobian.Api.Filters;
 using Laobian.Api.HostedServices;
 using Laobian.Api.HttpClients;
 using Laobian.Api.Logger;
 using Laobian.Api.Repository;
+using Laobian.Api.Source;
 using Laobian.Share;
 using Laobian.Share.Converter;
-using Laobian.Share.Extension;
-using Laobian.Share.Logger;
-using Laobian.Share.Notify;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
-using Polly;
-using Polly.Extensions.Http;
 
 namespace Laobian.Api
 {
@@ -67,10 +57,7 @@ namespace Laobian.Api
                 config.SetMinimumLevel(LogLevel.Debug);
                 config.AddDebug();
                 config.AddConsole();
-                config.AddGitFile(c =>
-                {
-                    c.LoggerName = "api";
-                });
+                config.AddGitFile(c => { c.LoggerName = "api"; });
             });
 
             services.AddControllers(o => { o.Filters.Add(new VerifyTokenActionFilter(httpRequestToken)); })

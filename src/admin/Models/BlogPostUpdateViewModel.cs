@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Laobian.Share.Blog;
 
 namespace Laobian.Admin.Models
@@ -10,6 +7,6 @@ namespace Laobian.Admin.Models
     {
         public BlogPost Post { get; set; }
 
-        public List<BlogTag> Tags { get; } = new List<BlogTag>();
+        public List<BlogTag> Tags { get; } = new();
     }
 }

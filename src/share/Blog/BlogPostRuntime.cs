@@ -12,15 +12,16 @@ namespace Laobian.Share.Blog
 {
     public class BlogPostRuntime
     {
-        public BlogPostRuntime(){}
+        public BlogPostRuntime()
+        {
+        }
 
         public BlogPostRuntime(BlogPost raw)
         {
             Raw = raw;
         }
 
-        [JsonPropertyName("raw")]
-        public BlogPost Raw { get; set; }
+        [JsonPropertyName("raw")] public BlogPost Raw { get; set; }
 
         [JsonPropertyName("tags")] public List<BlogTag> Tags { get; set; } = new();
 

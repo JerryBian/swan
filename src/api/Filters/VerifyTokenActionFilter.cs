@@ -3,7 +3,7 @@ using Laobian.Share;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Laobian.Api.Filter
+namespace Laobian.Api.Filters
 {
     public class VerifyTokenActionFilter : IAsyncActionFilter
     {
@@ -24,7 +24,8 @@ namespace Laobian.Api.Filter
 
             if (_token != context.HttpContext.Request.Headers[Constants.ApiRequestHeaderToken])
             {
-                context.Result = new BadRequestObjectResult($"Invalid API token set: {context.HttpContext.Request.Headers[Constants.ApiRequestHeaderToken]}");
+                context.Result = new BadRequestObjectResult(
+                    $"Invalid API token set: {context.HttpContext.Request.Headers[Constants.ApiRequestHeaderToken]}");
                 return;
             }
 

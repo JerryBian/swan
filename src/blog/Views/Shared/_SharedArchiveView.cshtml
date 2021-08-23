@@ -1,0 +1,50 @@
+﻿@model IEnumerable<PostArchiveViewModel>
+@inject IOptions<BlogOption> _option
+
+<div>
+    <div class="mb-4">
+        @foreach (var item in Model)
+        {
+            <a class="btn btn-light mb-2 me-2" href="#@item.Link">
+                @item.Name <span class="badge bg-info">@item.Count</span>
+            </a>
+        }
+    </div>
+
+    <div class="archive">
+        @foreach (var item in Model)
+        {
+            <div class="mb-4">
+                <h2 id="@item.Link" class="mt-3 mb-3 pb-1 border-bottom">
+                    <span>@item.Name (@item.Posts.Count)</span>
+                </h2>
+                @foreach (var post in item.Posts)
+                {
+                    <div class="mt-2 mb-3">
+                        <h4>
+                            <a href="@post.Raw.GetFullPath(_option.Value.BlogRemoteEndpoint)" class="text-decoration-none">
+                                <span>@post.Raw.Title</span>
+                            </a>
+                            <span class="text-muted fs-sm fst-italic">(@post.Raw.PublishTime.ToChinaMonthAndDay())</span>
+                        </h4>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@section script{
+    <script>
+        document.addEventListener("DOMContentLoaded",
+            function() {
+                anchors.options = {
+                    placement: 'right',
+                    visible: 'hover',
+                    base: '@Model.FirstOrDefault()?.BaseUrl'
+                };
+                anchors.add('.archive h2');
+                activeNavItem('#nav_archive');
+            });
+    </script>
+}

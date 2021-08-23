@@ -1,24 +1,23 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Laobian.Blog.Data;
+using Laobian.Blog.Service;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace Laobian.Blog.HostedService
 {
     public class BlogHostedService : BackgroundService
     {
-        private readonly ISystemData _systemData;
+        private readonly IBlogService _blogService;
 
-        public BlogHostedService(ISystemData systemData)
+        public BlogHostedService(IBlogService blogService)
         {
-            _systemData = systemData;
+            _blogService = blogService;
         }
 
         public override async Task StartAsync(CancellationToken cancellationToken)
         {
-            await _systemData.LoadAsync();
+            await _blogService.ReloadAsync();
             await base.StartAsync(cancellationToken);
         }
 
@@ -26,20 +25,15 @@ namespace Laobian.Blog.HostedService
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                if (DateTime.Now.Hour == 6 && DateTime.Now.Minute == 0)
+                if (DateTime.Now.Hour == 6 && DateTime.Now.Minute == 0 && DateTime.Now.Second == 0)
                 {
-                    await _systemData.LoadAsync();
+                    await _blogService.ReloadAsync();
                 }
                 else
                 {
                     await Task.Delay(300, stoppingToken);
                 }
             }
-        }
-
-        public override Task StopAsync(CancellationToken cancellationToken)
-        {
-            return base.StopAsync(cancellationToken);
         }
     }
 }

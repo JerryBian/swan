@@ -5,17 +5,15 @@ using System.IO;
 using System.Linq;
 using System.ServiceModel.Syndication;
 using System.Text;
-using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using System.Xml;
 using Laobian.Blog.Cache;
-using Laobian.Blog.Data;
-using Laobian.Blog.HttpService;
+using Laobian.Blog.HttpClients;
 using Laobian.Blog.Models;
+using Laobian.Blog.Service;
 using Laobian.Share;
 using Laobian.Share.Blog;
 using Laobian.Share.Extension;
-using Laobian.Share.Util;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -24,24 +22,24 @@ namespace Laobian.Blog.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ApiHttpService _apiHttpService;
+        private readonly ApiSiteHttpClient _apiSiteHttpClient;
         private readonly BlogOption _blogOption;
+        private readonly IBlogService _blogService;
         private readonly ICacheClient _cacheClient;
         private readonly ILogger<HomeController> _logger;
-        private readonly ISystemData _systemData;
 
         public HomeController(
-            ISystemData systemData,
+            IBlogService blogService,
             IOptions<BlogOption> config,
             ILogger<HomeController> logger,
-            ApiHttpService apiHttpService,
+            ApiSiteHttpClient apiSiteHttpClient,
             ICacheClient cacheClient)
         {
             _logger = logger;
             _cacheClient = cacheClient;
-            _systemData = systemData;
+            _blogService = blogService;
             _blogOption = config.Value;
-            _apiHttpService = apiHttpService;
+            _apiSiteHttpClient = apiSiteHttpClient;
         }
 
         [HttpPost]
@@ -59,7 +57,7 @@ namespace Laobian.Blog.Controllers
                     $"Invalid API token set: {HttpContext.Request.Headers[Constants.ApiRequestHeaderToken]}");
             }
 
-            await _systemData.LoadAsync();
+            await _blogService.ReloadAsync();
             return Ok();
         }
 
@@ -72,8 +70,7 @@ namespace Laobian.Blog.Controllers
                 () =>
                 {
                     var posts =
-                        _systemData.Posts.Where(x => authenticated || x.Raw.IsPostPublished())
-                            .OrderByDescending(x => x.Raw.PublishTime).ToList();
+                        _blogService.GetAllPosts().Where(x => x.Raw.IsPostPublished() || authenticated).ToList();
                     var toppedPosts = posts.Where(x => x.Raw.IsTopping).ToList();
                     foreach (var blogPost in toppedPosts)
                     {
@@ -99,118 +96,6 @@ namespace Laobian.Blog.Controllers
             return View(viewModel);
         }
 
-        [HttpGet]
-        [Route("/archive")]
-        public IActionResult Archive()
-        {
-            var authenticated = User.Identity?.IsAuthenticated ?? false;
-            var viewModel = _cacheClient.GetOrCreate(
-                CacheKeyBuilder.Build(nameof(HomeController), nameof(Archive), authenticated),
-                () =>
-                {
-                    var posts = _systemData.Posts.Where(x => authenticated || x.Raw.IsPostPublished())
-                        .OrderByDescending(x => x.Raw.PublishTime).ToList();
-                    var model = new List<PostArchiveViewModel>();
-                    foreach (var item in posts.GroupBy(x => x.Raw.PublishTime.Year).OrderByDescending(y => y.Key))
-                    {
-                        var archiveViewModel = new PostArchiveViewModel
-                        {
-                            Count = item.Count(),
-                            Posts = item.OrderByDescending(x => x.Raw.PublishTime).ToList(),
-                            Link = $"{item.Key}",
-                            Name = $"{item.Key}年",
-                            BaseUrl = "/archive"
-                        };
-
-                        model.Add(archiveViewModel);
-                    }
-
-                    return model;
-                });
-
-            ViewData["Title"] = "存档";
-            return View("~/Views/Archive/Index.cshtml", viewModel);
-        }
-
-        [HttpGet]
-        [Route("/tag")]
-        public IActionResult Tag()
-        {
-            var authenticated = User.Identity?.IsAuthenticated ?? false;
-            var viewModel = _cacheClient.GetOrCreate(
-                CacheKeyBuilder.Build(nameof(HomeController), nameof(Tag), authenticated),
-                () =>
-                {
-                    var tags = _systemData.Tags;
-                    var posts = _systemData.Posts.Where(x => authenticated || x.Raw.IsPostPublished())
-                        .OrderByDescending(x => x.Raw.PublishTime).ToList();
-                    var model = new List<PostArchiveViewModel>();
-
-                    foreach (var blogTag in tags.OrderByDescending(x => x.LastUpdatedAt))
-                    {
-                        var tagPosts = posts.Where(x => x.Raw.Tag.Contains(blogTag.Link)).ToList();
-                        var archiveViewModel = new PostArchiveViewModel
-                        {
-                            Count = tagPosts.Count(),
-                            Posts = tagPosts.OrderByDescending(x => x.Raw.PublishTime).ToList(),
-                            Link = $"{blogTag.Link}",
-                            Name = $"{blogTag.DisplayName}",
-                            BaseUrl = "/tag"
-                        };
-                        model.Add(archiveViewModel);
-                    }
-
-                    return model;
-                });
-
-            ViewData["Title"] = "标签";
-            return View("~/Views/Archive/Index.cshtml", viewModel);
-        }
-
-        [HttpGet]
-        [Route("/{year:int}/{month:int}/{link}.html")]
-        public IActionResult Post([FromRoute] int year, [FromRoute] int month, [FromRoute] string link)
-        {
-            var authenticated = User.Identity?.IsAuthenticated ?? false;
-            var viewModel = _cacheClient.GetOrCreate(
-                CacheKeyBuilder.Build(nameof(HomeController), nameof(Post), authenticated, year, month, link),
-                () =>
-                {
-                    var post = _systemData.Posts.FirstOrDefault(x =>
-                        StringUtil.EqualsIgnoreCase(x.Raw.Link, link) &&
-                        x.Raw.PublishTime.Year == year &&
-                        x.Raw.PublishTime.Month == month &&
-                        (x.Raw.IsPublished || authenticated));
-                    if (post == null)
-                    {
-                        return null;
-                    }
-
-                    var previousPost = _systemData.Posts.OrderByDescending(x => x.Raw.PublishTime)
-                        .FirstOrDefault(x => x.Raw.PublishTime < post.Raw.PublishTime);
-                    var nextPost = _systemData.Posts.OrderBy(x => x.Raw.PublishTime)
-                        .FirstOrDefault(x => x.Raw.PublishTime > post.Raw.PublishTime);
-                    var model = new PostViewModel
-                    {
-                        Current = post,
-                        Previous = previousPost,
-                        Next = nextPost
-                    };
-                    model.SetAdditionalInfo();
-                    return model;
-                });
-
-            if (viewModel == null)
-            {
-                return NotFound();
-            }
-
-#pragma warning disable 4014
-            Task.Run(() => _apiHttpService.AddPostAccess(viewModel.Current.Raw.Link));
-#pragma warning restore 4014
-
-            return View("~/Views/Post/Index.cshtml", viewModel);
-        }
 
         [HttpGet]
         [Route("/about")]
@@ -221,11 +106,10 @@ namespace Laobian.Blog.Controllers
                 CacheKeyBuilder.Build(nameof(HomeController), nameof(About), authenticated),
                 () =>
                 {
-                    var posts = _systemData.Posts.Where(x => authenticated || x.Raw.IsPostPublished())
-                        .OrderByDescending(x => x.Raw.PublishTime).ToList();
-                    var tags = _systemData.Tags;
+                    var posts = _blogService.GetAllPosts().Where(x => x.Raw.IsPostPublished() || authenticated)
+                        .ToList();
                     var topTags = new Dictionary<BlogTag, int>();
-                    foreach (var tag in tags)
+                    foreach (var tag in _blogService.GetAllTags())
                     {
                         var count = posts.Count(x =>
                             x.Raw.Tag.Contains(tag.Link, StringComparer.InvariantCultureIgnoreCase));
@@ -239,11 +123,11 @@ namespace Laobian.Blog.Controllers
                         PostTotalAccessCount = posts.Sum(p => p.GetAccessCount()).ToUSThousand(),
                         PostTotalCount = posts.Count.ToString(),
                         TopPosts = posts.OrderByDescending(p => p.GetAccessCount()).Take(postsPerPage),
-                        SystemAppVersion = _systemData.AppVersion,
-                        SystemDotNetVersion = _systemData.RuntimeVersion,
-                        SystemLastBoot = _systemData.BootTime.ToChinaDateAndTime(),
-                        SystemRunningInterval = (DateTime.Now - _systemData.BootTime).ToDisplayString(),
-                        TagTotalCount = tags.Count.ToString(),
+                        SystemAppVersion = _blogService.AppVersion,
+                        SystemDotNetVersion = _blogService.RuntimeVersion,
+                        SystemLastBoot = _blogService.BootTime.ToChinaDateAndTime(),
+                        SystemRunningInterval = (DateTime.Now - _blogService.BootTime).ToDisplayString(),
+                        TagTotalCount = _blogService.GetAllTags().Count.ToString(),
                         TopTags = topTags.OrderByDescending(x => x.Value).Take(postsPerPage)
                             .ToDictionary(x => x.Key, x => x.Value)
                     };
@@ -270,7 +154,7 @@ namespace Laobian.Blog.Controllers
                 feed.BaseUri = new Uri(_blogOption.BlogRemoteEndpoint);
                 feed.Language = "zh-cn";
                 var items = new List<SyndicationItem>();
-                foreach (var post in _systemData.Posts.Where(x => x.Raw.IsPostPublished()))
+                foreach (var post in _blogService.GetAllPosts().Where(x => x.Raw.IsPostPublished()))
                 {
                     items.Add(new SyndicationItem(post.Raw.Title, post.HtmlContent,
                         new Uri(post.Raw.GetFullPath(_blogOption.BlogRemoteEndpoint)),
@@ -314,14 +198,19 @@ namespace Laobian.Blog.Controllers
                     var sb = new StringBuilder();
                     sb.AppendLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
                     sb.AppendLine("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">");
-                    sb.AppendLine($"<url><loc>{_blogOption.BlogRemoteEndpoint}</loc><lastmod>{DateTime.Now.ToDate()}</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>");
-                    sb.AppendLine($"<url><loc>{_blogOption.BlogRemoteEndpoint}/about</loc><lastmod>{DateTime.Now.ToDate()}</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>");
-                    sb.AppendLine($"<url><loc>{_blogOption.BlogRemoteEndpoint}/archive</loc><lastmod>{DateTime.Now.ToDate()}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>");
-                    sb.AppendLine($"<url><loc>{_blogOption.BlogRemoteEndpoint}/tag</loc><lastmod>{DateTime.Now.ToDate()}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>");
+                    sb.AppendLine(
+                        $"<url><loc>{_blogOption.BlogRemoteEndpoint}</loc><lastmod>{DateTime.Now.ToDate()}</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>");
+                    sb.AppendLine(
+                        $"<url><loc>{_blogOption.BlogRemoteEndpoint}/about</loc><lastmod>{DateTime.Now.ToDate()}</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>");
+                    sb.AppendLine(
+                        $"<url><loc>{_blogOption.BlogRemoteEndpoint}/archive</loc><lastmod>{DateTime.Now.ToDate()}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>");
+                    sb.AppendLine(
+                        $"<url><loc>{_blogOption.BlogRemoteEndpoint}/tag</loc><lastmod>{DateTime.Now.ToDate()}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>");
 
-                    foreach (var post in _systemData.Posts.Where(x => x.Raw.IsPostPublished()))
+                    foreach (var post in _blogService.GetAllPosts().Where(x => x.Raw.IsPostPublished()))
                     {
-                        sb.AppendLine($"<url><loc>{post.Raw.GetFullPath(_blogOption.BlogRemoteEndpoint)}</loc><lastmod>{post.Raw.LastUpdateTime.ToDate()}</lastmod><changefreq>daily</changefreq><priority>0.6</priority></url>");
+                        sb.AppendLine(
+                            $"<url><loc>{post.Raw.GetFullPath(_blogOption.BlogRemoteEndpoint)}</loc><lastmod>{post.Raw.LastUpdateTime.ToDate()}</lastmod><changefreq>daily</changefreq><priority>0.6</priority></url>");
                     }
 
                     sb.AppendLine("</urlset>");

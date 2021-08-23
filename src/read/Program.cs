@@ -1,11 +1,7 @@
+using System;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Laobian.Read
 {
@@ -16,12 +12,17 @@ namespace Laobian.Read
             CreateHostBuilder(args).Build().Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
+        public static IHostBuilder CreateHostBuilder(string[] args)
+        {
+            return Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((hostContext, config) => { config.AddEnvironmentVariables("ENV_"); })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    webBuilder.CaptureStartupErrors(true);
+                    webBuilder.UseSetting(WebHostDefaults.DetailedErrorsKey, "true");
+                    webBuilder.UseShutdownTimeout(TimeSpan.FromMinutes(10));
                     webBuilder.UseStartup<Startup>();
                 });
+        }
     }
 }

@@ -1,15 +1,10 @@
 using System;
-using System.Net;
-using System.Net.Http;
 using System.Text.Encodings.Web;
 using Laobian.Admin.HostedService;
 using Laobian.Admin.HttpClients;
 using Laobian.Share;
 using Laobian.Share.Converter;
-using Laobian.Share.Extension;
-using Laobian.Share.Logger;
 using Laobian.Share.Logger.Remote;
-using Laobian.Share.Notify;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -20,8 +15,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Polly;
-using Polly.Extensions.Http;
 
 namespace Laobian.Admin
 {
@@ -40,15 +33,15 @@ namespace Laobian.Admin
 
             var httpRequestToken = Configuration.GetValue<string>(Constants.EnvHttpRequestToken);
             services.AddHttpClient<ApiSiteHttpClient>(x =>
-            {
-                x.DefaultRequestHeaders.Add(Constants.ApiRequestHeaderToken, httpRequestToken);
-            }).SetHandlerLifetime(TimeSpan.FromDays(1))
+                {
+                    x.DefaultRequestHeaders.Add(Constants.ApiRequestHeaderToken, httpRequestToken);
+                }).SetHandlerLifetime(TimeSpan.FromDays(1))
                 .AddPolicyHandler(GetHttpClientRetryPolicy());
 
             services.AddHttpClient<BlogSiteHttpClient>(x =>
-            {
-                x.DefaultRequestHeaders.Add(Constants.ApiRequestHeaderToken, httpRequestToken);
-            }).SetHandlerLifetime(TimeSpan.FromDays(1))
+                {
+                    x.DefaultRequestHeaders.Add(Constants.ApiRequestHeaderToken, httpRequestToken);
+                }).SetHandlerLifetime(TimeSpan.FromDays(1))
                 .AddPolicyHandler(GetHttpClientRetryPolicy());
 
             services.AddLogging(config =>

@@ -1,6 +1,4 @@
-﻿@using Microsoft.Extensions.Logging
-@using Laobian.Share.Extension
-@model List<Laobian.Share.Logger.LaobianLog>
+﻿@model List<Laobian.Share.Logger.LaobianLog>
 <div class="alert alert-light" role="alert">
     <div class="mb-2">
         <span class="me-3 text-primary">Site: </span>
@@ -64,9 +62,9 @@
 @section Scripts{
     <script>
         function loadLogs() {
-            let site = document.querySelector('input[name="site"]:checked').value;
-            let minLevel = document.querySelector('input[name="minLevel"]:checked').value;
-            let dateRange = document.querySelector('input[name="dateRange"]:checked').value;
+            const site = document.querySelector('input[name="site"]:checked').value;
+            const minLevel = document.querySelector('input[name="minLevel"]:checked').value;
+            const dateRange = document.querySelector('input[name="dateRange"]:checked').value;
 
             fetch(`/log?site=${site}&minLevel=${minLevel}&days=${dateRange}`,
                     {

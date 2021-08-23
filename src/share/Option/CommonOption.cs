@@ -5,35 +5,27 @@ namespace Laobian.Share.Option
 {
     public class CommonOption
     {
-        [OptionEnvName("BLOG_LOCAL_ENDPOINT")]
-        public string BlogLocalEndpoint { get; set; }
+        [OptionEnvName("BLOG_LOCAL_ENDPOINT")] public string BlogLocalEndpoint { get; set; }
 
         [OptionEnvName("BLOG_REMOTE_ENDPOINT")]
         public string BlogRemoteEndpoint { get; set; }
 
-        [OptionEnvName("API_LOCAL_ENDPOINT")]
-        public string ApiLocalEndpoint { get; set; }
+        [OptionEnvName("API_LOCAL_ENDPOINT")] public string ApiLocalEndpoint { get; set; }
 
         [OptionEnvName("FILE_REMOTE_ENDPOINT")]
         public string FileRemoteEndpoint { get; set; }
 
-        [OptionEnvName("ADMIN_USER_NAME")]
-        public string AdminUserName { get; set; }
+        [OptionEnvName("ADMIN_USER_NAME")] public string AdminUserName { get; set; }
 
-        [OptionEnvName("ADMIN_EMAIL")]
-        public string AdminEmail { get; set; }
+        [OptionEnvName("ADMIN_EMAIL")] public string AdminEmail { get; set; }
 
-        [OptionEnvName("ADMIN_CHINESE_NAME")]
-        public string AdminChineseName { get; set; }
+        [OptionEnvName("ADMIN_CHINESE_NAME")] public string AdminChineseName { get; set; }
 
-        [OptionEnvName("ADMIN_ENGLISH_NAME")]
-        public string AdminEnglishName { get; set; }
+        [OptionEnvName("ADMIN_ENGLISH_NAME")] public string AdminEnglishName { get; set; }
 
-        [OptionEnvName("ASSET_LOCATION")]
-        public string AssetLocation { get; set; }
+        [OptionEnvName("ASSET_LOCATION")] public string AssetLocation { get; set; }
 
-        [OptionEnvName("SEND_GRID_API_KEY")]
-        public string SendGridApiKey { get; set; }
+        [OptionEnvName("SEND_GRID_API_KEY")] public string SendGridApiKey { get; set; }
 
         [OptionEnvName(Constants.EnvDataProtectionKeyPath)]
         public string DataProtectionKeyPath { get; set; }
@@ -41,8 +33,7 @@ namespace Laobian.Share.Option
         [OptionEnvName(Constants.EnvHttpRequestToken)]
         public string HttpRequestToken { get; set; }
 
-        [OptionEnvName("HOME_PAGE_ENDPOINT")]
-        public string HomePageEndpoint { get; set; }
+        [OptionEnvName("HOME_PAGE_ENDPOINT")] public string HomePageEndpoint { get; set; }
 
         public void Clone(CommonOption option)
         {

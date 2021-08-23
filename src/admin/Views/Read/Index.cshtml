@@ -1,6 +1,4 @@
-﻿@using Microsoft.Extensions.Options
-@using Laobian.Share.Extension
-@model IEnumerable<Laobian.Share.Read.BookItem>
+﻿@model IEnumerable<Laobian.Share.Read.BookItem>
 @inject IOptions<LaobianAdminOption> _config
 @{
     ViewData["Title"] = "Read";
@@ -13,26 +11,26 @@
     <table class="table caption-top">
         <caption>Books: @Model.Count()</caption>
         <thead class="table-light">
-            <tr>
-                <th scope="col">Book</th>
-                <th scope="col">Start at</th>
-                <th scope="col">Completed</th>
-                <th scope="col">Operation</th>
-            </tr>
+        <tr>
+            <th scope="col">Book</th>
+            <th scope="col">Start at</th>
+            <th scope="col">Completed</th>
+            <th scope="col">Operation</th>
+        </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <th>@item.BookName</th>
-                    <th>@item.StartTime.ToChinaDate()</th>
-                    <th>@item.IsCompleted</th>
-                    <th>
-                        <a href="javascript:;" onclick="launchUpdateModal('@item.Id')">Update</a> &middot;
-                        <a href="javascript:;" onclick="deleteBook('@item.Id')">Delete</a>
-                    </th>
-                </tr>
-            }
+        @foreach (var item in Model)
+        {
+            <tr>
+                <th>@item.BookName</th>
+                <th>@item.StartTime.ToChinaDate()</th>
+                <th>@item.IsCompleted</th>
+                <th>
+                    <a href="javascript:;" onclick="launchUpdateModal('@item.Id')">Update</a> &middot;
+                    <a href="javascript:;" onclick="deleteBook('@item.Id')">Delete</a>
+                </th>
+            </tr>
+        }
         </tbody>
     </table>
 </div>

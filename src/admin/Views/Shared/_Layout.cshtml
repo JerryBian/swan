@@ -56,7 +56,9 @@
                 @if (Context.User.Identity?.IsAuthenticated == true)
                 {
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user-circle"></i> @Context.User.Identity.Name</a>
+                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-user-circle"></i> @Context.User.Identity.Name
+                        </a>
                         <div class="dropdown-menu">
                             <a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt"></i> 登出</a>
                         </div>
@@ -123,7 +125,7 @@
     }
 
     function validateForms() {
-        var forms = document.querySelectorAll('.needs-validation');
+        const forms = document.querySelectorAll('.needs-validation');
 
         // Loop over them and prevent submission
         Array.prototype.slice.call(forms)
@@ -176,9 +178,10 @@
         return editor;
     }
 
-    document.addEventListener("DOMContentLoaded", function() {
-        validateForms();
-    });
+    document.addEventListener("DOMContentLoaded",
+        function() {
+            validateForms();
+        });
 </script>
 @await RenderSectionAsync("Scripts", false)
 </body>

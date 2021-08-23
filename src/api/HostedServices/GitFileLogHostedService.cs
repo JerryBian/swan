@@ -10,8 +10,8 @@ namespace Laobian.Api.HostedServices
 {
     public class GitFileLogHostedService : BackgroundService
     {
-        private readonly ILaobianLogQueue _logQueue;
         private readonly IFileRepository _fileRepository;
+        private readonly ILaobianLogQueue _logQueue;
 
         public GitFileLogHostedService(ILaobianLogQueue logQueue, IFileRepository fileRepository)
         {

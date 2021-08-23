@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Laobian.Admin.HttpClients;
 using Laobian.Share.Read;
 using Microsoft.AspNetCore.Mvc;
@@ -26,26 +23,26 @@ namespace Laobian.Admin.Controllers
 
         [HttpGet]
         [Route("{id}")]
-        public async Task<BookItem> Get([FromRoute]string id)
+        public async Task<BookItem> Get([FromRoute] string id)
         {
             return await _apiSiteHttpClient.GetReadItemAsync(id);
         }
 
         [HttpPut]
-        public async Task Add([FromBody]BookItem bookItem)
+        public async Task Add([FromBody] BookItem bookItem)
         {
             await _apiSiteHttpClient.AddReadItemAsync(bookItem);
         }
 
         [HttpPost]
-        public async Task Update([FromBody]BookItem bookItem)
+        public async Task Update([FromBody] BookItem bookItem)
         {
             await _apiSiteHttpClient.UpdateReadItemAsync(bookItem);
         }
 
         [HttpDelete]
         [Route("{id}")]
-        public async Task Delete([FromRoute]string id)
+        public async Task Delete([FromRoute] string id)
         {
             await _apiSiteHttpClient.DeleteReadItemAsync(id);
         }

@@ -19,7 +19,8 @@ namespace Laobian.Admin.HttpClients
         private readonly HttpClient _httpClient;
         private readonly ILogger<ApiSiteHttpClient> _logger;
 
-        public ApiSiteHttpClient(HttpClient httpClient, ILogger<ApiSiteHttpClient> logger, IOptions<LaobianAdminOption> config)
+        public ApiSiteHttpClient(HttpClient httpClient, ILogger<ApiSiteHttpClient> logger,
+            IOptions<LaobianAdminOption> config)
         {
             _logger = logger;
             _httpClient = httpClient;
@@ -202,7 +203,7 @@ namespace Laobian.Admin.HttpClients
 
         public async Task<List<BookItem>> GetReadItemsAsync()
         {
-            var response = await _httpClient.GetAsync($"/read");
+            var response = await _httpClient.GetAsync("/read");
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 _logger.LogError(
@@ -263,7 +264,8 @@ namespace Laobian.Admin.HttpClients
 
         public async Task<string> UploadFileAsync(string fileName, byte[] content)
         {
-            var response = await _httpClient.PostAsync($"/file/upload?fileName={fileName}", new ByteArrayContent(content));
+            var response =
+                await _httpClient.PostAsync($"/file/upload?fileName={fileName}", new ByteArrayContent(content));
             var url = await response.Content.ReadAsStringAsync();
             if (response.StatusCode != HttpStatusCode.OK)
             {

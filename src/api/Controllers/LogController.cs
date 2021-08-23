@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 using Laobian.Api.Repository;
 using Laobian.Share;
-using Laobian.Share.Extension;
 using Laobian.Share.Logger;
-using Laobian.Share.Util;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Laobian.Api.Controllers
 {
@@ -18,11 +14,12 @@ namespace Laobian.Api.Controllers
     [Route("log")]
     public class LogController : ControllerBase
     {
+        private readonly IFileRepository _fileRepository;
         private readonly ILaobianLogQueue _laobianLogQueue;
         private readonly ILogger<LogController> _logger;
-        private readonly IFileRepository _fileRepository;
 
-        public LogController(ILogger<LogController> logger, ILaobianLogQueue laobianLogQueue, IFileRepository fileRepository)
+        public LogController(ILogger<LogController> logger, ILaobianLogQueue laobianLogQueue,
+            IFileRepository fileRepository)
         {
             _logger = logger;
             _fileRepository = fileRepository;

@@ -27,7 +27,7 @@ namespace Laobian.Api.Controllers
 
         [HttpGet]
         [Route("{id}")]
-        public async Task<ActionResult<BookItem>> Get([FromRoute]string id)
+        public async Task<ActionResult<BookItem>> Get([FromRoute] string id)
         {
             var readItems = await _fileRepository.GetBookItemsAsync();
             var result = readItems.SelectMany(x => x.Value).FirstOrDefault(x => x.Id == id);
@@ -55,7 +55,7 @@ namespace Laobian.Api.Controllers
 
         [HttpDelete]
         [Route("{id}")]
-        public async Task<IActionResult> Delete([FromRoute]string id)
+        public async Task<IActionResult> Delete([FromRoute] string id)
         {
             await _fileRepository.DeleteBookItemAsync(id);
             return Ok();

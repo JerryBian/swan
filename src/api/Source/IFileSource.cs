@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Share;
 
-namespace Laobian.Api._2.Source
+namespace Laobian.Api.Source
 {
     public interface IFileSource
     {

@@ -1,18 +1,13 @@
 using System;
 using System.IO;
-using System.Net;
-using System.Net.Http;
 using System.Text.Encodings.Web;
 using Laobian.Blog.Cache;
 using Laobian.Blog.Data;
 using Laobian.Blog.HostedService;
-using Laobian.Blog.HttpService;
+using Laobian.Blog.HttpClients;
 using Laobian.Share;
 using Laobian.Share.Converter;
-using Laobian.Share.Extension;
-using Laobian.Share.Logger;
 using Laobian.Share.Logger.Remote;
-using Laobian.Share.Notify;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.StaticFiles;
@@ -22,8 +17,6 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Polly;
-using Polly.Extensions.Http;
 
 namespace Laobian.Blog
 {
@@ -44,7 +37,7 @@ namespace Laobian.Blog
             services.AddSingleton<ICacheClient, CacheClient>();
 
             var httpRequestToken = Configuration.GetValue<string>(Constants.EnvHttpRequestToken);
-            services.AddHttpClient<ApiHttpService>(h =>
+            services.AddHttpClient<ApiSiteHttpClient>(h =>
                 {
                     h.Timeout = TimeSpan.FromMinutes(10);
                     h.DefaultRequestHeaders.Add(Constants.ApiRequestHeaderToken, httpRequestToken);
@@ -53,7 +46,7 @@ namespace Laobian.Blog
                 .AddPolicyHandler(GetHttpClientRetryPolicy());
 
             services.AddHostedService<BlogHostedService>();
-            services.AddHostedService<LogHostedService>();
+            services.AddHostedService<RemoteLogHostedService>();
 
             services.AddLogging(config =>
             {

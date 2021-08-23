@@ -3,21 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Laobian.Blog.HttpService;
+using Laobian.Blog.HttpClients;
 using Laobian.Share.Logger;
 using Microsoft.Extensions.Hosting;
 
 namespace Laobian.Blog.HostedService
 {
-    public class LogHostedService : BackgroundService
+    public class RemoteLogHostedService : BackgroundService
     {
-        private readonly ApiHttpService _apiHttpService;
+        private readonly ApiSiteHttpClient _apiSiteHttpClient;
         private readonly ILaobianLogQueue _logQueue;
 
-        public LogHostedService(ILaobianLogQueue logQueue, ApiHttpService apiHttpService)
+        public RemoteLogHostedService(ILaobianLogQueue logQueue, ApiSiteHttpClient apiSiteHttpClient)
         {
             _logQueue = logQueue;
-            _apiHttpService = apiHttpService;
+            _apiSiteHttpClient = apiSiteHttpClient;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -34,7 +34,7 @@ namespace Laobian.Blog.HostedService
                 {
                     try
                     {
-                        await _apiHttpService.SendLogsAsync(logs);
+                        await _apiSiteHttpClient.SendLogsAsync(logs);
                     }
                     catch (Exception ex)
                     {
@@ -64,7 +64,7 @@ namespace Laobian.Blog.HostedService
             {
                 try
                 {
-                    await _apiHttpService.SendLogsAsync(logs);
+                    await _apiSiteHttpClient.SendLogsAsync(logs);
                 }
                 catch (Exception ex)
                 {

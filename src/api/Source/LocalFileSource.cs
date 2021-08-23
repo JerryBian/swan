@@ -1,24 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Share;
-using Laobian.Share.Util;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Laobian.Api._2.Source
+namespace Laobian.Api.Source
 {
     public class LocalFileSource : IFileSource
     {
         private readonly LaobianApiOption _apiOption;
-        private readonly string _assetDbFileFolder;
         private readonly string _assetDbBlogFolder;
-        private readonly string _assetDbReadFolder;
+        private readonly string _assetDbFileFolder;
         private readonly string _assetDbLogFolder;
+        private readonly string _assetDbReadFolder;
         private readonly ILogger<LocalFileSource> _logger;
         protected readonly ManualResetEventSlim FileLocker;
 
@@ -27,17 +25,20 @@ namespace Laobian.Api._2.Source
             _logger = logger;
             _apiOption = apiOption.Value;
 
-            _assetDbFileFolder = Path.Combine(apiOption.Value.AssetLocation, Constants.AssetDbFolder, Constants.AssetDbFileFolder);
+            _assetDbFileFolder = Path.Combine(apiOption.Value.AssetLocation, Constants.AssetDbFolder,
+                Constants.AssetDbFileFolder);
             Directory.CreateDirectory(_assetDbFileFolder);
 
-            _assetDbBlogFolder = Path.Combine(apiOption.Value.AssetLocation, Constants.AssetDbFolder, Constants.AssetDbBlogFolder);
+            _assetDbBlogFolder = Path.Combine(apiOption.Value.AssetLocation, Constants.AssetDbFolder,
+                Constants.AssetDbBlogFolder);
             Directory.CreateDirectory(_assetDbBlogFolder);
 
             _assetDbReadFolder = Path.Combine(apiOption.Value.AssetLocation, Constants.AssetDbFolder,
                 Constants.AssetDbReadFolder);
             Directory.CreateDirectory(_assetDbReadFolder);
 
-            _assetDbLogFolder = Path.Combine(apiOption.Value.AssetLocation, Constants.AssetDbFolder, Constants.AssetDbLogFolder);
+            _assetDbLogFolder = Path.Combine(apiOption.Value.AssetLocation, Constants.AssetDbFolder,
+                Constants.AssetDbLogFolder);
             Directory.CreateDirectory(_assetDbLogFolder);
             FileLocker = new ManualResetEventSlim(true);
         }
@@ -52,7 +53,8 @@ namespace Laobian.Api._2.Source
                 return result;
             }
 
-            foreach (var blogPostFile in Directory.EnumerateFiles(blogPostFolder, "*.json", SearchOption.AllDirectories))
+            foreach (var blogPostFile in
+                Directory.EnumerateFiles(blogPostFolder, "*.json", SearchOption.AllDirectories))
             {
                 result.Add(await File.ReadAllTextAsync(blogPostFile, cancellationToken));
             }
@@ -95,7 +97,8 @@ namespace Laobian.Api._2.Source
             await File.WriteAllTextAsync(blogPostFile, content, Encoding.UTF8, cancellationToken);
         }
 
-        public async Task<string> ReadBlogPostAccessAsync(string postLink, CancellationToken cancellationToken = default)
+        public async Task<string> ReadBlogPostAccessAsync(string postLink,
+            CancellationToken cancellationToken = default)
         {
             FileLocker.Wait(cancellationToken);
             var blogPostAccessFolder = Path.Combine(_assetDbBlogFolder, Constants.AssetDbBlogAccessFolder);
@@ -120,10 +123,12 @@ namespace Laobian.Api._2.Source
             return await File.ReadAllTextAsync(access[0], Encoding.UTF8, cancellationToken);
         }
 
-        public async Task WriteBlogPostAccessAsync(int year, string postLink, string content, CancellationToken cancellationToken = default)
+        public async Task WriteBlogPostAccessAsync(int year, string postLink, string content,
+            CancellationToken cancellationToken = default)
         {
             FileLocker.Wait(cancellationToken);
-            var blogPostAccessSubFolder = Path.Combine(_assetDbBlogFolder, Constants.AssetDbBlogAccessFolder, year.ToString("D4"));
+            var blogPostAccessSubFolder =
+                Path.Combine(_assetDbBlogFolder, Constants.AssetDbBlogAccessFolder, year.ToString("D4"));
             Directory.CreateDirectory(blogPostAccessSubFolder);
             var blogPostAccessFile = Path.Combine(blogPostAccessSubFolder, $"{postLink}.json");
             await File.WriteAllTextAsync(blogPostAccessFile, content, Encoding.UTF8, cancellationToken);
@@ -148,10 +153,12 @@ namespace Laobian.Api._2.Source
             await File.WriteAllTextAsync(blogTagFile, blogTags, Encoding.UTF8, cancellationToken);
         }
 
-        public async Task<string> ReadLogsAsync(LaobianSite site, DateTime date, CancellationToken cancellationToken = default)
+        public async Task<string> ReadLogsAsync(LaobianSite site, DateTime date,
+            CancellationToken cancellationToken = default)
         {
             FileLocker.Wait(cancellationToken);
-            var logFile = Path.Combine(_assetDbLogFolder, site.ToString().ToLowerInvariant(), date.ToString("yyyy"), $"{date:yyyy-MM-dd}.log");
+            var logFile = Path.Combine(_assetDbLogFolder, site.ToString().ToLowerInvariant(), date.ToString("yyyy"),
+                $"{date:yyyy-MM-dd}.log");
             if (!File.Exists(logFile))
             {
                 return null;
@@ -160,7 +167,8 @@ namespace Laobian.Api._2.Source
             return await File.ReadAllTextAsync(logFile, Encoding.UTF8, cancellationToken);
         }
 
-        public async Task AppendLogAsync(LaobianSite site, DateTime date, string log, CancellationToken cancellationToken = default)
+        public async Task AppendLogAsync(LaobianSite site, DateTime date, string log,
+            CancellationToken cancellationToken = default)
         {
             FileLocker.Wait(cancellationToken);
             var logDir = Path.Combine(_assetDbLogFolder, site.ToString().ToLowerInvariant(), date.ToString("yyyy"));
@@ -175,7 +183,8 @@ namespace Laobian.Api._2.Source
             var result = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
             foreach (var item in Directory.EnumerateFiles(_assetDbReadFolder, "*.json", SearchOption.TopDirectoryOnly))
             {
-                result.Add(Path.GetFileNameWithoutExtension(item), await File.ReadAllTextAsync(item, Encoding.UTF8, cancellationToken));
+                result.Add(Path.GetFileNameWithoutExtension(item),
+                    await File.ReadAllTextAsync(item, Encoding.UTF8, cancellationToken));
             }
 
             return result;
@@ -200,7 +209,8 @@ namespace Laobian.Api._2.Source
             await File.WriteAllTextAsync(bookItemFile, content, Encoding.UTF8, cancellationToken);
         }
 
-        public async Task<string> AddRawFileAsync(string fileName, byte[] content, CancellationToken cancellationToken = default)
+        public async Task<string> AddRawFileAsync(string fileName, byte[] content,
+            CancellationToken cancellationToken = default)
         {
             var folderName = DateTime.Now.Year.ToString("D4");
             var folder = Path.Combine(_assetDbFileFolder, folderName);

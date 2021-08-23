@@ -53,9 +53,9 @@ namespace Laobian.Admin.Controllers
             var tags = await _apiSiteHttpClient.GetTagsAsync();
             return View("AddPost", tags);
         }
-        
+
         [HttpPost("post/add")]
-        public async Task<IActionResult> AddPost([FromForm]BlogPost post)
+        public async Task<IActionResult> AddPost([FromForm] BlogPost post)
         {
             post.ContainsMath = Request.Form["containsMath"] == "on";
             post.IsPublished = Request.Form["isPublished"] == "on";
@@ -65,7 +65,7 @@ namespace Laobian.Admin.Controllers
         }
 
         [HttpGet("post/update/{postLink}")]
-        public async Task<IActionResult> UpdatePost([FromRoute]string postLink)
+        public async Task<IActionResult> UpdatePost([FromRoute] string postLink)
         {
             var post = await _apiSiteHttpClient.GetPostAsync(postLink);
             if (post == null)
@@ -109,7 +109,7 @@ namespace Laobian.Admin.Controllers
         }
 
         [Route("tag/{link}")]
-        public async Task<BlogTag> GetTagAsync([FromRoute]string link)
+        public async Task<BlogTag> GetTagAsync([FromRoute] string link)
         {
             var tag = await _apiSiteHttpClient.GetTagAsync(link);
             return tag;
@@ -117,7 +117,7 @@ namespace Laobian.Admin.Controllers
 
         [HttpDelete]
         [Route("tag/{link}")]
-        public async Task<bool> DeleteTagAsync([FromRoute]string link)
+        public async Task<bool> DeleteTagAsync([FromRoute] string link)
         {
             var result = await _apiSiteHttpClient.DeleteTagAsync(link);
             return result;
@@ -138,7 +138,7 @@ namespace Laobian.Admin.Controllers
         }
 
         [HttpGet("tag/update/{tagLink}")]
-        public async Task<IActionResult> UpdateTagAsync([FromRoute]string tagLink)
+        public async Task<IActionResult> UpdateTagAsync([FromRoute] string tagLink)
         {
             var tag = await _apiSiteHttpClient.GetTagAsync(tagLink);
             if (tag != null)

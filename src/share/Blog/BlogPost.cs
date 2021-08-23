@@ -1,20 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace Laobian.Share.Blog
 {
     public class BlogPost
     {
-        [JsonPropertyName("link")]
-        public string Link { get; set; }
+        [JsonPropertyName("link")] public string Link { get; set; }
 
-        [JsonPropertyName("mdContent")] 
-        public string MdContent { get; set; }
+        [JsonPropertyName("mdContent")] public string MdContent { get; set; }
 
         [JsonPropertyName("title")] public string Title { get; set; }
 
@@ -32,8 +26,7 @@ namespace Laobian.Share.Blog
 
         [JsonPropertyName("excerpt")] public string Excerpt { get; set; }
 
-        [JsonPropertyName("tag")]
-        public List<string> Tag { get; set; } = new();
+        [JsonPropertyName("tag")] public List<string> Tag { get; set; } = new();
 
         public bool IsPostPublished()
         {

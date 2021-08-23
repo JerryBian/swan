@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Laobian.Admin.HttpClients;
-using Laobian.Share;
 using Laobian.Share.Extension;
-using Laobian.Share.Logger;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -30,7 +26,8 @@ namespace Laobian.Admin.Controllers
 
         [HttpPost]
         [Route("/log")]
-        public async Task<IActionResult> GetLogs([FromQuery]string site, [FromQuery]int minLevel, [FromQuery]int days)
+        public async Task<IActionResult> GetLogs([FromQuery] string site, [FromQuery] int minLevel,
+            [FromQuery] int days)
         {
             var logs = await _apiSiteHttpClient.GetLogsAsync(site, days);
             logs = logs.Where(x => (int) x.Level >= minLevel).OrderByDescending(x => x.TimeStamp).ToList();
@@ -50,13 +47,16 @@ namespace Laobian.Admin.Controllers
                     theme = "danger";
                 }
 
-                var details = string.IsNullOrEmpty(log.Exception) ? string.Empty : $"<p><button class=\"btn btn-danger\" type=\"button\" data-bs-toggle=\"collapse\" data-bs-target=\"#details-{id}\" aria-expanded=\"false\">Show exception details</button></p>" +
-                    $"<div class=\"collapse\" id=\"details-{id}\">" +
-                    $"<pre>{log.Exception}</pre></div>";
-                var html = $"<div class=\"list-group-item list-group-item-{theme}\"><div class=\"d-flex w-100 justify-content-between\">" +
-                           $"<h5 class=\"mb-1\">{log.LoggerName}</h5>" +
-                           $"<small>{log.TimeStamp.ToDateAndTime()}</small></div>" +
-                           $"<p class=\"mb-1\">{log.Message}</p>{details}</div>";
+                var details = string.IsNullOrEmpty(log.Exception)
+                    ? string.Empty
+                    : $"<p><button class=\"btn btn-danger\" type=\"button\" data-bs-toggle=\"collapse\" data-bs-target=\"#details-{id}\" aria-expanded=\"false\">Show exception details</button></p>" +
+                      $"<div class=\"collapse\" id=\"details-{id}\">" +
+                      $"<pre>{log.Exception}</pre></div>";
+                var html =
+                    $"<div class=\"list-group-item list-group-item-{theme}\"><div class=\"d-flex w-100 justify-content-between\">" +
+                    $"<h5 class=\"mb-1\">{log.LoggerName}</h5>" +
+                    $"<small>{log.TimeStamp.ToDateAndTime()}</small></div>" +
+                    $"<p class=\"mb-1\">{log.Message}</p>{details}</div>";
                 sb.AppendLine(html);
             }
 

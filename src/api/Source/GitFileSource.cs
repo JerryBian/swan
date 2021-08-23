@@ -9,16 +9,17 @@ using Laobian.Share.Extension;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Laobian.Api._2.Source
+namespace Laobian.Api.Source
 {
     public class GitFileSource : LocalFileSource
     {
-        private bool _prepared;
-        private readonly LaobianApiOption _laobianApiOption;
         private readonly ICommandClient _commandClient;
+        private readonly LaobianApiOption _laobianApiOption;
         private readonly ILogger<GitFileSource> _logger;
+        private bool _prepared;
 
-        public GitFileSource(IOptions<LaobianApiOption> apiOption, ILogger<GitFileSource> logger, ICommandClient commandClient) : base(apiOption, logger)
+        public GitFileSource(IOptions<LaobianApiOption> apiOption, ILogger<GitFileSource> logger,
+            ICommandClient commandClient) : base(apiOption, logger)
         {
             _logger = logger;
             _commandClient = commandClient;
@@ -94,7 +95,7 @@ namespace Laobian.Api._2.Source
                 {
                     _logger.LogInformation($"Retry: {retryTimes}... starting to pull DB repo.");
                 }
-                
+
                 var output = await _commandClient.RunAsync(command, cancellationToken);
                 if (retryTimes > 1)
                 {

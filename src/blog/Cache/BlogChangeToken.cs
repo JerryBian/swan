@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using Laobian.Blog.Data;
+using Laobian.Blog.Service;
 using Microsoft.Extensions.Primitives;
 
 namespace Laobian.Blog.Cache
@@ -8,14 +8,14 @@ namespace Laobian.Blog.Cache
     public class BlogChangeToken : IChangeToken
     {
         private readonly DateTime _assetLastUpdate;
+        private readonly IBlogService _blogService;
         private readonly DateTime? _nextHardRefreshAt;
-        private readonly ISystemData _systemData;
 
-        public BlogChangeToken(ISystemData systemData)
+        public BlogChangeToken(IBlogService blogService)
         {
-            _systemData = systemData;
-            _assetLastUpdate = systemData.LastLoadTimestamp;
-            _nextHardRefreshAt = systemData.Posts.FirstOrDefault(p => p.Raw.PublishTime > DateTime.Now)?.Raw
+            _blogService = blogService;
+            _assetLastUpdate = blogService.GetLastReloadTime();
+            _nextHardRefreshAt = blogService.GetAllPosts().FirstOrDefault(p => p.Raw.PublishTime > DateTime.Now)?.Raw
                 .PublishTime;
         }
 
@@ -30,7 +30,7 @@ namespace Laobian.Blog.Cache
         {
             get
             {
-                if (_assetLastUpdate != _systemData.LastLoadTimestamp)
+                if (_assetLastUpdate != _blogService.GetLastReloadTime())
                 {
                     return true;
                 }

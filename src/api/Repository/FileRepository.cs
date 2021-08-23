@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
-using Laobian.Api._2.Source;
+using Laobian.Api.Source;
 using Laobian.Share;
 using Laobian.Share.Blog;
 using Laobian.Share.Converter;
@@ -23,7 +23,8 @@ namespace Laobian.Api.Repository
         private readonly LaobianApiOption _laobianApiOption;
         private readonly ILogger<FileRepository> _logger;
 
-        public FileRepository(IOptions<LaobianApiOption> apiOption, IFileSource fileSource, ILogger<FileRepository> logger)
+        public FileRepository(IOptions<LaobianApiOption> apiOption, IFileSource fileSource,
+            ILogger<FileRepository> logger)
         {
             _logger = logger;
             _fileSource = fileSource;
@@ -139,7 +140,7 @@ namespace Laobian.Api.Repository
             var access = blogPostAccess.FirstOrDefault(x => x.Date == date);
             if (access == null)
             {
-                blogPostAccess.Add(new BlogAccess{Count = count, Date = date});
+                blogPostAccess.Add(new BlogAccess {Count = count, Date = date});
             }
             else
             {
@@ -231,7 +232,8 @@ namespace Laobian.Api.Repository
             await _fileSource.WriteBlogTagsAsync(JsonUtil.Serialize(tags), cancellationToken);
         }
 
-        public async Task<IDictionary<int, List<BookItem>>> GetBookItemsAsync(CancellationToken cancellationToken = default)
+        public async Task<IDictionary<int, List<BookItem>>> GetBookItemsAsync(
+            CancellationToken cancellationToken = default)
         {
             var result = new Dictionary<int, List<BookItem>>();
             var bookItems = await _fileSource.ReadBookItemsAsync(cancellationToken);
@@ -273,7 +275,8 @@ namespace Laobian.Api.Repository
 
             if (allBookItems.FirstOrDefault(x => x.BookName == bookItem.BookName) != null)
             {
-                _logger.LogWarning($"It appears you already added same book before: {bookItem.BookName}, however it's allowed.");
+                _logger.LogWarning(
+                    $"It appears you already added same book before: {bookItem.BookName}, however it's allowed.");
             }
 
             bookItem.LastUpdateTime = DateTime.Now;
@@ -299,7 +302,8 @@ namespace Laobian.Api.Repository
             bookItem.LastUpdateTime = DateTime.Now;
             existingBookItems.Remove(existingBookItem);
             existingBookItems.Add(bookItem);
-            await _fileSource.WriteBookItemsAsync(bookItem.StartTime.Year, JsonUtil.Serialize(existingBookItems.OrderByDescending(x => x.StartTime)),
+            await _fileSource.WriteBookItemsAsync(bookItem.StartTime.Year,
+                JsonUtil.Serialize(existingBookItems.OrderByDescending(x => x.StartTime)),
                 cancellationToken);
         }
 
@@ -325,7 +329,8 @@ namespace Laobian.Api.Repository
             }
         }
 
-        public async Task<List<LaobianLog>> GetLogsAsync(LaobianSite site, DateTime date, CancellationToken cancellationToken = default)
+        public async Task<List<LaobianLog>> GetLogsAsync(LaobianSite site, DateTime date,
+            CancellationToken cancellationToken = default)
         {
             var result = new List<LaobianLog>();
             var logs = await _fileSource.ReadLogsAsync(site, date, cancellationToken);

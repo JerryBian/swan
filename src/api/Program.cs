@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -15,7 +16,13 @@ namespace Laobian.Api
         {
             return Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((hostContext, config) => { config.AddEnvironmentVariables("ENV_"); })
-                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.CaptureStartupErrors(true);
+                    webBuilder.UseSetting(WebHostDefaults.DetailedErrorsKey, "true");
+                    webBuilder.UseShutdownTimeout(TimeSpan.FromMinutes(10));
+                    webBuilder.UseStartup<Startup>();
+                });
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Laobian.Blog.HttpService;
+using Laobian.Blog.HttpClients;
 using Laobian.Share.Blog;
 using Microsoft.Extensions.Logging;
 
@@ -13,17 +13,17 @@ namespace Laobian.Blog.Data
 {
     public class SystemData : ISystemData
     {
-        private readonly ApiHttpService _apiHttpService;
+        private readonly ApiSiteHttpClient _apiSiteHttpClient;
         private readonly ILogger<SystemData> _logger;
         private readonly ManualResetEventSlim _manualResetEventSlim;
         private readonly List<BlogPostRuntime> _posts;
         private readonly List<BlogTag> _tags;
 
-        public SystemData(ILogger<SystemData> logger, ApiHttpService apiHttpService)
+        public SystemData(ILogger<SystemData> logger, ApiSiteHttpClient apiSiteHttpClient)
         {
             _logger = logger;
             BootTime = DateTime.Now;
-            _apiHttpService = apiHttpService;
+            _apiSiteHttpClient = apiSiteHttpClient;
             _tags = new List<BlogTag>();
             _posts = new List<BlogPostRuntime>();
             RuntimeVersion = RuntimeInformation.FrameworkDescription;
@@ -74,8 +74,8 @@ namespace Laobian.Blog.Data
             {
                 _manualResetEventSlim.Reset();
                 _logger.LogInformation("Start to load system data.");
-                var posts = await _apiHttpService.GetPostsAsync();
-                var tags = await _apiHttpService.GetTagsAsync();
+                var posts = await _apiSiteHttpClient.GetPostsAsync();
+                var tags = await _apiSiteHttpClient.GetTagsAsync();
 
                 _posts.Clear();
                 _posts.AddRange(posts.OrderByDescending(x => x.Raw.PublishTime));

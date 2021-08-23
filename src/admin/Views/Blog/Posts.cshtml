@@ -19,24 +19,29 @@
         @foreach (var post in Model)
         {
             var trClass = "table-primary";
-                if (!post.Raw.IsPublished)
-                {
-                    trClass = "table-warning";
-                }
+            if (!post.Raw.IsPublished)
+            {
+                trClass = "table-warning";
+            }
 
-                <tr class="@trClass">
-                    <th><a href="/blog/post/update/@post.Raw.Link"><i class="fas fa-edit"></i></a></th>
-                    <th><i class="fas fa-calendar-alt"></i> @post.Raw.LastUpdateTime.ToChinaDate()</th>
-                    <th>
-                        <i class="fas fa-external-link-alt"></i>
-                        <a href="@post.Raw.GetFullPath(_config.Value.BlogRemoteEndpoint)">@post.Raw.Title</a>
-                    </th>
-                    <th>@post.Raw.IsPostPublished()</th>
-                    <th>
-                        @post.GetAccessCount().ToUSThousand()
-                    </th>
-                </tr>
-            
+            <tr class="@trClass">
+                <th>
+                    <a href="/blog/post/update/@post.Raw.Link">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                </th>
+                <th>
+                    <i class="fas fa-calendar-alt"></i> @post.Raw.LastUpdateTime.ToChinaDate()
+                </th>
+                <th>
+                    <i class="fas fa-external-link-alt"></i>
+                    <a href="@post.Raw.GetFullPath(_config.Value.BlogRemoteEndpoint)">@post.Raw.Title</a>
+                </th>
+                <th>@post.Raw.IsPostPublished()</th>
+                <th>
+                    @post.GetAccessCount().ToUSThousand()
+                </th>
+            </tr>
         }
         </tbody>
     </table>

@@ -1,5 +1,3 @@
-using System;
-
 namespace Laobian.Read.Models
 {
     public class ErrorViewModel

@@ -51,7 +51,8 @@ namespace Laobian.Api.Repository
         Task DeleteBookItemAsync(string bookItemId,
             CancellationToken cancellationToken = default);
 
-        Task<List<LaobianLog>> GetLogsAsync(LaobianSite site, DateTime date, CancellationToken cancellationToken = default);
+        Task<List<LaobianLog>> GetLogsAsync(LaobianSite site, DateTime date,
+            CancellationToken cancellationToken = default);
 
         Task AddLogAsync(LaobianLog log, CancellationToken cancellationToken = default);
 

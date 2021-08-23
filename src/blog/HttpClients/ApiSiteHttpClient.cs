@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
-using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
 using Laobian.Share.Blog;
@@ -11,32 +10,18 @@ using Laobian.Share.Util;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Laobian.Blog.HttpService
+namespace Laobian.Blog.HttpClients
 {
-    public class ApiHttpService
+    public class ApiSiteHttpClient
     {
         private readonly HttpClient _httpClient;
-        private readonly ILogger<ApiHttpService> _logger;
+        private readonly ILogger<ApiSiteHttpClient> _logger;
 
-        public ApiHttpService(HttpClient httpClient, ILogger<ApiHttpService> logger, IOptions<BlogOption> config)
+        public ApiSiteHttpClient(HttpClient httpClient, ILogger<ApiSiteHttpClient> logger, IOptions<BlogOption> config)
         {
             _logger = logger;
             _httpClient = httpClient;
             _httpClient.BaseAddress = new Uri(config.Value.ApiLocalEndpoint);
-        }
-
-        public async Task<bool> PersistentAsync(string message)
-        {
-            var response = await _httpClient.PostAsync("/blog/persistent",
-                new StringContent(message, Encoding.UTF8, MediaTypeNames.Text.Plain));
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                _logger.LogError(
-                    $"{nameof(ApiHttpService)}.{nameof(PersistentAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
-                return false;
-            }
-
-            return true;
         }
 
         public async Task<List<BlogPostRuntime>> GetPostsAsync()
@@ -45,7 +30,7 @@ namespace Laobian.Blog.HttpService
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 _logger.LogError(
-                    $"{nameof(ApiHttpService)}.{nameof(GetPostsAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+                    $"{nameof(ApiSiteHttpClient)}.{nameof(GetPostsAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
                 return new List<BlogPostRuntime>();
             }
 
@@ -59,7 +44,7 @@ namespace Laobian.Blog.HttpService
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 _logger.LogError(
-                    $"{nameof(ApiHttpService)}.{nameof(GetTagsAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+                    $"{nameof(ApiSiteHttpClient)}.{nameof(GetTagsAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
                 return new List<BlogTag>();
             }
 
@@ -73,7 +58,7 @@ namespace Laobian.Blog.HttpService
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 _logger.LogError(
-                    $"{nameof(ApiHttpService)}.{nameof(GetPostAsync)}({link}) failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+                    $"{nameof(ApiSiteHttpClient)}.{nameof(GetPostAsync)}({link}) failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
                 return null;
             }
 
@@ -87,7 +72,7 @@ namespace Laobian.Blog.HttpService
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 _logger.LogError(
-                    $"{nameof(ApiHttpService)}.{nameof(AddPostAccess)}({link}) failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+                    $"{nameof(ApiSiteHttpClient)}.{nameof(AddPostAccess)}({link}) failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
             }
         }
 
@@ -98,7 +83,7 @@ namespace Laobian.Blog.HttpService
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 Console.WriteLine(
-                    $"{nameof(ApiHttpService)}.{nameof(SendLogsAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+                    $"{nameof(ApiSiteHttpClient)}.{nameof(SendLogsAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
             }
         }
     }
