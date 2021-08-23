@@ -158,7 +158,7 @@ jobs:
   deploy_server:
     name: Deploy to remote server
     runs-on: ubuntu-20.04
-    needs: [publish_api, publish_admin, publish_blog, publish_read]
+    needs: [publish_api, publish_admin, publish_blog]
 
     steps:
       - name: Checkout
