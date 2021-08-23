@@ -8,16 +8,16 @@
             <div class="list-group-item p-0 mb-4 pb-3">
                 <div class="text-muted fs-sm">@Html.Raw(post.MetadataHtml)</div>
                 <h2 class="mb-3">
-                    <a href="@post.Current.GetFullPath(_option.Value.BlogRemoteEndpoint)" class="text-decoration-none">
-                        @post.Current.Metadata.Title
+                    <a href="@post.Current.Raw.GetFullPath(_option.Value.BlogRemoteEndpoint)" class="text-decoration-none">
+                        @post.Current.Raw.Title
 
                     </a>
-                    @if (post.Current.Metadata.IsTopping)
+                    @if (post.Current.Raw.IsTopping)
                     {
                         <span class="badge bg-success fs-sm">置顶</span>
                     }
 
-                    @if (!post.Current.Metadata.IsPublished)
+                    @if (!post.Current.Raw.IsPublished)
                     {
                         <span class="badge bg-warning fs-sm">
                             未发布
@@ -25,10 +25,10 @@
                     }
                 </h2>
                 <div>
-                    @if (!string.IsNullOrEmpty(post.Current.Thumbnail))
+                    @if (!string.IsNullOrEmpty(post.Current.ThumbnailHtml))
                     {
                         <div class="mt-1 mb-3">
-                            @Html.Raw(post.Current.Thumbnail)
+                            @Html.Raw(post.Current.ThumbnailHtml)
                             @*<img src="@post.Current.Thumbnail" class="img-fluid mt-1 mb-3">*@
                         </div>
                     }

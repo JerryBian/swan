@@ -15,7 +15,7 @@ namespace Laobian.Blog.Cache
         {
             _systemData = systemData;
             _assetLastUpdate = systemData.LastLoadTimestamp;
-            _nextHardRefreshAt = systemData.Posts.FirstOrDefault(p => p.Metadata.PublishTime > DateTime.Now)?.Metadata
+            _nextHardRefreshAt = systemData.Posts.FirstOrDefault(p => p.Raw.PublishTime > DateTime.Now)?.Raw
                 .PublishTime;
         }
 

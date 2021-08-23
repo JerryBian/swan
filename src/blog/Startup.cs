@@ -27,47 +27,30 @@ using Polly.Extensions.Http;
 
 namespace Laobian.Blog
 {
-    public class Startup
+    public class Startup : SharedStartup
     {
-        private readonly IWebHostEnvironment _env;
-
-        public Startup(IConfiguration configuration, IWebHostEnvironment env)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env) : base(configuration, env)
         {
-            _env = env;
-            Configuration = configuration;
-        }
-
-        public IConfiguration Configuration { get; }
-
-        private static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
-        {
-            return HttpPolicyExtensions
-                .HandleTransientHttpError()
-                .OrResult(msg => msg.StatusCode == HttpStatusCode.NotFound)
-                .WaitAndRetryAsync(6, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2,
-                    retryAttempt)));
+            Site = LaobianSite.Blog;
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public override void ConfigureServices(IServiceCollection services)
         {
-            var option = new BlogOption();
-            var resolver = new BlogOptionResolver();
-            resolver.Resolve(option, Configuration);
-            services.Configure<BlogOption>(o => { o.Clone(option); });
-            StartupHelper.ConfigureServices(services, _env, option);
+            base.ConfigureServices(services);
+            services.Configure<BlogOption>(o => { o.FetchFromEnv(Configuration); });
 
-            services.AddSingleton<ILaobianLogQueue, LaobianLogQueue>();
             services.AddSingleton<ISystemData, SystemData>();
             services.AddSingleton<ICacheClient, CacheClient>();
 
+            var httpRequestToken = Configuration.GetValue<string>(Constants.EnvHttpRequestToken);
             services.AddHttpClient<ApiHttpService>(h =>
                 {
                     h.Timeout = TimeSpan.FromMinutes(10);
-                    h.DefaultRequestHeaders.Add(Constants.ApiRequestHeaderToken, option.HttpRequestToken);
+                    h.DefaultRequestHeaders.Add(Constants.ApiRequestHeaderToken, httpRequestToken);
                 })
                 .SetHandlerLifetime(TimeSpan.FromDays(1))
-                .AddPolicyHandler(GetRetryPolicy());
+                .AddPolicyHandler(GetHttpClientRetryPolicy());
 
             services.AddHostedService<BlogHostedService>();
             services.AddHostedService<LogHostedService>();
@@ -92,52 +75,7 @@ namespace Laobian.Blog
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime appLifetime)
         {
             var config = app.ApplicationServices.GetRequiredService<IOptions<BlogOption>>().Value;
-            var emailNotify = app.ApplicationServices.GetRequiredService<IEmailNotify>();
-            appLifetime.ApplicationStarted.Register(async () =>
-            {
-                if (!env.IsDevelopment())
-                {
-                    var message = new NotifyMessage
-                    {
-                        Content = $"<p>site started at {DateTime.Now.ToChinaDateAndTime()}.</p>",
-                        Site = LaobianSite.Blog,
-                        Subject = "site started",
-                        SendGridApiKey = config.SendGridApiKey,
-                        ToEmailAddress = config.AdminEmail,
-                        ToName = config.AdminEnglishName
-                    };
-
-                    await emailNotify.SendAsync(message);
-                }
-            });
-
-            appLifetime.ApplicationStopped.Register(async () =>
-            {
-                if (!env.IsDevelopment())
-                {
-                    var message = new NotifyMessage
-                    {
-                        Content = $"<p>site stopped at {DateTime.Now.ToChinaDateAndTime()}.</p>",
-                        Site = LaobianSite.Blog,
-                        Subject = "site stopped",
-                        SendGridApiKey = config.SendGridApiKey,
-                        ToEmailAddress = config.AdminEmail,
-                        ToName = config.AdminEnglishName
-                    };
-
-                    await emailNotify.SendAsync(message);
-                }
-            });
-
-            
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/error");
-            }
+            base.Configure(app, appLifetime, config);
 
             app.UseStatusCodePages();
 
@@ -147,16 +85,12 @@ namespace Laobian.Blog
 
             if (env.IsDevelopment())
             {
-                var fileLoc = config.GetBlogFileLocation();
-                if (!Directory.Exists(fileLoc))
-                {
-                    Directory.CreateDirectory(fileLoc);
-                }
-
+                var dir = Path.Combine(config.AssetLocation, Constants.AssetDbFileFolder);
+                Directory.CreateDirectory(dir);
                 app.UseStaticFiles(new StaticFileOptions
                 {
-                    FileProvider = new PhysicalFileProvider(Path.GetFullPath(fileLoc)),
-                    RequestPath = "/blog"
+                    FileProvider = new PhysicalFileProvider(Path.GetFullPath(dir)),
+                    RequestPath = ""
                 });
             }
 

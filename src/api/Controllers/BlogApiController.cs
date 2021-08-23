@@ -4,12 +4,13 @@ using System.IO;
 using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
-using Laobian.Api.Service;
+using Laobian.Api.Repository;
 using Laobian.Share.Blog;
 using Laobian.Share.Util;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Laobian.Api.Controllers
 {
@@ -17,35 +18,16 @@ namespace Laobian.Api.Controllers
     [Route("blog")]
     public class BlogApiController : ControllerBase
     {
-        private readonly IBlogService _blogService;
+        private readonly LaobianApiOption _laobianApiOption;
+        private readonly IFileRepository _fileRepository;
         private readonly ILogger<BlogApiController> _logger;
 
-        public BlogApiController(IBlogService blogService, ILogger<BlogApiController> logger)
+        public BlogApiController(IOptions<LaobianApiOption> apiOption, IFileRepository fileRepository, ILogger<BlogApiController> logger)
         {
             _logger = logger;
-            _blogService = blogService;
+            _laobianApiOption = apiOption.Value;
+            _fileRepository = fileRepository;
         }
-
-        //[HttpPost]
-        //[Route("per")]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //public async Task<IActionResult> ReloadAsync()
-        //{
-        //    try
-        //    {
-        //        using var sr = new StreamReader(Request.Body, Encoding.UTF8);
-        //        var message = await sr.ReadToEndAsync();
-        //        await _blogService.FlushDataToFileAsync();
-        //        await _blogService.PushGitFilesAsync(message);
-        //        return Ok();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, $"{nameof(ReloadAsync)} failed.");
-        //        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        //    }
-        //}
 
         [HttpPost]
         [Route("persistent")]
@@ -57,7 +39,7 @@ namespace Laobian.Api.Controllers
             {
                 using var sr = new StreamReader(Request.Body, Encoding.UTF8);
                 var message = await sr.ReadToEndAsync();
-                await _blogService.PersistentAsync(message);
+                await _fileRepository.SaveAsync(message);
                 return Ok();
             }
             catch (Exception ex)
@@ -68,15 +50,20 @@ namespace Laobian.Api.Controllers
         }
 
         [HttpGet]
-        [Route("posts")]
+        [Route("post")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<List<BlogPost>>> GetPostsAsync([FromQuery] bool onlyPublished)
+        public async Task<ActionResult<List<BlogPostRuntime>>> GetPostsAsync([FromQuery] bool onlyPublished)
         {
             try
             {
-                var posts = await _blogService.GetAllPostsAsync();
-                var result = await Task.FromResult(posts);
+                var posts = await _fileRepository.GetBlogPostsAsync();
+                var result = new List<BlogPostRuntime>();
+                foreach (var blogPost in posts)
+                {
+                    var blogPostRuntime = await GetBlogPostRuntimeAsync(blogPost);
+                    result.Add(blogPostRuntime);
+                }
                 return Ok(result);
             }
             catch (Exception ex)
@@ -91,18 +78,18 @@ namespace Laobian.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<BlogPost>> GetPostAsync([FromRoute] string link)
+        public async Task<ActionResult<BlogPostRuntime>> GetPostAsync([FromRoute] string link)
         {
             try
             {
-                var post = await _blogService.GetPostAsync(link);
+                var post = await _fileRepository.GetBlogPostAsync(link);
                 if (post == null)
                 {
                     return NotFound($"Post with link not found: {link}");
                 }
 
-                var result = await Task.FromResult(post);
-                return Ok(result);
+                var blogPostRuntime = await GetBlogPostRuntimeAsync(post);
+                return Ok(blogPostRuntime);
             }
             catch (Exception ex)
             {
@@ -111,21 +98,58 @@ namespace Laobian.Api.Controllers
             }
         }
 
-        [HttpPost]
-        [Route("post/metadata")]
+        private async Task<BlogPostRuntime> GetBlogPostRuntimeAsync(BlogPost post)
+        {
+            var blogPostRuntime = new BlogPostRuntime(post);
+            var blogPostAccess = await _fileRepository.GetBlogPostAccessAsync(post.Link);
+            var blogTags = new List<BlogTag>();
+            foreach (var blogPostTag in post.Tag)
+            {
+                var tag = await _fileRepository.GetBlogTagAsync(blogPostTag);
+                if (tag != null)
+                {
+                    blogTags.Add(tag);
+                }
+            }
+
+            blogPostRuntime.ExtractRuntimeData(_laobianApiOption, blogPostAccess, blogTags);
+            return blogPostRuntime;
+        }
+
+        [HttpPut]
+        [Route("post")]
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdatePostMetadataAsync(BlogMetadata metadata)
+        public async Task<IActionResult> AddBlogPost(BlogPost post)
         {
             try
             {
-                await _blogService.UpdateBlogPostMetadataAsync(metadata);
+                await _fileRepository.AddBlogPostAsync(post);
                 return Ok();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"{nameof(UpdatePostMetadataAsync)}({JsonUtil.Serialize(metadata)}) failed.");
+                _logger.LogError(ex, $"{nameof(AddBlogPost)}({JsonUtil.Serialize(post)}) failed.");
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("post")]
+        [Consumes(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> UpdateBlogPost(BlogPost post)
+        {
+            try
+            {
+                await _fileRepository.UpdateBlogPostAsync(post);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"{nameof(UpdateBlogPost)}({JsonUtil.Serialize(post)}) failed.");
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
@@ -134,40 +158,39 @@ namespace Laobian.Api.Controllers
         [Route("post/access/{link}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostNewAccess([FromRoute] string link)
+        public async Task<IActionResult> AddBlogPostAccess([FromRoute] string link)
         {
             try
             {
-                var post = await _blogService.GetPostAsync(link);
+                var post = await _fileRepository.GetBlogPostAsync(link);
                 if (post == null)
                 {
                     _logger.LogWarning($"No post found with link {link}, new access will be discarded.");
                 }
                 else
                 {
-                    await _blogService.AddBlogAccessAsync(link);
+                    await _fileRepository.AddBlogPostAccessAsync(post, DateTime.Now, 1);
                 }
 
                 return Ok();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"{nameof(PostNewAccess)}({link}) failed.");
+                _logger.LogError(ex, $"{nameof(AddBlogPostAccess)}({link}) failed.");
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
         [HttpGet]
-        [Route("tags")]
+        [Route("tag")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<List<BlogTag>>> GetTagsAsync()
         {
             try
             {
-                var tags = await _blogService.GetAllTagsAsync();
-                var result = await Task.FromResult(tags);
-                return Ok(result);
+                var tags = await _fileRepository.GetBlogTagsAsync();
+                return Ok(tags);
             }
             catch (Exception ex)
             {
@@ -185,13 +208,13 @@ namespace Laobian.Api.Controllers
         {
             try
             {
-                var tag = await _blogService.GetTagAsync(link);
+                var tag = await _fileRepository.GetBlogTagAsync(link);
                 if (tag == null)
                 {
-                    return NotFound($"Tag link = {link}");
+                    return NotFound($"Tag link = {link} not found.");
                 }
 
-                return await Task.FromResult(tag);
+                return tag;
             }
             catch (Exception ex)
             {
@@ -208,7 +231,7 @@ namespace Laobian.Api.Controllers
         {
             try
             {
-                await _blogService.AddBlogTagAsync(tag);
+                await _fileRepository.AddBlogTagAsync(tag);
                 return Ok();
             }
             catch (Exception ex)
@@ -226,7 +249,7 @@ namespace Laobian.Api.Controllers
         {
             try
             {
-                await _blogService.UpdateBlogTagAsync(tag);
+                await _fileRepository.UpdateBlogTagAsync(tag);
                 return Ok();
             }
             catch (Exception ex)
@@ -244,7 +267,7 @@ namespace Laobian.Api.Controllers
         {
             try
             {
-                await _blogService.RemoveBlogTagAsync(link);
+                await _fileRepository.DeleteBlogTagAsync(link);
                 return Ok();
             }
             catch (Exception ex)
@@ -253,96 +276,5 @@ namespace Laobian.Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-
-        //[HttpPut]
-        //[Route("comment/{postLink}")]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //public async Task<ActionResult<bool>> AddCommentAsync([FromRoute] string postLink,
-        //    [FromBody] BlogCommentItem item)
-        //{
-        //    try
-        //    {
-        //        var result = await _blogService.AddCommentAsync(postLink, item);
-        //        return Ok(result);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, $"{nameof(AddCommentAsync)} failed.");
-        //        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        //    }
-        //}
-
-        //[HttpGet]
-        //[Route("comments")]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //public async Task<ActionResult<List<BlogComment>>> GetCommentsAsync()
-        //{
-        //    try
-        //    {
-        //        var result = await _blogService.GetCommentsAsync();
-        //        return Ok(result);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, $"{nameof(GetCommentsAsync)} failed.");
-        //        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        //    }
-        //}
-
-        //[HttpGet]
-        //[Route("comment/{postLink}")]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //public async Task<ActionResult<List<BlogComment>>> GetCommentAsync([FromRoute] string postLink)
-        //{
-        //    try
-        //    {
-        //        var result = await _blogService.GetCommentAsync(postLink);
-        //        return Ok(result);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, $"{nameof(GetCommentAsync)} failed.");
-        //        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        //    }
-        //}
-
-        //[HttpGet]
-        //[Route("comment/item/{commentId}")]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //public async Task<ActionResult<List<BlogComment>>> GetCommentItemAsync([FromRoute] Guid commentId)
-        //{
-        //    try
-        //    {
-        //        var result = await _blogService.GetCommentItemAsync(commentId);
-        //        return Ok(result);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, $"{nameof(GetCommentItemAsync)} failed.");
-        //        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        //    }
-        //}
-
-        //[HttpPost]
-        //[Route("comment")]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //public async Task<ActionResult<List<BlogComment>>> UpdateCommentAsync([FromBody] BlogCommentItem comment)
-        //{
-        //    try
-        //    {
-        //        var result = await _blogService.UpdateCommentAsync(comment);
-        //        return Ok(result);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, $"{nameof(GetCommentItemAsync)} failed.");
-        //        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        //    }
-        //}
     }
 }

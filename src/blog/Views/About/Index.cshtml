@@ -34,16 +34,16 @@
         @foreach (var post in Model.TopPosts)
         {
             <li>
-                <a href="@post.GetFullPath(Config.Value.BlogRemoteEndpoint)">@post.Metadata.Title</a> <i>(@post.GetAccessCount().ToUSThousand())</i>
+                <a href="@post.Raw.GetFullPath(Config.Value.BlogRemoteEndpoint)">@post.Raw.Title</a> <i>(@post.GetAccessCount().ToUSThousand())</i>
             </li>
         }
     </ol>
-    @if (Model.LatestPost != null)
+    @if (Model.LatestPostRuntime != null)
     {
         <p>
-            最近一次的发布是于 <strong>@Model.LatestPost.Metadata.PublishTime.ToChinaDate()</strong> 发布了
+            最近一次的发布是于 <strong>@Model.LatestPostRuntime.Raw.PublishTime.ToChinaDate()</strong> 发布了
             <strong>
-                <a href="@Model.LatestPost.GetFullPath(Config.Value.BlogRemoteEndpoint)">@Model.LatestPost.Metadata.Title</a>
+                <a href="@Model.LatestPostRuntime.Raw.GetFullPath(Config.Value.BlogRemoteEndpoint)">@Model.LatestPostRuntime.Raw.Title</a>
             </strong>。
         </p>
     }

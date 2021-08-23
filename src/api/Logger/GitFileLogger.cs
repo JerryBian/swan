@@ -6,11 +6,11 @@ namespace Laobian.Api.Logger
 {
     public class GitFileLogger : ILogger
     {
-        private readonly ILaobianLoggerProcessor _queueProcessor;
+        private readonly ILaobianLogQueue _logQueue;
 
-        public GitFileLogger(ILaobianLoggerProcessor queueProcessor)
+        public GitFileLogger(ILaobianLogQueue logQueue)
         {
-            _queueProcessor = queueProcessor;
+            _logQueue = logQueue;
         }
 
         public IExternalScopeProvider ScopeProvider { get; set; }
@@ -39,7 +39,7 @@ namespace Laobian.Api.Logger
                 log.Exception = exception?.ToString();
                 log.Level = logLevel;
                 log.TimeStamp = DateTime.Now;
-                _queueProcessor.Add(log);
+                _logQueue.Add(log);
             }
             catch (Exception ex)
             {

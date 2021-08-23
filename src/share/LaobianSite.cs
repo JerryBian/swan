@@ -2,7 +2,7 @@
 {
     public enum LaobianSite
     {
-        Home = 0,
+        All = 0,
 
         Api = 2,
 

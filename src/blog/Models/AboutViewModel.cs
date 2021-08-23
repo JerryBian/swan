@@ -19,13 +19,13 @@ namespace Laobian.Blog.Models
 
         #region Post
 
-        public BlogPost LatestPost { get; set; }
+        public BlogPostRuntime LatestPostRuntime { get; set; }
 
         public string PostTotalCount { get; set; }
 
         public string PostTotalAccessCount { get; set; }
 
-        public IEnumerable<BlogPost> TopPosts { get; set; }
+        public IEnumerable<BlogPostRuntime> TopPosts { get; set; }
 
         public string TagTotalCount { get; set; }
 

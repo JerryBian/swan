@@ -13,7 +13,7 @@ namespace Laobian.Blog.Data
 
         string RuntimeVersion { get; }
 
-        List<BlogPost> Posts { get; }
+        List<BlogPostRuntime> Posts { get; }
 
         List<BlogTag> Tags { get; }
 

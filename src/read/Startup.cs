@@ -16,48 +16,33 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Polly;
 using Polly.Extensions.Http;
 
 namespace Laobian.Read
 {
-    public class Startup
+    public class Startup : SharedStartup
     {
-        private readonly IHostEnvironment _env;
-
-        public Startup(IConfiguration configuration, IHostEnvironment env)
+        public Startup(IConfiguration configuration, IHostEnvironment env) : base(configuration, env)
         {
-            _env = env;
-            Configuration = configuration;
-        }
-
-        public IConfiguration Configuration { get; }
-
-        private static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
-        {
-            return HttpPolicyExtensions
-                .HandleTransientHttpError()
-                .OrResult(msg => msg.StatusCode == HttpStatusCode.NotFound)
-                .WaitAndRetryAsync(6, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2,
-                    retryAttempt)));
+            Site = LaobianSite.Blog;
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public override void ConfigureServices(IServiceCollection services)
         {
-            var option = new ReadOption();
-            var resolver = new ReadOptionResolver();
-            resolver.Resolve(option, Configuration);
-            services.Configure<ReadOption>(o => { o.Clone(option); });
-            StartupHelper.ConfigureServices(services, _env, option);
-            services.AddSingleton<ILaobianLogQueue, LaobianLogQueue>();
+            base.ConfigureServices(services);
+            services.Configure<ReadOption>(o => { o.FetchFromEnv(Configuration); });
+
+            var httpRequestToken = Configuration.GetValue<string>(Constants.EnvHttpRequestToken);
             services.AddHttpClient<ApiSiteHttpClient>(h =>
                 {
                     h.Timeout = TimeSpan.FromMinutes(10);
-                    h.DefaultRequestHeaders.Add(Constants.ApiRequestHeaderToken, option.HttpRequestToken);
+                    h.DefaultRequestHeaders.Add(Constants.ApiRequestHeaderToken, httpRequestToken);
                 })
                 .SetHandlerLifetime(TimeSpan.FromDays(1))
-                .AddPolicyHandler(GetRetryPolicy());
+                .AddPolicyHandler(GetHttpClientRetryPolicy());
             services.AddHostedService<RemoteLogHostedService>();
             services.AddLogging(config =>
             {
@@ -76,16 +61,11 @@ namespace Laobian.Read
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostApplicationLifetime appLifetime)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-            }
+            var option = app.ApplicationServices.GetRequiredService<IOptions<ReadOption>>();
+            base.Configure(app, appLifetime, option.Value);
+
             app.UseStaticFiles();
 
             app.UseRouting();

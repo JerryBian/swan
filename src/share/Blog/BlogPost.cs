@@ -1,160 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text;
 using System.Text.Json.Serialization;
-using HtmlAgilityPack;
-using Laobian.Share.Option;
-using Laobian.Share.Util;
-using Markdig;
+using System.Threading.Tasks;
 
 namespace Laobian.Share.Blog
 {
     public class BlogPost
     {
-        [JsonIgnore] public bool IsPublished => Metadata.IsPublished && Metadata.PublishTime <= DateTime.Now;
+        [JsonPropertyName("link")]
+        public string Link { get; set; }
 
-        private void SetPostThumbnail(HtmlNode imageNode)
+        [JsonPropertyName("mdContent")] 
+        public string MdContent { get; set; }
+
+        [JsonPropertyName("title")] public string Title { get; set; }
+
+        [JsonPropertyName("createTime")] public DateTime CreateTime { get; set; }
+
+        [JsonPropertyName("publishTime")] public DateTime PublishTime { get; set; }
+
+        [JsonPropertyName("lastUpdateTime")] public DateTime LastUpdateTime { get; set; }
+
+        [JsonPropertyName("isPublished")] public bool IsPublished { get; set; }
+
+        [JsonPropertyName("isTopping")] public bool IsTopping { get; set; }
+
+        [JsonPropertyName("containsMath")] public bool ContainsMath { get; set; }
+
+        [JsonPropertyName("excerpt")] public string Excerpt { get; set; }
+
+        [JsonPropertyName("tag")]
+        public List<string> Tag { get; set; } = new();
+
+        public bool IsPostPublished()
         {
-            if (string.IsNullOrEmpty(Thumbnail) && !string.IsNullOrEmpty(imageNode.GetAttributeValue("src", null)))
-            {
-                Thumbnail = imageNode.OuterHtml;
-                ThumbnailUrl = imageNode.GetAttributeValue("src", null);
-            }
-        }
-
-        public void ExtractRuntimeData(CommonOption option)
-        {
-            if (string.IsNullOrEmpty(MdContent))
-            {
-                MdContent = "Post content is empty.";
-            }
-
-            var html = Markdown.ToHtml(MdContent);
-            var htmlDoc = new HtmlDocument();
-            htmlDoc.LoadHtml(html);
-
-            // all images nodes
-            SetImageNodes(htmlDoc, option);
-            HtmlContent = htmlDoc.DocumentNode.OuterHtml;
-
-            // assign Excerpt
-            SetExcerpt(htmlDoc);
-        }
-
-        private void SetExcerpt(HtmlDocument htmlDoc)
-        {
-            if (!string.IsNullOrEmpty(Metadata.Excerpt))
-            {
-                ExcerptHtml = Markdown.ToHtml(Metadata.Excerpt);
-            }
-            else
-            {
-                var excerpt = string.Empty;
-                var excerptText = string.Empty;
-                var paraNodes =
-                    htmlDoc.DocumentNode
-                        .Descendants()
-                        .Where(_ =>
-                            StringUtil.EqualsIgnoreCase(_.Name, "p") &&
-                            _.Descendants().FirstOrDefault(c => StringUtil.EqualsIgnoreCase(c.Name, "img")) == null)
-                        .Take(2)
-                        .ToList();
-                if (paraNodes.Count == 1)
-                {
-                    excerpt += $"<p>{paraNodes[0].InnerText}</p>";
-                    excerptText += paraNodes[0].InnerText;
-                }
-
-                if (paraNodes.Count == 2)
-                {
-                    excerpt += $"<p>{paraNodes[0].InnerText}</p><p>{paraNodes[1].InnerText}</p>";
-                    excerptText += $"{paraNodes[0].InnerText}{paraNodes[1].InnerText}";
-                }
-
-                ExcerptPlainText = excerptText;
-                ExcerptHtml = excerpt;
-            }
-        }
-
-        private void SetImageNodes(HtmlDocument htmlDoc, CommonOption option)
-        {
-            var imageNodes = htmlDoc.DocumentNode.Descendants("img").ToList();
-            foreach (var imageNode in imageNodes)
-            {
-                if (imageNode.Attributes.Contains("src"))
-                {
-                    imageNode.AddClass("img-thumbnail mx-auto d-block");
-
-                    var src = imageNode.Attributes["src"].Value;
-                    if (string.IsNullOrEmpty(src))
-                    {
-                        continue;
-                    }
-
-                    if (Uri.TryCreate(src, UriKind.Absolute, out var uriResult) &&
-                        (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps))
-                    {
-                        // this is Network resources, keep it as it is
-                        SetPostThumbnail(imageNode);
-                        continue;
-                    }
-
-                    if (!Path.IsPathRooted(src))
-                    {
-                        var index = src.IndexOf(Constants.BlogPostFileBaseFolderName,
-                            StringComparison.InvariantCultureIgnoreCase);
-                        if (index >= 0)
-                        {
-                            var subPath = src.Substring(index + Constants.BlogPostFileBaseFolderName.Length + 1)
-                                .Replace("\\", "/");
-                            var fullSrc = $"{option.FileRemoteEndpoint}/blog/{subPath}";
-                            imageNode.SetAttributeValue("src", fullSrc);
-                            SetPostThumbnail(imageNode);
-                        }
-                    }
-                }
-            }
+            return IsPublished && PublishTime <= DateTime.Now;
         }
 
         public string GetFullPath(string baseAddress)
         {
             var path =
-                $"{baseAddress}/{Metadata.PublishTime.Year:D4}/{Metadata.PublishTime.Month:D2}/{Metadata.Link}.html";
+                $"{baseAddress}/{PublishTime.Year:D4}/{PublishTime.Month:D2}/{Link}.html";
             return path;
         }
-
-        public int GetAccessCount()
-        {
-            return Accesses.Sum(x => x.Count);
-        }
-
-        #region Raw data
-
-        [JsonPropertyName("link")] public string Link { get; set; }
-
-        [JsonPropertyName("mdContent")] public string MdContent { get; set; }
-
-        [JsonPropertyName("metadata")] public BlogMetadata Metadata { get; set; }
-
-        [JsonPropertyName("tags")] public List<BlogTag> Tags { get; set; } = new();
-
-        [JsonPropertyName("accesses")] public List<BlogAccess> Accesses { get; set; } = new();
-
-        #endregion
-
-        #region Runtime data
-
-        [JsonPropertyName("htmlContent")] public string HtmlContent { get; set; }
-
-        [JsonPropertyName("excerptHtml")] public string ExcerptHtml { get; set; }
-
-        [JsonPropertyName("excerptPlainText")] public string ExcerptPlainText { get; set; }
-
-        [JsonPropertyName("thumbnail")] public string Thumbnail { get; set; }
-
-        [JsonPropertyName("thumbnailUrl")] public string ThumbnailUrl { get; set; }
-
-        #endregion
     }
 }

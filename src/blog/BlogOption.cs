@@ -4,8 +4,7 @@ namespace Laobian.Blog
 {
     public class BlogOption : CommonOption
     {
-        public int PostsPerPage { get; set; }
-
-        public string GitHubHookSecret { get; set; }
+        [OptionEnvName("POSTS_PER_PAGE")]
+        public string PostsPerPage { get; set; }
     }
 }

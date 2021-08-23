@@ -14,7 +14,7 @@ namespace Laobian.Share.Extension
         /// <returns>Combination of date and time part</returns>
         public static string ToDateAndTime(this DateTime time)
         {
-            return time.ToString("yyyy-MM-dd HH:mm:ss");
+            return time.ToString("yyyy-MM-ddTHH:mm:ss");
         }
 
         public static string ToChinaDateAndTime(this DateTime time)
@@ -45,6 +45,11 @@ namespace Laobian.Share.Extension
         public static string ToChinaMonthAndDay(this DateTime time)
         {
             return time.ToString("MM月dd日");
+        }
+
+        public static string ToDateAndTimeInHourAndMinute(this DateTime time)
+        {
+            return time.ToString("yyyy-MM-ddTHH:mm");
         }
     }
 }

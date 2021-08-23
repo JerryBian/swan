@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Laobian.Admin.HttpService;
+using Laobian.Admin.HttpClients;
 using Laobian.Share;
 using Laobian.Share.Extension;
 using Laobian.Share.Logger;
@@ -16,11 +16,11 @@ namespace Laobian.Admin.Controllers
     [Route("log")]
     public class LogController : Controller
     {
-        private readonly ApiHttpService _apiHttpService;
+        private readonly ApiSiteHttpClient _apiSiteHttpClient;
 
-        public LogController(ApiHttpService apiHttpService)
+        public LogController(ApiSiteHttpClient apiSiteHttpClient)
         {
-            _apiHttpService = apiHttpService;
+            _apiSiteHttpClient = apiSiteHttpClient;
         }
 
         public IActionResult Index()
@@ -32,7 +32,7 @@ namespace Laobian.Admin.Controllers
         [Route("/log")]
         public async Task<IActionResult> GetLogs([FromQuery]string site, [FromQuery]int minLevel, [FromQuery]int days)
         {
-            var logs = await _apiHttpService.GetLogsAsync(site, days);
+            var logs = await _apiSiteHttpClient.GetLogsAsync(site, days);
             logs = logs.Where(x => (int) x.Level >= minLevel).OrderByDescending(x => x.TimeStamp).ToList();
 
             var sb = new StringBuilder();

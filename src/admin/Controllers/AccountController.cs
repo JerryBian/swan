@@ -14,13 +14,13 @@ namespace Laobian.Admin.Controllers
     [AllowAnonymous]
     public class AccountController : Controller
     {
-        private readonly AdminOption _adminOption;
+        private readonly LaobianAdminOption _laobianAdminOption;
         private readonly ILogger<AccountController> _logger;
 
-        public AccountController(ILogger<AccountController> logger, IOptions<AdminOption> options)
+        public AccountController(ILogger<AccountController> logger, IOptions<LaobianAdminOption> options)
         {
             _logger = logger;
-            _adminOption = options.Value;
+            _laobianAdminOption = options.Value;
         }
 
         [HttpGet]
@@ -35,7 +35,7 @@ namespace Laobian.Admin.Controllers
         [Route("/login")]
         public async Task<IActionResult> Login(string userName, string password, string returnUrl = null)
         {
-            if (userName == _adminOption.AdminUserName && password == _adminOption.AdminPassword)
+            if (userName == _laobianAdminOption.AdminUserName && password == _laobianAdminOption.AdminPassword)
             {
                 var claims = new List<Claim>
                 {

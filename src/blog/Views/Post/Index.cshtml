@@ -1,10 +1,10 @@
 ﻿@model PostViewModel
 @inject IOptions<BlogOption> Config
 @{
-    ViewData["Title"] = Model.Current.Metadata.Title;
-    ViewData["Image"] = Model.Current.ThumbnailUrl;
-    ViewData["DatePublished"] = Model.Current.Metadata.PublishTime;
-    ViewData["DateModified"] = Model.Current.Metadata.LastUpdateTime;
+    ViewData["Title"] = Model.Current.Raw.Title;
+    ViewData["Image"] = Model.Current.ThumbnailImageUrl;
+    ViewData["DatePublished"] = Model.Current.Raw.PublishTime;
+    ViewData["DateModified"] = Model.Current.Raw.LastUpdateTime;
 }
 
 <div>
@@ -12,15 +12,15 @@
         <div class="text-muted fs-sm">@Html.Raw(Model.MetadataHtml)</div>
         <h2 class="mb-3">
             <span>
-                @Model.Current.Metadata.Title
+                @Model.Current.Raw.Title
 
             </span>
-            @if (Model.Current.Metadata.IsTopping)
+            @if (Model.Current.Raw.IsTopping)
             {
                 <span class="badge bg-success fs-sm">置顶</span>
             }
 
-            @if (!Model.Current.Metadata.IsPublished)
+            @if (!Model.Current.Raw.IsPublished)
             {
                 <span class="badge bg-warning fs-sm">
                     未发布
@@ -35,7 +35,7 @@
 
     <div class="alert alert-warning post-alert fs-sm" role="alert">
         <ul>
-            <li>最后更新于：<span title="@Model.Current.Metadata.LastUpdateTime.ToChinaDateAndTime()">@Model.Current.Metadata.PublishTime.ToChinaDate()</span></li>
+            <li>最后更新于：<span title="@Model.Current.Raw.LastUpdateTime.ToChinaDateAndTime()">@Model.Current.Raw.PublishTime.ToChinaDate()</span></li>
             @{
                 var html = Model.TagHtml;
                 if (!string.IsNullOrEmpty(html))
@@ -46,16 +46,16 @@
 
             @if (Model.Previous != null)
             {
-                <li>前一篇：<a href="@Model.Previous.GetFullPath(Config.Value.BlogRemoteEndpoint)" class="text-decoration-none">@Model.Previous.Metadata.Title</a></li>
+                <li>前一篇：<a href="@Model.Previous.Raw.GetFullPath(Config.Value.BlogRemoteEndpoint)" class="text-decoration-none">@Model.Previous.Raw.Title</a></li>
             }
 
             @if (Model.Next != null)
             {
-                <li>后一篇：<a href="@Model.Next.GetFullPath(Config.Value.BlogRemoteEndpoint)" class="text-decoration-none">@Model.Next.Metadata.Title</a></li>
+                <li>后一篇：<a href="@Model.Next.Raw.GetFullPath(Config.Value.BlogRemoteEndpoint)" class="text-decoration-none">@Model.Next.Raw.Title</a></li>
             }
             <li>
                 文章的留言，请发送电子邮件至
-                <a href="mailto:@Config.Value.AdminEmail?subject=RE:@Model.Current.Metadata.Title&body=Good job！" class="text-decoration-none">
+                <a href="mailto:@Config.Value.AdminEmail?subject=RE:@Model.Current.Raw.Title&body=Good job！" class="text-decoration-none">
                     @Config.Value.AdminEmail
                 </a>
             </li>
@@ -67,9 +67,8 @@
     <script>
         hljs.highlightAll();
     </script>
-    @if (Model.Current.Metadata.ContainsMath)
+    @if (Model.Current.Raw.ContainsMath)
     {
-        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
         <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     }
 }

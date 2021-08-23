@@ -3,7 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text.Encodings.Web;
 using Laobian.Admin.HostedService;
-using Laobian.Admin.HttpService;
+using Laobian.Admin.HttpClients;
 using Laobian.Share;
 using Laobian.Share.Converter;
 using Laobian.Share.Extension;
@@ -25,44 +25,32 @@ using Polly.Extensions.Http;
 
 namespace Laobian.Admin
 {
-    public class Startup
+    public class Startup : SharedStartup
     {
-        private readonly IWebHostEnvironment _env;
-
-        public Startup(IConfiguration configuration, IWebHostEnvironment env)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env) : base(configuration, env)
         {
-            _env = env;
-            Configuration = configuration;
-        }
-
-        public IConfiguration Configuration { get; }
-
-        private static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
-        {
-            return HttpPolicyExtensions
-                .HandleTransientHttpError()
-                .OrResult(msg => msg.StatusCode == HttpStatusCode.NotFound)
-                .WaitAndRetryAsync(6, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2,
-                    retryAttempt)));
+            Site = LaobianSite.Admin;
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public override void ConfigureServices(IServiceCollection services)
         {
-            var option = new AdminOption();
-            var resolver = new AdminOptionResolver();
-            resolver.Resolve(option, Configuration);
-            services.Configure<AdminOption>(o => { o.Clone(option); });
-            StartupHelper.ConfigureServices(services, _env, option);
+            base.ConfigureServices(services);
+            services.Configure<LaobianAdminOption>(o => { o.FetchFromEnv(Configuration); });
 
-            services.AddHttpClient<ApiHttpService>(x =>
+            var httpRequestToken = Configuration.GetValue<string>(Constants.EnvHttpRequestToken);
+            services.AddHttpClient<ApiSiteHttpClient>(x =>
             {
-                x.DefaultRequestHeaders.Add(Constants.ApiRequestHeaderToken, option.HttpRequestToken);
-            });
-            services.AddHttpClient<BlogHttpService>(x =>
+                x.DefaultRequestHeaders.Add(Constants.ApiRequestHeaderToken, httpRequestToken);
+            }).SetHandlerLifetime(TimeSpan.FromDays(1))
+                .AddPolicyHandler(GetHttpClientRetryPolicy());
+
+            services.AddHttpClient<BlogSiteHttpClient>(x =>
             {
-                x.DefaultRequestHeaders.Add(Constants.ApiRequestHeaderToken, option.HttpRequestToken);
-            });
+                x.DefaultRequestHeaders.Add(Constants.ApiRequestHeaderToken, httpRequestToken);
+            }).SetHandlerLifetime(TimeSpan.FromDays(1))
+                .AddPolicyHandler(GetHttpClientRetryPolicy());
+
             services.AddLogging(config =>
             {
                 config.SetMinimumLevel(LogLevel.Trace);
@@ -71,8 +59,7 @@ namespace Laobian.Admin
                 config.AddRemote(c => { c.LoggerName = "admin"; });
             });
 
-            services.AddSingleton<ILaobianLogQueue, LaobianLogQueue>();
-            services.AddHostedService<LogHostedService>();
+            services.AddHostedService<RemoteLogHostedService>();
             services.AddControllersWithViews(config =>
             {
                 var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
@@ -86,54 +73,10 @@ namespace Laobian.Admin
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime appLifetime)
+        public void Configure(IApplicationBuilder app, IHostApplicationLifetime appLifetime)
         {
-            var config = app.ApplicationServices.GetRequiredService<IOptions<AdminOption>>().Value;
-            var emailNotify = app.ApplicationServices.GetRequiredService<IEmailNotify>();
-            appLifetime.ApplicationStarted.Register(async () =>
-            {
-                if (!env.IsDevelopment())
-                {
-                    var message = new NotifyMessage
-                    {
-                        Content = $"<p>site started at {DateTime.Now.ToChinaDateAndTime()}.</p>",
-                        Site = LaobianSite.Admin,
-                        Subject = "site started",
-                        SendGridApiKey = config.SendGridApiKey,
-                        ToEmailAddress = config.AdminEmail,
-                        ToName = config.AdminEnglishName
-                    };
-
-                    await emailNotify.SendAsync(message);
-                }
-            });
-
-            appLifetime.ApplicationStopped.Register(async () =>
-            {
-                if (!env.IsDevelopment())
-                {
-                    var message = new NotifyMessage
-                    {
-                        Content = $"<p>site stopped at {DateTime.Now.ToChinaDateAndTime()}.</p>",
-                        Site = LaobianSite.Admin,
-                        Subject = "site stopped",
-                        SendGridApiKey = config.SendGridApiKey,
-                        ToEmailAddress = config.AdminEmail,
-                        ToName = config.AdminEnglishName
-                    };
-
-                    await emailNotify.SendAsync(message);
-                }
-            });
-
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/error");
-            }
+            var config = app.ApplicationServices.GetRequiredService<IOptions<LaobianAdminOption>>().Value;
+            Configure(app, appLifetime, config);
 
             app.UseStatusCodePages();
             var fileContentTypeProvider = new FileExtensionContentTypeProvider();

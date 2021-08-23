@@ -13,6 +13,6 @@ namespace Laobian.Blog.Models
 
         public string BaseUrl { get; set; }
 
-        public List<BlogPost> Posts { get; set; }
+        public List<BlogPostRuntime> Posts { get; set; }
     }
 }

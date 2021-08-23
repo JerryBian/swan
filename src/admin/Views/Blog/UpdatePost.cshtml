@@ -1,0 +1,94 @@
+﻿@using Laobian.Share.Extension
+@model BlogPostUpdateViewModel
+
+<h3>编辑文章</h3>
+<form class="needs-validation" action="/blog/post/update" method="post" novalidate>
+    <div class="mb-3">
+        <label for="title" class="form-label">标题</label>
+        <input type="text" class="form-control" id="title" name="title" placeholder="文章标题" value="@Model.Post.Title" autocomplete="off" autofocus required>
+        <div class="invalid-feedback">
+            必填
+        </div>
+    </div>
+    <div class="mb-3">
+        <label for="link" class="form-label">链接</label>
+        <input type="text" class="form-control" id="link" name="link" placeholder="文章链接" value="@Model.Post.Link" autocomplete="off" required readonly>
+        <div class="invalid-feedback">
+            必填
+        </div>
+    </div>
+    <div class="mb-3">
+        <label for="excerpt" class="form-label">摘要</label>
+        <textarea class="form-control" id="excerpt" name="excerpt" rows="3" placeholder="文章摘要" autocomplete="off">@Model.Post.Excerpt</textarea>
+    </div>
+    <div class="mb-3">
+        <label for="mdContent" class="form-label">正文</label>
+        <textarea class="form-control" id="mdContent" name="mdContent" rows="3" placeholder="文章正文" autocomplete="off" required>@Model.Post.MdContent</textarea>
+        <div class="invalid-feedback">
+            必填
+        </div>
+    </div>
+    <div class="form-check form-switch mb-3">
+        @if (Model.Post.IsPublished)
+        {
+            <input class="form-check-input" type="checkbox" id="isPublished" name="isPublished" checked="checked">
+        }
+        else
+        {
+            <input class="form-check-input" type="checkbox" id="isPublished" name="isPublished">
+        }
+        <label class="form-check-label" for="isPublished">公开</label>
+    </div>
+    <div class="form-check form-switch mb-3">
+        @if (Model.Post.IsTopping)
+        {
+            <input class="form-check-input" type="checkbox" id="isTopping" name="isTopping" checked="checked">
+        }
+        else
+        {
+            <input class="form-check-input" type="checkbox" id="isTopping" name="isTopping">
+        }
+        <label class="form-check-label" for="isTopping">置顶</label>
+    </div>
+    <div class="form-check form-switch mb-3">
+        @if (Model.Post.ContainsMath)
+        {
+            <input class="form-check-input" type="checkbox" id="containsMath" name="containsMath" checked="checked">
+        }
+        else
+        {
+            <input class="form-check-input" type="checkbox" id="containsMath" name="containsMath">
+        }
+        <label class="form-check-label" for="containsMath">包含数学公式</label>
+    </div>
+    <div class="mb-3">
+        <label for="publishTime" class="form-label">发表时间</label>
+        <input type="datetime-local" class="form-control" id="publishTime" name="publishTime" value="@Model.Post.PublishTime.ToDateAndTimeInHourAndMinute()" required>
+        <div class="invalid-feedback">
+            必填
+        </div>
+    </div>
+    @if (Model.Tags.Any())
+    {
+        <div class="mb-3">
+            <label class="form-label">Tags</label>
+            <div id="tagsDiv">
+                @foreach (var tag in Model.Tags)
+                {
+                    var id = Guid.NewGuid().ToString("N");
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="@id" value="@tag.Link" name="tag" checked="@Model.Post.Tag.Contains(tag.Link)">
+                        <label class="form-check-label" for="@id">@tag.DisplayName</label>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+    <button type="submit" class="btn btn-primary">提交</button>
+</form>
+
+@section Scripts{
+    <script>
+        const mdContentEditor = prepareEditor(document.querySelector("#mdContent"), `blog_post_update_md_content_${@Model.Post.Link}`);
+    </script>
+}

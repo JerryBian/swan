@@ -1,163 +1,43 @@
-﻿@using Laobian.Share.Extension
-@using Microsoft.Extensions.Options
-@model PostsViewModel
-@inject IOptions<AdminOption> _config
+﻿@model List<BlogPostRuntime>
+@inject IOptions<LaobianAdminOption> _config
 @{
     ViewData["Title"] = "Blog Posts";
 }
-<div>
+<div class="table-responsive">
     <table class="table caption-top">
-        <caption>Total blog posts: @Model.Posts.Count()</caption>
+        <caption>文章总数: @Model.Count <a href="/blog/post/add" class="btn btn-primary float-end"><i class="fas fa-plus"></i> 添加新的文章</a></caption>
         <thead class="table-light">
         <tr>
-            <th scope="col">Date</th>
-            <th scope="col">Title</th>
-            <th scope="col">Published</th>
-            <th scope="col">Access</th>
-            <th scope="col">Metadata</th>
+            <th scope="col"></th>
+            <th scope="col">修改日期</th>
+            <th scope="col">文章标题</th>
+            <th scope="col">是否公开</th>
+            <th scope="col">总访问量</th>
         </tr>
         </thead>
         <tbody>
-        @foreach (var post in Model.Posts)
+        @foreach (var post in Model)
         {
-            <tr>
-                <th>@post.Metadata.PublishTime.ToChinaDate()</th>
-                <th>
-                    <a href="@post.GetFullPath(_config.Value.BlogRemoteEndpoint)">@post.Metadata.Title</a>
-                </th>
-                <th>@post.IsPublished</th>
-                <th>
-                    @post.GetAccessCount().ToUSThousand()
-                </th>
-                <th>
-                    <a href="javascript:;" onclick="launchMetadataModal('@post.Link')">Update Metadata</a>
-                </th>
-            </tr>
+            var trClass = "table-primary";
+                if (!post.Raw.IsPublished)
+                {
+                    trClass = "table-warning";
+                }
+
+                <tr class="@trClass">
+                    <th><a href="/blog/post/update/@post.Raw.Link"><i class="fas fa-edit"></i></a></th>
+                    <th><i class="fas fa-calendar-alt"></i> @post.Raw.LastUpdateTime.ToChinaDate()</th>
+                    <th>
+                        <i class="fas fa-external-link-alt"></i>
+                        <a href="@post.Raw.GetFullPath(_config.Value.BlogRemoteEndpoint)">@post.Raw.Title</a>
+                    </th>
+                    <th>@post.Raw.IsPostPublished()</th>
+                    <th>
+                        @post.GetAccessCount().ToUSThousand()
+                    </th>
+                </tr>
+            
         }
         </tbody>
     </table>
 </div>
-
-<div class="modal fade" tabindex="-1" id="postMetadataModal" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Metadata: <span id="postLink"></span></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="mb-3">
-                    <label for="modalBodyTitle" class="form-label">Title</label>
-                    <input type="text" class="form-control" id="modalBodyTitle" placeholder="post title">
-                </div>
-                <div class="mb-3">
-                    <label for="modalBodyExcerpt" class="form-label">Excerpt</label>
-                    <textarea class="form-control" id="modalBodyExcerpt" rows="3"></textarea>
-                </div>
-                <div class="form-check form-switch mb-3">
-                    <input class="form-check-input" type="checkbox" id="modalBodyIsPublished">
-                    <label class="form-check-label" for="modalBodyIsPublished">Is Published</label>
-                </div>
-                <div class="form-check form-switch mb-3">
-                    <input class="form-check-input" type="checkbox" id="modalBodyIsTopping">
-                    <label class="form-check-label" for="modalBodyIsTopping">Is Topping</label>
-                </div>
-                <div class="form-check form-switch mb-3">
-                    <input class="form-check-input" type="checkbox" id="modalBodyContainsMath">
-                    <label class="form-check-label" for="modalBodyContainsMath">Contains Math</label>
-                </div>
-                <div class="mb-3">
-                    <label for="modalBodyPublishTime" class="form-label">Publish Time</label>
-                    <input type="datetime-local" class="form-control" id="modalBodyPublishTime">
-                </div>
-                @if (Model.Tags.Any())
-                {
-                    <div class="mb-3">
-                        <label class="form-label">Tags</label>
-                        <div id="tagsDiv">
-                            @foreach (var tag in Model.Tags)
-                            {
-                                var id = Guid.NewGuid().ToString("N");
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" id="@id" value="@tag.Link">
-                                    <label class="form-check-label" for="@id">@tag.DisplayName</label>
-                                </div>
-                            }
-                        </div>
-                    </div>
-                }
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onclick="saveMetadata()">Save changes</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-@section Scripts{
-    <script>
-        let modalDiv = document.querySelector('#postMetadataModal');
-        let modal = new bootstrap.Modal(modalDiv, {});
-
-        function launchMetadataModal(link) {
-            fetch(`/blog/post/${link}`)
-                .then(response => response.json())
-                .then(post => {
-                    document.querySelector('#postLink').innerHTML = post.metadata.link;
-                    document.querySelector('#modalBodyTitle').value = post.metadata.title;
-                    document.querySelector('#modalBodyExcerpt').value = post.metadata.excerpt;
-                    document.querySelector('#modalBodyIsPublished').checked = post.metadata.isPublished;
-                    document.querySelector('#modalBodyIsTopping').checked = post.metadata.isTopping;
-                    document.querySelector('#modalBodyContainsMath').checked = post.metadata.containsMath;
-                    document.querySelector('#modalBodyPublishTime').value = post.metadata.publishTime;
-
-                    const checkedBoxes = document.querySelectorAll('#tagsDiv input[type=checkbox]');
-                    for (let i = 0; i < checkedBoxes.length; i++) {
-                        for (const val of post.metadata.tags) {
-                            if (val === checkedBoxes[i].value) {
-                                checkedBoxes[i].checked = true;
-                            }
-                        }
-                    }
-                    modal.show();
-                })
-                .catch(err => { console.log(err) });
-        }
-
-        function saveMetadata() {
-            const tags = [];
-            const checkedBoxes = document.querySelectorAll('#tagsDiv input[type=checkbox]:checked');
-            for (let i = 0; i < checkedBoxes.length; i++) {
-                tags.push(checkedBoxes[i].value);
-            }
-
-            const metadata = {
-                link: document.querySelector('#postLink').innerHTML,
-                title: document.querySelector('#modalBodyTitle').value,
-                excerpt: document.querySelector('#modalBodyExcerpt').value,
-                isPublished: document.querySelector('#modalBodyIsPublished').checked,
-                isTopping: document.querySelector('#modalBodyIsTopping').checked,
-                containsMath: document.querySelector('#modalBodyContainsMath').checked,
-                publishTime: document.querySelector('#modalBodyPublishTime').value,
-                tags: tags
-            };
-
-            fetch('/blog/post/metadata',
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(metadata)
-                    })
-                .then(response => {
-                    if (response.ok) {
-                        modal.hide();
-                        window.location.reload(true);
-                    }
-                })
-                .catch(err => { console.log(err) });
-        }
-    </script>
-}

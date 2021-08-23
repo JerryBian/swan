@@ -9,10 +9,10 @@ namespace Laobian.Api.Command
 {
     public class ProcessCommandClient : ICommandClient
     {
-        private readonly ApiOption _commonSetting;
+        private readonly LaobianApiOption _commonSetting;
         private readonly ILogger<ProcessCommandClient> _logger;
 
-        public ProcessCommandClient(IOptions<ApiOption> options, ILogger<ProcessCommandClient> logger)
+        public ProcessCommandClient(IOptions<LaobianApiOption> options, ILogger<ProcessCommandClient> logger)
         {
             _logger = logger;
             _commonSetting = options.Value;

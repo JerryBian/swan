@@ -24,18 +24,18 @@ namespace Laobian.Read.HttpClients
             _httpClient.BaseAddress = new Uri(config.Value.ApiLocalEndpoint);
         }
 
-        public async Task<List<ReadItem>> GetAllReadItemsAsync()
+        public async Task<List<BookItem>> GetAllReadItemsAsync()
         {
             var response = await _httpClient.GetAsync("/read");
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 _logger.LogError(
                     $"{nameof(ApiSiteHttpClient)}.{nameof(GetAllReadItemsAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
-                return new List<ReadItem>();
+                return new List<BookItem>();
             }
 
             await using var stream = await response.Content.ReadAsStreamAsync();
-            return await JsonUtil.DeserializeAsync<List<ReadItem>>(stream);
+            return await JsonUtil.DeserializeAsync<List<BookItem>>(stream);
         }
     }
 }

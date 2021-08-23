@@ -39,23 +39,23 @@ namespace Laobian.Blog.HttpService
             return true;
         }
 
-        public async Task<List<BlogPost>> GetPostsAsync()
+        public async Task<List<BlogPostRuntime>> GetPostsAsync()
         {
-            var response = await _httpClient.GetAsync($"/blog/posts");
+            var response = await _httpClient.GetAsync("/blog/post");
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 _logger.LogError(
                     $"{nameof(ApiHttpService)}.{nameof(GetPostsAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
-                return new List<BlogPost>();
+                return new List<BlogPostRuntime>();
             }
 
             await using var stream = await response.Content.ReadAsStreamAsync();
-            return await JsonUtil.DeserializeAsync<List<BlogPost>>(stream);
+            return await JsonUtil.DeserializeAsync<List<BlogPostRuntime>>(stream);
         }
 
         public async Task<List<BlogTag>> GetTagsAsync()
         {
-            var response = await _httpClient.GetAsync("/blog/tags");
+            var response = await _httpClient.GetAsync("/blog/tag");
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 _logger.LogError(
@@ -67,7 +67,7 @@ namespace Laobian.Blog.HttpService
             return await JsonUtil.DeserializeAsync<List<BlogTag>>(stream);
         }
 
-        public async Task<BlogPost> GetPostAsync(string link)
+        public async Task<BlogPostRuntime> GetPostAsync(string link)
         {
             var response = await _httpClient.GetAsync($"/blog/post/{link}");
             if (response.StatusCode != HttpStatusCode.OK)
@@ -78,7 +78,7 @@ namespace Laobian.Blog.HttpService
             }
 
             await using var stream = await response.Content.ReadAsStreamAsync();
-            return await JsonUtil.DeserializeAsync<BlogPost>(stream);
+            return await JsonUtil.DeserializeAsync<BlogPostRuntime>(stream);
         }
 
         public async Task AddPostAccess(string link)

@@ -13,7 +13,7 @@
             <text>@ViewData["Title"] &minus; Jerry Bian</text>
         }
     </title>
-    <link rel="stylesheet" href="~/style.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/style.min.css" asp-append-version="true"/>
 
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -33,32 +33,32 @@
 
         <div class="collapse navbar-collapse" id="navLinks">
             <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="/log">LOG</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/read">READ</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="javascript:;" onclick="persistent()">PERSISTENT</a>
-                </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">BLOG</a>
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-feather-alt"></i> 博客</a>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="/blog/post">ALL POSTS</a>
-                        <a class="dropdown-item" href="/blog/tag">ALL TAGS</a>
+                        <a class="dropdown-item" href="/blog/post"><i class="fas fa-archive"></i> 所有文章</a>
+                        <a class="dropdown-item" href="/blog/tag"><i class="fas fa-tags"></i> 所有标签</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="javascript:;" onclick="forceReloadBlogData()">FORCE RELOAD</a>
+                        <a class="dropdown-item" href="javascript:;" onclick="forceReloadBlogData()"><i class="fas fa-broom"></i> 清除缓存</a>
                     </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/log"><i class="fas fa-clipboard-list"></i> 日志</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/read"><i class="fas fa-book-open"></i> 阅读</a>
                 </li>
             </ul>
             <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link btn btn-outline-success" href="javascript:;" onclick="persistent()"><i class="fas fa-save"></i> 持久化数据库</a>
+                </li>
                 @if (Context.User.Identity?.IsAuthenticated == true)
                 {
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">@Context.User.Identity.Name</a>
+                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user-circle"></i> @Context.User.Identity.Name</a>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" href="/logout">LOGOUT</a>
+                            <a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt"></i> 登出</a>
                         </div>
                     </li>
                 }
@@ -75,36 +75,110 @@
 <script src="/script.min.js"></script>
 <script>
     function forceReloadBlogData() {
-        fetch('/blog/reload',
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'text/plain'
-                    },
-                    body: 'Request by Admin - Force Reload Blog Data button'
-                })
-            .then(response => {
-                if (response.ok) {
-                    window.location.reload(true);
-                }
-            });
+        Swal.fire({
+            title: "确定要清除博客的缓存吗？",
+            showCancelButton: true,
+            confirmButtonText: "确定"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('/blog/reload',
+                        {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'text/plain'
+                            },
+                            body: 'Request by Admin - Force Reload Blog Data button'
+                        })
+                    .then(response => {
+                        if (response.ok) {
+                            Swal.fire("清除成功", "", "success");
+                        }
+                    });
+            }
+        });
     }
 
     function persistent() {
-        fetch('/blog/persistent',
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'text/plain'
+        Swal.fire({
+            title: "确定要持久化数据库吗？",
+            showCancelButton: true,
+            confirmButtonText: "确定"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('/blog/persistent',
+                        {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'text/plain'
+                            },
+                            body: ':meat_on_bone: forced by @Context.User.Identity?.Name'
+                        })
+                    .then(response => {
+                        if (response.ok) {
+                            Swal.fire("持久化数据库成功", "", "success");
+                        }
+                    });
+            }
+        });
+    }
+
+    function validateForms() {
+        var forms = document.querySelectorAll('.needs-validation');
+
+        // Loop over them and prevent submission
+        Array.prototype.slice.call(forms)
+            .forEach(function(form) {
+                form.addEventListener('submit',
+                    function(event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+
+                        form.classList.add('was-validated');
                     },
-                    body: ':meat_on_bone: forced by @Context.User.Identity?.Name'
-                })
-            .then(response => {
-                if (response.ok) {
-                    window.location.reload(true);
-                }
+                    false);
             });
     }
+
+    function prepareEditor(textArea, u) {
+        const editor = new EasyMDE({
+            element: textArea,
+            autosave: {
+                enabled: true,
+                uniqueId: u,
+                text: "自动保存："
+            },
+            lineNumbers: true,
+            lineWrapping: true,
+            promptURLs: true,
+            uploadImage: true,
+            imageMaxSize: 1024 * 1024 * 20,
+            imageAccept: ["image/png", "image/jpeg"],
+            imageUploadEndpoint: "/file/upload",
+            imagePathAbsolute: true,
+            imageTexts: {
+                sbInit: "拖拽或者从剪切板复制图片",
+                sbOnDragEnter: "拖拽图片",
+                sbOnDrop: "正在上传图片 #images_names#",
+                sbProgress: "正在上传 #file_name#: #progress#",
+                sbOnUploaded: "成功上传 #image_name#"
+            },
+            errorCallback: function(err) {
+
+            },
+            renderingConfig: {
+                codeSyntaxHighlighting: true,
+                hljs: window.hljs
+            },
+            spellChecker: false
+        });
+        return editor;
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        validateForms();
+    });
 </script>
 @await RenderSectionAsync("Scripts", false)
 </body>

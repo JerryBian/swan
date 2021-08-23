@@ -16,7 +16,7 @@ namespace Laobian.Blog.Data
         private readonly ApiHttpService _apiHttpService;
         private readonly ILogger<SystemData> _logger;
         private readonly ManualResetEventSlim _manualResetEventSlim;
-        private readonly List<BlogPost> _posts;
+        private readonly List<BlogPostRuntime> _posts;
         private readonly List<BlogTag> _tags;
 
         public SystemData(ILogger<SystemData> logger, ApiHttpService apiHttpService)
@@ -25,7 +25,7 @@ namespace Laobian.Blog.Data
             BootTime = DateTime.Now;
             _apiHttpService = apiHttpService;
             _tags = new List<BlogTag>();
-            _posts = new List<BlogPost>();
+            _posts = new List<BlogPostRuntime>();
             RuntimeVersion = RuntimeInformation.FrameworkDescription;
             _manualResetEventSlim = new ManualResetEventSlim(true);
         }
@@ -48,7 +48,7 @@ namespace Laobian.Blog.Data
 
         public string RuntimeVersion { get; }
 
-        public List<BlogPost> Posts
+        public List<BlogPostRuntime> Posts
         {
             get
             {
@@ -78,7 +78,7 @@ namespace Laobian.Blog.Data
                 var tags = await _apiHttpService.GetTagsAsync();
 
                 _posts.Clear();
-                _posts.AddRange(posts.OrderByDescending(x => x.Metadata.PublishTime));
+                _posts.AddRange(posts.OrderByDescending(x => x.Raw.PublishTime));
 
                 _tags.Clear();
                 _tags.AddRange(tags);

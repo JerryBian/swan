@@ -25,10 +25,10 @@
                 {
                     <div class="mt-2 mb-3">
                         <h4>
-                            <a href="@post.GetFullPath(_option.Value.BlogRemoteEndpoint)" class="text-decoration-none">
-                                <span>@post.Metadata.Title</span>
+                            <a href="@post.Raw.GetFullPath(_option.Value.BlogRemoteEndpoint)" class="text-decoration-none">
+                                <span>@post.Raw.Title</span>
                             </a>
-                            <span class="text-muted fs-sm fst-italic">(@post.Metadata.PublishTime.ToChinaMonthAndDay())</span>
+                            <span class="text-muted fs-sm fst-italic">(@post.Raw.PublishTime.ToChinaMonthAndDay())</span>
                         </h4>
                     </div>
                 }

@@ -7,11 +7,11 @@ namespace Laobian.Blog.Models
 {
     public class PostViewModel
     {
-        public BlogPost Current { get; set; }
+        public BlogPostRuntime Current { get; set; }
 
-        public BlogPost Previous { get; set; }
+        public BlogPostRuntime Previous { get; set; }
 
-        public BlogPost Next { get; set; }
+        public BlogPostRuntime Next { get; set; }
 
         public string MetadataHtml { get; private set; }
 
@@ -21,7 +21,7 @@ namespace Laobian.Blog.Models
         {
             var metadata = new List<string>
             {
-                $"<time class=\"muted-bolder\" datetime=\"{Current.Metadata.PublishTime.ToDateAndTime()}\" title=\"{Current.Metadata.PublishTime.ToChinaDateAndTime()}\">{Current.Metadata.PublishTime.ToChinaDate()}</time>",
+                $"<time class=\"muted-bolder\" datetime=\"{Current.Raw.PublishTime.ToDateAndTime()}\" title=\"{Current.Raw.PublishTime.ToChinaDateAndTime()}\">{Current.Raw.PublishTime.ToChinaDate()}</time>",
                 $"<span class=\"muted-bolder\" title=\"{Current.GetAccessCount()}\">{Current.GetAccessCount().ToUSThousand()}</span> <span>次阅读</span>"
             };
 

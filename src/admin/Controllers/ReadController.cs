@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Laobian.Admin.HttpService;
+using Laobian.Admin.HttpClients;
 using Laobian.Share.Read;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,43 +11,43 @@ namespace Laobian.Admin.Controllers
     [Route("read")]
     public class ReadController : Controller
     {
-        private readonly ApiHttpService _apiHttpService;
+        private readonly ApiSiteHttpClient _apiSiteHttpClient;
 
-        public ReadController(ApiHttpService apiHttpService)
+        public ReadController(ApiSiteHttpClient apiSiteHttpClient)
         {
-            _apiHttpService = apiHttpService;
+            _apiSiteHttpClient = apiSiteHttpClient;
         }
 
         public async Task<IActionResult> Index()
         {
-            var model = await _apiHttpService.GetReadItemsAsync();
+            var model = await _apiSiteHttpClient.GetReadItemsAsync();
             return View(model);
         }
 
         [HttpGet]
         [Route("{id}")]
-        public async Task<ReadItem> Get([FromRoute]string id)
+        public async Task<BookItem> Get([FromRoute]string id)
         {
-            return await _apiHttpService.GetReadItemAsync(id);
+            return await _apiSiteHttpClient.GetReadItemAsync(id);
         }
 
         [HttpPut]
-        public async Task Add([FromBody]ReadItem readItem)
+        public async Task Add([FromBody]BookItem bookItem)
         {
-            await _apiHttpService.AddReadItemAsync(readItem);
+            await _apiSiteHttpClient.AddReadItemAsync(bookItem);
         }
 
         [HttpPost]
-        public async Task Update([FromBody]ReadItem readItem)
+        public async Task Update([FromBody]BookItem bookItem)
         {
-            await _apiHttpService.UpdateReadItemAsync(readItem);
+            await _apiSiteHttpClient.UpdateReadItemAsync(bookItem);
         }
 
         [HttpDelete]
         [Route("{id}")]
         public async Task Delete([FromRoute]string id)
         {
-            await _apiHttpService.DeleteReadItemAsync(id);
+            await _apiSiteHttpClient.DeleteReadItemAsync(id);
         }
     }
 }

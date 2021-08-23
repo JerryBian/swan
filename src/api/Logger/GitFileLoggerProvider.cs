@@ -7,14 +7,12 @@ namespace Laobian.Api.Logger
     public class GitFileLoggerProvider : ILoggerProvider, ISupportExternalScope
     {
         private readonly GitFileLogger _logger;
-        private readonly GitFileLoggerProcessor _processor;
         private IExternalScopeProvider _externalScopeProvider;
 
         public GitFileLoggerProvider(IOptions<GitFileLoggerOptions> options,
-            ILaobianLogQueue laobianLogQueue, SystemLocker systemLocker)
+            ILaobianLogQueue laobianLogQueue)
         {
-            _processor = new GitFileLoggerProcessor(options.Value, laobianLogQueue, systemLocker);
-            _logger = new GitFileLogger(_processor)
+            _logger = new GitFileLogger(laobianLogQueue)
             {
                 Options = options.Value,
                 ScopeProvider = _externalScopeProvider
@@ -29,7 +27,6 @@ namespace Laobian.Api.Logger
 
         public void Dispose()
         {
-            _processor?.Dispose();
         }
 
         public void SetScopeProvider(IExternalScopeProvider scopeProvider)

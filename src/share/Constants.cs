@@ -2,19 +2,26 @@
 {
     public class Constants
     {
-        public const string BlogPostFileBaseFolderName = "file";
+        public const string AssetDbFolder = "db";
 
-        public const string BlogPostPostBaseFolderName = "post";
+        public const string AssetDbBlogFolder = "blog";
 
-        public const string BlogAccessBaseFolderName = "access";
+        public const string AssetDbBlogAccessFolder = "access";
 
-        public const string ReadBaseFolderName = "read";
+        public const string AssetDbLogFolder = "log";
 
-        public const string DbAssetFolder = "db";
+        public const string AssetDbReadFolder = "read";
 
-        public const string BlogPostAssetFolder = "blog_post";
+        public const string AssetDbFileFolder = "file";
+
+        public const string AssetDbBlogPostFolder = "post";
 
         public const string ApiRequestHeaderToken = "laobian_api_token";
+
+        public const string EnvDataProtectionKeyPath = "DATA_PROTECTION_KEY_PATH";
+
+        public const string EnvHttpRequestToken = "HTTP_REQUEST_TOKEN";
+
 
         #region Personalization
 
