@@ -39,7 +39,7 @@ namespace Laobian.Share.Extension
 
         public static string ToTime(this DateTime time)
         {
-            return time.ToString("hh:mm:ss");
+            return time.ToString("HH:mm:ss");
         }
 
         public static string ToChinaMonthAndDay(this DateTime time)

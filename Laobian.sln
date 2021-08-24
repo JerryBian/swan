@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31129.286
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{EA8C544C-BE05-477F-990F-E5C011BAD590}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laobian.Admin", "src\admin\Laobian.Admin.csproj", "{77609B9D-3BF4-49B8-A16B-8D29A1738AE1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laobian.Blog", "src\blog\Laobian.Blog.csproj", "{BA4BAC78-D109-4BF0-B0E9-E385030120A4}"
@@ -38,12 +36,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{77609B9D-3BF4-49B8-A16B-8D29A1738AE1} = {EA8C544C-BE05-477F-990F-E5C011BAD590}
-		{BA4BAC78-D109-4BF0-B0E9-E385030120A4} = {EA8C544C-BE05-477F-990F-E5C011BAD590}
-		{26162D17-4779-4EAB-92F0-4B8B577F3BC0} = {EA8C544C-BE05-477F-990F-E5C011BAD590}
-		{7EEFB79A-E61C-47E6-9675-EDE28007B8B1} = {EA8C544C-BE05-477F-990F-E5C011BAD590}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5FB44028-B8CE-4E75-AC6B-ACED23D2F62E}
