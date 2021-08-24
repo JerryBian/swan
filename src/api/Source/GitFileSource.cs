@@ -33,8 +33,8 @@ namespace Laobian.Api.Source
                 return;
             }
 
-            await base.PrepareAsync(cancellationToken);
             await PullDbRepoAsync(cancellationToken);
+            await base.PrepareAsync(cancellationToken);
             _prepared = true;
         }
 

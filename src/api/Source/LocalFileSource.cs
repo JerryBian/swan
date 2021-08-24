@@ -13,10 +13,10 @@ namespace Laobian.Api.Source
     public class LocalFileSource : IFileSource
     {
         private readonly LaobianApiOption _apiOption;
-        private readonly string _assetDbBlogFolder;
-        private readonly string _assetDbFileFolder;
-        private readonly string _assetDbLogFolder;
-        private readonly string _assetDbReadFolder;
+        private string _assetDbBlogFolder;
+        private string _assetDbFileFolder;
+        private string _assetDbLogFolder;
+        private string _assetDbReadFolder;
         private readonly ILogger<LocalFileSource> _logger;
         protected readonly ManualResetEventSlim FileLocker;
 
@@ -25,21 +25,7 @@ namespace Laobian.Api.Source
             _logger = logger;
             _apiOption = apiOption.Value;
 
-            _assetDbFileFolder = Path.Combine(apiOption.Value.AssetLocation, Constants.AssetDbFolder,
-                Constants.AssetDbFileFolder);
-            Directory.CreateDirectory(_assetDbFileFolder);
-
-            _assetDbBlogFolder = Path.Combine(apiOption.Value.AssetLocation, Constants.AssetDbFolder,
-                Constants.AssetDbBlogFolder);
-            Directory.CreateDirectory(_assetDbBlogFolder);
-
-            _assetDbReadFolder = Path.Combine(apiOption.Value.AssetLocation, Constants.AssetDbFolder,
-                Constants.AssetDbReadFolder);
-            Directory.CreateDirectory(_assetDbReadFolder);
-
-            _assetDbLogFolder = Path.Combine(apiOption.Value.AssetLocation, Constants.AssetDbFolder,
-                Constants.AssetDbLogFolder);
-            Directory.CreateDirectory(_assetDbLogFolder);
+            
             FileLocker = new ManualResetEventSlim(true);
         }
 
@@ -224,9 +210,25 @@ namespace Laobian.Api.Source
             return Task.CompletedTask;
         }
 
-        public virtual Task PrepareAsync(CancellationToken cancellationToken = default)
+        public virtual async Task PrepareAsync(CancellationToken cancellationToken = default)
         {
-            return Task.CompletedTask;
+            _assetDbFileFolder = Path.Combine(_apiOption.AssetLocation, Constants.AssetDbFolder,
+                Constants.AssetDbFileFolder);
+            Directory.CreateDirectory(_assetDbFileFolder);
+
+            _assetDbBlogFolder = Path.Combine(_apiOption.AssetLocation, Constants.AssetDbFolder,
+                Constants.AssetDbBlogFolder);
+            Directory.CreateDirectory(_assetDbBlogFolder);
+
+            _assetDbReadFolder = Path.Combine(_apiOption.AssetLocation, Constants.AssetDbFolder,
+                Constants.AssetDbReadFolder);
+            Directory.CreateDirectory(_assetDbReadFolder);
+
+            _assetDbLogFolder = Path.Combine(_apiOption.AssetLocation, Constants.AssetDbFolder,
+                Constants.AssetDbLogFolder);
+            Directory.CreateDirectory(_assetDbLogFolder);
+
+            await Task.CompletedTask;
         }
     }
 }
