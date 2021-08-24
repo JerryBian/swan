@@ -28,16 +28,33 @@ namespace Laobian.Admin.Controllers
             return await _apiSiteHttpClient.GetReadItemAsync(id);
         }
 
-        [HttpPut]
-        public async Task Add([FromBody] BookItem bookItem)
+        [HttpGet("add")]
+        public IActionResult Add()
         {
-            await _apiSiteHttpClient.AddReadItemAsync(bookItem);
+            return View();
         }
 
-        [HttpPost]
-        public async Task Update([FromBody] BookItem bookItem)
+        [HttpPost("add")]
+        public async Task<IActionResult> Add([FromForm] BookItem bookItem)
         {
+            bookItem.IsCompleted = Request.Form["isCompleted"] == "on";
+            await _apiSiteHttpClient.AddReadItemAsync(bookItem);
+            return Redirect("/read");
+        }
+
+        [HttpGet("update/{id}")]
+        public async Task<IActionResult> Update([FromRoute]string id)
+        {
+            var bookItem = await _apiSiteHttpClient.GetReadItemAsync(id);
+            return View(bookItem);
+        }
+
+        [HttpPost("update")]
+        public async Task<IActionResult> Update([FromForm] BookItem bookItem)
+        {
+            bookItem.IsCompleted = Request.Form["isCompleted"] == "on";
             await _apiSiteHttpClient.UpdateReadItemAsync(bookItem);
+            return Redirect("/read");
         }
 
         [HttpDelete]

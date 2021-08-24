@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Blog.HttpClients;
 using Laobian.Share.Blog;
+using Laobian.Share.Read;
 using Microsoft.Extensions.Logging;
 
 namespace Laobian.Blog.Service
@@ -15,6 +16,7 @@ namespace Laobian.Blog.Service
     {
         private readonly List<BlogPostRuntime> _allPosts;
         private readonly List<BlogTag> _allTags;
+        private readonly List<BookItem> _allBookItems;
         private readonly ApiSiteHttpClient _httpClient;
         private readonly ILogger<BlogService> _logger;
         private readonly ManualResetEventSlim _reloadLock;
@@ -26,6 +28,7 @@ namespace Laobian.Blog.Service
             BootTime = DateTime.Now;
             _httpClient = httpClient;
             _allTags = new List<BlogTag>();
+            _allBookItems = new List<BookItem>();
             _allPosts = new List<BlogPostRuntime>();
             RuntimeVersion = RuntimeInformation.FrameworkDescription;
             _reloadLock = new ManualResetEventSlim(true);
@@ -61,6 +64,12 @@ namespace Laobian.Blog.Service
             return _allTags;
         }
 
+        public List<BookItem> GetBookItems()
+        {
+            _reloadLock.Wait();
+            return _allBookItems;
+        }
+
         public async Task ReloadAsync()
         {
             _reloadLock.Reset();
@@ -68,12 +77,16 @@ namespace Laobian.Blog.Service
             {
                 var posts = await _httpClient.GetPostsAsync();
                 var tags = await _httpClient.GetTagsAsync();
+                var bookItems = await _httpClient.GetBookItemsAsync();
 
                 _allPosts.Clear();
                 _allPosts.AddRange(posts.OrderByDescending(x => x.Raw.PublishTime));
 
                 _allTags.Clear();
                 _allTags.AddRange(tags.OrderByDescending(x => x.LastUpdatedAt));
+
+                _allBookItems.Clear();
+                _allBookItems.AddRange(bookItems.OrderByDescending(x => x.StartTime));
                 _lastReloadTime = DateTime.Now;
             }
             catch (Exception ex)

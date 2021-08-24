@@ -1,0 +1,82 @@
+﻿@model List<BookItemViewModel>
+
+<div data-bs-spy="scroll" data-bs-target="#aside_read_items" data-bs-offset="0">
+    @foreach (var item in Model)
+    {
+        <h3 class="mb-2" id="@item.Id">@item.Title</h3>
+        <div class="list-group mb-4">
+            @foreach (var book in item.Items)
+            {
+                <div class="list-group-item">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h4 class="mb-1">
+                            @book.BookName
+                            @if (book.Grade == 1)
+                            {
+                                <i class="text-success fas fa-thumbs-up"></i>
+                            }
+                            else if (book.Grade == -1)
+                            {
+                                <i class="text-danger fas fa-thumbs-down"></i>
+                            }
+                        </h4>
+                        @if (book.IsCompleted)
+                        {
+                            <small title="结束于 @book.EndTime.ToChinaDate()">@book.StartTime.ToChinaDate()</small>
+                        }
+                        else
+                        {
+                            <small class="text-success">正在阅读</small>
+                        }
+                    </div>
+                    @if (!string.IsNullOrEmpty(book.BookName2))
+                    {
+                        <small>@book.BookName2</small>
+                    }
+                    @if (!string.IsNullOrEmpty(book.BlogPostLink))
+                    {
+                        <p><a href="@book.BlogPostLink">@book.BlogPostTitle</a></p>
+                    }
+                    <p class="mb-1">@book.ShortComment</p>
+                    @{
+                        var info = new List<string>();
+                        if (!string.IsNullOrEmpty(book.AuthorName))
+                        {
+                            var author = book.AuthorName;
+                            if (!string.IsNullOrEmpty(book.AuthorCountry))
+                            {
+                                author = $"{author}（{book.AuthorCountry}）";
+
+                            }
+
+                            info.Add(author);
+                        }
+
+                        if (!string.IsNullOrEmpty(book.PublisherName))
+                        {
+                            var publisher = book.PublisherName;
+                            info.Add(publisher);
+                        }
+
+                        if (book.PublishTime != default)
+                        {
+                            info.Add(book.PublishTime.ToDate());
+                        }
+
+                        <small>@string.Join(" / ", info)</small>
+                    }
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@section Aside{
+    <div class="list-group" id="aside_read_items">
+        @foreach (var item in Model)
+        {
+            <a class="list-group-item list-group-item-action" href="#@item.Id">@item.Title (@item.Items.Count)</a>
+        }
+
+    </div>
+}

@@ -232,16 +232,16 @@ namespace Laobian.Api.Repository
             await _fileSource.WriteBlogTagsAsync(JsonUtil.Serialize(tags), cancellationToken);
         }
 
-        public async Task<IDictionary<int, List<BookItem>>> GetBookItemsAsync(
+        public async Task<List<BookItem>> GetBookItemsAsync(
             CancellationToken cancellationToken = default)
         {
-            var result = new Dictionary<int, List<BookItem>>();
+            var result = new List<BookItem>();
             var bookItems = await _fileSource.ReadBookItemsAsync(cancellationToken);
             if (bookItems != null)
             {
                 foreach (var bookItem in bookItems)
                 {
-                    result.Add(Convert.ToInt32(bookItem.Key), JsonUtil.Deserialize<List<BookItem>>(bookItem.Value));
+                    result.AddRange(JsonUtil.Deserialize<List<BookItem>>(bookItem.Value));
                 }
             }
 
@@ -267,7 +267,7 @@ namespace Laobian.Api.Repository
                 existingBookItems = new List<BookItem>();
             }
 
-            var allBookItems = (await GetBookItemsAsync(cancellationToken)).SelectMany(x => x.Value).ToList();
+            var allBookItems = await GetBookItemsAsync(cancellationToken);
             if (allBookItems.FirstOrDefault(x => x.Id == bookItem.Id) != null)
             {
                 throw new Exception($"BookItem with Id \"{bookItem.Id}\" already exists.");
@@ -310,7 +310,7 @@ namespace Laobian.Api.Repository
         public async Task DeleteBookItemAsync(string bookItemId,
             CancellationToken cancellationToken = default)
         {
-            var allBookItems = (await GetBookItemsAsync(cancellationToken)).SelectMany(x => x.Value).ToList();
+            var allBookItems = await GetBookItemsAsync(cancellationToken);
             var bookItem = allBookItems.FirstOrDefault(x => x.Id == bookItemId);
             if (bookItem != null)
             {

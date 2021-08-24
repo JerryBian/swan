@@ -40,7 +40,7 @@ namespace Laobian.Api.Repository
 
         Task DeleteBlogTagAsync(string tagLink, CancellationToken cancellationToken = default);
 
-        Task<IDictionary<int, List<BookItem>>> GetBookItemsAsync(CancellationToken cancellationToken = default);
+        Task<List<BookItem>> GetBookItemsAsync(CancellationToken cancellationToken = default);
 
         Task<List<BookItem>> GetBookItemsAsync(int year, CancellationToken cancellationToken = default);
 

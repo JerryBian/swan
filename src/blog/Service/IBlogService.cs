@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Laobian.Share.Blog;
+using Laobian.Share.Read;
 
 namespace Laobian.Blog.Service
 {
@@ -15,6 +16,8 @@ namespace Laobian.Blog.Service
         List<BlogPostRuntime> GetAllPosts();
 
         List<BlogTag> GetAllTags();
+
+        List<BookItem> GetBookItems();
 
         Task ReloadAsync();
 

@@ -19,7 +19,7 @@ namespace Laobian.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IDictionary<int, List<BookItem>>>> GetAll()
+        public async Task<ActionResult<List<BookItem>>> GetAll()
         {
             var readItems = await _fileRepository.GetBookItemsAsync();
             return Ok(readItems);
@@ -30,7 +30,7 @@ namespace Laobian.Api.Controllers
         public async Task<ActionResult<BookItem>> Get([FromRoute] string id)
         {
             var readItems = await _fileRepository.GetBookItemsAsync();
-            var result = readItems.SelectMany(x => x.Value).FirstOrDefault(x => x.Id == id);
+            var result = readItems.FirstOrDefault(x => x.Id == id);
             if (result == null)
             {
                 return NotFound($"Book item with id \"{id}\" does not exist.");

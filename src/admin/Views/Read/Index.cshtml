@@ -4,273 +4,48 @@
     ViewData["Title"] = "Read";
 }
 
-<div>
-    <h3 class="text-start">
-        <button class="btn btn-primary" onclick="launchAddModal()">Add new book</button>
-    </h3>
+<div class="table-responsive">
     <table class="table caption-top">
-        <caption>Books: @Model.Count()</caption>
+        <caption>阅读总数: @Model.Count() <a href="/read/add" class="btn btn-primary float-end"><i class="fas fa-plus"></i> 添加新的阅读</a></caption>
         <thead class="table-light">
         <tr>
-            <th scope="col">Book</th>
-            <th scope="col">Start at</th>
-            <th scope="col">Completed</th>
-            <th scope="col">Operation</th>
+            <th scope="col"></th>
+            <th scope="col">书名</th>
+            <th scope="col">开始时间</th>
+            <th scope="col">是否读完</th>
         </tr>
         </thead>
         <tbody>
         @foreach (var item in Model)
         {
-            <tr>
+            var trClass = "table-success";
+            if (!item.IsCompleted)
+            {
+                trClass = "table-warning";
+            }
+            <tr class="@trClass">
+                <th>
+                    <a class="btn btn-info me-2" href="/read/update/@item.Id"><i class="fas fa-edit"></i> 编辑</a>
+                    <a class="btn btn-danger" href="javascript:;" onclick="deleteBookItem('@item.Id')"><i class="fas fa-trash-alt"></i> 删除</a>
+                </th>
                 <th>@item.BookName</th>
                 <th>@item.StartTime.ToChinaDate()</th>
                 <th>@item.IsCompleted</th>
-                <th>
-                    <a href="javascript:;" onclick="launchUpdateModal('@item.Id')">Update</a> &middot;
-                    <a href="javascript:;" onclick="deleteBook('@item.Id')">Delete</a>
-                </th>
             </tr>
         }
         </tbody>
     </table>
 </div>
 
-<div class="modal fade" tabindex="-1" id="updateModal" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel1">Book: <span id="modalBodyBookId"></span></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="mb-3">
-                    <label for="modalBodyBookName" class="form-label">Book Name</label>
-                    <input type="text" class="form-control" id="modalBodyBookName" placeholder="tag name" autocomplete="off">
-                </div>
-                <div class="mb-3">
-                    <label for="modalBodyBookName2" class="form-label">Book Name 2</label>
-                    <input type="text" class="form-control" id="modalBodyBookName2" placeholder="tag name" autocomplete="off">
-                </div>
-                <div class="mb-3">
-                    <label for="modalBodyAuthorName" class="form-label">Author Name</label>
-                    <input type="text" class="form-control" id="modalBodyAuthorName" placeholder="tag name" autocomplete="off">
-                </div>
-                <div class="mb-3">
-                    <label for="modalBodyAuthorCountry" class="form-label">Author Country</label>
-                    <input type="text" class="form-control" id="modalBodyAuthorCountry" placeholder="tag name" autocomplete="off">
-                </div>
-                <div class="mb-3">
-                    <label for="modalBodyPublisherName" class="form-label">Publisher Name</label>
-                    <input type="text" class="form-control" id="modalBodyPublisherName" placeholder="tag name" autocomplete="off">
-                </div>
-                <div class="mb-3">
-                    <label for="modalBodyPostLink" class="form-label">Post Link</label>
-                    <input type="text" class="form-control" id="modalBodyPostLink" placeholder="tag name" autocomplete="off">
-                </div>
-                <div class="mb-3">
-                    <label for="modalBodyPublishTime" class="form-label">Publish Time</label>
-                    <input type="datetime-local" class="form-control" id="modalBodyPublishTime">
-                </div>
-                <div class="mb-3">
-                    <label for="modalBodyStartTime" class="form-label">Start Time</label>
-                    <input type="datetime-local" class="form-control" id="modalBodyStartTime">
-                </div>
-                <div class="mb-3">
-                    <label for="modalBodyEndTime" class="form-label">End Time</label>
-                    <input type="datetime-local" class="form-control" id="modalBodyEndTime">
-                </div>
-                <div class="mb-3">
-                    <label for="modalBodyShortComment" class="form-label">Short Comment</label>
-                    <textarea class="form-control" id="modalBodyShortComment" rows="3"></textarea>
-                </div>
-                <div class="mb-3">
-                    <label for="modalBodyGrade" class="form-label">Grade</label>
-                    <input type="number" min="-1" max="2" step="1" value="0" class="form-control" id="modalBodyGrade">
-                </div>
-                <div class="form-check form-switch mb-3">
-                    <input class="form-check-input" type="checkbox" id="modalBodyIsCompleted">
-                    <label class="form-check-label" for="modalBodyIsCompleted">Mark as Completed</label>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onclick="updateBook()">Save changes</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" tabindex="-1" id="addModal" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Add new book</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="mb-3">
-                    <label for="addModalBodyBookName" class="form-label">Book Name</label>
-                    <input type="text" class="form-control" id="addModalBodyBookName" placeholder="tag name" autocomplete="off">
-                </div>
-                <div class="mb-3">
-                    <label for="addModalBodyBookName2" class="form-label">Book Name 2</label>
-                    <input type="text" class="form-control" id="addModalBodyBookName2" placeholder="tag name" autocomplete="off">
-                </div>
-                <div class="mb-3">
-                    <label for="addModalBodyAuthorName" class="form-label">Author Name</label>
-                    <input type="text" class="form-control" id="addModalBodyAuthorName" placeholder="tag name" autocomplete="off">
-                </div>
-                <div class="mb-3">
-                    <label for="addModalBodyAuthorCountry" class="form-label">Author Country</label>
-                    <input type="text" class="form-control" id="addModalBodyAuthorCountry" placeholder="tag name" autocomplete="off">
-                </div>
-                <div class="mb-3">
-                    <label for="addModalBodyPublisherName" class="form-label">Publisher Name</label>
-                    <input type="text" class="form-control" id="addModalBodyPublisherName" placeholder="tag name" autocomplete="off">
-                </div>
-                <div class="mb-3">
-                    <label for="addModalBodyPostLink" class="form-label">Post Link</label>
-                    <input type="text" class="form-control" id="addModalBodyPostLink" placeholder="tag name" autocomplete="off">
-                </div>
-                <div class="mb-3">
-                    <label for="addModalBodyPublishTime" class="form-label">Publish Time</label>
-                    <input type="datetime-local" class="form-control" id="addModalBodyPublishTime">
-                </div>
-                <div class="mb-3">
-                    <label for="addModalBodyStartTime" class="form-label">Start Time</label>
-                    <input type="datetime-local" class="form-control" id="addModalBodyStartTime">
-                </div>
-                <div class="mb-3">
-                    <label for="addModalBodyEndTime" class="form-label">End Time</label>
-                    <input type="datetime-local" class="form-control" id="addModalBodyEndTime">
-                </div>
-                <div class="mb-3">
-                    <label for="addModalBodyShortComment" class="form-label">Short Comment</label>
-                    <textarea class="form-control" id="addModalBodyShortComment" rows="3"></textarea>
-                </div>
-                <div class="mb-3">
-                    <label for="addModalBodyGrade" class="form-label">Grade</label>
-                    <input type="number" min="-1" max="2" step="1" value="0" class="form-control" id="addModalBodyGrade">
-                </div>
-                <div class="form-check form-switch mb-3">
-                    <input class="form-check-input" type="checkbox" id="addModalBodyIsCompleted">
-                    <label class="form-check-label" for="addModalBodyIsCompleted">Mark as Completed</label>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onclick="addBook()">Save changes</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
 @section Scripts{
     <script>
-        let updateModalDiv = document.querySelector('#updateModal');
-        let updateModal = new bootstrap.Modal(updateModalDiv, {});
-        let addModalDiv = document.querySelector('#addModal');
-        let addModal = new bootstrap.Modal(addModalDiv, {});
-
-        function deleteBook(id) {
+        function deleteBookItem(id) {
             fetch(`/read/${id}`,
                     {
                         method: 'DELETE'
                     })
                 .then(response => {
                     if (response.ok) {
-                        window.location.reload(true);
-                    }
-                })
-                .catch(err => { console.log(err) });
-        }
-
-        function launchUpdateModal(id) {
-            fetch(`/read/${id}`)
-                .then(response => response.json())
-                .then(tag => {
-                    document.querySelector('#modalBodyBookId').innerText = tag.id;
-                    document.querySelector('#modalBodyBookName').value = tag.bookName;
-                    document.querySelector('#modalBodyBookName2').value = tag.bookName2;
-                    document.querySelector('#modalBodyAuthorName').value = tag.authorName;
-                    document.querySelector('#modalBodyAuthorCountry').value = tag.authorCountry;
-                    document.querySelector('#modalBodyPublisherName').value = tag.publisherName;
-                    document.querySelector('#modalBodyPostLink').value = tag.blogPostLink;
-                    document.querySelector('#modalBodyPublishTime').value = tag.publishTime;
-                    document.querySelector('#modalBodyStartTime').value = tag.startTime;
-                    document.querySelector('#modalBodyEndTime').value = tag.endTime;
-                    document.querySelector('#modalBodyShortComment').value = tag.shortComment;
-                    document.querySelector('#modalBodyGrade').value = tag.grade;
-                    document.querySelector('#modalBodyIsCompleted').checked = tag.isCompleted;
-                    updateModal.show();
-                })
-                .catch(err => { console.log(err) });
-        }
-
-        function updateBook() {
-            const book = {
-                id: document.querySelector('#modalBodyBookId').innerText,
-                bookName: document.querySelector('#modalBodyBookName').value,
-                bookName2: document.querySelector('#modalBodyBookName2').value,
-                authorName: document.querySelector('#modalBodyAuthorName').value,
-                authorCountry: document.querySelector('#modalBodyAuthorCountry').value,
-                publisherName: document.querySelector('#modalBodyPublisherName').value,
-                blogPostLink: document.querySelector('#modalBodyPostLink').value,
-                publishTime: document.querySelector('#modalBodyPublishTime').value,
-                startTime: document.querySelector('#modalBodyStartTime').value,
-                endTime: document.querySelector('#modalBodyEndTime').value,
-                shortComment: document.querySelector('#modalBodyShortComment').value,
-                grade: document.querySelector('#modalBodyGrade').value,
-                isCompleted: document.querySelector('#modalBodyIsCompleted').checked
-            };
-
-            fetch('/read',
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(book)
-                    })
-                .then(response => {
-                    if (response.ok) {
-                        updateModal.hide();
-                        window.location.reload(true);
-                    }
-                })
-                .catch(err => { console.log(err) });
-        }
-
-        function launchAddModal() {
-            addModal.show();
-        }
-
-        function addBook() {
-            const book = {
-                bookName: document.querySelector('#addModalBodyBookName').value,
-                bookName2: document.querySelector('#addModalBodyBookName2').value,
-                authorName: document.querySelector('#addModalBodyAuthorName').value,
-                authorCountry: document.querySelector('#addModalBodyAuthorCountry').value,
-                publisherName: document.querySelector('#addModalBodyPublisherName').value,
-                blogPostLink: document.querySelector('#addModalBodyPostLink').value,
-                publishTime: document.querySelector('#addModalBodyPublishTime').value,
-                startTime: document.querySelector('#addModalBodyStartTime').value,
-                endTime: document.querySelector('#addModalBodyEndTime').value,
-                shortComment: document.querySelector('#addModalBodyShortComment').value,
-                grade: document.querySelector('#addModalBodyGrade').value,
-                isCompleted: document.querySelector('#addModalBodyIsCompleted').checked
-            };
-
-            fetch('/read',
-                    {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(book)
-                    })
-                .then(response => {
-                    if (response.ok) {
-                        updateModal.hide();
                         window.location.reload(true);
                     }
                 })

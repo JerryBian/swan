@@ -18,7 +18,6 @@ services:
       - ENV_SEND_GRID_API_KEY
       - ENV_DATA_PROTECTION_KEY_PATH=/asset/data_protection
       - ENV_HTTP_REQUEST_TOKEN
-      - ENV_SOURCE
       - ENV_COMMAND_LINE_APP
       - ENV_COMMAND_LINE_BEGIN_ARG
       - ENV_GITHUB_DB_REPO_API_TOKEN

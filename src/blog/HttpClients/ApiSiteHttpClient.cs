@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Laobian.Share.Blog;
 using Laobian.Share.Logger;
+using Laobian.Share.Read;
 using Laobian.Share.Util;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -22,6 +23,20 @@ namespace Laobian.Blog.HttpClients
             _logger = logger;
             _httpClient = httpClient;
             _httpClient.BaseAddress = new Uri(config.Value.ApiLocalEndpoint);
+        }
+
+        public async Task<List<BookItem>> GetBookItemsAsync()
+        {
+            var response = await _httpClient.GetAsync("/read");
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                _logger.LogError(
+                    $"{nameof(ApiSiteHttpClient)}.{nameof(GetBookItemsAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+                return new List<BookItem>();
+            }
+
+            await using var stream = await response.Content.ReadAsStreamAsync();
+            return await JsonUtil.DeserializeAsync<List<BookItem>>(stream);
         }
 
         public async Task<List<BlogPostRuntime>> GetPostsAsync()
