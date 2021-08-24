@@ -17,6 +17,7 @@ namespace Laobian.Admin.Controllers
         }
 
         [HttpPost("upload")]
+        [RequestSizeLimit(20 * 1024 * 1024)]
         public async Task<ActionResult<string>> Upload(IFormFile image)
         {
             var fileName = Path.GetRandomFileName().Replace(".", "");

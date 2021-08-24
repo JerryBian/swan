@@ -153,11 +153,11 @@
             },
             lineNumbers: false,
             lineWrapping: true,
-            maxHeight: "600px",
+            maxHeight: "300px",
             promptURLs: true,
             uploadImage: true,
             imageMaxSize: 1024 * 1024 * 20,
-            imageAccept: ["image/png", "image/jpeg"],
+            imageAccept: ["image/png", "image/jpeg", "application/pdf", "image/svg+xml", "image/bmp", "image/gif", "image/tiff", "image/webp"],
             imageUploadEndpoint: "/file/upload",
             imagePathAbsolute: true,
             imageTexts: {
@@ -168,7 +168,7 @@
                 sbOnUploaded: "成功上传 #image_name#"
             },
             errorCallback: function(err) {
-
+                Swal.fire("文件上传错误！", err, "error");
             },
             renderingConfig: {
                 codeSyntaxHighlighting: true,
