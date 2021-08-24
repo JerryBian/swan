@@ -9,5 +9,5 @@ uglifyjs --compress -o $(Join-Path $WWWRootLoc script.min.js) `
     $(Join-Path $NodeModulesLoc anchor-js anchor.js) `
     $(Join-Path $NodeModulesLoc "@fortawesome" fontawesome-free js solid.js) `
     $(Join-Path $NodeModulesLoc "@fortawesome" fontawesome-free js fontawesome.js) `
-    $(Join-Path $WWWRootLoc highlight highlight.js) `
+    $(Join-Path $WWWRootLoc highlight highlight.min.js) `
     $(Join-Path $WWWRootLoc script.js)

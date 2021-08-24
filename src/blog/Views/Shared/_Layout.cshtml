@@ -31,20 +31,21 @@
 <body class="d-flex flex-column w-100 min-vh-100">
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container">
-        <a class="navbar-brand" href="/">Jerry Bian's blog</a>
+        <a class="navbar-brand" href="/">@Constants.BlogTitle</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navLinks" aria-controls="navLinks" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navLinks">
             <ul class="navbar-nav">
+                
+            </ul>
+            <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="/archive" id="nav_archive"><i class="fas fa-archive"></i> 存档</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/read" id="nav_read"><i class="fas fa-book"></i> 阅读</a>
                 </li>
-            </ul>
-            <ul class="navbar-nav ms-auto">
                 @if (Context.User.Identity?.IsAuthenticated == true)
                 {
                     <li class="navbar-text">

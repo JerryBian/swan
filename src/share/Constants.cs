@@ -27,7 +27,7 @@
 
         public const string ApplicationName = "laobian";
 
-        public const string BlogTitle = "Jerry Bian's blog";
+        public const string BlogTitle = "老卞的博客";
 
         public const string BlogDescription = "";
 
