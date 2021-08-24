@@ -88,6 +88,6 @@
 
 @section Scripts{
     <script>
-        const mdContentEditor = prepareEditor(document.querySelector("#mdContent"), `blog_post_update_md_content_${@Model.Post.Link}`);
+        const mdContentEditor = prepareEditor(document.querySelector("#mdContent"), "blog_post_update_md_content_@Model.Post.Link");
     </script>
 }
