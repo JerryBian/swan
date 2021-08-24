@@ -99,8 +99,10 @@ namespace Laobian.Api.Source
                 var output = await _commandClient.RunAsync(command, cancellationToken);
                 if (retryTimes > 1)
                 {
-                    _logger.LogInformation($"Retry: {retryTimes}, cmd: {command}{Environment.NewLine}Output: {output}");
+                    _logger.LogInformation($"Retry: {retryTimes}, cmd: {command}{Environment.NewLine}");
                 }
+
+                _logger.LogInformation(output);
             }
 
             if (!Directory.Exists(assetDbFolder))

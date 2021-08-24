@@ -39,10 +39,8 @@ namespace Laobian.Api.HostedServices
                         _logger.LogError(ex, $"{nameof(DbDataHostedService)}.{nameof(ExecuteAsync)} failed.");
                     }
                 }
-                else
-                {
-                    await Task.Delay(TimeSpan.FromMilliseconds(900), stoppingToken);
-                }
+
+                await Task.Delay(TimeSpan.FromMilliseconds(900), stoppingToken);
             }
         }
 
