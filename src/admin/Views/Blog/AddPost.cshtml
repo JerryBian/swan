@@ -65,6 +65,6 @@
 @section Scripts{
     <script>
         const mdContentEditor = prepareEditor(document.querySelector("#mdContent"), "blog_post_add_md_content");
-        document.querySelector("#publishTime").value = "@DateTime.Now.ToDateAndTimeInHourAndMinute()";
+        const excerptEditor = prepareEditor(document.querySelector("#excerpt"), "blog_post_add_excerpt");
     </script>
 }
