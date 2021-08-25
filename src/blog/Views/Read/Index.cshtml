@@ -11,75 +11,75 @@
         <div class="list-group mb-5">
             @foreach (var book in item.Items)
             {
-            <div class="list-group-item">
-                <div class="d-flex w-100 justify-content-between">
-                    <h4 class="mb-1">
-                        @book.BookName
-                        @if (book.Grade == 1)
+                <div class="list-group-item">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h4 class="mb-1">
+                            @book.BookName
+                            @if (book.Grade == 1)
+                            {
+                                <i class="text-success fas fa-thumbs-up"></i>
+                            }
+                            else if (book.Grade == -1)
+                            {
+                                <i class="text-danger fas fa-thumbs-down"></i>
+                            }
+                        </h4>
+                        @if (book.IsCompleted)
                         {
-                            <i class="text-success fas fa-thumbs-up"></i>
+                            <small title="结束于 @book.EndTime.ToChinaDate()">@book.StartTime.ToChinaDate()</small>
                         }
-                        else if (book.Grade == -1)
+                        else
                         {
-                            <i class="text-danger fas fa-thumbs-down"></i>
+                            <small class="text-success">正在阅读</small>
                         }
-                    </h4>
-                    @if (book.IsCompleted)
-                    {
-                        <small title="结束于 @book.EndTime.ToChinaDate()">@book.StartTime.ToChinaDate()</small>
+                    </div>
+
+                    @{
+                        var info = new List<string>();
+                        @if (!string.IsNullOrEmpty(book.BookName2))
+                        {
+                            info.Add($"（又名）{book.BookName2}");
+                        }
+
+                        if (!string.IsNullOrEmpty(book.AuthorName))
+                        {
+                            var author = book.AuthorName;
+                            if (!string.IsNullOrEmpty(book.AuthorCountry))
+                            {
+                                author = $"{author}（{book.AuthorCountry}）";
+
+                            }
+
+                            info.Add(author);
+                        }
+
+                        if (!string.IsNullOrEmpty(book.PublisherName))
+                        {
+                            var publisher = book.PublisherName;
+                            info.Add(publisher);
+                        }
+
+                        if (book.PublishTime != default)
+                        {
+                            info.Add(book.PublishTime.ToDate());
+                        }
+
+                        <small class="fs-sm text-muted">@string.Join(" / ", info)</small>
                     }
-                    else
+
+                    @if (!string.IsNullOrEmpty(book.ShortComment))
                     {
-                        <small class="text-success">正在阅读</small>
+                        <div class="my-3 alert alert-primary fs-6 font-monospace">@Html.Raw(Markdown.ToHtml(book.ShortComment))</div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(book.BlogPostLink))
+                    {
+                        <p>
+                            博客链接：
+                            <a href="@book.BlogPostLink">@book.BlogPostTitle</a>
+                        </p>
                     }
                 </div>
-
-                @{
-                    var info = new List<string>();
-                    @if (!string.IsNullOrEmpty(book.BookName2))
-                    {
-                        info.Add($"（又名）{book.BookName2}");
-                    }
-
-                    if (!string.IsNullOrEmpty(book.AuthorName))
-                    {
-                        var author = book.AuthorName;
-                        if (!string.IsNullOrEmpty(book.AuthorCountry))
-                        {
-                            author = $"{author}（{book.AuthorCountry}）";
-
-                        }
-
-                        info.Add(author);
-                    }
-
-                    if (!string.IsNullOrEmpty(book.PublisherName))
-                    {
-                        var publisher = book.PublisherName;
-                        info.Add(publisher);
-                    }
-
-                    if (book.PublishTime != default)
-                    {
-                        info.Add(book.PublishTime.ToDate());
-                    }
-
-                    <small class="fs-sm text-muted">@string.Join(" / ", info)</small>
-                }
-
-                @if (!string.IsNullOrEmpty(book.ShortComment))
-                {
-                    <div class="my-3 alert alert-primary fs-6 font-monospace">@Html.Raw(Markdown.ToHtml(book.ShortComment))</div>
-                }
-
-                @if (!string.IsNullOrEmpty(book.BlogPostLink))
-                {
-                    <p>
-                        博客链接：
-                        <a href="@book.BlogPostLink">@book.BlogPostTitle</a>
-                    </p>
-                }
-            </div>
             }
         </div>
     }
@@ -93,4 +93,19 @@
         }
 
     </div>
+}
+
+@section script{
+    <script>
+        document.addEventListener("DOMContentLoaded",
+            function() {
+                anchors.options = {
+                    placement: 'right',
+                    visible: 'hover',
+                    base: '/about'
+                };
+                anchors.add('h3');
+                activeNavItem('#nav_read');
+            });
+    </script>
 }
