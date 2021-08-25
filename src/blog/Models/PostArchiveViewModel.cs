@@ -11,8 +11,6 @@ namespace Laobian.Blog.Models
 
         public string Name { get; set; }
 
-        public string BaseUrl { get; set; }
-
         public List<BlogPostRuntime> Posts { get; set; }
     }
 }

@@ -41,8 +41,7 @@ namespace Laobian.Blog.Controllers
                             Count = tagPosts.Count,
                             Posts = tagPosts.ToList(),
                             Link = $"{blogTag.Link}",
-                            Name = $"{blogTag.DisplayName}",
-                            BaseUrl = "/tag"
+                            Name = $"{blogTag.DisplayName}"
                         };
                         model.Add(archiveViewModel);
                     }

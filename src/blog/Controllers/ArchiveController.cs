@@ -39,8 +39,7 @@ namespace Laobian.Blog.Controllers
                             Count = item.Count(),
                             Posts = item.ToList(),
                             Link = $"{item.Key}",
-                            Name = $"{item.Key}年",
-                            BaseUrl = "/archive"
+                            Name = $"{item.Key}年"
                         };
 
                         model.Add(archiveViewModel);

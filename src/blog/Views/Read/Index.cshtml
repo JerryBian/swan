@@ -74,7 +74,10 @@
 
                 @if (!string.IsNullOrEmpty(book.BlogPostLink))
                 {
-                    <p><a href="@book.BlogPostLink">@book.BlogPostTitle</a></p>
+                    <p>
+                        博客链接：
+                        <a href="@book.BlogPostLink">@book.BlogPostTitle</a>
+                    </p>
                 }
             </div>
             }
