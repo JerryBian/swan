@@ -74,10 +74,10 @@
 
                     @if (!string.IsNullOrEmpty(book.BlogPostLink))
                     {
-                        <p>
-                            博客链接：
+                        <div class="my-3 alert alert-info fs-6 font-monospace">
+                            <i class="text-primary fas fa-link"></i>
                             <a href="@book.BlogPostLink">@book.BlogPostTitle</a>
-                        </p>
+                        </div>
                     }
                 </div>
             }
@@ -102,7 +102,7 @@
                 anchors.options = {
                     placement: 'right',
                     visible: 'hover',
-                    base: '/about'
+                    base: '/read'
                 };
                 anchors.add('h3');
                 activeNavItem('#nav_read');

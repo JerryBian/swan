@@ -34,10 +34,8 @@ namespace Laobian.Api.HostedServices
             {
                 try
                 {
-                    Console.WriteLine("aaa");
                     log.LoggerName = string.IsNullOrEmpty(log.LoggerName) ? LaobianSite.Api.ToString() : log.LoggerName;
                     await _fileRepository.AddLogAsync(log, stoppingToken);
-                    Console.WriteLine("bbb");
                 }
                 catch (Exception ex)
                 {

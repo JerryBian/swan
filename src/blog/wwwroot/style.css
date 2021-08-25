@@ -11368,7 +11368,7 @@ a {
 }
 
 .post-content {
-  line-height: 1.875em;
+  line-height: 1.8em;
 }
 .post-content p {
   margin-bottom: 1.75rem;
@@ -11377,6 +11377,7 @@ a {
   padding-left: 4px;
   padding-right: 4px;
   background-color: #f4f3ee;
+  font-size: 90%;
 }
 .post-content h3, .post-content .h3 {
   background-color: #f1f2f6;
