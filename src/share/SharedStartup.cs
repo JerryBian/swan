@@ -55,7 +55,7 @@ namespace Laobian.Share
                 .SetApplicationName($"{Constants.ApplicationName}_{CurrentEnv.EnvironmentName}");
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(options =>
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
                 {
                     options.Cookie.Name = $".LAOBIAN.AUTH.{CurrentEnv.EnvironmentName}";
                     options.ExpireTimeSpan = TimeSpan.FromDays(7);
