@@ -63,7 +63,7 @@ namespace Laobian.Share
                     options.ReturnUrlParameter = "returnUrl";
                     options.LoginPath = new PathString("/login");
                     options.LogoutPath = new PathString("/logout");
-                    options.Cookie.Domain = CurrentEnv.IsDevelopment() ? "localhost" : ".laobian.me";
+                    options.Cookie.Domain = CurrentEnv.IsDevelopment() ? "localhost" : "laobian.me";
                 });
         }
 
