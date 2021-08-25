@@ -70,7 +70,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <img id="modal-content" class="img-fluid" />
+                <img id="modal-content" class="img-fluid"/>
             </div>
             <div class="modal-footer justify-content-center" id="modal-caption">
             </div>
@@ -82,7 +82,7 @@
     <script>
 
         document.addEventListener("DOMContentLoaded",
-            function () {
+            function() {
                 anchors.options = {
                     placement: 'right',
                     visible: 'hover',
@@ -98,8 +98,8 @@
                         let images = document.querySelectorAll(".post-content img");
                         var modalImg = document.querySelector("#modal-content");
                         var caption = document.querySelector("#modal-caption");
-                        images.forEach(function (img) {
-                            img.onclick = function () {
+                        images.forEach(function(img) {
+                            img.onclick = function() {
                                 modal.show();
                                 modalImg.src = this.src;
                                 caption.innerHTML = this.alt;

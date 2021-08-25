@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text.Json.Serialization;
 using HtmlAgilityPack;
@@ -112,7 +111,7 @@ namespace Laobian.Share.Blog
                     {
                         i++;
                         var id = $"outline-2-{i}";
-                        var outline = new BlogPostOutline { Link = id, Title = item.InnerText };
+                        var outline = new BlogPostOutline {Link = id, Title = item.InnerText};
                         item.Id = id;
                         Outlines.Add(outline);
                     }

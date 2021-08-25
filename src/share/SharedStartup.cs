@@ -57,13 +57,13 @@ namespace Laobian.Share
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
                 {
-                    //options.Cookie.Name = $".LAOBIAN.AUTH.{CurrentEnv.EnvironmentName}";
+                    options.Cookie.Name = $".LAOBIAN.AUTH.{CurrentEnv.EnvironmentName}";
                     options.ExpireTimeSpan = TimeSpan.FromDays(7);
                     options.Cookie.HttpOnly = true;
                     options.ReturnUrlParameter = "returnUrl";
                     options.LoginPath = new PathString("/login");
                     options.LogoutPath = new PathString("/logout");
-                    options.Cookie.Domain = CurrentEnv.IsDevelopment() ? "localhost" : "laobian.me";
+                    options.Cookie.Domain = CurrentEnv.IsDevelopment() ? "localhost" : ".laobian.me";
                 });
         }
 

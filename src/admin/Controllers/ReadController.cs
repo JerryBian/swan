@@ -43,7 +43,7 @@ namespace Laobian.Admin.Controllers
         }
 
         [HttpGet("update/{id}")]
-        public async Task<IActionResult> Update([FromRoute]string id)
+        public async Task<IActionResult> Update([FromRoute] string id)
         {
             var bookItem = await _apiSiteHttpClient.GetReadItemAsync(id);
             return View(bookItem);

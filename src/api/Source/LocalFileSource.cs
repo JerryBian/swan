@@ -13,12 +13,12 @@ namespace Laobian.Api.Source
     public class LocalFileSource : IFileSource
     {
         private readonly LaobianApiOption _apiOption;
+        private readonly ILogger<LocalFileSource> _logger;
+        protected readonly ManualResetEventSlim FileLocker;
         private string _assetDbBlogFolder;
         private string _assetDbFileFolder;
         private string _assetDbLogFolder;
         private string _assetDbReadFolder;
-        private readonly ILogger<LocalFileSource> _logger;
-        protected readonly ManualResetEventSlim FileLocker;
 
         public LocalFileSource(IOptions<LaobianApiOption> apiOption, ILogger<LocalFileSource> logger)
         {

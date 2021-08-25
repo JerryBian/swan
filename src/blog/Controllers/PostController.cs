@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Laobian.Blog.Cache;
 using Laobian.Blog.HttpClients;
@@ -27,7 +26,6 @@ namespace Laobian.Blog.Controllers
         [Route("/{year:int}/{month:int}/{link}.html")]
         public IActionResult Post([FromRoute] int year, [FromRoute] int month, [FromRoute] string link)
         {
-            Console.WriteLine(JsonUtil.Serialize(User.Identity));
             var authenticated = User.Identity?.IsAuthenticated ?? false;
             var viewModel = _cacheClient.GetOrCreate(
                 CacheKeyBuilder.Build(nameof(HomeController), nameof(Post), authenticated, year, month, link),

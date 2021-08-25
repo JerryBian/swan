@@ -20,15 +20,15 @@
                 </h2>
                 @foreach (var post in item.Posts)
                 {
-            <div class="mt-2 mb-3">
-                <p class="text-muted fs-sm mb-0">@post.Raw.PublishTime.ToChinaDate()</p>
-                <h4>
-                    <a href="@post.Raw.GetFullPath(_option.Value.BlogRemoteEndpoint)" class="text-decoration-none">
-                        <span>@post.Raw.Title</span>
-                    </a>
+                    <div class="mt-2 mb-3">
+                        <p class="text-muted fs-sm mb-0">@post.Raw.PublishTime.ToChinaDate()</p>
+                        <h4>
+                            <a href="@post.Raw.GetFullPath(_option.Value.BlogRemoteEndpoint)" class="text-decoration-none">
+                                <span>@post.Raw.Title</span>
+                            </a>
 
-                </h4>
-            </div>
+                        </h4>
+                    </div>
                 }
             </div>
         }

@@ -14,9 +14,9 @@ namespace Laobian.Blog.Service
 {
     public class BlogService : IBlogService
     {
+        private readonly List<BookItem> _allBookItems;
         private readonly List<BlogPostRuntime> _allPosts;
         private readonly List<BlogTag> _allTags;
-        private readonly List<BookItem> _allBookItems;
         private readonly ApiSiteHttpClient _httpClient;
         private readonly ILogger<BlogService> _logger;
         private readonly ManualResetEventSlim _reloadLock;

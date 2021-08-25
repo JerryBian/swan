@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using Laobian.Blog.Cache;
 using Laobian.Blog.Models;
@@ -13,8 +12,8 @@ namespace Laobian.Blog.Controllers
     public class ReadController : Controller
     {
         private readonly BlogOption _blogOption;
-        private readonly ICacheClient _cacheClient;
         private readonly IBlogService _blogService;
+        private readonly ICacheClient _cacheClient;
 
         public ReadController(IBlogService blogService, ICacheClient cacheClient, IOptions<BlogOption> blogOption)
         {

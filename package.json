@@ -26,10 +26,10 @@
     "anchor-js": "^4.3.1",
     "bootstrap": "^5.1.0",
     "bootswatch": "^5.1.0",
-    "chart.js": "^3.5.0",
+    "chart.js": "^3.5.1",
     "easymde": "^2.15.0",
     "highlight.js": "^11.2.0",
-    "sass": "^1.37.5",
+    "sass": "^1.38.1",
     "sweetalert2": "^11.1.4",
     "uglify-js": "^3.14.1",
     "uglifycss": "0.0.29"
