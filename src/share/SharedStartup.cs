@@ -39,7 +39,7 @@ namespace Laobian.Share
             return HttpPolicyExtensions
                 .HandleTransientHttpError()
                 .OrResult(msg => msg.StatusCode == HttpStatusCode.NotFound)
-                .WaitAndRetryAsync(6, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2,
+                .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2,
                     retryAttempt)));
         }
 
@@ -52,12 +52,12 @@ namespace Laobian.Share
             var dpFolder = Configuration.GetValue<string>(Constants.EnvDataProtectionKeyPath);
             Directory.CreateDirectory(dpFolder);
             services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(dpFolder))
-                .SetApplicationName(Constants.ApplicationName);
+                .SetApplicationName($"{Constants.ApplicationName}_{CurrentEnv.EnvironmentName}");
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
-                    options.Cookie.Name = "LAOBIAN_AUTH";
+                    options.Cookie.Name = $".LAOBIAN.AUTH.{CurrentEnv.EnvironmentName}";
                     options.ExpireTimeSpan = TimeSpan.FromDays(7);
                     options.Cookie.HttpOnly = true;
                     options.ReturnUrlParameter = "returnUrl";
