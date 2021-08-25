@@ -349,7 +349,6 @@ namespace Laobian.Api.Repository
 
         public async Task AddLogAsync(LaobianLog log, CancellationToken cancellationToken = default)
         {
-            Console.WriteLine("xxx");
             var site = LaobianSite.Api;
             if (Enum.TryParse(log.LoggerName, true, out LaobianSite temp))
             {
@@ -357,7 +356,6 @@ namespace Laobian.Api.Repository
             }
 
             await _fileSource.AppendLogAsync(site, log.TimeStamp.Date, JsonUtil.Serialize(log), cancellationToken);
-            Console.WriteLine("yyy");
         }
 
         public async Task<string> AddRawFileAsync(string fileName, byte[] content,

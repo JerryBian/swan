@@ -25,7 +25,9 @@ namespace Laobian.Api.Source
             _logger = logger;
             _apiOption = apiOption.Value;
 
-            
+            _assetDbReadFolder = Path.Combine(_apiOption.AssetLocation, Constants.AssetDbFolder,
+                Constants.AssetDbReadFolder);
+            Directory.CreateDirectory(_assetDbReadFolder);
             FileLocker = new ManualResetEventSlim(true);
         }
 
@@ -156,13 +158,11 @@ namespace Laobian.Api.Source
         public async Task AppendLogAsync(LaobianSite site, DateTime date, string log,
             CancellationToken cancellationToken = default)
         {
-            Console.WriteLine("uuu");
             FileLocker.Wait(cancellationToken);
             var logDir = Path.Combine(_assetDbLogFolder, site.ToString().ToLowerInvariant(), date.ToString("yyyy"));
             Directory.CreateDirectory(logDir);
             var logFile = Path.Combine(logDir, $"{date:yyyy-MM-dd}.log");
             await File.AppendAllLinesAsync(logFile, new List<string> {log}, Encoding.UTF8, cancellationToken);
-            Console.WriteLine($"mmm {logFile}");
         }
 
         public async Task<IDictionary<string, string>> ReadBookItemsAsync(CancellationToken cancellationToken = default)

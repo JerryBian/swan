@@ -39,7 +39,6 @@ namespace Laobian.Share.Logger.Remote
                 log.Level = logLevel;
                 log.TimeStamp = DateTime.Now;
                 _logQueue.Add(log);
-                Console.WriteLine("a");
             }
             catch (Exception ex)
             {
