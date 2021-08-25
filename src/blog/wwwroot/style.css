@@ -11369,6 +11369,7 @@ a {
 
 .post-content {
   line-height: 1.8em;
+  position: relative;
 }
 .post-content p {
   margin-bottom: 1.75rem;
