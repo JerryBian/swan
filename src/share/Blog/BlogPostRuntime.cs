@@ -37,6 +37,8 @@ namespace Laobian.Share.Blog
 
         [JsonPropertyName("thumbnailUrl")] public string ThumbnailImageUrl { get; set; }
 
+        [JsonPropertyName("outline")] public List<BlogPostOutline> Outlines { get; set; } = new();
+
         private void SetPostThumbnail(HtmlNode imageNode)
         {
             if (string.IsNullOrEmpty(ThumbnailHtml) && !string.IsNullOrEmpty(imageNode.GetAttributeValue("src", null)))
@@ -56,6 +58,9 @@ namespace Laobian.Share.Blog
             var html = Markdown.ToHtml(Raw.MdContent);
             var htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(html);
+
+            // post outlines
+            SetOutlines(htmlDoc);
 
             // all images nodes
             SetImageNodes(htmlDoc, option);
@@ -79,6 +84,38 @@ namespace Laobian.Share.Blog
                 if (tag != null)
                 {
                     Tags.Add(tag);
+                }
+            }
+        }
+
+        private void SetOutlines(HtmlDocument htmlDoc)
+        {
+            var i = 0;
+            var h3 = htmlDoc.DocumentNode.ChildNodes.Where(x => StringUtil.EqualsIgnoreCase(x.Name, "h3")).ToList();
+            if (h3.Any())
+            {
+                foreach (var item in h3)
+                {
+                    i++;
+                    var id = $"outline-1-{i}";
+                    var outline = new BlogPostOutline {Link = id, Title = item.InnerText};
+                    item.Id = id;
+                    Outlines.Add(outline);
+                }
+            }
+            else
+            {
+                var h4 = htmlDoc.DocumentNode.ChildNodes.Where(x => StringUtil.EqualsIgnoreCase(x.Name, "h4")).ToList();
+                if (h4.Any())
+                {
+                    foreach (var item in h4)
+                    {
+                        i++;
+                        var id = $"outline-2-{i}";
+                        var outline = new BlogPostOutline { Link = id, Title = item.InnerText };
+                        item.Id = id;
+                        Outlines.Add(outline);
+                    }
                 }
             }
         }
@@ -126,6 +163,7 @@ namespace Laobian.Share.Blog
                 if (imageNode.Attributes.Contains("src"))
                 {
                     imageNode.AddClass("img-thumbnail mx-auto d-block");
+                    imageNode.Attributes.Add("loading", "lazy");
 
                     var src = imageNode.Attributes["src"].Value;
                     if (string.IsNullOrEmpty(src))
@@ -137,15 +175,6 @@ namespace Laobian.Share.Blog
                         (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps))
                     {
                         // this is Network resources, keep it as it is
-                        SetPostThumbnail(imageNode);
-                        continue;
-                    }
-
-                    if (!Path.IsPathRooted(src))
-                    {
-                        var subPath = src.Replace("\\", "/");
-                        var fullSrc = $"{option.FileRemoteEndpoint}/blog/{subPath}";
-                        imageNode.SetAttributeValue("src", fullSrc);
                         SetPostThumbnail(imageNode);
                     }
                 }

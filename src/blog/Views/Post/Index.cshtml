@@ -28,7 +28,7 @@
             }
         </h2>
     </div>
-    <div class="post-content">
+    <div class="post-content" data-bs-spy="scroll" data-bs-target="#aside_post" data-bs-offset="10">
         @Html.Raw(Model.Current.HtmlContent)
         <p class="text-muted">（本文完）</p>
     </div>
@@ -70,7 +70,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <img id="modal-content" class="img-fluid"/>
+                <img id="modal-content" class="img-fluid" />
             </div>
             <div class="modal-footer justify-content-center" id="modal-caption">
             </div>
@@ -80,28 +80,52 @@
 
 @section Script {
     <script>
-        hljs.highlightAll();
-        try {
-            let modalEl = document.querySelector("#imgModal");
-            if (modalEl) {
-                let modal = bootstrap.Modal.getOrCreateInstance(modalEl);
-                let images = document.querySelectorAll(".post-content img");
-                var modalImg = document.querySelector("#modal-content");
-                var caption = document.querySelector("#modal-caption");
-                images.forEach(function (img) {
-                    img.onclick = function () {
-                        modal.show();
-                        modalImg.src = this.src;
-                        caption.innerHTML = this.alt;
-                    };
-                });
-            }
-        } catch (e) {
-            console.log(e);
-        }
+
+        document.addEventListener("DOMContentLoaded",
+            function () {
+                anchors.options = {
+                    placement: 'right',
+                    visible: 'hover',
+                    base: '@Model.Current.Raw.GetFullPath(Config.Value.BlogRemoteEndpoint)'
+                };
+                anchors.add('.post-content h3, .post-content h4');
+
+                hljs.highlightAll();
+                try {
+                    let modalEl = document.querySelector("#imgModal");
+                    if (modalEl) {
+                        let modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+                        let images = document.querySelectorAll(".post-content img");
+                        var modalImg = document.querySelector("#modal-content");
+                        var caption = document.querySelector("#modal-caption");
+                        images.forEach(function (img) {
+                            img.onclick = function () {
+                                modal.show();
+                                modalImg.src = this.src;
+                                caption.innerHTML = this.alt;
+                            };
+                        });
+                    }
+                } catch (e) {
+                    console.log(e);
+                }
+            });
     </script>
     @if (Model.Current.Raw.ContainsMath)
     {
         <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    }
+}
+
+@section Aside{
+    @if (Model.Current.Outlines.Any())
+    {
+        <div class="list-group" id="aside_post">
+            @foreach (var item in Model.Current.Outlines)
+            {
+                <a class="list-group-item list-group-item-action" href="#@item.Link">@item.Title</a>
+            }
+
+        </div>
     }
 }
