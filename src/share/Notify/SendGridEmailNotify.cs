@@ -73,7 +73,7 @@ namespace Laobian.Share.Notify
             info.AppendLine($"<p>Memory: {ByteSize.FromBytes(process.PrivateMemorySize64).ToString("#.## MB")}</p>");
             info.AppendLine($"<p>CPU time: {process.TotalProcessorTime.ToHuman()}</p>");
 
-            var footer = $"<div style='margin-top:1rem;font-size:smaller;color:grey;line-height: 1.2;'>{info}</div>";
+            var footer = $"<div style='margin-top:1rem;font-size:smaller;color:grey;line-height: 0.9;'>{info}</div>";
             return footer;
         }
     }

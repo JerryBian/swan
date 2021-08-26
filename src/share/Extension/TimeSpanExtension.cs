@@ -6,7 +6,28 @@ namespace Laobian.Share.Extension
     {
         public static string ToHuman(this TimeSpan interval)
         {
-            return interval.ToString("dd天hh小时mm分钟");
+            var result = string.Empty;
+            if (interval.Days > 0)
+            {
+                result += $"{interval.Days}天";
+            }
+
+            if (interval.Hours > 0)
+            {
+                result += $"{interval.Hours}小时";
+            }
+
+            if (interval.Minutes > 0)
+            {
+                result += $"{interval.Hours}分钟";
+            }
+
+            if (string.IsNullOrEmpty(result))
+            {
+                result = interval.ToString();
+            }
+
+            return result;
         }
     }
 }

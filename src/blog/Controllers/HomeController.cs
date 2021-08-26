@@ -14,6 +14,7 @@ using Laobian.Blog.Service;
 using Laobian.Share;
 using Laobian.Share.Extension;
 using Laobian.Share.Site.Blog;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -65,6 +66,7 @@ namespace Laobian.Blog.Controllers
         [ResponseCache(CacheProfileName = Constants.CacheProfileName)]
         public IActionResult Index([FromQuery] int p)
         {
+            throw new Exception("aaa");
             var authenticated = User.Identity?.IsAuthenticated ?? false;
             var viewModel = _cacheClient.GetOrCreate(
                 CacheKeyBuilder.Build(nameof(HomeController), nameof(Index), p, authenticated),
@@ -224,8 +226,6 @@ namespace Laobian.Blog.Controllers
         }
 
         [HttpGet]
-        [HttpPost]
-        [HttpPut]
         [Route("/error")]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

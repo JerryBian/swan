@@ -33,16 +33,10 @@ namespace Laobian.Admin
             services.Configure<LaobianAdminOption>(o => { o.FetchFromEnv(Configuration); });
 
             var httpRequestToken = Configuration.GetValue<string>(Constants.EnvHttpRequestToken);
-            services.AddHttpClient<ApiSiteHttpClient>(x =>
-                {
-                    x.DefaultRequestHeaders.Add(Constants.ApiRequestHeaderToken, httpRequestToken);
-                }).SetHandlerLifetime(TimeSpan.FromDays(1))
+            services.AddHttpClient<ApiSiteHttpClient>(SetHttpClient).SetHandlerLifetime(TimeSpan.FromDays(1))
                 .AddPolicyHandler(GetHttpClientRetryPolicy());
 
-            services.AddHttpClient<BlogSiteHttpClient>(x =>
-                {
-                    x.DefaultRequestHeaders.Add(Constants.ApiRequestHeaderToken, httpRequestToken);
-                }).SetHandlerLifetime(TimeSpan.FromDays(1))
+            services.AddHttpClient<BlogSiteHttpClient>(SetHttpClient).SetHandlerLifetime(TimeSpan.FromDays(1))
                 .AddPolicyHandler(GetHttpClientRetryPolicy());
 
             services.AddLogging(config =>

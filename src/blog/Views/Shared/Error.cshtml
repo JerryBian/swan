@@ -1,7 +1,8 @@
-﻿@{
+﻿@inject IOptions<LaobianBlogOption> _config
+@{
     ViewData["Title"] = "Error";
     ViewData["RobotsEnabled"] = bool.FalseString;
 }
 
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">An error occurred while processing your request.</h2>
+
+<h2 class="text-danger">哪里出错了，请联系 <a href="mailto:@_config.Value.AdminEmail">@_config.Value.AdminEmail</a>。</h2>
