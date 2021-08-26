@@ -1,4 +1,7 @@
 ﻿@model BlogPostUpdateViewModel
+@{
+    ViewData["Title"] = "编辑文章";
+}
 
 <h3>编辑文章</h3>
 <form class="needs-validation" action="/blog/post/update" method="post" novalidate>
@@ -83,9 +86,9 @@
             </div>
         </div>
     }
-<div class="d-grid">
-    <button type="submit" class="btn btn-primary btn-lg">提交</button>
-</div>
+    <div class="d-grid">
+        <button type="submit" class="btn btn-primary btn-lg">提交</button>
+    </div>
 </form>
 
 @section Scripts{

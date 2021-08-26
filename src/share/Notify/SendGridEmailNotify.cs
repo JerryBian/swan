@@ -69,6 +69,7 @@ namespace Laobian.Share.Notify
         {
             using var process = Process.GetCurrentProcess();
             var info = new StringBuilder();
+            info.AppendLine(message.Content);
             info.AppendLine($"<p>Timestamp: {message.Timestamp.ToChinaDateAndTime()}</p>");
             info.AppendLine($"<p>Memory: {ByteSize.FromBytes(process.PrivateMemorySize64).ToString("#.## MB")}</p>");
             info.AppendLine($"<p>CPU time: {process.TotalProcessorTime.ToHuman()}</p>");

@@ -24,35 +24,18 @@ namespace Laobian.Admin.HostedService
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                var logs = new List<LaobianLog>();
-                while (_logQueue.TryDequeue(out var log))
-                {
-                    logs.Add(log);
-                }
-
-                if (logs.Any())
-                {
-                    try
-                    {
-                        await _apiSiteHttpClient.SendLogsAsync(logs);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Sent logs failed. {ex}");
-                        foreach (var laobianLog in logs)
-                        {
-                            Console.WriteLine(laobianLog);
-                        }
-                    }
-                }
-                else
-                {
-                    await Task.Delay(TimeSpan.FromMilliseconds(100), stoppingToken);
-                }
+                await SendLogsAsync();
+                await Task.Delay(TimeSpan.FromMilliseconds(100), stoppingToken);
             }
         }
 
         public override async Task StopAsync(CancellationToken cancellationToken)
+        {
+            await SendLogsAsync();
+            await base.StopAsync(cancellationToken);
+        }
+
+        private async Task SendLogsAsync()
         {
             var logs = new List<LaobianLog>();
             while (_logQueue.TryDequeue(out var log))
@@ -75,8 +58,6 @@ namespace Laobian.Admin.HostedService
                     }
                 }
             }
-
-            await base.StopAsync(cancellationToken);
         }
     }
 }

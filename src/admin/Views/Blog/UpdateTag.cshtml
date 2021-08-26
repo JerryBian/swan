@@ -1,4 +1,7 @@
-﻿@model Laobian.Share.Site.Blog.BlogTag
+﻿@model BlogTag
+@{
+    ViewData["Title"] = "编辑标签";
+}
 <h3>编辑标签</h3>
 <form class="needs-validation" action="/blog/tag/update" method="post" novalidate>
     <div class="mb-3">
@@ -22,5 +25,5 @@
     <div class="d-grid">
         <button type="submit" class="btn btn-primary btn-lg">提交</button>
     </div>
-    
+
 </form>

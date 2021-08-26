@@ -32,7 +32,6 @@ namespace Laobian.Admin
             base.ConfigureServices(services);
             services.Configure<LaobianAdminOption>(o => { o.FetchFromEnv(Configuration); });
 
-            var httpRequestToken = Configuration.GetValue<string>(Constants.EnvHttpRequestToken);
             services.AddHttpClient<ApiSiteHttpClient>(SetHttpClient).SetHandlerLifetime(TimeSpan.FromDays(1))
                 .AddPolicyHandler(GetHttpClientRetryPolicy());
 

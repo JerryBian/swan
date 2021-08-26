@@ -1,4 +1,7 @@
-﻿<div class="d-flex align-items-center justify-content-center">
+﻿@{
+    ViewData["Title"] = "登录";
+}
+<div class="d-flex align-items-center justify-content-center">
     <form asp-controller="Account" asp-action="Login" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" role="form" class="w-100 p-3 needs-validation" novalidate>
         <div class="mb-3">
             <label for="userName" class="form-label">用户名</label>

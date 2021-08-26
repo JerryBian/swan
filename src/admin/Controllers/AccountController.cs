@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Net.Http.Headers;
 
 namespace Laobian.Admin.Controllers
 {
@@ -62,7 +63,7 @@ namespace Laobian.Admin.Controllers
                 return Redirect(returnUrl);
             }
 
-            _logger.LogWarning($"Login failed. User Name = {userName}, Password = {password}");
+            _logger.LogWarning($"Login failed. User Name = {userName}, Password = {password}. IP: {HttpContext.Connection.RemoteIpAddress}, User Agent: {Request.Headers[HeaderNames.UserAgent]}");
             return Redirect("/");
         }
 

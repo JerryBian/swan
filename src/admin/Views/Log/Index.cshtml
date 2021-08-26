@@ -1,4 +1,7 @@
-﻿@model List<Laobian.Share.Logger.LaobianLog>
+﻿@model List<LaobianLog>
+@{
+    ViewData["Title"] = "查看日志";
+}
 <div class="alert alert-light" role="alert">
     <div class="mb-2">
         <span class="me-3 text-primary">Site: </span>
@@ -68,9 +71,9 @@
 
             toggleSpinner();
             fetch(`/log?site=${site}&minLevel=${minLevel}&days=${dateRange}`,
-                    {
-                        method: 'POST'
-                    })
+                {
+                    method: 'POST'
+                })
                 .then(response => response.text())
                 .then(x => {
                     document.querySelector("#log_panel").innerHTML = x;

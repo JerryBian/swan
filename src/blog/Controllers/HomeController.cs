@@ -66,7 +66,6 @@ namespace Laobian.Blog.Controllers
         [ResponseCache(CacheProfileName = Constants.CacheProfileName)]
         public IActionResult Index([FromQuery] int p)
         {
-            throw new Exception("aaa");
             var authenticated = User.Identity?.IsAuthenticated ?? false;
             var viewModel = _cacheClient.GetOrCreate(
                 CacheKeyBuilder.Build(nameof(HomeController), nameof(Index), p, authenticated),
@@ -206,6 +205,8 @@ namespace Laobian.Blog.Controllers
                     sb.AppendLine("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">");
                     sb.AppendLine(
                         $"<url><loc>{_laobianBlogOption.BlogRemoteEndpoint}</loc><lastmod>{DateTime.Now.ToDate()}</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>");
+                    sb.AppendLine(
+                        $"<url><loc>{_laobianBlogOption.BlogRemoteEndpoint}/read</loc><lastmod>{DateTime.Now.ToDate()}</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>");
                     sb.AppendLine(
                         $"<url><loc>{_laobianBlogOption.BlogRemoteEndpoint}/about</loc><lastmod>{DateTime.Now.ToDate()}</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>");
                     sb.AppendLine(

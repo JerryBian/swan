@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 using Laobian.Admin.HttpClients;
+using Laobian.Share.Util;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,7 +21,7 @@ namespace Laobian.Admin.Controllers
         [RequestSizeLimit(20 * 1024 * 1024)]
         public async Task<ActionResult<string>> Upload(IFormFile image)
         {
-            var fileName = Path.GetRandomFileName().Replace(".", "");
+            var fileName = StringUtil.GenerateRandom();
             var ext = Path.GetExtension(image.FileName);
             await using var ms = new MemoryStream();
             await image.CopyToAsync(ms);
