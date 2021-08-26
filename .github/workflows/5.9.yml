@@ -162,6 +162,7 @@ jobs:
           target-folder: blog/${{ env.APP_VERSION }}
           folder: src/blog/wwwroot/dist
           single-commit: false
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   deploy_server:
     name: Deploy to remote server
