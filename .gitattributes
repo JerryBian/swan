@@ -39,5 +39,4 @@ package-lock.json text -diff
 Dockerfile.* linguist-language=Dockerfile
 **/*.cshtml -linguist-detectable
 sample -linguist-detectable
-**/wwwroot/*.css -linguist-detectable
-**/wwwroot/*.js -linguist-detectable
+wwwroot -linguist-detectable
