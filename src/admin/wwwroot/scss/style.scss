@@ -1,3 +1,12 @@
-﻿@import "../../../../node_modules/bootswatch/dist/sandstone/variables";
+﻿$font-family-sans-serif: system-ui, 'Heiti SC', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+$font-family-code: ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace;
+
+@import "../../../../node_modules/bootswatch/dist/sandstone/variables";
 @import "../../../../node_modules/bootstrap/scss/bootstrap";
 @import "../../../../node_modules/bootswatch/dist/sandstone/bootswatch";
+
+.editor-preview {
+    img {
+        max-width: 100%;
+    }
+}
