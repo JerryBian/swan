@@ -1,4 +1,4 @@
-﻿@model List<BlogPostRuntime>
+﻿@model List<Laobian.Share.Site.Blog.BlogPostRuntime>
 @inject IOptions<LaobianAdminOption> _config
 @{
     ViewData["Title"] = "Blog Posts";
@@ -39,7 +39,7 @@
                 </th>
                 <th>@post.Raw.IsPostPublished()</th>
                 <th>
-                    @post.GetAccessCount().ToUSThousand()
+                    @post.GetAccessCount().ToHuman()
                 </th>
             </tr>
         }

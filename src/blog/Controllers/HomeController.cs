@@ -12,34 +12,32 @@ using Laobian.Blog.HttpClients;
 using Laobian.Blog.Models;
 using Laobian.Blog.Service;
 using Laobian.Share;
-using Laobian.Share.Blog;
 using Laobian.Share.Extension;
+using Laobian.Share.Site.Blog;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Net.Http.Headers;
 
 namespace Laobian.Blog.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ApiSiteHttpClient _apiSiteHttpClient;
-        private readonly BlogOption _blogOption;
+        private readonly LaobianBlogOption _laobianBlogOption;
         private readonly IBlogService _blogService;
         private readonly ICacheClient _cacheClient;
         private readonly ILogger<HomeController> _logger;
 
         public HomeController(
             IBlogService blogService,
-            IOptions<BlogOption> config,
+            IOptions<LaobianBlogOption> config,
             ILogger<HomeController> logger,
-            ApiSiteHttpClient apiSiteHttpClient,
             ICacheClient cacheClient)
         {
             _logger = logger;
             _cacheClient = cacheClient;
             _blogService = blogService;
-            _blogOption = config.Value;
-            _apiSiteHttpClient = apiSiteHttpClient;
+            _laobianBlogOption = config.Value;
         }
 
         [HttpPost]
@@ -48,11 +46,13 @@ namespace Laobian.Blog.Controllers
         {
             if (!HttpContext.Request.Headers.ContainsKey(Constants.ApiRequestHeaderToken))
             {
+                _logger.LogError($"No API token set. IP: {HttpContext.Connection.RemoteIpAddress}, User Agent: {Request.Headers[HeaderNames.UserAgent]}");
                 return BadRequest("No API token set.");
             }
 
-            if (_blogOption.HttpRequestToken != HttpContext.Request.Headers[Constants.ApiRequestHeaderToken])
+            if (_laobianBlogOption.HttpRequestToken != HttpContext.Request.Headers[Constants.ApiRequestHeaderToken])
             {
+                _logger.LogError($"Invalid API token set: {HttpContext.Request.Headers[Constants.ApiRequestHeaderToken]}. IP: {HttpContext.Connection.RemoteIpAddress}, User Agent: {Request.Headers[HeaderNames.UserAgent]}");
                 return BadRequest(
                     $"Invalid API token set: {HttpContext.Request.Headers[Constants.ApiRequestHeaderToken]}");
             }
@@ -62,6 +62,7 @@ namespace Laobian.Blog.Controllers
         }
 
         [HttpGet]
+        [ResponseCache(CacheProfileName = Constants.CacheProfileName)]
         public IActionResult Index([FromQuery] int p)
         {
             var authenticated = User.Identity?.IsAuthenticated ?? false;
@@ -79,7 +80,7 @@ namespace Laobian.Blog.Controllers
 
                     posts.InsertRange(0, toppedPosts);
 
-                    var postsPerPage = Convert.ToInt32(_blogOption.PostsPerPage);
+                    var postsPerPage = Convert.ToInt32(_laobianBlogOption.PostsPerPage);
                     var model = new PagedPostViewModel(p, posts.Count, postsPerPage) {Url = Request.Path};
 
                     foreach (var blogPost in posts.ToPaged(postsPerPage, model.CurrentPage))
@@ -99,6 +100,7 @@ namespace Laobian.Blog.Controllers
 
         [HttpGet]
         [Route("/about")]
+        [ResponseCache(CacheProfileName = Constants.CacheProfileName)]
         public IActionResult About()
         {
             var authenticated = User.Identity?.IsAuthenticated ?? false;
@@ -116,17 +118,17 @@ namespace Laobian.Blog.Controllers
                         topTags.Add(tag, count);
                     }
 
-                    var postsPerPage = Convert.ToInt32(_blogOption.PostsPerPage);
+                    var postsPerPage = Convert.ToInt32(_laobianBlogOption.PostsPerPage);
                     var model = new AboutViewModel
                     {
                         LatestPostRuntime = posts.FirstOrDefault(),
-                        PostTotalAccessCount = posts.Sum(p => p.GetAccessCount()).ToUSThousand(),
+                        PostTotalAccessCount = posts.Sum(p => p.GetAccessCount()).ToHuman(),
                         PostTotalCount = posts.Count.ToString(),
                         TopPosts = posts.OrderByDescending(p => p.GetAccessCount()).Take(postsPerPage),
                         SystemAppVersion = _blogService.AppVersion,
                         SystemDotNetVersion = _blogService.RuntimeVersion,
                         SystemLastBoot = _blogService.BootTime.ToChinaDateAndTime(),
-                        SystemRunningInterval = (DateTime.Now - _blogService.BootTime).ToDisplayString(),
+                        SystemRunningInterval = (DateTime.Now - _blogService.BootTime).ToHuman(),
                         TagTotalCount = _blogService.GetAllTags().Count.ToString(),
                         TopTags = topTags.OrderByDescending(x => x.Value).Take(postsPerPage)
                             .ToDictionary(x => x.Key, x => x.Value)
@@ -140,25 +142,26 @@ namespace Laobian.Blog.Controllers
         }
 
         [Route("/rss")]
+        [ResponseCache(CacheProfileName = Constants.CacheProfileName)]
         public IActionResult Rss()
         {
             var rss = _cacheClient.GetOrCreate(CacheKeyBuilder.Build(nameof(HomeController), nameof(Rss)), () =>
             {
                 var feed = new SyndicationFeed(Constants.BlogTitle, Constants.BlogDescription,
-                    new Uri($"{_blogOption.BlogRemoteEndpoint}/rss"),
+                    new Uri($"{_laobianBlogOption.BlogRemoteEndpoint}/rss"),
                     Constants.ApplicationName, DateTimeOffset.UtcNow);
                 feed.Copyright =
-                    new TextSyndicationContent($"&#x26;amp;#169; {DateTime.Now.Year} {_blogOption.AdminChineseName}");
-                feed.Authors.Add(new SyndicationPerson(_blogOption.AdminEmail, _blogOption.AdminChineseName,
-                    _blogOption.BlogRemoteEndpoint));
-                feed.BaseUri = new Uri(_blogOption.BlogRemoteEndpoint);
+                    new TextSyndicationContent($"&#x26;amp;#169; {DateTime.Now.Year} {_laobianBlogOption.AdminChineseName}");
+                feed.Authors.Add(new SyndicationPerson(_laobianBlogOption.AdminEmail, _laobianBlogOption.AdminChineseName,
+                    _laobianBlogOption.BlogRemoteEndpoint));
+                feed.BaseUri = new Uri(_laobianBlogOption.BlogRemoteEndpoint);
                 feed.Language = "zh-cn";
                 var items = new List<SyndicationItem>();
                 foreach (var post in _blogService.GetAllPosts().Where(x => x.Raw.IsPostPublished()))
                 {
                     items.Add(new SyndicationItem(post.Raw.Title, post.HtmlContent,
-                        new Uri(post.Raw.GetFullPath(_blogOption.BlogRemoteEndpoint)),
-                        post.Raw.GetFullPath(_blogOption.BlogRemoteEndpoint),
+                        new Uri(post.Raw.GetFullPath(_laobianBlogOption.BlogRemoteEndpoint)),
+                        post.Raw.GetFullPath(_laobianBlogOption.BlogRemoteEndpoint),
                         new DateTimeOffset(post.Raw.LastUpdateTime, TimeSpan.FromHours(8))));
                 }
 
@@ -190,6 +193,7 @@ namespace Laobian.Blog.Controllers
 
         [Route("/sitemap")]
         [Route("/sitemap.xml")]
+        [ResponseCache(CacheProfileName = Constants.CacheProfileName)]
         public IActionResult Sitemap()
         {
             var sitemap = _cacheClient.GetOrCreate(CacheKeyBuilder.Build(nameof(HomeController), nameof(Sitemap)),
@@ -199,18 +203,18 @@ namespace Laobian.Blog.Controllers
                     sb.AppendLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
                     sb.AppendLine("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">");
                     sb.AppendLine(
-                        $"<url><loc>{_blogOption.BlogRemoteEndpoint}</loc><lastmod>{DateTime.Now.ToDate()}</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>");
+                        $"<url><loc>{_laobianBlogOption.BlogRemoteEndpoint}</loc><lastmod>{DateTime.Now.ToDate()}</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>");
                     sb.AppendLine(
-                        $"<url><loc>{_blogOption.BlogRemoteEndpoint}/about</loc><lastmod>{DateTime.Now.ToDate()}</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>");
+                        $"<url><loc>{_laobianBlogOption.BlogRemoteEndpoint}/about</loc><lastmod>{DateTime.Now.ToDate()}</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>");
                     sb.AppendLine(
-                        $"<url><loc>{_blogOption.BlogRemoteEndpoint}/archive</loc><lastmod>{DateTime.Now.ToDate()}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>");
+                        $"<url><loc>{_laobianBlogOption.BlogRemoteEndpoint}/archive</loc><lastmod>{DateTime.Now.ToDate()}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>");
                     sb.AppendLine(
-                        $"<url><loc>{_blogOption.BlogRemoteEndpoint}/tag</loc><lastmod>{DateTime.Now.ToDate()}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>");
+                        $"<url><loc>{_laobianBlogOption.BlogRemoteEndpoint}/tag</loc><lastmod>{DateTime.Now.ToDate()}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>");
 
                     foreach (var post in _blogService.GetAllPosts().Where(x => x.Raw.IsPostPublished()))
                     {
                         sb.AppendLine(
-                            $"<url><loc>{post.Raw.GetFullPath(_blogOption.BlogRemoteEndpoint)}</loc><lastmod>{post.Raw.LastUpdateTime.ToDate()}</lastmod><changefreq>daily</changefreq><priority>0.6</priority></url>");
+                            $"<url><loc>{post.Raw.GetFullPath(_laobianBlogOption.BlogRemoteEndpoint)}</loc><lastmod>{post.Raw.LastUpdateTime.ToDate()}</lastmod><changefreq>daily</changefreq><priority>0.6</priority></url>");
                     }
 
                     sb.AppendLine("</urlset>");
@@ -226,7 +230,7 @@ namespace Laobian.Blog.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
+            return View();
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Linq;
 using Laobian.Blog.Cache;
 using Laobian.Blog.Models;
 using Laobian.Blog.Service;
+using Laobian.Share;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -10,18 +11,19 @@ namespace Laobian.Blog.Controllers
 {
     public class ArchiveController : Controller
     {
-        private readonly BlogOption _blogOption;
+        private readonly LaobianBlogOption _laobianBlogOption;
         private readonly IBlogService _blogService;
         private readonly ICacheClient _cacheClient;
 
-        public ArchiveController(ICacheClient cacheClient, IBlogService blogService, IOptions<BlogOption> blogOption)
+        public ArchiveController(ICacheClient cacheClient, IBlogService blogService, IOptions<LaobianBlogOption> blogOption)
         {
             _cacheClient = cacheClient;
             _blogService = blogService;
-            _blogOption = blogOption.Value;
+            _laobianBlogOption = blogOption.Value;
         }
 
         [HttpGet]
+        [ResponseCache(CacheProfileName = Constants.CacheProfileName)]
         public IActionResult Index()
         {
             var authenticated = User.Identity?.IsAuthenticated ?? false;
@@ -49,7 +51,7 @@ namespace Laobian.Blog.Controllers
                 });
 
             ViewData["Title"] = "存档";
-            ViewData["Image"] = $"{_blogOption.BlogRemoteEndpoint}/archive.png";
+            ViewData["Image"] = $"{_laobianBlogOption.BlogRemoteEndpoint}/archive.png";
             return View("Index", viewModel);
         }
     }

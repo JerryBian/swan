@@ -4,7 +4,7 @@
     {
         public static string Build(params object[] parts)
         {
-            return $"LAOBIAN:BLOG:{string.Join(":", parts)}";
+            return $"_c_:{string.Join(":", parts)}";
         }
     }
 }

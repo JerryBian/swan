@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Laobian.Share.Blog;
 using Laobian.Share.Extension;
+using Laobian.Share.Site.Blog;
 
 namespace Laobian.Blog.Models
 {
@@ -22,7 +22,7 @@ namespace Laobian.Blog.Models
             var metadata = new List<string>
             {
                 $"<time class=\"muted-bolder\" datetime=\"{Current.Raw.PublishTime.ToDateAndTime()}\" title=\"{Current.Raw.PublishTime.ToChinaDateAndTime()}\">{Current.Raw.PublishTime.ToChinaDate()}</time>",
-                $"<span class=\"muted-bolder\" title=\"{Current.GetAccessCount()}\">{Current.GetAccessCount().ToUSThousand()}</span> <span>次阅读</span>"
+                $"<span class=\"muted-bolder\" title=\"{Current.GetAccessCount()}\">{Current.GetAccessCount().ToHuman()}</span> <span>次阅读</span>"
             };
 
             MetadataHtml = string.Join(" &middot; ", metadata);

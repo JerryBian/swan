@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Laobian.Share.Site;
 
 namespace Laobian.Share.Notify
 {
     public class NotifyMessage
     {
-        public string SendGridApiKey { get; set; }
-
         public string ToEmailAddress { get; set; }
 
         public string ToName { get; set; }

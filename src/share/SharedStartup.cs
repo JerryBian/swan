@@ -8,6 +8,7 @@ using Laobian.Share.Extension;
 using Laobian.Share.Logger;
 using Laobian.Share.Notify;
 using Laobian.Share.Option;
+using Laobian.Share.Site;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
@@ -43,10 +44,17 @@ namespace Laobian.Share
                     retryAttempt)));
         }
 
+        protected void SetHttpClient(HttpClient httpClient)
+        {
+            var httpRequestToken = Configuration.GetValue<string>(Constants.EnvHttpRequestToken);
+            httpClient.Timeout = TimeSpan.FromMinutes(10);
+            httpClient.DefaultRequestHeaders.Add(Constants.ApiRequestHeaderToken, httpRequestToken);
+        }
+
         public virtual void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
-            services.AddSingleton<IEmailNotify, EmailNotify>();
+            services.AddSingleton<IEmailNotify, SendGridEmailNotify>();
             services.AddSingleton<ILaobianLogQueue, LaobianLogQueue>();
 
             var dpFolder = Configuration.GetValue<string>(Constants.EnvDataProtectionKeyPath);
@@ -67,16 +75,16 @@ namespace Laobian.Share
                 });
         }
 
-        protected void Configure(IApplicationBuilder app, IHostApplicationLifetime appLifetime, CommonOption option)
+        protected void Configure(IApplicationBuilder app, IHostApplicationLifetime appLifetime, LaobianSharedOption option)
         {
             var emailNotify = app.ApplicationServices.GetRequiredService<IEmailNotify>();
             appLifetime.ApplicationStarted.Register(async () =>
             {
                 if (!CurrentEnv.IsDevelopment())
                 {
-                    var message = new NotifyMessage
+                    var message = new SendGridEmailMessage
                     {
-                        Content = $"<p>site started at {DateTime.Now.ToChinaDateAndTime()}.</p>",
+                        Content = "<p>恭喜，网站已经运行起来了！</p>",
                         Site = Site,
                         Subject = "site started",
                         SendGridApiKey = option.SendGridApiKey,
@@ -92,9 +100,9 @@ namespace Laobian.Share
             {
                 if (!CurrentEnv.IsDevelopment())
                 {
-                    var message = new NotifyMessage
+                    var message = new SendGridEmailMessage
                     {
-                        Content = $"<p>site stopped at {DateTime.Now.ToChinaDateAndTime()}.</p>",
+                        Content = "<p>网站被停掉了，请确认是否是正常行为。</p>",
                         Site = Site,
                         Subject = "site stopped",
                         SendGridApiKey = option.SendGridApiKey,

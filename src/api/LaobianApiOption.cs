@@ -2,7 +2,7 @@
 
 namespace Laobian.Api
 {
-    public class LaobianApiOption : CommonOption
+    public class LaobianApiOption : LaobianSharedOption
     {
         [OptionEnvName("COMMAND_LINE_APP")] public string CommandLineApp { get; set; }
 

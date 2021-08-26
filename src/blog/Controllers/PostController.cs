@@ -4,6 +4,7 @@ using Laobian.Blog.Cache;
 using Laobian.Blog.HttpClients;
 using Laobian.Blog.Models;
 using Laobian.Blog.Service;
+using Laobian.Share;
 using Laobian.Share.Util;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,6 +25,7 @@ namespace Laobian.Blog.Controllers
 
         [HttpGet]
         [Route("/{year:int}/{month:int}/{link}.html")]
+        [ResponseCache(CacheProfileName = Constants.CacheProfileName)]
         public IActionResult Post([FromRoute] int year, [FromRoute] int month, [FromRoute] string link)
         {
             var authenticated = User.Identity?.IsAuthenticated ?? false;

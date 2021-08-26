@@ -6,8 +6,8 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Blog.HttpClients;
-using Laobian.Share.Blog;
-using Laobian.Share.Read;
+using Laobian.Share.Site.Blog;
+using Laobian.Share.Site.Read;
 using Microsoft.Extensions.Logging;
 
 namespace Laobian.Blog.Service
@@ -101,6 +101,7 @@ namespace Laobian.Blog.Service
 
         public DateTime GetLastReloadTime()
         {
+            _reloadLock.Wait();
             return _lastReloadTime;
         }
     }

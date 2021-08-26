@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Laobian.Admin.HttpClients;
-using Laobian.Share.Read;
+using Laobian.Share.Site.Read;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Laobian.Admin.Controllers

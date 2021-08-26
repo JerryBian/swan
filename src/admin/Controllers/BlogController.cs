@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Laobian.Admin.HttpClients;
 using Laobian.Admin.Models;
-using Laobian.Share.Blog;
+using Laobian.Share.Site.Blog;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Laobian.Admin.Controllers

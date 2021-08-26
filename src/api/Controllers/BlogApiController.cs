@@ -5,7 +5,7 @@ using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
 using Laobian.Api.Repository;
-using Laobian.Share.Blog;
+using Laobian.Share.Site.Blog;
 using Laobian.Share.Util;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -114,7 +114,7 @@ namespace Laobian.Api.Controllers
                 }
             }
 
-            blogPostRuntime.ExtractRuntimeData(_laobianApiOption, blogPostAccess, blogTags);
+            blogPostRuntime.ExtractRuntimeData(blogPostAccess, blogTags);
             return blogPostRuntime;
         }
 

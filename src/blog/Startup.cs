@@ -8,8 +8,10 @@ using Laobian.Blog.Service;
 using Laobian.Share;
 using Laobian.Share.Converter;
 using Laobian.Share.Logger.Remote;
+using Laobian.Share.Site;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,23 +33,18 @@ namespace Laobian.Blog
         public override void ConfigureServices(IServiceCollection services)
         {
             base.ConfigureServices(services);
-            services.Configure<BlogOption>(o => { o.FetchFromEnv(Configuration); });
+            services.Configure<LaobianBlogOption>(o => { o.FetchFromEnv(Configuration); });
 
             services.AddSingleton<ICacheClient, CacheClient>();
             services.AddSingleton<IBlogService, BlogService>();
 
-            var httpRequestToken = Configuration.GetValue<string>(Constants.EnvHttpRequestToken);
-            services.AddHttpClient<ApiSiteHttpClient>(h =>
-                {
-                    h.Timeout = TimeSpan.FromMinutes(10);
-                    h.DefaultRequestHeaders.Add(Constants.ApiRequestHeaderToken, httpRequestToken);
-                })
+            
+            services.AddHttpClient<ApiSiteHttpClient>(SetHttpClient)
                 .SetHandlerLifetime(TimeSpan.FromDays(1))
                 .AddPolicyHandler(GetHttpClientRetryPolicy());
 
             services.AddHostedService<RemoteLogHostedService>();
             services.AddHostedService<BlogHostedService>();
-
 
             services.AddLogging(config =>
             {
@@ -57,7 +54,15 @@ namespace Laobian.Blog
                 config.AddRemote(c => { c.LoggerName = "blog"; });
             });
 
-            services.AddControllersWithViews().AddJsonOptions(config =>
+            services.AddControllersWithViews(option =>
+            {
+                option.CacheProfiles.Add(Constants.CacheProfileName, new CacheProfile
+                {
+                    Duration = (int)TimeSpan.FromMinutes(1).TotalSeconds,
+                    Location = ResponseCacheLocation.Client,
+                    VaryByHeader = "User-Agent"
+                });
+            }).AddJsonOptions(config =>
             {
                 config.JsonSerializerOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
                 var converter = new IsoDateTimeConverter();
@@ -68,8 +73,8 @@ namespace Laobian.Blog
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime appLifetime)
         {
-            var config = app.ApplicationServices.GetRequiredService<IOptions<BlogOption>>().Value;
-            base.Configure(app, appLifetime, config);
+            var config = app.ApplicationServices.GetRequiredService<IOptions<LaobianBlogOption>>().Value;
+            Configure(app, appLifetime, config);
 
             app.UseStatusCodePages();
 

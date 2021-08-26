@@ -1,6 +1,4 @@
-﻿using Laobian.Share.Util;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Laobian.Share.Logger.Remote
@@ -22,12 +20,6 @@ namespace Laobian.Share.Logger.Remote
 
         public ILogger CreateLogger(string categoryName)
         {
-            if (StringUtil.EqualsIgnoreCase("System.Net.Http.HttpClient.log.ClientHandler", categoryName) ||
-                StringUtil.EqualsIgnoreCase("System.Net.Http.HttpClient.log.LogicalHandler", categoryName))
-            {
-                return NullLogger.Instance;
-            }
-
             return _logger;
         }
 

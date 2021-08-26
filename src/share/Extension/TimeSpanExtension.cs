@@ -4,9 +4,9 @@ namespace Laobian.Share.Extension
 {
     public static class TimeSpanExtension
     {
-        public static string ToDisplayString(this TimeSpan interval)
+        public static string ToHuman(this TimeSpan interval)
         {
-            return interval.ToString(@"dd\.hh\:mm\:ss");
+            return interval.ToString("dd天hh小时mm分钟");
         }
     }
 }

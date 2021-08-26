@@ -3,7 +3,9 @@ using System.Linq;
 using Laobian.Blog.Cache;
 using Laobian.Blog.Models;
 using Laobian.Blog.Service;
+using Laobian.Share;
 using Laobian.Share.Util;
+using Markdig;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -11,17 +13,18 @@ namespace Laobian.Blog.Controllers
 {
     public class ReadController : Controller
     {
-        private readonly BlogOption _blogOption;
+        private readonly LaobianBlogOption _laobianBlogOption;
         private readonly IBlogService _blogService;
         private readonly ICacheClient _cacheClient;
 
-        public ReadController(IBlogService blogService, ICacheClient cacheClient, IOptions<BlogOption> blogOption)
+        public ReadController(IBlogService blogService, ICacheClient cacheClient, IOptions<LaobianBlogOption> blogOption)
         {
             _cacheClient = cacheClient;
             _blogService = blogService;
-            _blogOption = blogOption.Value;
+            _laobianBlogOption = blogOption.Value;
         }
 
+        [ResponseCache(CacheProfileName = Constants.CacheProfileName)]
         public IActionResult Index()
         {
             var model = _cacheClient.GetOrCreate(CacheKeyBuilder.Build(nameof(ReadController), nameof(Index)),
@@ -44,8 +47,13 @@ namespace Laobian.Blog.Controllers
                             {
                                 var post = posts.FirstOrDefault(x =>
                                     StringUtil.EqualsIgnoreCase(bookItem.BlogPostLink, x.Raw.Link));
-                                bookItem.BlogPostLink = post?.Raw.GetFullPath(_blogOption.BlogRemoteEndpoint);
+                                bookItem.BlogPostLink = post?.Raw.GetFullPath(_laobianBlogOption.BlogRemoteEndpoint);
                                 bookItem.BlogPostTitle = post?.Raw.Title;
+                            }
+
+                            if (!string.IsNullOrEmpty(bookItem.ShortComment))
+                            {
+                                bookItem.ShortCommentHtml = Markdown.ToHtml(bookItem.ShortComment);
                             }
                         }
 

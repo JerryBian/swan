@@ -1,10 +1,9 @@
-﻿@using Markdig
-@model List<BookItemViewModel>
+﻿@model List<BookItemViewModel>
 @{
     ViewData["Title"] = "我的阅读";
 }
 
-<div data-bs-spy="scroll" data-bs-target="#aside_read_items" data-bs-offset="10">
+<div data-bs-spy="scroll" data-bs-target="#aside_read_items" data-bs-offset="0">
     @foreach (var item in Model)
     {
         <h3 class="mb-2" id="@item.Id">@item.Title</h3>
@@ -71,9 +70,9 @@
                         <small class="fs-sm text-muted">@string.Join(" / ", info)</small>
                     }
 
-                    @if (!string.IsNullOrEmpty(book.ShortComment))
+                    @if (!string.IsNullOrEmpty(book.ShortCommentHtml))
                     {
-                        <div class="my-3 alert alert-primary fs-6 font-monospace">@Html.Raw(Markdown.ToHtml(book.ShortComment))</div>
+                        <div class="my-3 alert alert-primary fs-6 font-monospace">@Html.Raw(book.ShortCommentHtml)</div>
                     }
 
                     @if (!string.IsNullOrEmpty(book.BlogPostLink))

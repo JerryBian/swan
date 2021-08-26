@@ -4,9 +4,9 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Laobian.Share.Blog;
 using Laobian.Share.Logger;
-using Laobian.Share.Read;
+using Laobian.Share.Site.Blog;
+using Laobian.Share.Site.Read;
 using Laobian.Share.Util;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -18,7 +18,7 @@ namespace Laobian.Blog.HttpClients
         private readonly HttpClient _httpClient;
         private readonly ILogger<ApiSiteHttpClient> _logger;
 
-        public ApiSiteHttpClient(HttpClient httpClient, ILogger<ApiSiteHttpClient> logger, IOptions<BlogOption> config)
+        public ApiSiteHttpClient(HttpClient httpClient, ILogger<ApiSiteHttpClient> logger, IOptions<LaobianBlogOption> config)
         {
             _logger = logger;
             _httpClient = httpClient;

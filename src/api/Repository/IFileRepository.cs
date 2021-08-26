@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Share;
-using Laobian.Share.Blog;
 using Laobian.Share.Logger;
-using Laobian.Share.Read;
+using Laobian.Share.Site;
+using Laobian.Share.Site.Blog;
+using Laobian.Share.Site.Read;
 
 namespace Laobian.Api.Repository
 {

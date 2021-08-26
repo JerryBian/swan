@@ -6,15 +6,15 @@ namespace Laobian.Share.Logger
 {
     public class LaobianLog
     {
-        [JsonPropertyName("message")] public string Message { get; set; }
+        [JsonPropertyName("m")] public string Message { get; set; }
 
-        [JsonPropertyName("exception")] public string Exception { get; set; }
+        [JsonPropertyName("e")] public string Exception { get; set; }
 
-        [JsonPropertyName("timestamp")] public DateTime TimeStamp { get; set; }
+        [JsonPropertyName("t")] public DateTime TimeStamp { get; set; }
 
-        [JsonPropertyName("level")] public LogLevel Level { get; set; }
+        [JsonPropertyName("l")] public LogLevel Level { get; set; }
 
-        [JsonPropertyName("logger")] public string LoggerName { get; set; }
+        [JsonPropertyName("n")] public string LoggerName { get; set; }
 
         public void Clone(LaobianLog log)
         {

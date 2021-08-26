@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Share;
+using Laobian.Share.Site;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 

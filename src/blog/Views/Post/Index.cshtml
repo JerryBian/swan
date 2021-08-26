@@ -1,5 +1,5 @@
 ﻿@model PostViewModel
-@inject IOptions<BlogOption> Config
+@inject IOptions<LaobianBlogOption> _config
 @{
     ViewData["Title"] = Model.Current.Raw.Title;
     ViewData["Image"] = Model.Current.ThumbnailImageUrl;
@@ -46,17 +46,17 @@
 
             @if (Model.Previous != null)
             {
-                <li>前一篇：<a href="@Model.Previous.Raw.GetFullPath(Config.Value.BlogRemoteEndpoint)" class="text-decoration-none">@Model.Previous.Raw.Title</a></li>
+                <li>前一篇：<a href="@Model.Previous.Raw.GetFullPath(_config.Value.BlogRemoteEndpoint)" class="text-decoration-none">@Model.Previous.Raw.Title</a></li>
             }
 
             @if (Model.Next != null)
             {
-                <li>后一篇：<a href="@Model.Next.Raw.GetFullPath(Config.Value.BlogRemoteEndpoint)" class="text-decoration-none">@Model.Next.Raw.Title</a></li>
+                <li>后一篇：<a href="@Model.Next.Raw.GetFullPath(_config.Value.BlogRemoteEndpoint)" class="text-decoration-none">@Model.Next.Raw.Title</a></li>
             }
             <li>
                 文章的留言，请发送电子邮件至
-                <a href="mailto:@Config.Value.AdminEmail?subject=RE:@Model.Current.Raw.Title&body=Good job！" class="text-decoration-none">
-                    @Config.Value.AdminEmail
+                <a href="mailto:@_config.Value.AdminEmail?subject=RE:@Model.Current.Raw.Title&body=Good job！" class="text-decoration-none">
+                    @_config.Value.AdminEmail
                 </a>
             </li>
         </ul>
@@ -86,7 +86,7 @@
                 anchors.options = {
                     placement: 'right',
                     visible: 'hover',
-                    base: '@Model.Current.Raw.GetFullPath(Config.Value.BlogRemoteEndpoint)'
+                    base: '@Model.Current.Raw.GetFullPath(_config.Value.BlogRemoteEndpoint)'
                 };
                 anchors.add('.post-content h3, .post-content h4');
 

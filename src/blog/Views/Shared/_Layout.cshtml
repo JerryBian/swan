@@ -1,6 +1,4 @@
-﻿@using Microsoft.Extensions.Hosting
-@using Laobian.Share
-@inject IOptions<BlogOption> _config
+﻿@inject IOptions<LaobianBlogOption> _config
 @inject IHostEnvironment _env
 <!DOCTYPE html>
 <html lang="zh" class="w-100 min-vh-100">
@@ -10,8 +8,7 @@
         {
             ApplicationTitleColor = "#00a300",
             Description = ViewData["Description"]?.ToString(),
-            Keywords = ViewData["Keywords"]?.ToString(),
-            RobotsEnabled = _env.IsProduction(),
+            RobotsEnabled = bool.TryParse(ViewData["RobotsEnabled"]?.ToString(), out var result) ? result : _env.IsProduction(),
             SafariPinnedTabColor = "#5bbad5",
             ThemeColor = "#ffffff",
             Title = ViewData["Title"]?.ToString(),
@@ -26,7 +23,13 @@
         @Html.Raw(headerBuilder.Build())
     }
 
-    <link rel="stylesheet" href="~/style.min.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/dist/style.min.css" 
+          asp-append-version="true" 
+          asp-fallback-href="https://jerrybian.github.io/laobian.me/blog/style.min.css"
+          asp-fallback-test-class="d-flex"
+          asp-fallback-test-property="display"
+          asp-fallback-test-value="flex !important"/>
+
 </head>
 <body class="d-flex flex-column w-100 min-vh-100">
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -68,8 +71,7 @@
                 <div class="card-body">
                     <h5 class="card-title"><i class="fas fa-landmark"></i> Welcome!</h5>
                     <div class="card-text">
-                        <p>卞良忠，英文名：Jerry Bian，一个普通人。</p>
-                        <p>这里是我的个人博客，想到什么就写什么。</p>
+                        @await Html.PartialAsync("_SharedAbout")
                     </div>
                     <div class="d-grid">
                         <a href="/about" class="btn btn-light">关于 <i class="fas fa-long-arrow-alt-right"></i></a>
@@ -101,7 +103,10 @@
     </nav>
 
 </footer>
-<script src="~/script.min.js" asp-append-version="true"></script>
+<script src="~/script.min.js" 
+        asp-append-version="true" 
+        asp-fallback-src="https://jerrybian.github.io/laobian.me/blog/index.min.js"
+        asp-fallback-test="window.fallbackTest"></script>
 @await RenderSectionAsync("Script", false)
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-97849167-1"></script>
 <script>

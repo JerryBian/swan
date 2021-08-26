@@ -1,5 +1,8 @@
 ﻿@model PagedPostViewModel
-@inject IOptions<BlogOption> _option;
+@inject IOptions<LaobianBlogOption> _option
+@{
+    ViewData["Description"] = Constants.BlogDescription;
+}
 
 <section>
     <div class="list-group list-group-flush">
@@ -29,7 +32,6 @@
                     {
                         <div class="mt-1 mb-3">
                             @Html.Raw(post.Current.ThumbnailHtml)
-                            @*<img src="@post.Current.Thumbnail" class="img-fluid mt-1 mb-3">*@
                         </div>
                     }
 

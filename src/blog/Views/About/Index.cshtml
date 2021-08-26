@@ -1,20 +1,20 @@
 ﻿@model AboutViewModel
-@inject IOptions<BlogOption> Config
+@inject IOptions<LaobianBlogOption> _config
 @{
     ViewData["Title"] = "关于";
-    ViewData["Image"] = $"{Config.Value.BlogRemoteEndpoint}/information.png";
+    ViewData["Image"] = $"{_config.Value.BlogRemoteEndpoint}/information.png";
 }
 
 <div class="post-content">
     <div class="d-lg-none d-xl-none d-xxl-none">
         <p>以下是关于作者以及这个博客系统的一些简介。</p>
         <h3>关于作者</h3>
-        <p>我叫 @Config.Value.AdminChineseName，网名：汴梁钟声，英文名：@Config.Value.AdminEnglishName。软件工程师，热爱技术与写作。</p>
+        @await Html.PartialAsync("_SharedAbout")
     </div>
 
     <p>我的联系方式：</p>
     <ul>
-        <li><strong>Email</strong>: <a href="mailto:@Config.Value.AdminEmail">@Config.Value.AdminEmail</a></li>
+        <li><strong>Email</strong>: <a href="mailto:@_config.Value.AdminEmail">@_config.Value.AdminEmail</a></li>
         <li><strong>GitHub</strong>: <a href="https://github.com/JerryBian">JerryBian</a></li>
     </ul>
 
@@ -29,12 +29,12 @@
         </strong>。
     </p>
     <p>最后一次启动于 <strong>@Model.SystemLastBoot</strong>，迄今为止已平稳运行 <strong>@Model.SystemRunningInterval</strong>。当前系统的版本为 <strong>@Model.SystemAppVersion</strong>。</p>
-    <p>目前共有 <strong>@Model.PostTotalCount</strong> 篇文章，访问总量为 <strong>@Model.PostTotalAccessCount</strong>，最受欢迎的 <strong>@Config.Value.PostsPerPage</strong> 篇文章依次为：</p>
+    <p>目前共有 <strong>@Model.PostTotalCount</strong> 篇文章，访问总量为 <strong>@Model.PostTotalAccessCount</strong>，最受欢迎的 <strong>@_config.Value.PostsPerPage</strong> 篇文章依次为：</p>
     <ol>
         @foreach (var post in Model.TopPosts)
         {
             <li>
-                <a href="@post.Raw.GetFullPath(Config.Value.BlogRemoteEndpoint)">@post.Raw.Title</a> <i>(@post.GetAccessCount().ToUSThousand())</i>
+                <a href="@post.Raw.GetFullPath(_config.Value.BlogRemoteEndpoint)">@post.Raw.Title</a> <i>(@post.GetAccessCount().ToHuman())</i>
             </li>
         }
     </ol>
@@ -43,11 +43,11 @@
         <p>
             最近一次的发布是于 <strong>@Model.LatestPostRuntime.Raw.PublishTime.ToChinaDate()</strong> 发布了
             <strong>
-                <a href="@Model.LatestPostRuntime.Raw.GetFullPath(Config.Value.BlogRemoteEndpoint)">@Model.LatestPostRuntime.Raw.Title</a>
+                <a href="@Model.LatestPostRuntime.Raw.GetFullPath(_config.Value.BlogRemoteEndpoint)">@Model.LatestPostRuntime.Raw.Title</a>
             </strong>。
         </p>
     }
-    <p>共有 <strong>@Model.TagTotalCount</strong> 个文章标签，拥有文章数最多的 <strong>@Config.Value.PostsPerPage</strong> 个依次为：</p>
+    <p>共有 <strong>@Model.TagTotalCount</strong> 个文章标签，拥有文章数最多的 <strong>@_config.Value.PostsPerPage</strong> 个依次为：</p>
     <ol>
         @foreach (var tag in Model.TopTags.Keys)
         {

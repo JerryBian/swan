@@ -1,14 +1,20 @@
-﻿using System.Globalization;
-
-namespace Laobian.Share.Extension
+﻿namespace Laobian.Share.Extension
 {
     public static class IntExtension
     {
-        public static string ToUSThousand(this int number)
+        public static string ToHuman(this int number)
         {
-            var nfi = new CultureInfo("en-US", false).NumberFormat;
-            nfi.NumberDecimalDigits = 0;
-            return number.ToString("N", nfi);
+            if (number < 1000)
+            {
+                return number.ToString();
+            }
+
+            if (number < 10000)
+            {
+                return $"{(number / 1000):F1}k";
+            }
+
+            return $"{(number / 10000):F1}w";
         }
     }
 }
