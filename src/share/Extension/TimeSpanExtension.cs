@@ -19,7 +19,7 @@ namespace Laobian.Share.Extension
 
             if (interval.Minutes > 0)
             {
-                result += $"{interval.Hours}分钟";
+                result += $"{interval.Minutes}分钟";
             }
 
             if (string.IsNullOrEmpty(result))
