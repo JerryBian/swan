@@ -159,10 +159,8 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@4.1.4
         with:
           branch: gh-pages
-          target-folder: blog/${{ env.APP_VERSION }}
           folder: src/blog/wwwroot/dist
           single-commit: false
-          token: ${{ secrets.GITHUB_TOKEN }}
 
   deploy_server:
     name: Deploy to remote server
