@@ -52,10 +52,10 @@ jobs:
           file: ./Dockerfile.api
           push: true
           tags: |
-            cnbian/laobian-api:latest
             cnbian/laobian-api:${{ env.APP_VERSION }}
-            ghcr.io/jerrybian/laobian-api:latest
+            cnbian/laobian-api:latest
             ghcr.io/jerrybian/laobian-api:${{ env.APP_VERSION }}
+            ghcr.io/jerrybian/laobian-api:latest
 
   publish_admin:
     name: Publish ADMIN images
@@ -104,10 +104,10 @@ jobs:
           file: ./Dockerfile.admin
           push: true
           tags: |
-            cnbian/laobian-admin:latest
             cnbian/laobian-admin:${{ env.APP_VERSION }}
-            ghcr.io/jerrybian/laobian-admin:latest
+            cnbian/laobian-admin:latest
             ghcr.io/jerrybian/laobian-admin:${{ env.APP_VERSION }}
+            ghcr.io/jerrybian/laobian-admin:latest
 
   publish_blog:
     name: Publish BLOG images
@@ -156,67 +156,22 @@ jobs:
           file: ./Dockerfile.blog
           push: true
           tags: |
-            cnbian/laobian-blog:latest
             cnbian/laobian-blog:${{ env.APP_VERSION }}
-            ghcr.io/jerrybian/laobian-blog:latest
+            cnbian/laobian-blog:latest
             ghcr.io/jerrybian/laobian-blog:${{ env.APP_VERSION }}
+            ghcr.io/jerrybian/laobian-blog:latest
 
-  publish_read:
-    name: Publish READ images
-    runs-on: ubuntu-20.04
-    permissions:
-      packages: write
-      contents: read
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get install -y libxml2-utils
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_HUB_USER }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-          
-      - name: Setup environment variables
-        run: |
-          APP_VERSION=`xmllint --xpath "/Project/PropertyGroup/Version/text()" Directory.Build.props`
-          echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
-
-      - name: Build and push READ images
-        id: docker_build_read
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          file: ./Dockerfile.read
-          push: true
-          tags: |
-            cnbian/laobian-read:latest
-            cnbian/laobian-read:${{ env.APP_VERSION }}
-            ghcr.io/jerrybian/laobian-read:latest
-            ghcr.io/jerrybian/laobian-read:${{ env.APP_VERSION }}
+      # - name: Deploy GitHub Pages 🚀
+      #   uses: JamesIves/github-pages-deploy-action@4.1.4
+      #   with:
+      #     branch: gh-pages
+      #     folder: src/blog/wwwroot/dist
+      #     single-commit: false
 
   deploy_server:
     name: Deploy to remote server
     runs-on: ubuntu-20.04
-    needs: [publish_api, publish_admin, publish_blog, publish_read]
+    needs: [publish_api, publish_admin, publish_blog]
 
     steps:
       - name: Checkout
