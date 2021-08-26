@@ -52,6 +52,11 @@
                             info.Add(author);
                         }
 
+                        if (!string.IsNullOrEmpty(book.Translator))
+                        {
+                            info.Add($"{book.Translator}（译）");
+                        }
+
                         if (!string.IsNullOrEmpty(book.PublisherName))
                         {
                             var publisher = book.PublisherName;

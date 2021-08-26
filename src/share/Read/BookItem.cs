@@ -32,6 +32,8 @@ namespace Laobian.Share.Read
 
         [JsonPropertyName("grade")] public int Grade { get; set; }
 
+        [JsonPropertyName("translator")] public string Translator { get; set; }
+
         [JsonPropertyName("lastUpdateTime")] public DateTime LastUpdateTime { get; set; }
 
         [JsonIgnore] public string BlogPostTitle { get; set; }

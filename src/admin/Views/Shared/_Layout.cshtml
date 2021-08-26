@@ -68,14 +68,39 @@
         </div>
     </div>
 </nav>
-<main class="container p-2 my-3">
+<main class="container p-2 my-3 visible" id="main1">
     @RenderBody()
+</main>
+<main class="d-flex align-items-center invisible" id="main2">
+    <div class="spinner-border" role="status">
+        <span class="visually-hidden">working...</span>
+    </div>
 </main>
 <footer class="mt-auto text-center p-2">
     &copy; @DateTime.Now.Year
 </footer>
 <script src="/script.min.js"></script>
 <script>
+    function toggleSpinner() {
+        let main1 = document.querySelector("#main1");
+        if (main1.classList.contains("visible")) {
+            main1.classList.remove("visible");
+            main1.classList.add("invisible");
+        } else {
+            main1.classList.remove("invisible");
+            main1.classList.add("visible");
+        }
+
+        let main2 = document.querySelector("#main2");
+        if (main2.classList.contains("visible")) {
+            main2.classList.remove("visible");
+            main2.classList.add("invisible");
+        } else {
+            main2.classList.remove("invisible");
+            main2.classList.add("visible");
+        }
+    }
+
     function forceReloadBlogData() {
         Swal.fire({
             title: "确定要清除博客的缓存吗？",
@@ -153,7 +178,7 @@
             },
             lineNumbers: false,
             lineWrapping: true,
-            maxHeight: "300px",
+            maxHeight: "200px",
             promptURLs: true,
             uploadImage: true,
             imageMaxSize: 1024 * 1024 * 20,

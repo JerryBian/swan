@@ -53,8 +53,8 @@
             <label class="form-check-label" for="date_one_year">One Year</label>
         </div>
     </div>
-    <div>
-        <button class="btn btn-info px-5" onclick="loadLogs()">Load</button>
+    <div class="d-grid">
+        <button class="btn btn-info btn-lg px-5" onclick="loadLogs()">加载</button>
     </div>
 </div>
 <div class="list-group" id="log_panel"></div>
@@ -66,6 +66,7 @@
             const minLevel = document.querySelector('input[name="minLevel"]:checked').value;
             const dateRange = document.querySelector('input[name="dateRange"]:checked').value;
 
+            toggleSpinner();
             fetch(`/log?site=${site}&minLevel=${minLevel}&days=${dateRange}`,
                     {
                         method: 'POST'
@@ -73,6 +74,7 @@
                 .then(response => response.text())
                 .then(x => {
                     document.querySelector("#log_panel").innerHTML = x;
+                    toggleSpinner();
                 });
         }
 
