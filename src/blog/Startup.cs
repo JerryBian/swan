@@ -38,7 +38,7 @@ namespace Laobian.Blog
             services.AddSingleton<ICacheClient, CacheClient>();
             services.AddSingleton<IBlogService, BlogService>();
 
-            
+
             services.AddHttpClient<ApiSiteHttpClient>(SetHttpClient)
                 .SetHandlerLifetime(TimeSpan.FromDays(1))
                 .AddPolicyHandler(GetHttpClientRetryPolicy());
@@ -58,7 +58,7 @@ namespace Laobian.Blog
             {
                 option.CacheProfiles.Add(Constants.CacheProfileName, new CacheProfile
                 {
-                    Duration = (int)TimeSpan.FromMinutes(1).TotalSeconds,
+                    Duration = (int) TimeSpan.FromMinutes(1).TotalSeconds,
                     Location = ResponseCacheLocation.Client,
                     VaryByHeader = "User-Agent"
                 });

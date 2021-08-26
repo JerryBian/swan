@@ -1,16 +1,9 @@
-﻿using System.Diagnostics;
-using Laobian.Admin.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Laobian.Admin.Controllers
 {
     public class HomeController : Controller
     {
-        public HomeController()
-        {
-        }
-
         public IActionResult Index()
         {
             return View();

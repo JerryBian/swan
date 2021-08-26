@@ -47,15 +47,22 @@ namespace Laobian.Api.Command
                     resetEvent1.Set();
                 }
                 else
+                {
                     output.AppendLine(args.Data);
+                }
             };
             process.ErrorDataReceived += (sender, args) =>
             {
                 if (args.Data == null)
+                {
                     // ReSharper disable once AccessToDisposedClosure
                     resetEvent2.Set();
+                }
+
                 else
+                {
                     output.AppendLine(args.Data);
+                }
             };
 
             process.Start();

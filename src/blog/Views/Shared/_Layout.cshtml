@@ -23,8 +23,8 @@
         @Html.Raw(headerBuilder.Build())
     }
 
-    <link rel="stylesheet" href="~/dist/style.min.css" 
-          asp-append-version="true" 
+    <link rel="stylesheet" href="~/dist/style.min.css"
+          asp-append-version="true"
           asp-fallback-href="https://jerrybian.github.io/laobian.me/blog/style.min.css"
           asp-fallback-test-class="d-flex"
           asp-fallback-test-property="display"
@@ -103,8 +103,8 @@
     </nav>
 
 </footer>
-<script src="~/dist/script.min.js" 
-        asp-append-version="true" 
+<script src="~/dist/script.min.js"
+        asp-append-version="true"
         asp-fallback-src="https://jerrybian.github.io/laobian.me/blog/index.min.js"
         asp-fallback-test="window.fallbackTest"></script>
 @await RenderSectionAsync("Script", false)

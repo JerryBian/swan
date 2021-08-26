@@ -229,29 +229,29 @@ namespace Laobian.Admin.HttpClients
             return await JsonUtil.DeserializeAsync<BookItem>(stream);
         }
 
-        public async Task AddReadItemAsync(BookItem bookItem)
+        public async Task AddBookItemAsync(BookItem bookItem)
         {
             var response = await _httpClient.PutAsync("/read",
                 new StringContent(JsonUtil.Serialize(bookItem), Encoding.UTF8, "application/json"));
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 Console.WriteLine(
-                    $"{nameof(ApiSiteHttpClient)}.{nameof(AddReadItemAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+                    $"{nameof(ApiSiteHttpClient)}.{nameof(AddBookItemAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
             }
         }
 
-        public async Task UpdateReadItemAsync(BookItem bookItem)
+        public async Task UpdateBookItemAsync(BookItem bookItem)
         {
             var response = await _httpClient.PostAsync("/read",
                 new StringContent(JsonUtil.Serialize(bookItem), Encoding.UTF8, "application/json"));
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 Console.WriteLine(
-                    $"{nameof(ApiSiteHttpClient)}.{nameof(UpdateReadItemAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+                    $"{nameof(ApiSiteHttpClient)}.{nameof(UpdateBookItemAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
             }
         }
 
-        public async Task DeleteReadItemAsync(string id)
+        public async Task DeleteBookItemAsync(string id)
         {
             var response = await _httpClient.DeleteAsync($"/read/{id}");
             var content = await response.Content.ReadAsStringAsync();

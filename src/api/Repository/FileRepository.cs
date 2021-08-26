@@ -6,7 +6,6 @@ using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Api.Source;
-using Laobian.Share;
 using Laobian.Share.Converter;
 using Laobian.Share.Logger;
 using Laobian.Share.Site;
@@ -14,22 +13,19 @@ using Laobian.Share.Site.Blog;
 using Laobian.Share.Site.Read;
 using Laobian.Share.Util;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Laobian.Api.Repository
 {
     public class FileRepository : IFileRepository
     {
         private readonly IFileSource _fileSource;
-        private readonly LaobianApiOption _laobianApiOption;
         private readonly ILogger<FileRepository> _logger;
 
-        public FileRepository(IOptions<LaobianApiOption> apiOption, IFileSource fileSource,
+        public FileRepository(IFileSource fileSource,
             ILogger<FileRepository> logger)
         {
             _logger = logger;
             _fileSource = fileSource;
-            _laobianApiOption = apiOption.Value;
         }
 
         public async Task PrepareAsync(CancellationToken cancellationToken = default)
@@ -92,7 +88,8 @@ namespace Laobian.Api.Repository
 
             blogPost.CreateTime = DateTime.Now;
             blogPost.LastUpdateTime = DateTime.Now;
-            await _fileSource.WriteBlogPostAsync(blogPost.CreateTime.Year, blogPost.Link, JsonUtil.Serialize(blogPost),
+            await _fileSource.WriteBlogPostAsync(blogPost.CreateTime.Year, blogPost.Link,
+                JsonUtil.Serialize(blogPost),
                 cancellationToken);
         }
 
@@ -117,7 +114,8 @@ namespace Laobian.Api.Repository
             var existingPost = JsonUtil.Deserialize<BlogPost>(existingData);
             blogPost.CreateTime = existingPost.CreateTime;
             blogPost.LastUpdateTime = DateTime.Now;
-            await _fileSource.WriteBlogPostAsync(blogPost.CreateTime.Year, blogPost.Link, JsonUtil.Serialize(blogPost),
+            await _fileSource.WriteBlogPostAsync(blogPost.CreateTime.Year, blogPost.Link,
+                JsonUtil.Serialize(blogPost),
                 cancellationToken);
         }
 
@@ -138,7 +136,7 @@ namespace Laobian.Api.Repository
             CancellationToken cancellationToken = default)
         {
             var blogPostAccess = await GetBlogPostAccessAsync(blogPost.Link, cancellationToken);
-            var access = blogPostAccess.FirstOrDefault(x => x.Date == date);
+            var access = blogPostAccess.FirstOrDefault(x => x.Date == date.Date);
             if (access == null)
             {
                 blogPostAccess.Add(new BlogAccess {Count = count, Date = date});

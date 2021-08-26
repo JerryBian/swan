@@ -18,7 +18,8 @@ namespace Laobian.Blog.HttpClients
         private readonly HttpClient _httpClient;
         private readonly ILogger<ApiSiteHttpClient> _logger;
 
-        public ApiSiteHttpClient(HttpClient httpClient, ILogger<ApiSiteHttpClient> logger, IOptions<LaobianBlogOption> config)
+        public ApiSiteHttpClient(HttpClient httpClient, ILogger<ApiSiteHttpClient> logger,
+            IOptions<LaobianBlogOption> config)
         {
             _logger = logger;
             _httpClient = httpClient;

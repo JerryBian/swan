@@ -40,7 +40,7 @@ namespace Laobian.Api.Source
 
         public override async Task FlushAsync(string message)
         {
-            FileLocker.Reset();
+            FileLocker.WaitOne();
             try
             {
                 await base.FlushAsync(message);

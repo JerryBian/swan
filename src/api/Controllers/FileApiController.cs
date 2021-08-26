@@ -17,6 +17,7 @@ namespace Laobian.Api.Controllers
         }
 
         [HttpPost("upload")]
+        [RequestSizeLimit(20 * 1024 * 1024)]
         public async Task<ActionResult<string>> Upload([FromQuery] string fileName)
         {
             await using var ms = new MemoryStream();

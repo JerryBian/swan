@@ -4,7 +4,6 @@ using System.Net;
 using System.Net.Http;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
-using Laobian.Share.Extension;
 using Laobian.Share.Logger;
 using Laobian.Share.Notify;
 using Laobian.Share.Option;
@@ -75,7 +74,8 @@ namespace Laobian.Share
                 });
         }
 
-        protected void Configure(IApplicationBuilder app, IHostApplicationLifetime appLifetime, LaobianSharedOption option)
+        protected void Configure(IApplicationBuilder app, IHostApplicationLifetime appLifetime,
+            LaobianSharedOption option)
         {
             var emailNotify = app.ApplicationServices.GetRequiredService<IEmailNotify>();
             appLifetime.ApplicationStarted.Register(async () =>

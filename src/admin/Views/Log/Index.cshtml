@@ -71,9 +71,9 @@
 
             toggleSpinner();
             fetch(`/log?site=${site}&minLevel=${minLevel}&days=${dateRange}`,
-                {
-                    method: 'POST'
-                })
+                    {
+                        method: 'POST'
+                    })
                 .then(response => response.text())
                 .then(x => {
                     document.querySelector("#log_panel").innerHTML = x;

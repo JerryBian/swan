@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.ServiceModel.Syndication;
@@ -8,13 +7,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using Laobian.Blog.Cache;
-using Laobian.Blog.HttpClients;
 using Laobian.Blog.Models;
 using Laobian.Blog.Service;
 using Laobian.Share;
 using Laobian.Share.Extension;
 using Laobian.Share.Site.Blog;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -24,9 +21,9 @@ namespace Laobian.Blog.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly LaobianBlogOption _laobianBlogOption;
         private readonly IBlogService _blogService;
         private readonly ICacheClient _cacheClient;
+        private readonly LaobianBlogOption _laobianBlogOption;
         private readonly ILogger<HomeController> _logger;
 
         public HomeController(
@@ -47,13 +44,15 @@ namespace Laobian.Blog.Controllers
         {
             if (!HttpContext.Request.Headers.ContainsKey(Constants.ApiRequestHeaderToken))
             {
-                _logger.LogError($"No API token set. IP: {HttpContext.Connection.RemoteIpAddress}, User Agent: {Request.Headers[HeaderNames.UserAgent]}");
+                _logger.LogError(
+                    $"No API token set. IP: {HttpContext.Connection.RemoteIpAddress}, User Agent: {Request.Headers[HeaderNames.UserAgent]}");
                 return BadRequest("No API token set.");
             }
 
             if (_laobianBlogOption.HttpRequestToken != HttpContext.Request.Headers[Constants.ApiRequestHeaderToken])
             {
-                _logger.LogError($"Invalid API token set: {HttpContext.Request.Headers[Constants.ApiRequestHeaderToken]}. IP: {HttpContext.Connection.RemoteIpAddress}, User Agent: {Request.Headers[HeaderNames.UserAgent]}");
+                _logger.LogError(
+                    $"Invalid API token set: {HttpContext.Request.Headers[Constants.ApiRequestHeaderToken]}. IP: {HttpContext.Connection.RemoteIpAddress}, User Agent: {Request.Headers[HeaderNames.UserAgent]}");
                 return BadRequest(
                     $"Invalid API token set: {HttpContext.Request.Headers[Constants.ApiRequestHeaderToken]}");
             }
@@ -152,8 +151,10 @@ namespace Laobian.Blog.Controllers
                     new Uri($"{_laobianBlogOption.BlogRemoteEndpoint}/rss"),
                     Constants.ApplicationName, DateTimeOffset.UtcNow);
                 feed.Copyright =
-                    new TextSyndicationContent($"&#x26;amp;#169; {DateTime.Now.Year} {_laobianBlogOption.AdminChineseName}");
-                feed.Authors.Add(new SyndicationPerson(_laobianBlogOption.AdminEmail, _laobianBlogOption.AdminChineseName,
+                    new TextSyndicationContent(
+                        $"&#x26;amp;#169; {DateTime.Now.Year} {_laobianBlogOption.AdminChineseName}");
+                feed.Authors.Add(new SyndicationPerson(_laobianBlogOption.AdminEmail,
+                    _laobianBlogOption.AdminChineseName,
                     _laobianBlogOption.BlogRemoteEndpoint));
                 feed.BaseUri = new Uri(_laobianBlogOption.BlogRemoteEndpoint);
                 feed.Language = "zh-cn";

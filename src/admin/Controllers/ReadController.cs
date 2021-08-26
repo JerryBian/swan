@@ -38,7 +38,7 @@ namespace Laobian.Admin.Controllers
         public async Task<IActionResult> Add([FromForm] BookItem bookItem)
         {
             bookItem.IsCompleted = Request.Form["isCompleted"] == "on";
-            await _apiSiteHttpClient.AddReadItemAsync(bookItem);
+            await _apiSiteHttpClient.AddBookItemAsync(bookItem);
             return Redirect("/read");
         }
 
@@ -53,7 +53,7 @@ namespace Laobian.Admin.Controllers
         public async Task<IActionResult> Update([FromForm] BookItem bookItem)
         {
             bookItem.IsCompleted = Request.Form["isCompleted"] == "on";
-            await _apiSiteHttpClient.UpdateReadItemAsync(bookItem);
+            await _apiSiteHttpClient.UpdateBookItemAsync(bookItem);
             return Redirect("/read");
         }
 
@@ -61,7 +61,7 @@ namespace Laobian.Admin.Controllers
         [Route("{id}")]
         public async Task Delete([FromRoute] string id)
         {
-            await _apiSiteHttpClient.DeleteReadItemAsync(id);
+            await _apiSiteHttpClient.DeleteBookItemAsync(id);
         }
     }
 }

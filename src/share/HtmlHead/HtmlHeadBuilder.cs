@@ -75,9 +75,9 @@ namespace Laobian.Share.HtmlHead
                     : _buildOption.BaseImage);
 
                 sb.AppendLine(
-                    $"<script type=\"application/ld+json\">{JsonUtil.Serialize(googleStructuredData, false, new List<JsonConverter> { new IsoDateTimeZoneConverter() })}</script>");
+                    $"<script type=\"application/ld+json\">{JsonUtil.Serialize(googleStructuredData, false, new List<JsonConverter> {new IsoDateTimeZoneConverter()})}</script>");
             }
-            
+
             return sb.ToString();
         }
     }

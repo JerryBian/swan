@@ -63,7 +63,8 @@ namespace Laobian.Admin.Controllers
                 return Redirect(returnUrl);
             }
 
-            _logger.LogWarning($"Login failed. User Name = {userName}, Password = {password}. IP: {HttpContext.Connection.RemoteIpAddress}, User Agent: {Request.Headers[HeaderNames.UserAgent]}");
+            _logger.LogWarning(
+                $"Login failed. User Name = {userName}, Password = {password}. IP: {HttpContext.Connection.RemoteIpAddress}, User Agent: {Request.Headers[HeaderNames.UserAgent]}");
             return Redirect("/");
         }
 

@@ -1,9 +1,9 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Laobian.Admin.HttpClients;
 using Laobian.Share.Extension;
+using Laobian.Share.Util;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -35,7 +35,7 @@ namespace Laobian.Admin.Controllers
             var sb = new StringBuilder();
             foreach (var log in logs)
             {
-                var id = Guid.NewGuid().ToString("N");
+                var id = StringUtil.GenerateRandom();
                 var theme = "info";
                 if (log.Level == LogLevel.Warning)
                 {

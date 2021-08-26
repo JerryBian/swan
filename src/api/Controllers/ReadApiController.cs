@@ -9,11 +9,11 @@ namespace Laobian.Api.Controllers
 {
     [ApiController]
     [Route("read")]
-    public class BookItemApiController : ControllerBase
+    public class ReadApiController : ControllerBase
     {
         private readonly IFileRepository _fileRepository;
 
-        public BookItemApiController(IFileRepository fileRepository)
+        public ReadApiController(IFileRepository fileRepository)
         {
             _fileRepository = fileRepository;
         }

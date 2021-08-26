@@ -10,7 +10,6 @@ using Laobian.Share.Util;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Laobian.Api.Controllers
 {
@@ -19,14 +18,12 @@ namespace Laobian.Api.Controllers
     public class BlogApiController : ControllerBase
     {
         private readonly IFileRepository _fileRepository;
-        private readonly LaobianApiOption _laobianApiOption;
         private readonly ILogger<BlogApiController> _logger;
 
-        public BlogApiController(IOptions<LaobianApiOption> apiOption, IFileRepository fileRepository,
+        public BlogApiController(IFileRepository fileRepository,
             ILogger<BlogApiController> logger)
         {
             _logger = logger;
-            _laobianApiOption = apiOption.Value;
             _fileRepository = fileRepository;
         }
 

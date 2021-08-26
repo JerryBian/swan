@@ -13,11 +13,12 @@ namespace Laobian.Blog.Controllers
 {
     public class ReadController : Controller
     {
-        private readonly LaobianBlogOption _laobianBlogOption;
         private readonly IBlogService _blogService;
         private readonly ICacheClient _cacheClient;
+        private readonly LaobianBlogOption _laobianBlogOption;
 
-        public ReadController(IBlogService blogService, ICacheClient cacheClient, IOptions<LaobianBlogOption> blogOption)
+        public ReadController(IBlogService blogService, ICacheClient cacheClient,
+            IOptions<LaobianBlogOption> blogOption)
         {
             _cacheClient = cacheClient;
             _blogService = blogService;

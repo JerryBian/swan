@@ -11,10 +11,10 @@
 
             if (number < 10000)
             {
-                return $"{(number / 1000):F1}k";
+                return $"{number / 1000:F1}k";
             }
 
-            return $"{(number / 10000):F1}w";
+            return $"{number / 10000:F1}w";
         }
     }
 }

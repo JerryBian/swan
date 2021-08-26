@@ -11,9 +11,9 @@ namespace Laobian.Blog.Controllers
 {
     public class TagController : Controller
     {
-        private readonly LaobianBlogOption _laobianBlogOption;
         private readonly IBlogService _blogService;
         private readonly ICacheClient _cacheClient;
+        private readonly LaobianBlogOption _laobianBlogOption;
 
         public TagController(ICacheClient cacheClient, IBlogService blogService, IOptions<LaobianBlogOption> blogOption)
         {

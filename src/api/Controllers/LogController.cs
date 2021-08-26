@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Laobian.Api.Repository;
-using Laobian.Share;
 using Laobian.Share.Logger;
 using Laobian.Share.Site;
 using Microsoft.AspNetCore.Http;

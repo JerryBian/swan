@@ -31,6 +31,7 @@ namespace Laobian.Api
         {
             base.ConfigureServices(services);
             services.Configure<LaobianApiOption>(o => { o.FetchFromEnv(Configuration); });
+
             services.AddSingleton<ICommandClient, ProcessCommandClient>();
             services.AddSingleton<IFileRepository, FileRepository>();
             if (CurrentEnv.IsDevelopment())
@@ -46,11 +47,7 @@ namespace Laobian.Api
             services.AddHostedService<DbDataHostedService>();
 
             var httpRequestToken = Configuration.GetValue<string>(Constants.EnvHttpRequestToken);
-            services.AddHttpClient<BlogSiteHttpClient>(h =>
-                {
-                    h.Timeout = TimeSpan.FromMinutes(10);
-                    h.DefaultRequestHeaders.Add(Constants.ApiRequestHeaderToken, httpRequestToken);
-                }).SetHandlerLifetime(TimeSpan.FromDays(1))
+            services.AddHttpClient<BlogSiteHttpClient>(SetHttpClient).SetHandlerLifetime(TimeSpan.FromDays(1))
                 .AddPolicyHandler(GetHttpClientRetryPolicy());
 
             services.AddLogging(config =>
@@ -77,6 +74,7 @@ namespace Laobian.Api
             Configure(app, appLifetime, config);
 
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
