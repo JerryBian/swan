@@ -59,8 +59,7 @@
 
     <div class="d-lg-none d-xl-none d-xxl-none">
         <h3>关于转载以及声明</h3>
-        <p>这里是我的个人博客，所有文章均为个人言论，除非特殊声明，均与我的雇主或者其他任何团体无关。</p>
-        <p>遵守 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh">“署名-非商业性使用-禁止演绎 4.0 国际(CC BY-NC-ND 4.0)协议</a>。</p>
+        @await Html.PartialAsync("_SharedCopyright")
     </div>
 
 
@@ -77,6 +76,7 @@
                     base: '/about'
                 };
                 anchors.add('.post-content h3, .post-content h4');
+                activeNavItem('#nav_about');
             });
     </script>
 }

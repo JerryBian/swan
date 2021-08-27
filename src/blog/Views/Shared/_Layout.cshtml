@@ -45,6 +45,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/read" id="nav_read"><i class="fas fa-book"></i> 阅读</a>
                 </li>
+                <li class="nav-item d-lg-none d-xl-none d-xxl-none">
+                    <a class="nav-link" href="/about" id="nav_about"><i class="fas fa-info-circle"></i> 关于</a>
+                </li>
                 @if (Context.User.Identity?.IsAuthenticated == true)
                 {
                     <li class="navbar-text">
@@ -80,8 +83,7 @@
                     <div class="card-body">
                         <h5 class="card-title"><i class="fas fa-exclamation-circle"></i> 关于转载以及声明</h5>
                         <div class="card-text">
-                            <p>这里是我的个人博客，所有文章均为个人言论，除非特殊声明，均与我的雇主或者其他任何团体无关。</p>
-                            <p>遵守 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" class="link-dark text-decoration-none">“署名-非商业性使用-禁止演绎 4.0 国际(CC BY-NC-ND 4.0)</a> 协议。</p>
+                            @await Html.PartialAsync("_SharedCopyright")
                         </div>
                     </div>
                 </div>

@@ -7,6 +7,7 @@ services:
     environment:
       - ASPNETCORE_URLS=http://0.0.0.0:5011
       - ASPNETCORE_ENVIRONMENT
+      - ENV_HOME_PAGE_ENDPOINT
       - ENV_BLOG_LOCAL_ENDPOINT=http://blog:5013
       - ENV_BLOG_REMOTE_ENDPOINT
       - ENV_FILE_REMOTE_ENDPOINT
@@ -29,6 +30,7 @@ services:
     environment:
       - ASPNETCORE_URLS=http://0.0.0.0:5012
       - ASPNETCORE_ENVIRONMENT
+      - ENV_HOME_PAGE_ENDPOINT
       - ENV_BLOG_LOCAL_ENDPOINT=http://blog:5013
       - ENV_API_LOCAL_ENDPOINT=http://api:5011
       - ENV_BLOG_REMOTE_ENDPOINT
@@ -53,6 +55,7 @@ services:
     environment:
       - ASPNETCORE_URLS=http://0.0.0.0:5013
       - ASPNETCORE_ENVIRONMENT
+      - ENV_HOME_PAGE_ENDPOINT
       - ENV_API_LOCAL_ENDPOINT=http://api:5011
       - ENV_BLOG_REMOTE_ENDPOINT
       - ENV_FILE_REMOTE_ENDPOINT

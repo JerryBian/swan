@@ -24,11 +24,11 @@ namespace Laobian.Blog.Controllers
 
         [HttpGet]
         [ResponseCache(CacheProfileName = Constants.CacheProfileName)]
-        public IActionResult Tag()
+        public IActionResult Index()
         {
             var authenticated = User.Identity?.IsAuthenticated ?? false;
             var viewModel = _cacheClient.GetOrCreate(
-                CacheKeyBuilder.Build(nameof(HomeController), nameof(Tag), authenticated),
+                CacheKeyBuilder.Build(nameof(HomeController), nameof(Index), authenticated),
                 () =>
                 {
                     var posts = _blogService.GetAllPosts().Where(x => x.Raw.IsPostPublished() || authenticated)
@@ -53,7 +53,7 @@ namespace Laobian.Blog.Controllers
 
             ViewData["Title"] = "标签";
             ViewData["Image"] = $"{_laobianBlogOption.BlogRemoteEndpoint}/archive.png";
-            return View("Index", viewModel);
+            return View(viewModel);
         }
     }
 }
