@@ -27,6 +27,8 @@ services:
       - ENV_GITHUB_DB_REPO_USER_NAME
   admin:
     image: cnbian/laobian-admin:${ENV_APP_VERSION}
+    volumes:
+      - ${ENV_ASSET_LOCATION}:/asset
     environment:
       - ASPNETCORE_URLS=http://0.0.0.0:5012
       - ASPNETCORE_ENVIRONMENT
