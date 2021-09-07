@@ -94,6 +94,6 @@ services:
       - ENV_DATA_PROTECTION_KEY_PATH=/asset/data_protection
       - ENV_HTTP_REQUEST_TOKEN
     ports:
-      - "${ENV_JARVIS_PORT}:5013"
+      - "${ENV_JARVIS_PORT}:5014"
     depends_on:
       - api
