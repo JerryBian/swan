@@ -105,6 +105,56 @@ jobs:
             cnbian/laobian-admin:${{ env.APP_VERSION }}
             ghcr.io/jerrybian/laobian-admin:${{ env.APP_VERSION }}
 
+  publish_jarvis:
+    name: Publish JARVIS images
+    runs-on: ubuntu-20.04
+    permissions:
+      packages: write
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get install -y libxml2-utils
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USER }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Setup environment variables
+        run: |
+          APP_VERSION=`xmllint --xpath "/Project/PropertyGroup/Version/text()" Directory.Build.props`
+          echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
+
+      - name: Build and push JARVIS images
+        id: docker_build_jarvis
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./Dockerfile.jarvis
+          push: true
+          tags: |
+            cnbian/laobian-jarvis:${{ env.APP_VERSION }}
+            ghcr.io/jerrybian/laobian-jarvis:${{ env.APP_VERSION }}
+
   publish_blog:
     name: Publish BLOG images
     runs-on: ubuntu-20.04
