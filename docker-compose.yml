@@ -74,3 +74,26 @@ services:
       - "${ENV_BLOG_PORT}:5013"
     depends_on:
       - api
+  jarvis:
+    image: cnbian/laobian-jarvis:${ENV_APP_VERSION}
+    volumes:
+      - ${ENV_ASSET_LOCATION}:/asset
+    environment:
+      - ASPNETCORE_URLS=http://0.0.0.0:5014
+      - ASPNETCORE_ENVIRONMENT
+      - ENV_HOME_PAGE_ENDPOINT
+      - ENV_API_LOCAL_ENDPOINT=http://api:5011
+      - ENV_BLOG_REMOTE_ENDPOINT
+      - ENV_FILE_REMOTE_ENDPOINT
+      - ENV_ADMIN_USER_NAME
+      - ENV_ADMIN_EMAIL
+      - ENV_ASSET_LOCATION=/asset
+      - ENV_ADMIN_CHINESE_NAME
+      - ENV_ADMIN_ENGLISH_NAME
+      - ENV_SEND_GRID_API_KEY
+      - ENV_DATA_PROTECTION_KEY_PATH=/asset/data_protection
+      - ENV_HTTP_REQUEST_TOKEN
+    ports:
+      - "${ENV_JARVIS_PORT}:5013"
+    depends_on:
+      - api
