@@ -10,6 +10,7 @@ using Laobian.Share.Converter;
 using Laobian.Share.Logger;
 using Laobian.Share.Site;
 using Laobian.Share.Site.Blog;
+using Laobian.Share.Site.Jarvis;
 using Laobian.Share.Site.Read;
 using Laobian.Share.Util;
 using Microsoft.Extensions.Logging;
@@ -361,6 +362,50 @@ namespace Laobian.Api.Repository
             CancellationToken cancellationToken = default)
         {
             return await _fileSource.AddRawFileAsync(fileName, content, cancellationToken);
+        }
+
+        public async Task<Diary> GetDiaryAsync(DateTime date, CancellationToken cancellationToken = default)
+        {
+            Diary result = null;
+            var diary = await _fileSource.ReadDiaryAsync(date, cancellationToken);
+            if (!string.IsNullOrEmpty(diary))
+            {
+                result = JsonUtil.Deserialize<Diary>(diary);
+            }
+
+            return result;
+        }
+
+        public async Task<List<Diary>> GetDiariesAsync(CancellationToken cancellationToken = default)
+        {
+            var dates = await _fileSource.ListDiariesAsync(cancellationToken);
+            var result = new List<Diary>();
+            foreach (var date in dates)
+            {
+                var diary = await GetDiaryAsync(date, cancellationToken);
+                if (diary != null)
+                {
+                    result.Add(diary);
+                }
+            }
+
+            return result;
+        }
+
+        public async Task AddDiaryAsync(Diary diary, CancellationToken cancellationToken = default)
+        {
+            diary.CreateTime = diary.LastUpdateTime = DateTime.Now;
+            await _fileSource.WriteDiaryAsync(diary.Date,
+                JsonUtil.Serialize(diary),
+                cancellationToken);
+        }
+
+        public async Task UpdateDiaryAsync(Diary diary, CancellationToken cancellationToken = default)
+        {
+            diary.LastUpdateTime = DateTime.Now;
+            await _fileSource.WriteDiaryAsync(diary.Date,
+                JsonUtil.Serialize(diary),
+                cancellationToken);
         }
     }
 }

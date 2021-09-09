@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Laobian.Share.Logger;
 using Laobian.Share.Site;
 using Laobian.Share.Site.Blog;
+using Laobian.Share.Site.Jarvis;
 using Laobian.Share.Site.Read;
 
 namespace Laobian.Api.Repository
@@ -58,5 +59,13 @@ namespace Laobian.Api.Repository
 
         Task<string> AddRawFileAsync(string fileName, byte[] content,
             CancellationToken cancellationToken = default);
+
+        Task<Diary> GetDiaryAsync(DateTime date, CancellationToken cancellationToken = default);
+
+        Task<List<Diary>> GetDiariesAsync(CancellationToken cancellationToken = default);
+
+        Task AddDiaryAsync(Diary diary, CancellationToken cancellationToken = default);
+
+        Task UpdateDiaryAsync(Diary diary, CancellationToken cancellationToken = default);
     }
 }

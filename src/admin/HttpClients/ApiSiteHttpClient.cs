@@ -5,8 +5,10 @@ using System.Net.Http;
 using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
+using Laobian.Share.Extension;
 using Laobian.Share.Logger;
 using Laobian.Share.Site.Blog;
+using Laobian.Share.Site.Jarvis;
 using Laobian.Share.Site.Read;
 using Laobian.Share.Util;
 using Microsoft.Extensions.Logging;
@@ -179,7 +181,7 @@ namespace Laobian.Admin.HttpClients
         public async Task SendLogsAsync(IEnumerable<LaobianLog> logs)
         {
             var response = await _httpClient.PostAsync("/log/admin",
-                new StringContent(JsonUtil.Serialize(logs), Encoding.UTF8, "application/json"));
+                new StringContent(JsonUtil.Serialize(logs), Encoding.UTF8, MediaTypeNames.Application.Json));
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 Console.WriteLine(
@@ -232,7 +234,7 @@ namespace Laobian.Admin.HttpClients
         public async Task AddBookItemAsync(BookItem bookItem)
         {
             var response = await _httpClient.PutAsync("/read",
-                new StringContent(JsonUtil.Serialize(bookItem), Encoding.UTF8, "application/json"));
+                new StringContent(JsonUtil.Serialize(bookItem), Encoding.UTF8, MediaTypeNames.Application.Json));
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 Console.WriteLine(
@@ -243,7 +245,7 @@ namespace Laobian.Admin.HttpClients
         public async Task UpdateBookItemAsync(BookItem bookItem)
         {
             var response = await _httpClient.PostAsync("/read",
-                new StringContent(JsonUtil.Serialize(bookItem), Encoding.UTF8, "application/json"));
+                new StringContent(JsonUtil.Serialize(bookItem), Encoding.UTF8, MediaTypeNames.Application.Json));
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 Console.WriteLine(
@@ -275,6 +277,42 @@ namespace Laobian.Admin.HttpClients
             }
 
             return url;
+        }
+
+        public async Task<Diary> GetDiaryAsync(DateTime date)
+        {
+            var response = await _httpClient.GetAsync($"/jarvis/diary/{date.ToDate()}");
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                _logger.LogError(
+                    $"{nameof(ApiSiteHttpClient)}.{nameof(GetDiaryAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+                return null;
+            }
+
+            await using var stream = await response.Content.ReadAsStreamAsync();
+            return await JsonUtil.DeserializeAsync<Diary>(stream);
+        }
+
+        public async Task AddDiaryAsync(Diary diary)
+        {
+            var response = await _httpClient.PutAsync("/jarvis/diary",
+                new StringContent(JsonUtil.Serialize(diary), Encoding.UTF8, MediaTypeNames.Application.Json));
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                Console.WriteLine(
+                    $"{nameof(ApiSiteHttpClient)}.{nameof(AddDiaryAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+            }
+        }
+
+        public async Task UpdateDiaryAsync(Diary diary)
+        {
+            var response = await _httpClient.PostAsync("/jarvis/diary",
+                new StringContent(JsonUtil.Serialize(diary), Encoding.UTF8, MediaTypeNames.Application.Json));
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                Console.WriteLine(
+                    $"{nameof(ApiSiteHttpClient)}.{nameof(UpdateDiaryAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+            }
         }
     }
 }

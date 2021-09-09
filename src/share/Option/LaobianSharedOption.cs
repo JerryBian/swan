@@ -15,6 +15,12 @@ namespace Laobian.Share.Option
         [OptionEnvName("FILE_REMOTE_ENDPOINT")]
         public string FileRemoteEndpoint { get; set; }
 
+        [OptionEnvName("ADMIN_REMOTE_ENDPOINT")]
+        public string AdminRemoteEndpoint { get; set; }
+
+        [OptionEnvName("JARVIS_REMOTE_ENDPOINT")]
+        public string JarvisRemoteEndpoint { get; set; }
+
         [OptionEnvName("ADMIN_USER_NAME")] public string AdminUserName { get; set; }
 
         [OptionEnvName("ADMIN_EMAIL")] public string AdminEmail { get; set; }
