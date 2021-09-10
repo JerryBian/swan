@@ -9,31 +9,25 @@ using Microsoft.Extensions.Options;
 
 namespace Laobian.Admin.Controllers
 {
-    [Route("jarvis")]
-    public class JarvisController : Controller
+    [Route("diary")]
+    public class DiaryController : Controller
     {
         private readonly LaobianAdminOption _option;
         private readonly ApiSiteHttpClient _httpClient;
 
-        public JarvisController(IOptions<LaobianAdminOption> option, ApiSiteHttpClient httpClient)
+        public DiaryController(IOptions<LaobianAdminOption> option, ApiSiteHttpClient httpClient)
         {
             _httpClient = httpClient;
             _option = option.Value;
         }
 
         [HttpGet]
-        [Route("diary/add")]
-        public async Task<IActionResult> AddDiary([FromQuery]DateTime date)
+        [Route("add")]
+        public IActionResult AddDiary([FromQuery]DateTime date)
         {
             if (date == default)
             {
                 date = DateTime.Now;
-            }
-
-            var item = await _httpClient.GetDiaryAsync(date);
-            if (item != null)
-            {
-                return Redirect($"/jarvis/diary/update/{date.ToDate()}");
             }
 
             ViewData["Date"] = date.ToDate();
@@ -41,7 +35,7 @@ namespace Laobian.Admin.Controllers
         }
 
         [HttpPost]
-        [Route("diary/add")]
+        [Route("add")]
         public async Task<IActionResult> AddDiary([FromForm] Diary diary)
         {
             if (diary.Date == default)
@@ -54,22 +48,23 @@ namespace Laobian.Admin.Controllers
         }
 
         [HttpGet]
-        [Route("diary/update/{date}")]
+        [Route("update/{date}")]
         public async Task<IActionResult> UpdateDiary(DateTime date)
         {
             var item = await _httpClient.GetDiaryAsync(date);
             if (item == null)
             {
-                return Redirect($"/jarvis/diary/add?date={date.ToDate()}");
+                return Redirect($"/diary/add?date={date.ToDate()}");
             }
 
             return View(item);
         }
 
         [HttpPost]
-        [Route("diary/update")]
+        [Route("update")]
         public async Task<IActionResult> UpdateDiary([FromForm] Diary diary)
         {
+            await _httpClient.UpdateDiaryAsync(diary);
             return Redirect(diary.GetFullPath(_option));
         }
     }

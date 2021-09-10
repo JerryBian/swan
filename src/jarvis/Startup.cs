@@ -7,21 +7,23 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Laobian.Share;
+using Laobian.Share.Site;
 
 namespace Laobian.Jarvis
 {
-    public class Startup
+    public class Startup : SharedStartup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env) : base(configuration, env)
         {
-            Configuration = configuration;
+            Site = LaobianSite.Jarvis;
         }
 
-        public IConfiguration Configuration { get; }
-
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public override void ConfigureServices(IServiceCollection services)
         {
+            base.ConfigureServices(services);
+            services.Configure<JarvisOption>(o => { o.FetchFromEnv(Configuration); });
             services.AddControllersWithViews();
         }
 

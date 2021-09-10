@@ -8,6 +8,8 @@
 
         Blog = 4,
 
-        Admin = 8
+        Admin = 8,
+
+        Jarvis = 16
     }
 }

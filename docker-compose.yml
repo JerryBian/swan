@@ -19,6 +19,8 @@ services:
       - ENV_SEND_GRID_API_KEY
       - ENV_DATA_PROTECTION_KEY_PATH=/asset/data_protection
       - ENV_HTTP_REQUEST_TOKEN
+      - ENV_ADMIN_REMOTE_ENDPOINT
+      - ENV_JARVIS_REMOTE_ENDPOINT
       - ENV_COMMAND_LINE_APP
       - ENV_COMMAND_LINE_BEGIN_ARG
       - ENV_GITHUB_DB_REPO_API_TOKEN
@@ -45,6 +47,8 @@ services:
       - ENV_SEND_GRID_API_KEY
       - ENV_DATA_PROTECTION_KEY_PATH=/asset/data_protection
       - ENV_HTTP_REQUEST_TOKEN
+      - ENV_ADMIN_REMOTE_ENDPOINT
+      - ENV_JARVIS_REMOTE_ENDPOINT
       - ENV_ADMIN_PASSWORD
     ports:
       - "${ENV_ADMIN_PORT}:5012"
@@ -69,6 +73,8 @@ services:
       - ENV_SEND_GRID_API_KEY
       - ENV_DATA_PROTECTION_KEY_PATH=/asset/data_protection
       - ENV_HTTP_REQUEST_TOKEN
+      - ENV_ADMIN_REMOTE_ENDPOINT
+      - ENV_JARVIS_REMOTE_ENDPOINT
       - ENV_POSTS_PER_PAGE
     ports:
       - "${ENV_BLOG_PORT}:5013"
@@ -93,6 +99,8 @@ services:
       - ENV_SEND_GRID_API_KEY
       - ENV_DATA_PROTECTION_KEY_PATH=/asset/data_protection
       - ENV_HTTP_REQUEST_TOKEN
+      - ENV_ADMIN_REMOTE_ENDPOINT
+      - ENV_JARVIS_REMOTE_ENDPOINT
     ports:
       - "${ENV_JARVIS_PORT}:5014"
     depends_on:

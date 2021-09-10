@@ -281,7 +281,7 @@ namespace Laobian.Admin.HttpClients
 
         public async Task<Diary> GetDiaryAsync(DateTime date)
         {
-            var response = await _httpClient.GetAsync($"/jarvis/diary/{date.ToDate()}");
+            var response = await _httpClient.GetAsync($"/diary/{date.ToDate()}");
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 _logger.LogError(
@@ -295,7 +295,7 @@ namespace Laobian.Admin.HttpClients
 
         public async Task AddDiaryAsync(Diary diary)
         {
-            var response = await _httpClient.PutAsync("/jarvis/diary",
+            var response = await _httpClient.PutAsync("/diary",
                 new StringContent(JsonUtil.Serialize(diary), Encoding.UTF8, MediaTypeNames.Application.Json));
             if (response.StatusCode != HttpStatusCode.OK)
             {
@@ -306,7 +306,7 @@ namespace Laobian.Admin.HttpClients
 
         public async Task UpdateDiaryAsync(Diary diary)
         {
-            var response = await _httpClient.PostAsync("/jarvis/diary",
+            var response = await _httpClient.PostAsync("/diary",
                 new StringContent(JsonUtil.Serialize(diary), Encoding.UTF8, MediaTypeNames.Application.Json));
             if (response.StatusCode != HttpStatusCode.OK)
             {

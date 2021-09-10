@@ -16,11 +16,17 @@ namespace Laobian.Jarvis
             CreateHostBuilder(args).Build().Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
+        public static IHostBuilder CreateHostBuilder(string[] args)
+        {
+            return Host.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((hostContext, config) => { config.AddEnvironmentVariables("ENV_"); })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    webBuilder.CaptureStartupErrors(true);
+                    webBuilder.UseSetting(WebHostDefaults.DetailedErrorsKey, "true");
+                    webBuilder.UseShutdownTimeout(TimeSpan.FromMinutes(10));
                     webBuilder.UseStartup<Startup>();
                 });
+        }
     }
 }

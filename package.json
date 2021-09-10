@@ -9,7 +9,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build_admin": "pwsh ./script/build_admin.ps1",
-    "build_blog": "pwsh ./script/build_blog.ps1"
+    "build_blog": "pwsh ./script/build_blog.ps1",
+    "build_jarvis": "pwsh ./script/build_jarvis.ps1"
   },
   "repository": {
     "type": "git",
@@ -24,14 +25,14 @@
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.15.4",
     "anchor-js": "^4.3.1",
-    "bootstrap": "^5.1.0",
-    "bootswatch": "^5.1.0",
+    "bootstrap": "^5.1.1",
+    "bootswatch": "^5.1.1",
     "chart.js": "^3.5.1",
     "easymde": "^2.15.0",
     "highlight.js": "^11.2.0",
-    "sass": "^1.38.1",
-    "sweetalert2": "^11.1.4",
-    "uglify-js": "^3.14.1",
+    "sass": "^1.39.2",
+    "sweetalert2": "^11.1.5",
+    "uglify-js": "^3.14.2",
     "uglifycss": "0.0.29"
   }
 }

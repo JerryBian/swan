@@ -1,27 +1,25 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Laobian.Api.Repository;
 using Laobian.Share.Site.Jarvis;
 
 namespace Laobian.Api.Controllers
 {
-    [Route("jarvis")]
+    [Route("diary")]
     [ApiController]
-    public class JarvisApiController : ControllerBase
+    public class DiaryApiController : ControllerBase
     {
         private readonly IFileRepository _fileRepository;
 
-        public JarvisApiController(IFileRepository fileRepository)
+        public DiaryApiController(IFileRepository fileRepository)
         {
             _fileRepository = fileRepository;
         }
 
         [HttpGet]
-        [Route("diary/{date}")]
+        [Route("{date}")]
         public async Task<ActionResult<Diary>> GetDiary([FromRoute]DateTime date)
         {
             var diary = await _fileRepository.GetDiaryAsync(date);
@@ -34,7 +32,6 @@ namespace Laobian.Api.Controllers
         }
 
         [HttpGet]
-        [Route("diary")]
         public async Task<ActionResult<List<Diary>>> GetDiary()
         {
             var diaries = await _fileRepository.GetDiariesAsync();
@@ -42,7 +39,6 @@ namespace Laobian.Api.Controllers
         }
 
         [HttpPut]
-        [Route("diary")]
         public async Task<IActionResult> AddDiary(Diary diary)
         {
             await _fileRepository.AddDiaryAsync(diary);
@@ -50,7 +46,6 @@ namespace Laobian.Api.Controllers
         }
 
         [HttpPost]
-        [Route("diary")]
         public async Task<IActionResult> UpdateDiary(Diary diary)
         {
             await _fileRepository.UpdateDiaryAsync(diary);
