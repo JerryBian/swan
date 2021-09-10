@@ -16,7 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="HttpClients\" />
     <Folder Include="wwwroot\dist\" />
   </ItemGroup>
 

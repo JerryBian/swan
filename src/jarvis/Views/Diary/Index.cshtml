@@ -1,0 +1,11 @@
+﻿@model List<Diary>
+@{
+    Layout = "_DiaryLayout";
+}
+
+<ul>
+    @foreach (var item in Model.GroupBy(x => x.Date.Year))
+    {
+        <li>@item.Key 年 （@item.Count()）</li>
+    }
+</ul>

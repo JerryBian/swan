@@ -6,9 +6,14 @@ using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Laobian.Jarvis.HttpClients;
 using Laobian.Share;
+using Laobian.Share.Converter;
+using Laobian.Share.Logger.Remote;
 using Laobian.Share.Site;
+using Microsoft.Extensions.Logging;
 
 namespace Laobian.Jarvis
 {
@@ -24,7 +29,25 @@ namespace Laobian.Jarvis
         {
             base.ConfigureServices(services);
             services.Configure<JarvisOption>(o => { o.FetchFromEnv(Configuration); });
-            services.AddControllersWithViews();
+
+            services.AddHttpClient<ApiSiteHttpClient>(SetHttpClient)
+                .SetHandlerLifetime(TimeSpan.FromDays(1))
+                .AddPolicyHandler(GetHttpClientRetryPolicy());
+            services.AddLogging(config =>
+            {
+                config.SetMinimumLevel(LogLevel.Debug);
+                config.AddDebug();
+                config.AddConsole();
+                config.AddRemote(c => { c.LoggerName = "jarvis"; });
+            });
+
+            services.AddControllersWithViews()
+                .AddJsonOptions(config =>
+                {
+                    config.JsonSerializerOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
+                    var converter = new IsoDateTimeConverter();
+                    config.JsonSerializerOptions.Converters.Add(converter);
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

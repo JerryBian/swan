@@ -1,0 +1,47 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+<div class="container">
+    <div class="row gx-4">
+        <main class="col-9 d-flex justify-content-center px-2 py-3 flex-grow-1">
+            <div class="wrapper-content">
+                @RenderBody()
+            </div>
+        </main>
+        <aside class="col-3 d-none d-lg-block fs-sm">
+            @*<div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-landmark"></i> Welcome!</h5>
+                    <div class="card-text">
+                        @await Html.PartialAsync("_SharedAbout")
+                    </div>
+                    <div class="d-grid">
+                        <a href="/about" class="btn btn-light">关于 <i class="fas fa-long-arrow-alt-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="position-sticky" style="top: 10px;">
+                @await RenderSectionAsync("Aside", false)
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-exclamation-circle"></i> 关于转载以及声明</h5>
+                        <div class="card-text">
+                            @await Html.PartialAsync("_SharedCopyright")
+                        </div>
+                    </div>
+                </div>
+            </div>*@
+
+        </aside>
+    </div>
+</div>
+
+@await RenderSectionAsync("Script", false)
+
+@section Script
+{
+    <script>
+        activeNavItem("#nav_diary");
+    </script>
+}
