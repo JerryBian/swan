@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Laobian.Api.Repository;
 using Laobian.Share.Site.Jarvis;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Laobian.Api.Controllers
 {
@@ -20,7 +20,7 @@ namespace Laobian.Api.Controllers
 
         [HttpGet]
         [Route("{date}")]
-        public async Task<ActionResult<Diary>> GetDiary([FromRoute]DateTime date)
+        public async Task<ActionResult<DiaryRuntime>> GetDiary([FromRoute] DateTime date)
         {
             var diary = await _fileRepository.GetDiaryAsync(date);
             if (diary == null)
@@ -28,13 +28,17 @@ namespace Laobian.Api.Controllers
                 return NotFound();
             }
 
-            return Ok(diary);
+            var diaryRuntime = new DiaryRuntime {Raw = diary};
+            diaryRuntime.ExtractRuntimeData();
+            return Ok(diaryRuntime);
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Diary>>> GetDiary()
+        [Route("list")]
+        public async Task<ActionResult<List<DateTime>>> ListDiaries([FromQuery] int? year = null,
+            [FromQuery] int? month = null)
         {
-            var diaries = await _fileRepository.GetDiariesAsync();
+            var diaries = await _fileRepository.ListDiariesAsync(year, month);
             return Ok(diaries);
         }
 

@@ -40,7 +40,8 @@ namespace Laobian.Api.Source
 
         Task WriteDiaryAsync(DateTime date, string diary, CancellationToken cancellationToken = default);
 
-        Task<List<DateTime>> ListDiariesAsync(CancellationToken cancellationToken = default);
+        Task<List<DateTime>> ListDiariesAsync(int? year = null, int? month = null,
+            CancellationToken cancellationToken = default);
 
         Task FlushAsync(string message);
 

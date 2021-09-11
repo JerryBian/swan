@@ -377,20 +377,11 @@ namespace Laobian.Api.Repository
             return result;
         }
 
-        public async Task<List<Diary>> GetDiariesAsync(CancellationToken cancellationToken = default)
+        public async Task<List<DateTime>> ListDiariesAsync(int? year = null, int? month = null,
+            CancellationToken cancellationToken = default)
         {
-            var dates = await _fileSource.ListDiariesAsync(cancellationToken);
-            var result = new List<Diary>();
-            foreach (var date in dates)
-            {
-                var diary = await GetDiaryAsync(date, cancellationToken);
-                if (diary != null)
-                {
-                    result.Add(diary);
-                }
-            }
-
-            return result;
+            var dates = await _fileSource.ListDiariesAsync(year, month, cancellationToken);
+            return dates;
         }
 
         public async Task AddDiaryAsync(Diary diary, CancellationToken cancellationToken = default)

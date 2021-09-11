@@ -279,7 +279,7 @@ namespace Laobian.Admin.HttpClients
             return url;
         }
 
-        public async Task<Diary> GetDiaryAsync(DateTime date)
+        public async Task<DiaryRuntime> GetDiaryAsync(DateTime date)
         {
             var response = await _httpClient.GetAsync($"/diary/{date.ToDate()}");
             if (response.StatusCode != HttpStatusCode.OK)
@@ -290,7 +290,7 @@ namespace Laobian.Admin.HttpClients
             }
 
             await using var stream = await response.Content.ReadAsStreamAsync();
-            return await JsonUtil.DeserializeAsync<Diary>(stream);
+            return await JsonUtil.DeserializeAsync<DiaryRuntime>(stream);
         }
 
         public async Task AddDiaryAsync(Diary diary)

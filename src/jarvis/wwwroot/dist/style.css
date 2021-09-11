@@ -11230,4 +11230,12 @@ legend {
   color: inherit;
 }
 
+a {
+  text-underline-offset: 0.1em;
+}
+
+li {
+  margin-bottom: 0.5rem;
+}
+
 /*# sourceMappingURL=style.css.map */

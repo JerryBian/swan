@@ -1,0 +1,14 @@
+﻿@model List<DateTime>
+@{
+    Layout = "_DiaryLayout";
+}
+
+<ul>
+    @foreach (var item in Model.OrderByDescending(x => x))
+    {
+        var url = $"/diary/{item.Year:D4}/{item.ToDate()}.html";
+        <li>
+            <a href="@url">@item.ToChinaDate()</a>
+        </li>
+    }
+</ul>

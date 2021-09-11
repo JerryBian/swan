@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Laobian.Admin.HttpClients;
 using Laobian.Share.Extension;
 using Laobian.Share.Site.Jarvis;
-using Laobian.Share.Util;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -12,8 +11,8 @@ namespace Laobian.Admin.Controllers
     [Route("diary")]
     public class DiaryController : Controller
     {
-        private readonly LaobianAdminOption _option;
         private readonly ApiSiteHttpClient _httpClient;
+        private readonly LaobianAdminOption _option;
 
         public DiaryController(IOptions<LaobianAdminOption> option, ApiSiteHttpClient httpClient)
         {
@@ -23,7 +22,7 @@ namespace Laobian.Admin.Controllers
 
         [HttpGet]
         [Route("add")]
-        public IActionResult AddDiary([FromQuery]DateTime date)
+        public IActionResult AddDiary([FromQuery] DateTime date)
         {
             if (date == default)
             {

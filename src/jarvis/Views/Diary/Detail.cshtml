@@ -1,0 +1,31 @@
+﻿@model DiaryViewModel
+@inject IOptions<JarvisOption> _option
+@{
+    Layout = "_DiaryLayout";
+}
+<h2>
+    @Model.Current.Raw.Date.ToChinaDate()
+</h2>
+<article>
+    @Html.Raw(Model.Current.HtmlContent)
+</article>
+
+@section Aside{
+    <div class="d-grid mb-3">
+        <a class="btn btn-secondary" href="@_option.Value.AdminRemoteEndpoint/diary/update/@Model.Current.Raw.Date.ToDate()">编辑日记</a>
+    </div>
+
+    <div class="list-group">
+        @if (Model.Prev != null)
+        {
+            <a href="@Model.Prev.Raw.GetFullPath(_option.Value)" class="list-group-item list-group-item-action">前一篇：@Model.Prev.Raw.Date.ToChinaDate()</a>
+        }
+        @if (Model.Next != null)
+        {
+            <a href="@Model.Next.Raw.GetFullPath(_option.Value)" class="list-group-item list-group-item-action">后一篇：@Model.Next.Raw.Date.ToChinaDate()</a>
+        }
+
+        <div class="list-group-item">创建于：@Model.Current.Raw.CreateTime.ToDateAndTime()</div>
+        <div class="list-group-item">修改于：@Model.Current.Raw.LastUpdateTime.ToDateAndTime()</div>
+    </div>
+}

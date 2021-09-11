@@ -31,7 +31,8 @@ namespace Laobian.Blog.Models
 
             foreach (var tag in Current.Tags)
             {
-                tags.Add($"<a href='/tag#{tag.Link}' title='{tag.DisplayName}' class=\"text-decoration-none\">{tag.DisplayName}</a>");
+                tags.Add(
+                    $"<a href='/tag#{tag.Link}' title='{tag.DisplayName}' class=\"text-decoration-none\">{tag.DisplayName}</a>");
             }
 
             if (tags.Any())

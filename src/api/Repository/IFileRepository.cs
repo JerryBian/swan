@@ -62,7 +62,8 @@ namespace Laobian.Api.Repository
 
         Task<Diary> GetDiaryAsync(DateTime date, CancellationToken cancellationToken = default);
 
-        Task<List<Diary>> GetDiariesAsync(CancellationToken cancellationToken = default);
+        Task<List<DateTime>> ListDiariesAsync(int? year = null, int? month = null,
+            CancellationToken cancellationToken = default);
 
         Task AddDiaryAsync(Diary diary, CancellationToken cancellationToken = default);
 

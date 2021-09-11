@@ -1,5 +1,3 @@
-using System;
-
 namespace Laobian.Jarvis.Models
 {
     public class ErrorViewModel

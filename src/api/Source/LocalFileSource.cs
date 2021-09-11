@@ -18,10 +18,10 @@ namespace Laobian.Api.Source
         private readonly ILogger<LocalFileSource> _logger;
         protected readonly AutoResetEvent FileLocker;
         private string _assetDbBlogFolder;
+        private string _assetDbDiaryFolder;
         private string _assetDbFileFolder;
         private string _assetDbLogFolder;
         private string _assetDbReadFolder;
-        private string _assetDbDiaryFolder;
 
         public LocalFileSource(IOptions<LaobianApiOption> apiOption, ILogger<LocalFileSource> logger)
         {
@@ -339,15 +339,54 @@ namespace Laobian.Api.Source
             }
         }
 
-        public async Task<List<DateTime>> ListDiariesAsync(CancellationToken cancellationToken = default)
+        public async Task<List<DateTime>> ListDiariesAsync(int? year = null, int? month = null,
+            CancellationToken cancellationToken = default)
         {
             FileLocker.WaitOne();
             try
             {
                 var result = new List<DateTime>();
-                foreach (var item in Directory.EnumerateFiles(_assetDbDiaryFolder, "*.json", SearchOption.AllDirectories))
+                if (year == null)
                 {
-                    result.Add(Convert.ToDateTime(Path.GetFileNameWithoutExtension(item)));
+                    if (month == null)
+                    {
+                        foreach (var item in Directory.EnumerateFiles(_assetDbDiaryFolder, "*.json",
+                            SearchOption.AllDirectories))
+                        {
+                            result.Add(Convert.ToDateTime(Path.GetFileNameWithoutExtension(item)));
+                        }
+                    }
+                    else
+                    {
+                        foreach (var item in Directory.EnumerateFiles(_assetDbDiaryFolder, $"*-{month:D2}-*.json",
+                            SearchOption.AllDirectories))
+                        {
+                            result.Add(Convert.ToDateTime(Path.GetFileNameWithoutExtension(item)));
+                        }
+                    }
+                }
+                else
+                {
+                    var yearFolder = Path.Combine(_assetDbDiaryFolder, year.Value.ToString("D4"));
+                    if (Directory.Exists(yearFolder))
+                    {
+                        if (month == null)
+                        {
+                            foreach (var item in Directory.EnumerateFiles(yearFolder, "*.json",
+                                SearchOption.AllDirectories))
+                            {
+                                result.Add(Convert.ToDateTime(Path.GetFileNameWithoutExtension(item)));
+                            }
+                        }
+                        else
+                        {
+                            foreach (var item in Directory.EnumerateFiles(yearFolder, $"{year:D4}-{month:D2}-*.json",
+                                SearchOption.AllDirectories))
+                            {
+                                result.Add(Convert.ToDateTime(Path.GetFileNameWithoutExtension(item)));
+                            }
+                        }
+                    }
                 }
 
                 return await Task.FromResult(result);
