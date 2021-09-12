@@ -166,6 +166,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Deploy GitHub Pages 🚀
+        uses: JamesIves/github-pages-deploy-action@4.1.5
+        with:
+          branch: gh-pages
+          folder: .
+          token: {{ secrets.ACCESS_TOKEN }}
+
       - name: Install dependencies
         run: |
           sudo apt-get install -y libxml2-utils
@@ -204,12 +211,6 @@ jobs:
           tags: |
             cnbian/laobian-blog:${{ env.APP_VERSION }}
             ghcr.io/jerrybian/laobian-blog:${{ env.APP_VERSION }}
-
-      - name: Deploy GitHub Pages 🚀
-        uses: JamesIves/github-pages-deploy-action@4.1.5
-        with:
-          branch: gh-pages
-          folder: .
 
   deploy_server:
     name: Deploy to remote server
