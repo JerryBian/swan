@@ -166,13 +166,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Deploy GitHub Pages 🚀
-        uses: JamesIves/github-pages-deploy-action@4.1.5
-        with:
-          branch: gh-pages
-          folder: .
-          token: ${{ secrets.ACCESS_TOKEN }}
-
       - name: Install dependencies
         run: |
           sudo apt-get install -y libxml2-utils
@@ -200,6 +193,14 @@ jobs:
         run: |
           APP_VERSION=`xmllint --xpath "/Project/PropertyGroup/Version/text()" Directory.Build.props`
           echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
+
+      - name: Deploy GitHub Pages 🚀
+        uses: JamesIves/github-pages-deploy-action@4.1.5
+        with:
+          branch: gh-pages
+          folder: src/blog/wwwroot/dist
+          target-folder: blog/${{ env.APP_VERSION }}
+          token: ${{ secrets.ACCESS_TOKEN }}
 
       - name: Build and push BLOG images
         id: docker_build_blog
