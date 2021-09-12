@@ -36,6 +36,20 @@ namespace Laobian.Share.Option
         [OptionEnvName(Constants.EnvHttpRequestToken)]
         public string HttpRequestToken { get; set; }
 
+        public string AppVersion
+        {
+            get
+            {
+                var ver = Assembly.GetEntryAssembly()?.GetName().Version;
+                if (ver == null)
+                {
+                    return "1.0";
+                }
+
+                return $"{ver.Major}.{ver.Minor}";
+            }
+        }
+
         [OptionEnvName("HOME_PAGE_ENDPOINT")] public string HomePageEndpoint { get; set; }
 
         public void FetchFromEnv(IConfiguration configuration)
