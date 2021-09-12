@@ -119,6 +119,13 @@
 }
 
 @section Aside{
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <div class="d-grid mb-4">
+            <a class="btn btn-danger" href="@_config.Value.AdminRemoteEndpoint/blog/post/update/@Model.Current.Raw.Link"><i class="fas fa-edit"></i> 编辑文章</a>
+        </div>
+    }
+
     @if (Model.Current.Outlines.Any())
     {
         <div class="list-group" id="aside_post">
