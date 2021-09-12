@@ -28,7 +28,7 @@
             }
         </h2>
     </div>
-    <div class="post-content" data-bs-spy="scroll" data-bs-target="#aside_post" data-bs-offset="10">
+    <div class="post-content">
         @Html.Raw(Model.Current.HtmlContent)
         <p class="text-muted">（本文完）</p>
     </div>
@@ -91,6 +91,7 @@
                 anchors.add('.post-content h3, .post-content h4');
 
                 hljs.highlightAll();
+                setScrollspy("#aside_post");
                 try {
                     let modalEl = document.querySelector("#imgModal");
                     if (modalEl) {
