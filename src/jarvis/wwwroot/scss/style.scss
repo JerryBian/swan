@@ -5,6 +5,11 @@ $font-family-code: ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation
 @import "../../../../node_modules/bootstrap/scss/bootstrap";
 @import "../../../../node_modules/bootswatch/dist/minty/bootswatch";
 
+.wrapper-content {
+    max-width: 680px;
+    width: 100%;
+}
+
 a {
     text-underline-offset: 0.1em;
 }
@@ -12,3 +17,5 @@ a {
 li{
     margin-bottom: .5rem;
 }
+
+@import "../../../../lib/article-content";

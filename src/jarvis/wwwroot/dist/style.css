@@ -11230,12 +11230,75 @@ legend {
   color: inherit;
 }
 
+.wrapper-content {
+  max-width: 680px;
+  width: 100%;
+}
+
 a {
   text-underline-offset: 0.1em;
 }
 
 li {
   margin-bottom: 0.5rem;
+}
+
+.article-content {
+  line-height: 1.8em;
+  position: relative;
+  color: black;
+}
+.article-content p {
+  margin-bottom: 1.75rem;
+}
+.article-content *:not(pre) > code {
+  padding-left: 4px;
+  padding-right: 4px;
+  background-color: #f4f3ee;
+  font-size: 90%;
+}
+.article-content h3, .article-content .h3 {
+  background-color: #f3969a;
+  margin-bottom: 0.8rem;
+  margin-top: 1.5rem;
+  padding: 0.4rem;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.article-content h4, .article-content .h4 {
+  border-bottom: 1px solid #eaecef;
+  margin-bottom: 0.6rem;
+  margin-top: 1rem;
+  padding: 0.4rem;
+}
+.article-content blockquote {
+  background-color: #f8edeb;
+  border-left: 2px solid #fcd5ce;
+  margin-bottom: 1.5rem;
+  padding: 10px;
+  font-size: 97%;
+}
+.article-content blockquote p {
+  margin-bottom: 0.8rem;
+}
+.article-content blockquote *:last-child {
+  margin-bottom: 0.1rem;
+}
+.article-content pre {
+  font-size: 88%;
+}
+.article-content img {
+  cursor: pointer;
+  transition: 0.3s;
+  max-width: 100%;
+}
+.article-content img:hover {
+  opacity: 0.9;
+}
+.article-content li {
+  margin-bottom: 0.5rem;
+}
+.article-content li p {
+  margin-bottom: 0;
 }
 
 /*# sourceMappingURL=style.css.map */

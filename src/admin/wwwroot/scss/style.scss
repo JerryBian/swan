@@ -4,9 +4,4 @@ $font-family-code: ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation
 @import "../../../../node_modules/bootswatch/dist/sandstone/variables";
 @import "../../../../node_modules/bootstrap/scss/bootstrap";
 @import "../../../../node_modules/bootswatch/dist/sandstone/bootswatch";
-
-.editor-preview {
-    img {
-        max-width: 100%;
-    }
-}
+@import "../../../../lib/article-content";

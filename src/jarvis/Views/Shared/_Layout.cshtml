@@ -1,16 +1,28 @@
-﻿<!doctype html>
+﻿@inject IOptions<JarvisOption> _option
+<!doctype html>
 <html lang="zh" class="w-100 min-vh-100">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="~/dist/style.min.css" rel="stylesheet">
+    @{
+        var buildOption = new HtmlHeadBuildOption
+        {
+            ApplicationTitleColor = "#da532c",
+            Description = ViewData["Description"]?.ToString(),
+            RobotsEnabled = false,
+            SafariPinnedTabColor = "#139cc4",
+            ThemeColor = "#ffffff",
+            Title = ViewData["Title"]?.ToString(),
+            BaseTitle = "Jarvis"
+        };
 
-    <title>Hello, world!</title>
+        var headerBuilder = new HtmlHeadBuilder(_option.Value, buildOption);
+        @Html.Raw(headerBuilder.Build())
+    }
+    <link href="~/dist/style.min.css" asp-append-version="true" rel="stylesheet">
 </head>
 <body class="d-flex flex-column w-100 min-vh-100">
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
-        <a class="navbar-brand" href="/">Jerry Bian</a>
+        <a class="navbar-brand" href="/">Jarvis</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navLinks" aria-controls="navLinks" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
