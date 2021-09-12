@@ -171,7 +171,7 @@ jobs:
         with:
           branch: gh-pages
           folder: .
-          token: {{ secrets.ACCESS_TOKEN }}
+          token: ${{ secrets.ACCESS_TOKEN }}
 
       - name: Install dependencies
         run: |
