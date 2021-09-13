@@ -122,7 +122,7 @@
     @if (User.Identity?.IsAuthenticated == true)
     {
         <div class="d-grid mb-4">
-            <a class="btn btn-danger" href="@_config.Value.AdminRemoteEndpoint/blog/post/update/@Model.Current.Raw.Link"><i class="fas fa-edit"></i> 编辑文章</a>
+            <a class="btn btn-danger" href="@_config.Value.AdminRemoteEndpoint/blog/post/update/@Model.Current.Raw.Link" target="_blank"><i class="fas fa-edit"></i> 编辑文章</a>
         </div>
     }
 

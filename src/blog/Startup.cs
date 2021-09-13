@@ -45,6 +45,7 @@ namespace Laobian.Blog
 
             services.AddHostedService<RemoteLogHostedService>();
             services.AddHostedService<BlogHostedService>();
+            services.AddHostedService<PostAccessHostedService>();
 
             services.AddLogging(config =>
             {

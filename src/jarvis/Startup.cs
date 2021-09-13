@@ -1,16 +1,19 @@
 using System;
 using System.Text.Encodings.Web;
 using Laobian.Jarvis.HttpClients;
+using Laobian.Jarvis.Middleware;
 using Laobian.Share;
 using Laobian.Share.Converter;
 using Laobian.Share.Logger.Remote;
 using Laobian.Share.Site;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Laobian.Jarvis
 {
@@ -48,23 +51,22 @@ namespace Laobian.Jarvis
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostApplicationLifetime appLifetime)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-            }
+            var config = app.ApplicationServices.GetRequiredService<IOptions<JarvisOption>>().Value;
+            Configure(app, appLifetime, config);
 
-            app.UseStaticFiles();
+            app.UseStatusCodePages();
+            var fileContentTypeProvider = new FileExtensionContentTypeProvider();
+            fileContentTypeProvider.Mappings[".webmanifest"] = "application/manifest+json";
+            app.UseStaticFiles(new StaticFileOptions {ContentTypeProvider = fileContentTypeProvider});
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
+            app.UsePostAuthentication();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

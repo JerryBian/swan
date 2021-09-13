@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Runtime.InteropServices;
 using Microsoft.Extensions.Configuration;
 
 namespace Laobian.Share.Option
@@ -49,6 +50,8 @@ namespace Laobian.Share.Option
                 return $"{ver.Major}.{ver.Minor}";
             }
         }
+
+        public string RuntimeVersion => RuntimeInformation.FrameworkDescription;
 
         [OptionEnvName("HOME_PAGE_ENDPOINT")] public string HomePageEndpoint { get; set; }
 

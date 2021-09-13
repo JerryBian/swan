@@ -1,8 +1,7 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Blog.HttpClients;
@@ -19,6 +18,7 @@ namespace Laobian.Blog.Service
         private readonly List<BlogTag> _allTags;
         private readonly ApiSiteHttpClient _httpClient;
         private readonly ILogger<BlogService> _logger;
+        private readonly ConcurrentQueue<string> _postAccessQueue;
         private readonly ManualResetEventSlim _reloadLock;
         private DateTime _lastReloadTime;
 
@@ -30,27 +30,11 @@ namespace Laobian.Blog.Service
             _allTags = new List<BlogTag>();
             _allBookItems = new List<BookItem>();
             _allPosts = new List<BlogPostRuntime>();
-            RuntimeVersion = RuntimeInformation.FrameworkDescription;
+            _postAccessQueue = new ConcurrentQueue<string>();
             _reloadLock = new ManualResetEventSlim(true);
         }
 
-        public string AppVersion
-        {
-            get
-            {
-                var ver = Assembly.GetEntryAssembly()?.GetName().Version;
-                if (ver == null)
-                {
-                    return "1.0";
-                }
-
-                return $"{ver.Major}.{ver.Minor}";
-            }
-        }
-
         public DateTime BootTime { get; }
-
-        public string RuntimeVersion { get; }
 
         public List<BlogPostRuntime> GetAllPosts()
         {
@@ -103,6 +87,16 @@ namespace Laobian.Blog.Service
         {
             _reloadLock.Wait();
             return _lastReloadTime;
+        }
+
+        public void EnqueuePostAccess(string link)
+        {
+            _postAccessQueue.Enqueue(link);
+        }
+
+        public bool TryDequeuePostAccess(out string link)
+        {
+            return _postAccessQueue.TryDequeue(out link);
         }
     }
 }
