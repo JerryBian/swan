@@ -1,7 +1,5 @@
 ﻿using System.Linq;
-using System.Threading.Tasks;
 using Laobian.Blog.Cache;
-using Laobian.Blog.HttpClients;
 using Laobian.Blog.Models;
 using Laobian.Blog.Service;
 using Laobian.Share;
@@ -14,11 +12,9 @@ namespace Laobian.Blog.Controllers
     {
         private readonly IBlogService _blogService;
         private readonly ICacheClient _cacheClient;
-        private readonly ApiSiteHttpClient _httpClient;
 
-        public PostController(ICacheClient cacheClient, IBlogService blogService, ApiSiteHttpClient httpClient)
+        public PostController(ICacheClient cacheClient, IBlogService blogService)
         {
-            _httpClient = httpClient;
             _cacheClient = cacheClient;
             _blogService = blogService;
         }
@@ -62,10 +58,7 @@ namespace Laobian.Blog.Controllers
                 return NotFound();
             }
 
-#pragma warning disable 4014
-            Task.Run(() => _httpClient.AddPostAccess(viewModel.Current.Raw.Link));
-#pragma warning restore 4014
-
+            _blogService.EnqueuePostAccess(viewModel.Current.Raw.Link);
             return View("Index", viewModel);
         }
     }

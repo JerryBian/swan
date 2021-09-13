@@ -8,11 +8,7 @@ namespace Laobian.Blog.Service
 {
     public interface IBlogService
     {
-        string AppVersion { get; }
-
         DateTime BootTime { get; }
-
-        string RuntimeVersion { get; }
 
         List<BlogPostRuntime> GetAllPosts();
 
@@ -23,5 +19,9 @@ namespace Laobian.Blog.Service
         Task ReloadAsync();
 
         DateTime GetLastReloadTime();
+
+        void EnqueuePostAccess(string link);
+
+        bool TryDequeuePostAccess(out string link);
     }
 }

@@ -1,6 +1,6 @@
 @charset "UTF-8";
 /*!
- * Bootstrap v5.1.0 (https://getbootstrap.com/)
+ * Bootstrap v5.1.1 (https://getbootstrap.com/)
  * Copyright 2011-2021 The Bootstrap Authors
  * Copyright 2011-2021 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
@@ -47,7 +47,8 @@
   --bs-dark-rgb: 62, 63, 58;
   --bs-white-rgb: 255, 255, 255;
   --bs-black-rgb: 0, 0, 0;
-  --bs-body-rgb: 62, 63, 58;
+  --bs-body-color-rgb: 62, 63, 58;
+  --bs-body-bg-rgb: 255, 255, 255;
   --bs-font-sans-serif: system-ui, "Heiti SC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
@@ -7603,7 +7604,7 @@ textarea.form-control-lg {
 
 .text-body {
   --bs-text-opacity: 1;
-  color: rgba(var(--bs-body-rgb), var(--bs-text-opacity)) !important;
+  color: rgba(var(--bs-body-color-rgb), var(--bs-text-opacity)) !important;
 }
 
 .text-muted {
@@ -7694,7 +7695,7 @@ textarea.form-control-lg {
 
 .bg-body {
   --bs-bg-opacity: 1;
-  background-color: rgba(var(--bs-body-rgb), var(--bs-bg-opacity)) !important;
+  background-color: rgba(var(--bs-body-bg-rgb), var(--bs-bg-opacity)) !important;
 }
 
 .bg-transparent {
@@ -11254,8 +11255,62 @@ textarea.form-control-lg {
   background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23dfd7ca'><path d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/></svg>");
 }
 
-.editor-preview img {
+.article-content {
+  line-height: 1.8em;
+  position: relative;
+  color: black;
+}
+.article-content p {
+  margin-bottom: 1.75rem;
+}
+.article-content *:not(pre) > code {
+  padding-left: 4px;
+  padding-right: 4px;
+  background-color: #f4f3ee;
+  font-size: 90%;
+}
+.article-content h3, .article-content .h3 {
+  background-color: #8e8c84;
+  margin-bottom: 0.8rem;
+  margin-top: 1.5rem;
+  padding: 0.4rem;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.article-content h4, .article-content .h4 {
+  border-bottom: 1px solid #eaecef;
+  margin-bottom: 0.6rem;
+  margin-top: 1rem;
+  padding: 0.4rem;
+}
+.article-content blockquote {
+  background-color: #f8edeb;
+  border-left: 2px solid #fcd5ce;
+  margin-bottom: 1.5rem;
+  padding: 10px;
+  font-size: 97%;
+}
+.article-content blockquote p {
+  margin-bottom: 0.8rem;
+}
+.article-content blockquote *:last-child {
+  margin-bottom: 0.1rem;
+}
+.article-content pre {
+  font-size: 88%;
+}
+.article-content img {
+  cursor: pointer;
+  transition: 0.3s;
   max-width: 100%;
+}
+.article-content img:hover {
+  opacity: 0.9;
+}
+.article-content li {
+  margin-bottom: 0.5rem;
+}
+.article-content li p {
+  margin-bottom: 0;
 }
 
 /*# sourceMappingURL=style.css.map */

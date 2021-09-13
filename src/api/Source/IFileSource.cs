@@ -36,6 +36,13 @@ namespace Laobian.Api.Source
 
         Task<string> AddRawFileAsync(string fileName, byte[] content, CancellationToken cancellationToken = default);
 
+        Task<string> ReadDiaryAsync(DateTime date, CancellationToken cancellationToken = default);
+
+        Task WriteDiaryAsync(DateTime date, string diary, CancellationToken cancellationToken = default);
+
+        Task<List<DateTime>> ListDiariesAsync(int? year = null, int? month = null,
+            CancellationToken cancellationToken = default);
+
         Task FlushAsync(string message);
 
         Task PrepareAsync(CancellationToken cancellationToken = default);

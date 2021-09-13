@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Runtime.InteropServices;
 using Microsoft.Extensions.Configuration;
 
 namespace Laobian.Share.Option
@@ -15,6 +16,12 @@ namespace Laobian.Share.Option
         [OptionEnvName("FILE_REMOTE_ENDPOINT")]
         public string FileRemoteEndpoint { get; set; }
 
+        [OptionEnvName("ADMIN_REMOTE_ENDPOINT")]
+        public string AdminRemoteEndpoint { get; set; }
+
+        [OptionEnvName("JARVIS_REMOTE_ENDPOINT")]
+        public string JarvisRemoteEndpoint { get; set; }
+
         [OptionEnvName("ADMIN_USER_NAME")] public string AdminUserName { get; set; }
 
         [OptionEnvName("ADMIN_EMAIL")] public string AdminEmail { get; set; }
@@ -29,6 +36,22 @@ namespace Laobian.Share.Option
 
         [OptionEnvName(Constants.EnvHttpRequestToken)]
         public string HttpRequestToken { get; set; }
+
+        public string AppVersion
+        {
+            get
+            {
+                var ver = Assembly.GetEntryAssembly()?.GetName().Version;
+                if (ver == null)
+                {
+                    return "1.0";
+                }
+
+                return $"{ver.Major}.{ver.Minor}";
+            }
+        }
+
+        public string RuntimeVersion => RuntimeInformation.FrameworkDescription;
 
         [OptionEnvName("HOME_PAGE_ENDPOINT")] public string HomePageEndpoint { get; set; }
 

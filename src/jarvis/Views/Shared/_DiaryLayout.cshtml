@@ -1,0 +1,29 @@
+﻿@inject IOptions<JarvisOption> _option
+@{
+    Layout = "_Layout";
+}
+
+<div class="container">
+    <div class="row gx-4">
+        <main class="col-lg-9 d-flex justify-content-center px-2 py-3 flex-grow-1">
+            <div class="wrapper-content">
+                @RenderBody()
+            </div>
+        </main>
+        <aside class="col-lg-3 fs-sm position-sticky" style="top: 10px;">
+            <div class="d-grid mb-3">
+                <a class="btn btn-info" href="@_option.Value.AdminRemoteEndpoint/diary/add" target="_blank"><i class="fas fa-plus"></i> 发表日记</a>
+            </div>
+            @await RenderSectionAsync("Aside", false)
+        </aside>
+    </div>
+</div>
+
+@await RenderSectionAsync("Script", false)
+
+@section Script
+{
+    <script>
+        activeNavItem("#nav_diary");
+    </script>
+}

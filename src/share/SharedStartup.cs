@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Net;
 using System.Net.Http;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
@@ -38,7 +37,6 @@ namespace Laobian.Share
         {
             return HttpPolicyExtensions
                 .HandleTransientHttpError()
-                .OrResult(msg => msg.StatusCode == HttpStatusCode.NotFound)
                 .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2,
                     retryAttempt)));
         }

@@ -1,6 +1,6 @@
 @charset "UTF-8";
 /*!
- * Bootstrap v5.1.0 (https://getbootstrap.com/)
+ * Bootstrap v5.1.1 (https://getbootstrap.com/)
  * Copyright 2011-2021 The Bootstrap Authors
  * Copyright 2011-2021 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
@@ -47,7 +47,8 @@
   --bs-dark-rgb: 33, 37, 41;
   --bs-white-rgb: 255, 255, 255;
   --bs-black-rgb: 45, 52, 54;
-  --bs-body-rgb: 45, 52, 54;
+  --bs-body-color-rgb: 45, 52, 54;
+  --bs-body-bg-rgb: 255, 255, 255;
   --bs-font-sans-serif: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
@@ -7692,7 +7693,7 @@ textarea.form-control-lg {
 
 .text-body {
   --bs-text-opacity: 1;
-  color: rgba(var(--bs-body-rgb), var(--bs-text-opacity)) !important;
+  color: rgba(var(--bs-body-color-rgb), var(--bs-text-opacity)) !important;
 }
 
 .text-muted {
@@ -7783,7 +7784,7 @@ textarea.form-control-lg {
 
 .bg-body {
   --bs-bg-opacity: 1;
-  background-color: rgba(var(--bs-body-rgb), var(--bs-bg-opacity)) !important;
+  background-color: rgba(var(--bs-body-bg-rgb), var(--bs-bg-opacity)) !important;
 }
 
 .bg-transparent {
@@ -11367,59 +11368,61 @@ a {
   font-size: 0.88rem;
 }
 
-.post-content {
+.article-content {
   line-height: 1.8em;
   position: relative;
+  color: black;
 }
-.post-content p {
+.article-content p {
   margin-bottom: 1.75rem;
 }
-.post-content *:not(pre) > code {
+.article-content *:not(pre) > code {
   padding-left: 4px;
   padding-right: 4px;
   background-color: #f4f3ee;
   font-size: 90%;
 }
-.post-content h3, .post-content .h3 {
+.article-content h3, .article-content .h3 {
   background-color: #f1f2f6;
   margin-bottom: 0.8rem;
   margin-top: 1.5rem;
   padding: 0.4rem;
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
-.post-content h4, .post-content .h4 {
+.article-content h4, .article-content .h4 {
   border-bottom: 1px solid #eaecef;
   margin-bottom: 0.6rem;
   margin-top: 1rem;
   padding: 0.4rem;
 }
-.post-content blockquote {
+.article-content blockquote {
   background-color: #f8edeb;
   border-left: 2px solid #fcd5ce;
   margin-bottom: 1.5rem;
   padding: 10px;
   font-size: 97%;
 }
-.post-content blockquote p {
+.article-content blockquote p {
   margin-bottom: 0.8rem;
 }
-.post-content blockquote *:last-child {
+.article-content blockquote *:last-child {
   margin-bottom: 0.1rem;
 }
-.post-content pre {
+.article-content pre {
   font-size: 88%;
 }
-.post-content img {
+.article-content img {
   cursor: pointer;
   transition: 0.3s;
+  max-width: 100%;
 }
-.post-content img:hover {
+.article-content img:hover {
   opacity: 0.9;
 }
-.post-content li {
+.article-content li {
   margin-bottom: 0.5rem;
 }
-.post-content li p {
+.article-content li p {
   margin-bottom: 0;
 }
 

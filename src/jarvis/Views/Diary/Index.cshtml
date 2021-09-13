@@ -1,0 +1,12 @@
+﻿@model List<DateTime>
+@{
+    Layout = "_DiaryLayout";
+    ViewData["Title"] = "所有日记";
+}
+
+<ul>
+    @foreach (var item in Model.GroupBy(x => x.Year).OrderByDescending(x => x.Key))
+    {
+        <li><a href="/diary/@item.Key.ToString("D4")">@item.Key 年</a> （@item.Count()）</li>
+    }
+</ul>

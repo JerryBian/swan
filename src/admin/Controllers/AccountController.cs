@@ -58,6 +58,15 @@ namespace Laobian.Admin.Controllers
                 {
                     returnUrl = "/";
                 }
+                else if (!Url.IsLocalUrl(returnUrl))
+                {
+                    var uri = new Uri(returnUrl);
+                    if (!uri.Host.EndsWith("localhost") && !uri.Host.EndsWith(".laobian.me"))
+                    {
+                        _logger.LogWarning($"Invalid Return Url: {returnUrl}");
+                        returnUrl = "/";
+                    }
+                }
 
                 _logger.LogInformation($"Login successfully, user={userName}.");
                 return Redirect(returnUrl);

@@ -24,7 +24,11 @@
     }
 
     <link rel="stylesheet" href="~/dist/style.min.css"
-          asp-append-version="true"/>
+          asp-append-version="true"
+          asp-fallback-href="https://jerrybian.github.io/laobian.me/blog/@_config.Value.AppVersion/style.min.css"
+          asp-fallback-test-class="row"
+          asp-fallback-test-property="display"
+          asp-fallback-test-value="flex"/>
 
 </head>
 <body class="d-flex flex-column w-100 min-vh-100">
@@ -50,7 +54,7 @@
                 </li>
                 @if (Context.User.Identity?.IsAuthenticated == true)
                 {
-                    <li class="navbar-text">
+                    <li class="nav-item navbar-text">
                         <i class="fas fa-user"></i> <span class="text-info">@Context.User.Identity.Name</span>
                     </li>
                 }
@@ -102,6 +106,8 @@
 
 </footer>
 <script src="~/dist/script.min.js"
+        asp-fallback-src="https://jerrybian.github.io/laobian.me/blog/@_config.Value.AppVersion/script.min.js"
+        asp-fallback-test="window.fallbackTest"
         asp-append-version="true"></script>
 @await RenderSectionAsync("Script", false)
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-97849167-1"></script>
@@ -114,5 +120,6 @@
 
     gtag('config', 'UA-97849167-1');
 </script>
+<!--@DateTime.Now.ToDateAndTime()-->
 </body>
 </html>

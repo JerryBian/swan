@@ -3,7 +3,7 @@
     ViewData["Title"] = "我的阅读";
 }
 
-<div data-bs-spy="scroll" data-bs-target="#aside_read_items" data-bs-offset="0">
+<div>
     @foreach (var item in Model)
     {
         <h3 class="mb-2" id="@item.Id">@item.Title</h3>
@@ -108,6 +108,7 @@
                     base: '/read'
                 };
                 anchors.add('h3');
+                setScrollspy("#aside_read_items");
                 activeNavItem('#nav_read');
             });
     </script>
