@@ -28,9 +28,9 @@ namespace Laobian.Api.Source
             _logger = logger;
             _apiOption = apiOption.Value;
 
-            _assetDbReadFolder = Path.Combine(_apiOption.AssetLocation, Constants.AssetDbFolder,
-                Constants.AssetDbReadFolder);
-            Directory.CreateDirectory(_assetDbReadFolder);
+            _assetDbLogFolder = Path.Combine(_apiOption.AssetLocation, Constants.AssetDbFolder,
+                Constants.AssetDbLogFolder);
+            Directory.CreateDirectory(_assetDbLogFolder);
             FileLocker = new AutoResetEvent(true);
         }
 

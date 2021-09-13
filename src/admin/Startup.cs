@@ -52,7 +52,7 @@ namespace Laobian.Admin
             {
                 var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
                 config.Filters.Add(new AuthorizeFilter(policy));
-                config.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+                //config.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
             }).AddJsonOptions(config =>
             {
                 config.JsonSerializerOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
