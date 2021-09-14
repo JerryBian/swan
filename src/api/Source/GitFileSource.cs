@@ -33,9 +33,17 @@ namespace Laobian.Api.Source
                 return;
             }
 
-            await PullDbRepoAsync(cancellationToken);
-            await base.PrepareAsync(cancellationToken);
-            _prepared = true;
+            FileLocker.WaitOne();
+            try
+            {
+                await PullDbRepoAsync(cancellationToken);
+                await base.PrepareAsync(cancellationToken);
+                _prepared = true;
+            }
+            finally
+            {
+                FileLocker.Set();
+            }
         }
 
         public override async Task FlushAsync(string message)
