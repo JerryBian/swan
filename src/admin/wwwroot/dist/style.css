@@ -11256,12 +11256,12 @@ textarea.form-control-lg {
 }
 
 .article-content {
-  line-height: 1.8em;
+  line-height: 1.6em;
   position: relative;
   color: black;
 }
 .article-content p {
-  margin-bottom: 1.75rem;
+  margin-bottom: 1.65rem;
 }
 .article-content *:not(pre) > code {
   padding-left: 4px;

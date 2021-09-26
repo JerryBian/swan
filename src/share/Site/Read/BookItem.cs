@@ -36,6 +36,8 @@ namespace Laobian.Share.Site.Read
 
         [JsonPropertyName("lastUpdateTime")] public DateTime LastUpdateTime { get; set; }
 
+        [JsonPropertyName("isPublished")] public bool IsPublished { get; set; }
+
         [JsonIgnore] public string ShortCommentHtml { get; set; }
 
         [JsonIgnore] public string BlogPostTitle { get; set; }

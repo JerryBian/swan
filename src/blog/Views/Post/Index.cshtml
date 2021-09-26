@@ -20,7 +20,7 @@
                 <span class="badge bg-success fs-sm">置顶</span>
             }
 
-            @if (!Model.Current.Raw.IsPublished)
+            @if (!Model.Current.Raw.IsPostPublished())
             {
                 <span class="badge bg-warning fs-sm">
                     未发布

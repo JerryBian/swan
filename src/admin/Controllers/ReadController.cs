@@ -38,6 +38,7 @@ namespace Laobian.Admin.Controllers
         public async Task<IActionResult> Add([FromForm] BookItem bookItem)
         {
             bookItem.IsCompleted = Request.Form["isCompleted"] == "on";
+            bookItem.IsPublished = Request.Form["isPublished"] == "on";
             await _apiSiteHttpClient.AddBookItemAsync(bookItem);
             return Redirect("/read");
         }
@@ -53,6 +54,7 @@ namespace Laobian.Admin.Controllers
         public async Task<IActionResult> Update([FromForm] BookItem bookItem)
         {
             bookItem.IsCompleted = Request.Form["isCompleted"] == "on";
+            bookItem.IsPublished = Request.Form["isPublished"] == "on";
             await _apiSiteHttpClient.UpdateBookItemAsync(bookItem);
             return Redirect("/read");
         }

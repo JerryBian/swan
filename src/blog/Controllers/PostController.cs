@@ -33,7 +33,7 @@ namespace Laobian.Blog.Controllers
                         StringUtil.EqualsIgnoreCase(x.Raw.Link, link) &&
                         x.Raw.PublishTime.Year == year &&
                         x.Raw.PublishTime.Month == month &&
-                        (x.Raw.IsPublished || authenticated));
+                        (x.Raw.IsPostPublished() || authenticated));
                     if (post == null)
                     {
                         return null;

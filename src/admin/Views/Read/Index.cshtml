@@ -13,6 +13,7 @@
             <th scope="col">书名</th>
             <th scope="col">开始时间</th>
             <th scope="col">是否读完</th>
+            <th scope="col">是否公开</th>
         </tr>
         </thead>
         <tbody>
@@ -31,6 +32,7 @@
                 <th>@item.BookName</th>
                 <th>@item.StartTime.ToChinaDate()</th>
                 <th>@item.IsCompleted</th>
+                <th>@item.IsPublished</th>
             </tr>
         }
         </tbody>

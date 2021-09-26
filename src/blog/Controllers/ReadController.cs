@@ -28,12 +28,16 @@ namespace Laobian.Blog.Controllers
         [ResponseCache(CacheProfileName = Constants.CacheProfileName)]
         public IActionResult Index()
         {
-            var model = _cacheClient.GetOrCreate(CacheKeyBuilder.Build(nameof(ReadController), nameof(Index)),
+            var authenticated = User.Identity?.IsAuthenticated ?? false;
+            var model = _cacheClient.GetOrCreate(
+                CacheKeyBuilder.Build(nameof(ReadController), nameof(Index), authenticated),
                 () =>
                 {
                     var viewModels = new List<BookItemViewModel>();
-                    var posts = _blogService.GetAllPosts();
-                    foreach (var item in _blogService.GetBookItems().GroupBy(x => x.StartTime.Year))
+                    var posts = _blogService.GetAllPosts().Where(x => authenticated || x.Raw.IsPostPublished())
+                        .ToList();
+                    foreach (var item in _blogService.GetBookItems().Where(x => authenticated || x.IsPublished)
+                        .GroupBy(x => x.StartTime.Year))
                     {
                         var viewModel = new BookItemViewModel
                         {

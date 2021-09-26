@@ -10,7 +10,8 @@
         <div class="list-group mb-5">
             @foreach (var book in item.Items)
             {
-                <div class="list-group-item">
+                var c = book.IsPublished ? string.Empty : "list-group-item-danger";
+                <div class="list-group-item @c">
                     <div class="d-flex w-100 justify-content-between">
                         <h4 class="mb-1">
                             @book.BookName
