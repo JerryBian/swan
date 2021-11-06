@@ -1,0 +1,18 @@
+﻿@model List<NoteRuntime>
+@{
+    Layout = "_NoteLayout";
+    ViewData["Title"] = "所有笔记";
+}
+
+<div>
+    @foreach (var items in Model.GroupBy(x => x.Raw.CreateTime.Year).OrderByDescending(x => x.Key))
+    {
+        <h3>@items.Key</h3>
+        <ul>
+            @foreach (var item in items)
+            {
+                <li><a href="@item.Raw.GetFullPath()">@item.Raw.Title</a></li>
+            }
+        </ul>
+    }
+</div>

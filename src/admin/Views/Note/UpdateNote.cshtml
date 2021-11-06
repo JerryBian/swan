@@ -1,0 +1,32 @@
+﻿@model Note
+@{
+    ViewData["Title"] = "编辑笔记";
+}
+<h3>编辑日记</h3>
+<form class="needs-validation" action="/note/update" method="post" novalidate>
+    <div class="mb-3">
+        <label for="title" class="form-label">标题</label>
+        <input type="text" class="form-control" id="title" name="title" placeholder="笔记标题" autocomplete="off" value="@Model.Title" autofocus required>
+        <div class="invalid-feedback">
+            必填
+        </div>
+    </div>
+    <div class="mb-3">
+        <label for="mdContent" class="form-label">正文</label>
+        <textarea class="form-control" id="mdContent" name="mdContent" rows="3" placeholder="笔记正文" autocomplete="off" required>@Model.MdContent</textarea>
+        <div class="invalid-feedback">
+            必填
+        </div>
+    </div>
+    <div class="d-grid">
+        <button type="submit" class="btn btn-primary btn-lg">提交</button>
+    </div>
+    <input type="hidden" name="link" value="@Model.Link"/>
+    <input type="hidden" name="createTime" value="@Model.CreateTime.ToDateAndTime()"/>
+</form>
+
+@section Scripts {
+    <script>
+        const markdownContent = prepareEditor(document.querySelector("#mdContent"), "note_update_@Model.Link");
+    </script>
+}

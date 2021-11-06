@@ -51,5 +51,33 @@ namespace Laobian.Jarvis.HttpClients
             await using var stream = await response.Content.ReadAsStreamAsync();
             return await JsonUtil.DeserializeAsync<DiaryRuntime>(stream);
         }
+
+        public async Task<NoteRuntime> GetNoteAsync(string link)
+        {
+            var response = await _httpClient.GetAsync($"/note/{link}");
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                _logger.LogError(
+                    $"{nameof(ApiSiteHttpClient)}.{nameof(GetNoteAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+                return null;
+            }
+
+            await using var stream = await response.Content.ReadAsStreamAsync();
+            return await JsonUtil.DeserializeAsync<NoteRuntime>(stream);
+        }
+
+        public async Task<List<NoteRuntime>> GetNotesAsync(int? year = null)
+        {
+            var response = await _httpClient.GetAsync(year.HasValue ? $"/note?year={year.Value}" : "/note");
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                _logger.LogError(
+                    $"{nameof(ApiSiteHttpClient)}.{nameof(GetNotesAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+                return null;
+            }
+
+            await using var stream = await response.Content.ReadAsStreamAsync();
+            return await JsonUtil.DeserializeAsync<List<NoteRuntime>>(stream);
+        }
     }
 }

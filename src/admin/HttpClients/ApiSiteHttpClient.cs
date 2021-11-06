@@ -314,5 +314,41 @@ namespace Laobian.Admin.HttpClients
                     $"{nameof(ApiSiteHttpClient)}.{nameof(UpdateDiaryAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
             }
         }
+
+        public async Task<NoteRuntime> GetNoteAsync(string link)
+        {
+            var response = await _httpClient.GetAsync($"/note/{link}");
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                _logger.LogError(
+                    $"{nameof(ApiSiteHttpClient)}.{nameof(GetNoteAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+                return null;
+            }
+
+            await using var stream = await response.Content.ReadAsStreamAsync();
+            return await JsonUtil.DeserializeAsync<NoteRuntime>(stream);
+        }
+
+        public async Task AddNoteAsync(Note note)
+        {
+            var response = await _httpClient.PutAsync("/note",
+                new StringContent(JsonUtil.Serialize(note), Encoding.UTF8, MediaTypeNames.Application.Json));
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                Console.WriteLine(
+                    $"{nameof(ApiSiteHttpClient)}.{nameof(AddNoteAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+            }
+        }
+
+        public async Task UpdateNoteAsync(Note note)
+        {
+            var response = await _httpClient.PostAsync("/note",
+                new StringContent(JsonUtil.Serialize(note), Encoding.UTF8, MediaTypeNames.Application.Json));
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                Console.WriteLine(
+                    $"{nameof(ApiSiteHttpClient)}.{nameof(UpdateNoteAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+            }
+        }
     }
 }

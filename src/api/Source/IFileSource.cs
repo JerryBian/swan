@@ -43,6 +43,13 @@ namespace Laobian.Api.Source
         Task<List<DateTime>> ListDiariesAsync(int? year = null, int? month = null,
             CancellationToken cancellationToken = default);
 
+        Task<string> ReadNoteAsync(string link, CancellationToken cancellationToken = default);
+
+        Task WriteNoteAsync(string link, int year, string note, CancellationToken cancellationToken = default);
+
+        Task<List<string>> ListNotesAsync(int? year = null,
+            CancellationToken cancellationToken = default);
+
         Task FlushAsync(string message);
 
         Task PrepareAsync(CancellationToken cancellationToken = default);
