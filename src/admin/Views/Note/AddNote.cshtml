@@ -1,0 +1,47 @@
+﻿@model IEnumerable<NoteTag>
+@{
+    ViewData["Title"] = "添加新的笔记";
+}
+<h3>新笔记</h3>
+<form class="needs-validation" action="/note/add" method="post" novalidate>
+    <div class="mb-3">
+        <label for="title" class="form-label">标题</label>
+        <input type="text" class="form-control" id="title" name="title" placeholder="笔记标题" autocomplete="off" autofocus required>
+        <div class="invalid-feedback">
+            必填
+        </div>
+    </div>
+    <div class="mb-3">
+        <label for="mdContent" class="form-label">正文</label>
+        <textarea class="form-control" id="mdContent" name="mdContent" rows="3" placeholder="笔记正文" autocomplete="off" required></textarea>
+        <div class="invalid-feedback">
+            必填
+        </div>
+    </div>
+    @if (Model.Any())
+    {
+        <div class="mb-3">
+            <label class="form-label">标签</label>
+            <div id="tagsDiv">
+                @foreach (var tag in Model)
+                {
+                    var id = Guid.NewGuid().ToString("N");
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="@id" value="@tag.Link" name="tag">
+                        <label class="form-check-label" for="@id">@tag.DisplayName</label>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+    <div class="d-grid">
+        <button type="submit" class="btn btn-primary btn-lg">提交</button>
+    </div>
+
+</form>
+
+@section Scripts {
+    <script>
+        const markdownContent = prepareEditor(document.querySelector("#mdContent"), "note_add");
+    </script>
+}

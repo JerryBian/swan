@@ -68,5 +68,13 @@ namespace Laobian.Api.Repository
         Task AddDiaryAsync(Diary diary, CancellationToken cancellationToken = default);
 
         Task UpdateDiaryAsync(Diary diary, CancellationToken cancellationToken = default);
+
+        Task<List<Note>> GetNotesAsync(int? year = null, CancellationToken cancellationToken = default);
+
+        Task<Note> GetNoteAsync(string link, CancellationToken cancellationToken = default);
+
+        Task AddNoteAsync(Note note, CancellationToken cancellationToken = default);
+
+        Task UpdateNoteAsync(Note note, CancellationToken cancellationToken = default);
     }
 }

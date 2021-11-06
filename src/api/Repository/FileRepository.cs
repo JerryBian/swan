@@ -412,5 +412,59 @@ namespace Laobian.Api.Repository
                 JsonUtil.Serialize(diary),
                 cancellationToken);
         }
+
+        public async Task<List<Note>> GetNotesAsync(int? year = null, CancellationToken cancellationToken = default)
+        {
+            var notes = await _fileSource.ListNotesAsync(year, cancellationToken);
+            var result = new List<Note>();
+            foreach (var note in notes)
+            {
+                result.Add(JsonUtil.Deserialize<Note>(note));
+            }
+
+            return result;
+        }
+
+        public async Task<Note> GetNoteAsync(string link, CancellationToken cancellationToken = default)
+        {
+            Note result = null;
+            var note = await _fileSource.ReadNoteAsync(link, cancellationToken);
+            if (!string.IsNullOrEmpty(note))
+            {
+                result = JsonUtil.Deserialize<Note>(note);
+            }
+
+            return result;
+        }
+
+        public async Task AddNoteAsync(Note note, CancellationToken cancellationToken = default)
+        {
+            var existingNote = await GetNoteAsync(note.Link, cancellationToken);
+            if (existingNote != null)
+            {
+                throw new Exception($"Note with link({note.Link}) already exists.");
+            }
+
+            await _fileSource.WriteNoteAsync(note.Link, note.CreateTime.Year,
+                JsonUtil.Serialize(note),
+                cancellationToken);
+        }
+
+        public async Task UpdateNoteAsync(Note note, CancellationToken cancellationToken = default)
+        {
+            var existingNote = await GetNoteAsync(note.Link, cancellationToken);
+            if (existingNote == null)
+            {
+                throw new Exception($"Note with link({note.Link}) not exists.");
+            }
+
+            existingNote.LastUpdateTime = DateTime.Now;
+            existingNote.MdContent = note.MdContent;
+            existingNote.Title = note.Title;
+            existingNote.Tag = note.Tag;
+            await _fileSource.WriteNoteAsync(note.Link, note.CreateTime.Year,
+                JsonUtil.Serialize(existingNote),
+                cancellationToken);
+        }
     }
 }

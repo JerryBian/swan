@@ -19,6 +19,7 @@ namespace Laobian.Api.Source
         protected readonly AutoResetEvent FileLocker;
         private string _assetDbBlogFolder;
         private string _assetDbDiaryFolder;
+        private string _assetDbNoteFolder;
         private string _assetDbFileFolder;
         private string _assetDbLogFolder;
         private string _assetDbReadFolder;
@@ -397,6 +398,76 @@ namespace Laobian.Api.Source
             }
         }
 
+        public async Task<string> ReadNoteAsync(string link, CancellationToken cancellationToken = default)
+        {
+            FileLocker.WaitOne();
+            try
+            {
+                var file = string.Empty;
+                foreach (var item in Directory.EnumerateFiles(_assetDbNoteFolder, $"{link.ToLowerInvariant()}.json", SearchOption.AllDirectories))
+                {
+                    file = item;
+                    break;
+                }
+
+                if (string.IsNullOrEmpty(file))
+                {
+                    return null;
+                }
+
+                return await File.ReadAllTextAsync(file, Encoding.UTF8, cancellationToken);
+            }
+            finally
+            {
+                FileLocker.Set();
+            }
+        }
+
+        public async Task WriteNoteAsync(string link, int year, string note, CancellationToken cancellationToken = default)
+        {
+            FileLocker.WaitOne();
+            try
+            {
+                var folder = Path.Combine(_assetDbNoteFolder, year.ToString("D4"));
+                Directory.CreateDirectory(folder);
+                var file = Path.Combine(folder, $"{link}.json");
+                await File.WriteAllTextAsync(file, note, Encoding.UTF8, cancellationToken);
+            }
+            finally
+            {
+                FileLocker.Set();
+            }
+        }
+
+        public async Task<List<string>> ListNotesAsync(int? year = null, CancellationToken cancellationToken = default)
+        {
+            FileLocker.WaitOne();
+            try
+            {
+                var result = new List<string>();
+                var folder = _assetDbNoteFolder;
+                if (year.HasValue)
+                {
+                    folder = Path.Combine(folder, year.Value.ToString("D4"));
+                    if (!Directory.Exists(folder))
+                    {
+                        return result;
+                    }
+                }
+
+                foreach (var file in Directory.EnumerateFiles(folder, "*.json", SearchOption.AllDirectories))
+                {
+                    result.Add(await File.ReadAllTextAsync(file, Encoding.UTF8, cancellationToken));
+                }
+
+                return result;
+            }
+            finally
+            {
+                FileLocker.Set();
+            }
+        }
+
         public virtual Task FlushAsync(string message)
         {
             return Task.CompletedTask;
@@ -423,6 +494,10 @@ namespace Laobian.Api.Source
             _assetDbDiaryFolder = Path.Combine(_apiOption.AssetLocation, Constants.AssetDbFolder,
                 Constants.AssetDbDiaryFolder);
             Directory.CreateDirectory(_assetDbDiaryFolder);
+
+            _assetDbNoteFolder = Path.Combine(_apiOption.AssetLocation, Constants.AssetDbFolder,
+                Constants.AssetDbNoteFolder);
+            Directory.CreateDirectory(_assetDbNoteFolder);
 
             await Task.CompletedTask;
         }

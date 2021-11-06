@@ -26,6 +26,8 @@
 
         public const string AssetDbDiaryFolder = "diary";
 
+        public const string AssetDbNoteFolder = "note";
+
         public const string AssetDbBlogPostFolder = "post";
 
         #endregion
