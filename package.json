@@ -10,7 +10,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build_admin": "pwsh ./script/build_admin.ps1",
     "build_blog": "pwsh ./script/build_blog.ps1",
-    "build_jarvis": "pwsh ./script/build_jarvis.ps1"
+    "build_jarvis": "pwsh ./script/build_jarvis.ps1",
+    "build": "pwsh ./script/build_all.ps1"
   },
   "repository": {
     "type": "git",

@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 
 COPY ./src ./
@@ -7,7 +7,7 @@ RUN dotnet publish -c Release -o /publish --self-contained true -v normal -p:Pub
 COPY ./script/wait-for-it.sh /publish
 COPY ./script/start-after-api.sh /publish
 
-FROM mcr.microsoft.com/dotnet/aspnet:5.0
+FROM mcr.microsoft.com/dotnet/aspnet:6.0
 WORKDIR /app
 COPY --from=build /publish ./
 RUN chmod +x laobian.admin ./wait-for-it.sh ./start-after-api.sh
