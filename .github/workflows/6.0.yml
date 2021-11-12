@@ -1,8 +1,8 @@
-name: 5.11
+name: 6.0
 
 on:
   push:
-    branches: [ 5.11 ]
+    branches: [ 6.0 ]
 
 jobs:
   publish_api:
@@ -160,7 +160,7 @@ jobs:
     runs-on: ubuntu-20.04
     permissions:
       packages: write
-      contents: read
+      contents: write
 
     steps:
       - name: Checkout
