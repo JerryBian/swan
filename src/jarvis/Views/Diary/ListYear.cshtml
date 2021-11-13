@@ -1,0 +1,33 @@
+﻿@model Dictionary<int, List<DateTime>>
+@{
+    Layout = "_DiaryLayout";
+    ViewData["Title"] = "过滤的所有日记";
+}
+
+<div class="accordion accordion-flush" id="diaries">
+    @foreach(var item in Model)
+    {
+        <div class="accordion-item">
+    <h2 class="accordion-header" id="flush-heading-@item.Key">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse-@item.Key" aria-expanded="false" aria-controls="flush-collapse-@item.Key">
+        @item.Key.ToString("D2")月
+      </button>
+    </h2>
+    <div id="flush-collapse-@item.Key" class="accordion-collapse collapse" aria-labelledby="flush-heading-@item.Key" data-bs-parent="#diaries">
+      <div class="accordion-body">
+          <ul>
+              @foreach(var diary in item.Value)
+                    {
+                        var url = $"/diary/{diary.Year:D4}/{diary.Month:D2}/{diary.Day:D2}.html";
+        <li>
+            <a href="@url">@diary.ToChinaDate()</a>
+        </li>
+                    }
+          </ul>
+          
+                </div>
+    </div>
+  </div>
+    }
+    
+  </div>
