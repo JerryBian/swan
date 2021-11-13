@@ -3,7 +3,15 @@ WORKDIR /src
 
 COPY ./src ./
 COPY ./Directory.Build.props ./
-RUN dotnet publish -c Release -o /publish --self-contained true -v normal -p:PublishTrimmed=true -p:PublishSingleFile=true -r linux-x64 ./jarvis/Laobian.Jarvis.csproj
+RUN dotnet publish \
+    -c Release \
+    -o /publish \
+    --self-contained true \
+    -v normal \
+    -p:PublishTrimmed=true \
+    -p:PublishSingleFile=true \
+    -p:IncludeNativeLibrariesForSelfExtract=true \
+    -r linux-x64 \./jarvis/Laobian.Jarvis.csproj
 COPY ./script/wait-for-it.sh /publish
 COPY ./script/start-after-api.sh /publish
 
