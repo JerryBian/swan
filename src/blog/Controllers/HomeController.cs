@@ -83,7 +83,7 @@ namespace Laobian.Blog.Controllers
                     var postsPerPage = Convert.ToInt32(_laobianBlogOption.PostsPerPage);
                     var model = new PagedPostViewModel(p, posts.Count, postsPerPage) {Url = Request.Path};
 
-                    foreach (var blogPost in posts.ToPaged(postsPerPage, model.CurrentPage))
+                    foreach (var blogPost in posts.Chunk(postsPerPage).ElementAtOrDefault(model.CurrentPage - 1) ?? Enumerable.Empty<BlogPostRuntime>())
                     {
                         var postViewModel = new PostViewModel {Current = blogPost};
                         postViewModel.SetAdditionalInfo();
