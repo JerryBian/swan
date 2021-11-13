@@ -38,14 +38,18 @@ namespace Laobian.Blog.Controllers
                     foreach (var blogTag in _blogService.GetAllTags())
                     {
                         var tagPosts = posts.Where(x => x.Raw.Tag.Contains(blogTag.Link)).ToList();
-                        var archiveViewModel = new PostArchiveViewModel
+                        if(tagPosts.Any())
                         {
-                            Count = tagPosts.Count,
-                            Posts = tagPosts.ToList(),
-                            Link = $"{blogTag.Link}",
-                            Name = $"{blogTag.DisplayName}"
-                        };
-                        model.Add(archiveViewModel);
+                            var archiveViewModel = new PostArchiveViewModel
+                            {
+                                Count = tagPosts.Count,
+                                Posts = tagPosts.ToList(),
+                                Link = $"{blogTag.Link}",
+                                Name = $"{blogTag.DisplayName}"
+                            };
+
+                            model.Add(archiveViewModel);
+                        }
                     }
 
                     return model;
