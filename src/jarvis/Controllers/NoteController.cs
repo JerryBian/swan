@@ -28,11 +28,11 @@ namespace Laobian.Jarvis.Controllers
         }
 
         [HttpGet]
-        [Route("{year}/{link}.html")]
-        public async Task<IActionResult> Detail([FromRoute] int year, [FromRoute] string link)
+        [Route("{link}.html")]
+        public async Task<IActionResult> Detail([FromRoute] string link)
         {
             var note = await _httpClient.GetNoteAsync(link);
-            if (note == null || note.Raw.CreateTime.Year != year)
+            if (note == null)
             {
                 return NotFound();
             }

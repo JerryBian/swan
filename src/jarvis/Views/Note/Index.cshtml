@@ -5,14 +5,10 @@
 }
 
 <div>
-    @foreach (var items in Model.GroupBy(x => x.Raw.CreateTime.Year).OrderByDescending(x => x.Key))
-    {
-        <h3>@items.Key</h3>
-        <ul>
-            @foreach (var item in items)
-            {
-                <li><a href="@item.Raw.GetFullPath()">@item.Raw.Title</a></li>
-            }
-        </ul>
-    }
+    <ul>
+        @foreach (var item in Model.OrderByDescending(x => x.Raw.CreateTime))
+        {
+            <li><a href="@item.Raw.GetFullPath()">@item.Raw.Title</a></li>
+        }
+    </ul>
 </div>

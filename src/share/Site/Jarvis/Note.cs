@@ -24,7 +24,7 @@ namespace Laobian.Share.Site.Jarvis
         public string GetFullPath()
         {
             var path =
-                $"/note/{CreateTime.Year:D4}/{Link}.html";
+                $"/note/{Link}.html";
             return path;
         }
     }
