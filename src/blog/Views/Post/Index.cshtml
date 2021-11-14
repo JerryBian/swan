@@ -88,7 +88,7 @@
                     visible: 'hover',
                     base: '@Model.Current.Raw.GetFullPath(_config.Value.BlogRemoteEndpoint)'
                 };
-                anchors.add('.post-content h3, .post-content h4');
+                anchors.add('.article-content h3, .article-content h4');
 
                 hljs.highlightAll();
                 setScrollspy("#aside_post");
@@ -96,7 +96,7 @@
                     let modalEl = document.querySelector("#imgModal");
                     if (modalEl) {
                         let modal = bootstrap.Modal.getOrCreateInstance(modalEl);
-                        let images = document.querySelectorAll(".post-content img");
+                        let images = document.querySelectorAll(".article-content img");
                         var modalImg = document.querySelector("#modal-content");
                         var caption = document.querySelector("#modal-caption");
                         images.forEach(function(img) {

@@ -1,8 +1,8 @@
-name: master
+name: 6.1
 
 on:
   push:
-    branches: [ master ]
+    branches: [ 6.1 ]
 
 jobs:
   publish_api:
@@ -53,9 +53,7 @@ jobs:
           push: true
           tags: |
             cnbian/laobian-api:${{ env.APP_VERSION }}
-            cnbian/laobian-api:latest
             ghcr.io/jerrybian/laobian-api:${{ env.APP_VERSION }}
-            ghcr.io/jerrybian/laobian-api:latest
 
   publish_admin:
     name: Publish ADMIN images
@@ -105,9 +103,7 @@ jobs:
           push: true
           tags: |
             cnbian/laobian-admin:${{ env.APP_VERSION }}
-            cnbian/laobian-admin:latest
             ghcr.io/jerrybian/laobian-admin:${{ env.APP_VERSION }}
-            ghcr.io/jerrybian/laobian-admin:latest
 
   publish_jarvis:
     name: Publish JARVIS images
@@ -157,9 +153,7 @@ jobs:
           push: true
           tags: |
             cnbian/laobian-jarvis:${{ env.APP_VERSION }}
-            cnbian/laobian-jarvis:latest
             ghcr.io/jerrybian/laobian-jarvis:${{ env.APP_VERSION }}
-            ghcr.io/jerrybian/laobian-jarvis:latest
 
   publish_blog:
     name: Publish BLOG images
@@ -209,9 +203,7 @@ jobs:
           push: true
           tags: |
             cnbian/laobian-blog:${{ env.APP_VERSION }}
-            cnbian/laobian-blog:latest
             ghcr.io/jerrybian/laobian-blog:${{ env.APP_VERSION }}
-            ghcr.io/jerrybian/laobian-blog:latest
 
       - name: Deploy GitHub Pages 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.5
@@ -246,4 +238,4 @@ jobs:
           password: ${{ secrets.VPS_SSH_PASSWORD }}
           port: ${{ secrets.VPS_SSH_PORT }}
           script: |
-            sh /ga/deploy-laobian.sh prod ${{ env.APP_VERSION }}
+            sh /ga/deploy-laobian.sh stage ${{ env.APP_VERSION }}

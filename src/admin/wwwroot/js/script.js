@@ -96,7 +96,7 @@ function prepareEditor(textArea, u) {
         lineNumbers: false,
         lineWrapping: true,
         maxHeight: "200px",
-        previewClass: "article-content",
+        previewClass: "editor-preview",
         promptURLs: true,
         uploadImage: true,
         imageMaxSize: 1024 * 1024 * 20,

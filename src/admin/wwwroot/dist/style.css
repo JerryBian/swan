@@ -11318,4 +11318,8 @@ textarea.form-control-lg {
   margin-bottom: 0;
 }
 
+.editor-preview img {
+  max-width: 99%;
+}
+
 /*# sourceMappingURL=style.css.map */

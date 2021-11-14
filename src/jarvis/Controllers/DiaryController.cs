@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Laobian.Jarvis.HttpClients;
@@ -28,17 +29,37 @@ namespace Laobian.Jarvis.Controllers
         }
 
         [HttpGet]
-        [Route("{year}")]
-        public async Task<IActionResult> List([FromRoute] int year)
+        [Route("{year}/{month}")]
+        public async Task<IActionResult> ListMonth([FromRoute] int year, [FromRoute] int month)
         {
-            var diaries = await _httpClient.ListDiariesAsync(year);
-            return View(diaries);
+            var diaries = await _httpClient.ListDiariesAsync(year, month);
+            return View(diaries.OrderByDescending(x => x).ToList());
         }
 
         [HttpGet]
-        [Route("{year}/{date}.html")]
-        public async Task<IActionResult> Detail([FromRoute] int year, [FromRoute] DateTime date)
+        [Route("{year}")]
+        public async Task<IActionResult> ListYear([FromRoute] int year)
         {
+            var diaries = await _httpClient.ListDiariesAsync(year);
+            var result = new Dictionary<int, List<DateTime>>();
+            foreach (var item in diaries.GroupBy(x => x.Month).OrderByDescending(x => x))
+            {
+                var list = new List<DateTime>();
+                foreach (var d in item.OrderByDescending(x => x))
+                {
+                    list.Add(d);
+                }
+
+                result.Add(item.Key, list);
+            }
+            return View(result);
+        }
+
+        [HttpGet]
+        [Route("{year}/{month}/{day}.html")]
+        public async Task<IActionResult> Detail([FromRoute] int year, [FromRoute] int month, [FromRoute] int day)
+        {
+            var date = new DateTime(year, month, day);
             var diary = await _httpClient.GetDiaryAsync(date);
             if (diary == null)
             {
