@@ -166,7 +166,7 @@ jobs:
     runs-on: ubuntu-20.04
     permissions:
       packages: write
-      contents: read
+      contents: write
 
     steps:
       - name: Checkout
@@ -219,7 +219,6 @@ jobs:
           branch: gh-pages
           folder: src/blog/wwwroot/dist
           target-folder: blog/${{ env.APP_VERSION }}
-          token: ${{ secrets.ACCESS_TOKEN }}
 
   deploy_server:
     name: Deploy to remote server
