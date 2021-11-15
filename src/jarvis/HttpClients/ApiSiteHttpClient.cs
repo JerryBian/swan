@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Laobian.Share.Extension;
+using Laobian.Share.Logger;
 using Laobian.Share.Site.Jarvis;
 using Laobian.Share.Util;
 using Microsoft.Extensions.Logging;
@@ -22,6 +24,17 @@ namespace Laobian.Jarvis.HttpClients
             _logger = logger;
             _httpClient = httpClient;
             _httpClient.BaseAddress = new Uri(config.Value.ApiLocalEndpoint);
+        }
+
+        public async Task SendLogsAsync(IEnumerable<LaobianLog> logs)
+        {
+            var response = await _httpClient.PostAsync("/log/jarvis",
+                new StringContent(JsonUtil.Serialize(logs), Encoding.UTF8, "application/json"));
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                Console.WriteLine(
+                    $"{nameof(ApiSiteHttpClient)}.{nameof(SendLogsAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+            }
         }
 
         public async Task<List<DateTime>> ListDiariesAsync(int? year = null, int? month = null)

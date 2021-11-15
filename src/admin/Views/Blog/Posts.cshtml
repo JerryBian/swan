@@ -4,15 +4,15 @@
     ViewData["Title"] = "所有的博客文章";
 }
 <div>
-    <table class="table caption-top">
+    <table class="table caption-top table-bordered">
         <caption>文章总数: @Model.Count <a href="/blog/post/add" class="btn btn-primary float-end"><i class="fas fa-plus"></i> 添加新的文章</a></caption>
         <thead class="table-light">
         <tr>
-            <th scope="col"></th>
             <th scope="col">修改日期</th>
             <th scope="col">文章标题</th>
             <th scope="col">是否公开</th>
             <th scope="col">总访问量</th>
+            <th scope="col">操作</th>
         </tr>
         </thead>
         <tbody>
@@ -26,20 +26,21 @@
 
             <tr class="@trClass">
                 <th>
-                    <a class="btn btn-info" href="/blog/post/update/@post.Raw.Link">
-                        <i class="fas fa-edit"></i> 编辑
-                    </a>
-                </th>
-                <th>
                     <i class="fas fa-calendar-alt"></i> @post.Raw.LastUpdateTime.ToChinaDate()
                 </th>
                 <th>
                     <i class="fas fa-external-link-alt"></i>
                     <a href="@post.Raw.GetFullPath(_config.Value.BlogRemoteEndpoint)">@post.Raw.Title</a>
                 </th>
-                <th>@post.Raw.IsPostPublished()</th>
+                <th>@(post.Raw.IsPostPublished() ? "公开" : "未发布")</th>
                 <th>
                     @post.GetAccessCount().ToHuman()
+                    <a href=""><i class="fas fa-chart-line"></i></a>
+                </th>
+                <th>
+                    <a class="btn btn-info" href="/blog/post/update/@post.Raw.Link">
+                        <i class="fas fa-edit"></i> 编辑
+                    </a>
                 </th>
             </tr>
         }

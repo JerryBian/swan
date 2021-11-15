@@ -1,5 +1,6 @@
 using System;
 using System.Text.Encodings.Web;
+using Laobian.Jarvis.HostedServices;
 using Laobian.Jarvis.HttpClients;
 using Laobian.Jarvis.Middleware;
 using Laobian.Share;
@@ -33,6 +34,9 @@ namespace Laobian.Jarvis
             services.AddHttpClient<ApiSiteHttpClient>(SetHttpClient)
                 .SetHandlerLifetime(TimeSpan.FromDays(1))
                 .AddPolicyHandler(GetHttpClientRetryPolicy());
+
+            services.AddHostedService<RemoteLogHostedService>();
+
             services.AddLogging(config =>
             {
                 config.SetMinimumLevel(LogLevel.Debug);

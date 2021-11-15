@@ -34,6 +34,7 @@
     "sass": "^1.43.4",
     "sweetalert2": "^11.1.10",
     "uglify-js": "^3.14.3",
-    "uglifycss": "0.0.29"
+    "uglifycss": "0.0.29",
+    "bootstrap-icons": "^1.7.0"
   }
 }
