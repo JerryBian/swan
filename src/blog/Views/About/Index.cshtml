@@ -51,9 +51,12 @@
     <ol>
         @foreach (var tag in Model.TopTags.Keys)
         {
-            <li>
+            @if(Model.TopTags[tag] > 0)
+            {
+                <li>
                 <a href="/tag#@tag.Link">@tag.DisplayName</a> <i>(@Model.TopTags[tag])</i>
             </li>
+            }
         }
     </ol>
 
@@ -63,7 +66,7 @@
     </div>
 
 
-    <p class="text-muted">（本文完）</p>
+    <p class="text-muted small">（本文完）</p>
 </div>
 
 @section script{

@@ -6,7 +6,7 @@
 <div>
     @foreach (var item in Model)
     {
-        <h3 class="mb-2" id="@item.Id">@item.Title</h3>
+        <h3 class="mb-3" id="@item.Id">@item.Title</h3>
         <div class="list-group mb-5">
             @foreach (var book in item.Items)
             {
@@ -30,7 +30,7 @@
                         }
                         else
                         {
-                            <small class="text-success">正在阅读</small>
+                            <small class="text-success" title="开始于 @book.StartTime.ToChinaDate()">正在阅读</small>
                         }
                     </div>
 
@@ -68,17 +68,17 @@
                             info.Add(book.PublishTime.ToDate());
                         }
 
-                        <small class="fs-sm text-muted">@string.Join(" / ", info)</small>
+                        <small class="small text-muted d-block mb-3">@string.Join(" / ", info)</small>
                     }
 
                     @if (!string.IsNullOrEmpty(book.ShortCommentHtml))
                     {
-                        <div class="my-3 alert alert-primary fs-6 font-monospace">@Html.Raw(book.ShortCommentHtml)</div>
+                        <div class="my-3 alert bg-light small font-monospace">@Html.Raw(book.ShortCommentHtml)</div>
                     }
 
                     @if (!string.IsNullOrEmpty(book.BlogPostLink))
                     {
-                        <div class="my-3 alert alert-info fs-6 font-monospace">
+                        <div class="my-3 alert bg-light fs-6 font-monospace">
                             <i class="text-primary fas fa-link"></i>
                             <a href="@book.BlogPostLink">@book.BlogPostTitle</a>
                         </div>

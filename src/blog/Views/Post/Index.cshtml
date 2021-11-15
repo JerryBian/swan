@@ -9,7 +9,7 @@
 
 <div>
     <div class="mb-3">
-        <div class="text-muted fs-sm">@Html.Raw(Model.MetadataHtml)</div>
+        <div class="text-muted small">@Html.Raw(Model.MetadataHtml)</div>
         <h2 class="mb-3">
             <span>
                 @Model.Current.Raw.Title
@@ -17,12 +17,12 @@
             </span>
             @if (Model.Current.Raw.IsTopping)
             {
-                <span class="badge bg-success fs-sm">置顶</span>
+                <span class="badge bg-success small">置顶</span>
             }
 
             @if (!Model.Current.Raw.IsPostPublished())
             {
-                <span class="badge bg-warning fs-sm">
+                <span class="badge bg-warning small">
                     未发布
                 </span>
             }
@@ -30,10 +30,10 @@
     </div>
     <div class="article-content">
         @Html.Raw(Model.Current.HtmlContent)
-        <p class="text-muted">（本文完）</p>
+        <p class="text-muted small">（本文完）</p>
     </div>
 
-    <div class="alert alert-warning post-alert fs-sm" role="alert">
+    <div class="alert alert-warning post-alert small" role="alert">
         <ul>
             <li>最后更新于：<span title="@Model.Current.Raw.LastUpdateTime.ToChinaDateAndTime()">@Model.Current.Raw.PublishTime.ToChinaDate()</span></li>
             @{

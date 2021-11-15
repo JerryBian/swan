@@ -9,7 +9,7 @@
         @foreach (var post in Model.Posts)
         {
             <div class="list-group-item p-0 mb-4 pb-3">
-                <div class="text-muted fs-sm">@Html.Raw(post.MetadataHtml)</div>
+                <div class="text-muted small">@Html.Raw(post.MetadataHtml)</div>
                 <h2 class="mb-3">
                     <a href="@post.Current.Raw.GetFullPath(_option.Value.BlogRemoteEndpoint)" class="text-decoration-none">
                         @post.Current.Raw.Title
@@ -17,12 +17,12 @@
                     </a>
                     @if (post.Current.Raw.IsTopping)
                     {
-                        <span class="badge bg-success fs-sm">置顶</span>
+                        <span class="badge bg-success small">置顶</span>
                     }
 
                     @if (!post.Current.Raw.IsPostPublished())
                     {
-                        <span class="badge bg-warning fs-sm">
+                        <span class="badge bg-warning small">
                             未发布
                         </span>
                     }

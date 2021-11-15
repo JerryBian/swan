@@ -20,7 +20,7 @@ namespace Laobian.Blog.TagHelpers
         {
             output.TagName = "nav";
             output.Attributes.SetAttribute("id", "pagination");
-            output.Attributes.SetAttribute("class", "my-4 fs-sm");
+            output.Attributes.SetAttribute("class", "my-4 small");
 
             // No need to generate HTML markup as we only have one pagination
             if (TotalPages < 2) return;
