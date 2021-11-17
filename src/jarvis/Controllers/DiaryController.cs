@@ -42,7 +42,7 @@ namespace Laobian.Jarvis.Controllers
         {
             var diaries = await _httpClient.ListDiariesAsync(year);
             var result = new Dictionary<int, List<DateTime>>();
-            foreach (var item in diaries.GroupBy(x => x.Month).OrderByDescending(x => x))
+            foreach (var item in diaries.GroupBy(x => x.Month).OrderByDescending(x => x.Key))
             {
                 var list = new List<DateTime>();
                 foreach (var d in item.OrderByDescending(x => x))

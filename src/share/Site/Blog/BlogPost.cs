@@ -37,7 +37,7 @@ namespace Laobian.Share.Site.Blog
         {
             baseAddress = string.IsNullOrEmpty(baseAddress) ? string.Empty : baseAddress;
             var path =
-                $"{baseAddress}/{PublishTime.Year:D4}/{PublishTime.Month:D2}/{Link}.html";
+                $"{baseAddress}/{Link}.html";
             return path;
         }
     }

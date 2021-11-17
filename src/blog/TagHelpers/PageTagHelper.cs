@@ -8,7 +8,7 @@ namespace Laobian.Blog.TagHelpers
     {
         private const string PrevLabel = "&larr;";
         private const string NextLabel = "&rarr;";
-        private const string QueryName = "p";
+        private const string QueryName = "page";
 
         public int TotalPages { get; set; }
 

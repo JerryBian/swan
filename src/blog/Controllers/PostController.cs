@@ -20,19 +20,17 @@ namespace Laobian.Blog.Controllers
         }
 
         [HttpGet]
-        [Route("/{year:int}/{month:int}/{link}.html")]
+        [Route("/{link}.html")]
         [ResponseCache(CacheProfileName = Constants.CacheProfileName)]
-        public IActionResult Post([FromRoute] int year, [FromRoute] int month, [FromRoute] string link)
+        public IActionResult Post([FromRoute] string link)
         {
             var authenticated = User.Identity?.IsAuthenticated ?? false;
             var viewModel = _cacheClient.GetOrCreate(
-                CacheKeyBuilder.Build(nameof(HomeController), nameof(Post), authenticated, year, month, link),
+                CacheKeyBuilder.Build(nameof(HomeController), nameof(Post), authenticated, link),
                 () =>
                 {
                     var post = _blogService.GetAllPosts().FirstOrDefault(x =>
                         StringUtil.EqualsIgnoreCase(x.Raw.Link, link) &&
-                        x.Raw.PublishTime.Year == year &&
-                        x.Raw.PublishTime.Month == month &&
                         (x.Raw.IsPostPublished() || authenticated));
                     if (post == null)
                     {

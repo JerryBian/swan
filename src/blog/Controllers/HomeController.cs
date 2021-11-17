@@ -38,36 +38,13 @@ namespace Laobian.Blog.Controllers
             _laobianBlogOption = config.Value;
         }
 
-        [HttpPost]
-        [Route("/reload")]
-        public async Task<IActionResult> Reload()
-        {
-            if (!HttpContext.Request.Headers.ContainsKey(Constants.ApiRequestHeaderToken))
-            {
-                _logger.LogError(
-                    $"No API token set. IP: {HttpContext.Connection.RemoteIpAddress}, User Agent: {Request.Headers[HeaderNames.UserAgent]}");
-                return BadRequest("No API token set.");
-            }
-
-            if (_laobianBlogOption.HttpRequestToken != HttpContext.Request.Headers[Constants.ApiRequestHeaderToken])
-            {
-                _logger.LogError(
-                    $"Invalid API token set: {HttpContext.Request.Headers[Constants.ApiRequestHeaderToken]}. IP: {HttpContext.Connection.RemoteIpAddress}, User Agent: {Request.Headers[HeaderNames.UserAgent]}");
-                return BadRequest(
-                    $"Invalid API token set: {HttpContext.Request.Headers[Constants.ApiRequestHeaderToken]}");
-            }
-
-            await _blogService.ReloadAsync();
-            return Ok();
-        }
-
         [HttpGet]
         [ResponseCache(CacheProfileName = Constants.CacheProfileName)]
-        public IActionResult Index([FromQuery] int p)
+        public IActionResult Index([FromQuery] int page)
         {
             var authenticated = User.Identity?.IsAuthenticated ?? false;
             var viewModel = _cacheClient.GetOrCreate(
-                CacheKeyBuilder.Build(nameof(HomeController), nameof(Index), p, authenticated),
+                CacheKeyBuilder.Build(nameof(HomeController), nameof(Index), page, authenticated),
                 () =>
                 {
                     var posts =
@@ -81,7 +58,7 @@ namespace Laobian.Blog.Controllers
                     posts.InsertRange(0, toppedPosts);
 
                     var postsPerPage = Convert.ToInt32(_laobianBlogOption.PostsPerPage);
-                    var model = new PagedPostViewModel(p, posts.Count, postsPerPage) {Url = Request.Path};
+                    var model = new PagedPostViewModel(page, posts.Count, postsPerPage) {Url = Request.Path};
 
                     foreach (var blogPost in posts.Chunk(postsPerPage).ElementAtOrDefault(model.CurrentPage - 1) ?? Enumerable.Empty<BlogPostRuntime>())
                     {
