@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
-namespace Laobian.Share.Site.Jarvis
+namespace Laobian.Share.Site.Jarvis;
+
+public class NoteOutline
 {
-    public class NoteOutline
-    {
-        [JsonPropertyName("link")] public string Link { get; set; }
+    [JsonPropertyName("link")] public string Link { get; set; }
 
-        [JsonPropertyName("title")] public string Title { get; set; }
-    }
+    [JsonPropertyName("title")] public string Title { get; set; }
 }

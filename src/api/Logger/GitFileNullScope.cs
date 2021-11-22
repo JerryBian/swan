@@ -1,17 +1,16 @@
 ﻿using System;
 
-namespace Laobian.Api.Logger
+namespace Laobian.Api.Logger;
+
+public class GitFileNullScope : IDisposable
 {
-    public class GitFileNullScope : IDisposable
+    private GitFileNullScope()
     {
-        private GitFileNullScope()
-        {
-        }
+    }
 
-        public static GitFileNullScope Instance { get; } = new();
+    public static GitFileNullScope Instance { get; } = new();
 
-        public void Dispose()
-        {
-        }
+    public void Dispose()
+    {
     }
 }

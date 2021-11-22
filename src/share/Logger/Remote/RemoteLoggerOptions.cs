@@ -1,11 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace Laobian.Share.Logger.Remote
-{
-    public class RemoteLoggerOptions : ILaobianLoggerOptions
-    {
-        public string LoggerName { get; set; }
+namespace Laobian.Share.Logger.Remote;
 
-        public LogLevel MinLevel { get; set; } = LogLevel.Information;
-    }
+public class RemoteLoggerOptions : ILaobianLoggerOptions
+{
+    public string LoggerName { get; set; }
+
+    public LogLevel MinLevel { get; set; } = LogLevel.Information;
 }

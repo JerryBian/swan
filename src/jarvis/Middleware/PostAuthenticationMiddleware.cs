@@ -3,27 +3,26 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Options;
 
-namespace Laobian.Jarvis.Middleware
+namespace Laobian.Jarvis.Middleware;
+
+public class PostAuthenticationMiddleware
 {
-    public class PostAuthenticationMiddleware
+    private readonly RequestDelegate _next;
+
+    public PostAuthenticationMiddleware(RequestDelegate next)
     {
-        private readonly RequestDelegate _next;
+        _next = next;
+    }
 
-        public PostAuthenticationMiddleware(RequestDelegate next)
+    public async Task Invoke(HttpContext httpContext, IOptions<JarvisOptions> option)
+    {
+        if (httpContext.User.Identity?.IsAuthenticated != true)
         {
-            _next = next;
+            httpContext.Response.Redirect(
+                $"{option.Value.AdminRemoteEndpoint}/login?returnUrl={httpContext.Request.GetDisplayUrl()}");
+            return;
         }
 
-        public async Task Invoke(HttpContext httpContext, IOptions<JarvisOption> option)
-        {
-            if (httpContext.User.Identity?.IsAuthenticated != true)
-            {
-                httpContext.Response.Redirect(
-                    $"{option.Value.AdminRemoteEndpoint}/login?returnUrl={httpContext.Request.GetDisplayUrl()}");
-                return;
-            }
-
-            await _next(httpContext);
-        }
+        await _next(httpContext);
     }
 }

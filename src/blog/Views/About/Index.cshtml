@@ -1,5 +1,5 @@
 ﻿@model AboutViewModel
-@inject IOptions<LaobianBlogOption> _config
+@inject IOptions<BlogOptions> _config
 @{
     ViewData["Title"] = "关于";
     ViewData["Image"] = $"{_config.Value.BlogRemoteEndpoint}/information.png";
@@ -51,11 +51,11 @@
     <ol>
         @foreach (var tag in Model.TopTags.Keys)
         {
-            @if(Model.TopTags[tag] > 0)
+            @if (Model.TopTags[tag] > 0)
             {
                 <li>
-                <a href="/tag#@tag.Link">@tag.DisplayName</a> <i>(@Model.TopTags[tag])</i>
-            </li>
+                    <a href="/tag#@tag.Link">@tag.DisplayName</a> <i>(@Model.TopTags[tag])</i>
+                </li>
             }
         }
     </ol>

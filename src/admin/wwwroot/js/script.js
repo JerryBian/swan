@@ -25,7 +25,7 @@ function forceReloadBlogData() {
         confirmButtonText: "确定"
     }).then((result) => {
         if (result.isConfirmed) {
-            fetch('/blog/reload',
+            fetch('/blog/cache/reload',
                 {
                     method: 'POST',
                     headers: {
@@ -42,20 +42,20 @@ function forceReloadBlogData() {
     });
 }
 
-function persistent() {
+function persistent(user) {
     Swal.fire({
         title: "确定要持久化数据库吗？",
         showCancelButton: true,
         confirmButtonText: "确定"
     }).then((result) => {
         if (result.isConfirmed) {
-            fetch('/blog/persistent',
+            fetch('/persistent',
                 {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'text/plain'
                     },
-                    body: ':meat_on_bone: forced by @Context.User.Identity?.Name'
+                    body: `:meat_on_bone: forced by ${user}`
                 })
                 .then(response => {
                     if (response.ok) {

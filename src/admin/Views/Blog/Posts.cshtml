@@ -1,11 +1,11 @@
 ﻿@model List<BlogPostRuntime>
-@inject IOptions<LaobianAdminOption> _config
+@inject IOptions<AdminOptions> _config
 @{
     ViewData["Title"] = "所有的博客文章";
 }
 <div>
     <table class="table caption-top table-bordered">
-        <caption>文章总数: @Model.Count <a href="/blog/post/add" class="btn btn-primary float-end"><i class="fas fa-plus"></i> 添加新的文章</a></caption>
+        <caption>文章总数: @Model.Count <a href="/blog/posts/add" class="btn btn-primary float-end"><i class="fas fa-plus"></i> 添加新的文章</a></caption>
         <thead class="table-light">
         <tr>
             <th scope="col">修改日期</th>
@@ -35,10 +35,12 @@
                 <th>@(post.Raw.IsPostPublished() ? "公开" : "未发布")</th>
                 <th>
                     @post.GetAccessCount().ToHuman()
-                    <a href=""><i class="fas fa-chart-line"></i></a>
+                    <a href="">
+                        <i class="fas fa-chart-line"></i>
+                    </a>
                 </th>
                 <th>
-                    <a class="btn btn-info" href="/blog/post/update/@post.Raw.Link">
+                    <a class="btn btn-info" href="/blog/posts/@post.Raw.Link/update">
                         <i class="fas fa-edit"></i> 编辑
                     </a>
                 </th>

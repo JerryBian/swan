@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <AssemblyName>laobian.api</AssemblyName>
+    <IncludeOpenAPIAnalyzers>true</IncludeOpenAPIAnalyzers>
     <UserSecretsId>d0d1c480-148f-40e7-a309-668b4bb9d811</UserSecretsId>
   </PropertyGroup>
 
@@ -13,6 +14,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\share\Laobian.Share.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Filters\" />
   </ItemGroup>
 
 </Project>

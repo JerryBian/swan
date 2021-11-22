@@ -1,17 +1,16 @@
 ﻿using System;
 
-namespace Laobian.Share.Logger.Remote
+namespace Laobian.Share.Logger.Remote;
+
+public class RemoteNullScope : IDisposable
 {
-    public class RemoteNullScope : IDisposable
+    private RemoteNullScope()
     {
-        private RemoteNullScope()
-        {
-        }
+    }
 
-        public static RemoteNullScope Instance { get; } = new();
+    public static RemoteNullScope Instance { get; } = new();
 
-        public void Dispose()
-        {
-        }
+    public void Dispose()
+    {
     }
 }

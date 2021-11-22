@@ -53,7 +53,7 @@
             <div id="tagsDiv">
                 @foreach (var tag in Model)
                 {
-                    var id = Guid.NewGuid().ToString("N");
+                    var id = StringUtil.GenerateRandom();
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="checkbox" id="@id" value="@tag.Link" name="tag">
                         <label class="form-check-label" for="@id">@tag.DisplayName</label>
@@ -70,7 +70,7 @@
 
 @section Scripts{
     <script>
-        const mdContentEditor = prepareEditor(document.querySelector("#mdContent"), "blog_post_add_md_content");
-        const excerptEditor = prepareEditor(document.querySelector("#excerpt"), "blog_post_add_excerpt");
+        const mdContentEditor = prepareEditor(document.querySelector("#mdContent"), "blog_post_add_md_content_@DateTime.Now.Ticks");
+        const excerptEditor = prepareEditor(document.querySelector("#excerpt"), "blog_post_add_excerpt_@DateTime.Now.Ticks");
     </script>
 }

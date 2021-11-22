@@ -17,109 +17,108 @@ using Microsoft.Extensions.Hosting;
 using Polly;
 using Polly.Extensions.Http;
 
-namespace Laobian.Share
+namespace Laobian.Share;
+
+public abstract class SharedStartup
 {
-    public abstract class SharedStartup
+    protected SharedStartup(IConfiguration configuration, IHostEnvironment env)
     {
-        protected SharedStartup(IConfiguration configuration, IHostEnvironment env)
-        {
-            Configuration = configuration;
-            CurrentEnv = env;
-        }
+        Configuration = configuration;
+        CurrentEnv = env;
+    }
 
-        public IConfiguration Configuration { get; }
+    public IConfiguration Configuration { get; }
 
-        public IHostEnvironment CurrentEnv { get; }
+    public IHostEnvironment CurrentEnv { get; }
 
-        public LaobianSite Site { get; set; }
+    public LaobianSite Site { get; set; }
 
-        protected IAsyncPolicy<HttpResponseMessage> GetHttpClientRetryPolicy()
-        {
-            return HttpPolicyExtensions
-                .HandleTransientHttpError()
-                .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2,
-                    retryAttempt)));
-        }
+    protected IAsyncPolicy<HttpResponseMessage> GetHttpClientRetryPolicy()
+    {
+        return HttpPolicyExtensions
+            .HandleTransientHttpError()
+            .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2,
+                retryAttempt)));
+    }
 
-        protected void SetHttpClient(HttpClient httpClient)
-        {
-            var httpRequestToken = Configuration.GetValue<string>(Constants.EnvHttpRequestToken);
-            httpClient.Timeout = TimeSpan.FromMinutes(10);
-            httpClient.DefaultRequestHeaders.Add(Constants.ApiRequestHeaderToken, httpRequestToken);
-        }
+    protected void SetHttpClient(HttpClient httpClient)
+    {
+        var httpRequestToken = Configuration.GetValue<string>(Constants.EnvHttpRequestToken);
+        httpClient.Timeout = TimeSpan.FromMinutes(10);
+        httpClient.DefaultRequestHeaders.Add(Constants.ApiRequestHeaderToken, httpRequestToken);
+    }
 
-        public virtual void ConfigureServices(IServiceCollection services)
-        {
-            services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
-            services.AddSingleton<IEmailNotify, SendGridEmailNotify>();
-            services.AddSingleton<ILaobianLogQueue, LaobianLogQueue>();
+    public virtual void ConfigureServices(IServiceCollection services)
+    {
+        services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
+        services.AddSingleton<IEmailNotify, SendGridEmailNotify>();
+        services.AddSingleton<ILaobianLogQueue, LaobianLogQueue>();
 
-            var dpFolder = Configuration.GetValue<string>(Constants.EnvDataProtectionKeyPath);
-            Directory.CreateDirectory(dpFolder);
-            services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(dpFolder))
-                .SetApplicationName($"{Constants.ApplicationName}_{CurrentEnv.EnvironmentName}");
+        var dpFolder = Configuration.GetValue<string>(Constants.EnvDataProtectionKeyPath);
+        Directory.CreateDirectory(dpFolder);
+        services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(dpFolder))
+            .SetApplicationName($"{Constants.ApplicationName}_{CurrentEnv.EnvironmentName}");
 
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
-                {
-                    options.Cookie.Name = $".LAOBIAN.AUTH.{CurrentEnv.EnvironmentName}";
-                    options.ExpireTimeSpan = TimeSpan.FromDays(7);
-                    options.Cookie.HttpOnly = true;
-                    options.ReturnUrlParameter = "returnUrl";
-                    options.LoginPath = new PathString("/login");
-                    options.LogoutPath = new PathString("/logout");
-                    options.Cookie.Domain = CurrentEnv.IsDevelopment() ? "localhost" : ".laobian.me";
-                });
-        }
-
-        protected void Configure(IApplicationBuilder app, IHostApplicationLifetime appLifetime,
-            LaobianSharedOption option)
-        {
-            var emailNotify = app.ApplicationServices.GetRequiredService<IEmailNotify>();
-            appLifetime.ApplicationStarted.Register(async () =>
+        services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
             {
-                if (!CurrentEnv.IsDevelopment())
-                {
-                    var message = new SendGridEmailMessage
-                    {
-                        Content = "<p>恭喜，网站已经运行起来了！</p>",
-                        Site = Site,
-                        Subject = "site started",
-                        SendGridApiKey = option.SendGridApiKey,
-                        ToEmailAddress = option.AdminEmail,
-                        ToName = option.AdminEnglishName
-                    };
-
-                    await emailNotify.SendAsync(message);
-                }
+                options.Cookie.Name = $".LAOBIAN.AUTH.{CurrentEnv.EnvironmentName}";
+                options.ExpireTimeSpan = TimeSpan.FromDays(7);
+                options.Cookie.HttpOnly = true;
+                options.ReturnUrlParameter = "returnUrl";
+                options.LoginPath = new PathString("/login");
+                options.LogoutPath = new PathString("/logout");
+                options.Cookie.Domain = CurrentEnv.IsDevelopment() ? "localhost" : ".laobian.me";
             });
+    }
 
-            appLifetime.ApplicationStopped.Register(async () =>
+    protected void Configure(IApplicationBuilder app, IHostApplicationLifetime appLifetime,
+        SharedOptions option)
+    {
+        var emailNotify = app.ApplicationServices.GetRequiredService<IEmailNotify>();
+        appLifetime.ApplicationStarted.Register(async () =>
+        {
+            if (!CurrentEnv.IsDevelopment())
             {
-                if (!CurrentEnv.IsDevelopment())
+                var message = new SendGridEmailMessage
                 {
-                    var message = new SendGridEmailMessage
-                    {
-                        Content = "<p>网站被停掉了，请确认是否是正常行为。</p>",
-                        Site = Site,
-                        Subject = "site stopped",
-                        SendGridApiKey = option.SendGridApiKey,
-                        ToEmailAddress = option.AdminEmail,
-                        ToName = option.AdminEnglishName
-                    };
+                    Content = "<p>恭喜，网站已经运行起来了！</p>",
+                    Site = Site,
+                    Subject = "site started",
+                    SendGridApiKey = option.SendGridApiKey,
+                    ToEmailAddress = option.AdminEmail,
+                    ToName = option.AdminEnglishName
+                };
 
-                    await emailNotify.SendAsync(message);
-                }
-            });
+                await emailNotify.SendAsync(message);
+            }
+        });
 
-            if (CurrentEnv.IsDevelopment())
+        appLifetime.ApplicationStopping.Register(async () =>
+        {
+            if (!CurrentEnv.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                var message = new SendGridEmailMessage
+                {
+                    Content = "<p>网站被停掉了，请确认是否是正常行为。</p>",
+                    Site = Site,
+                    Subject = "site stopped",
+                    SendGridApiKey = option.SendGridApiKey,
+                    ToEmailAddress = option.AdminEmail,
+                    ToName = option.AdminEnglishName
+                };
+
+                await emailNotify.SendAsync(message);
             }
-            else
-            {
-                app.UseExceptionHandler("/error");
-            }
+        });
+
+        if (CurrentEnv.IsDevelopment())
+        {
+            app.UseDeveloperExceptionPage();
+        }
+        else
+        {
+            app.UseExceptionHandler("/error");
         }
     }
 }

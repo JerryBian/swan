@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace Laobian.Blog.Cache
+namespace Laobian.Blog.Cache;
+
+public interface ICacheClient
 {
-    public interface ICacheClient
-    {
-        T GetOrCreate<T>(string cacheKey, Func<T> func);
-    }
+    T GetOrCreate<T>(string cacheKey, Func<T> func);
 }

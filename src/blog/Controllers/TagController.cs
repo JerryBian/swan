@@ -7,57 +7,56 @@ using Laobian.Share;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
-namespace Laobian.Blog.Controllers
+namespace Laobian.Blog.Controllers;
+
+public class TagController : Controller
 {
-    public class TagController : Controller
+    private readonly BlogOptions _blogOptions;
+    private readonly IBlogService _blogService;
+    private readonly ICacheClient _cacheClient;
+
+    public TagController(ICacheClient cacheClient, IBlogService blogService, IOptions<BlogOptions> blogOption)
     {
-        private readonly IBlogService _blogService;
-        private readonly ICacheClient _cacheClient;
-        private readonly LaobianBlogOption _laobianBlogOption;
+        _cacheClient = cacheClient;
+        _blogService = blogService;
+        _blogOptions = blogOption.Value;
+    }
 
-        public TagController(ICacheClient cacheClient, IBlogService blogService, IOptions<LaobianBlogOption> blogOption)
-        {
-            _cacheClient = cacheClient;
-            _blogService = blogService;
-            _laobianBlogOption = blogOption.Value;
-        }
+    [HttpGet]
+    [ResponseCache(CacheProfileName = Constants.CacheProfileName)]
+    public IActionResult Index()
+    {
+        var authenticated = User.Identity?.IsAuthenticated ?? false;
+        var viewModel = _cacheClient.GetOrCreate(
+            CacheKeyBuilder.Build(nameof(HomeController), nameof(Index), authenticated),
+            () =>
+            {
+                var posts = _blogService.GetAllPosts().Where(x => x.Raw.IsPostPublished() || authenticated)
+                    .ToList();
+                var model = new List<PostArchiveViewModel>();
 
-        [HttpGet]
-        [ResponseCache(CacheProfileName = Constants.CacheProfileName)]
-        public IActionResult Index()
-        {
-            var authenticated = User.Identity?.IsAuthenticated ?? false;
-            var viewModel = _cacheClient.GetOrCreate(
-                CacheKeyBuilder.Build(nameof(HomeController), nameof(Index), authenticated),
-                () =>
+                foreach (var blogTag in _blogService.GetAllTags())
                 {
-                    var posts = _blogService.GetAllPosts().Where(x => x.Raw.IsPostPublished() || authenticated)
-                        .ToList();
-                    var model = new List<PostArchiveViewModel>();
-
-                    foreach (var blogTag in _blogService.GetAllTags())
+                    var tagPosts = posts.Where(x => x.Raw.Tag.Contains(blogTag.Link)).ToList();
+                    if (tagPosts.Any())
                     {
-                        var tagPosts = posts.Where(x => x.Raw.Tag.Contains(blogTag.Link)).ToList();
-                        if(tagPosts.Any())
+                        var archiveViewModel = new PostArchiveViewModel
                         {
-                            var archiveViewModel = new PostArchiveViewModel
-                            {
-                                Count = tagPosts.Count,
-                                Posts = tagPosts.ToList(),
-                                Link = $"{blogTag.Link}",
-                                Name = $"{blogTag.DisplayName}"
-                            };
+                            Count = tagPosts.Count,
+                            Posts = tagPosts.ToList(),
+                            Link = $"{blogTag.Link}",
+                            Name = $"{blogTag.DisplayName}"
+                        };
 
-                            model.Add(archiveViewModel);
-                        }
+                        model.Add(archiveViewModel);
                     }
+                }
 
-                    return model;
-                });
+                return model;
+            });
 
-            ViewData["Title"] = "标签";
-            ViewData["Image"] = $"{_laobianBlogOption.BlogRemoteEndpoint}/archive.png";
-            return View(viewModel);
-        }
+        ViewData["Title"] = "标签";
+        ViewData["Image"] = $"{_blogOptions.BlogRemoteEndpoint}/archive.png";
+        return View(viewModel);
     }
 }

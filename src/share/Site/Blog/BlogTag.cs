@@ -1,16 +1,27 @@
 ﻿using System;
 using System.Text.Json.Serialization;
 
-namespace Laobian.Share.Site.Blog
+namespace Laobian.Share.Site.Blog;
+
+public class BlogTag
 {
-    public class BlogTag
-    {
-        [JsonPropertyName("displayName")] public string DisplayName { get; set; }
+    [JsonPropertyName("id")]
+    [JsonPropertyOrder(1)]
+    public string Id { get; set; }
 
-        [JsonPropertyName("link")] public string Link { get; set; }
+    [JsonPropertyName("displayName")]
+    [JsonPropertyOrder(2)]
+    public string DisplayName { get; set; }
 
-        [JsonPropertyName("description")] public string Description { get; set; }
+    [JsonPropertyName("link")]
+    [JsonPropertyOrder(3)]
+    public string Link { get; set; }
 
-        [JsonPropertyName("lastUpdatedAt")] public DateTime LastUpdatedAt { get; set; }
-    }
+    [JsonPropertyName("description")]
+    [JsonPropertyOrder(4)]
+    public string Description { get; set; }
+
+    [JsonPropertyName("lastUpdatedAt")]
+    [JsonPropertyOrder(5)]
+    public DateTime LastUpdatedAt { get; set; }
 }

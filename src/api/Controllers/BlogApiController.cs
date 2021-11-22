@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net.Mime;
-using System.Text;
 using System.Threading.Tasks;
 using Laobian.Api.Repository;
 using Laobian.Share.Site.Blog;
@@ -11,95 +9,78 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace Laobian.Api.Controllers
+namespace Laobian.Api.Controllers;
+
+[ApiController]
+[Route("blog")]
+public class BlogApiController : ControllerBase
 {
-    [ApiController]
-    [Route("blog")]
-    public class BlogApiController : ControllerBase
+    private readonly IFileRepository _fileRepository;
+    private readonly ILogger<BlogApiController> _logger;
+
+    public BlogApiController(IFileRepository fileRepository,
+        ILogger<BlogApiController> logger)
     {
-        private readonly IFileRepository _fileRepository;
-        private readonly ILogger<BlogApiController> _logger;
+        _logger = logger;
+        _fileRepository = fileRepository;
+    }
 
-        public BlogApiController(IFileRepository fileRepository,
-            ILogger<BlogApiController> logger)
+    [HttpGet]
+    [Route("posts")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<List<BlogPostRuntime>>> GetPostsAsync([FromQuery] bool extractRuntime = true)
+    {
+        try
         {
-            _logger = logger;
-            _fileRepository = fileRepository;
+            var posts = await _fileRepository.GetBlogPostsAsync();
+            var result = new List<BlogPostRuntime>();
+            foreach (var blogPost in posts)
+            {
+                var blogPostRuntime = await GetBlogPostRuntimeAsync(blogPost, extractRuntime);
+                result.Add(blogPostRuntime);
+            }
+
+            return Ok(result);
         }
-
-        [HttpPost]
-        [Route("persistent")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PersistentAsync()
+        catch (Exception ex)
         {
-            try
-            {
-                using var sr = new StreamReader(Request.Body, Encoding.UTF8);
-                var message = await sr.ReadToEndAsync();
-                await _fileRepository.SaveAsync(message);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"{nameof(PersistentAsync)} failed.");
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            _logger.LogError(ex, $"{nameof(GetPostsAsync)} failed.");
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
         }
+    }
 
-        [HttpGet]
-        [Route("post")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<List<BlogPostRuntime>>> GetPostsAsync([FromQuery] bool onlyPublished)
+    [HttpGet]
+    [Route("posts/{link}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<BlogPostRuntime>> GetPostAsync([FromRoute] string link,
+        [FromQuery] bool extractRuntime = true)
+    {
+        try
         {
-            try
+            var post = await _fileRepository.GetBlogPostAsync(link);
+            if (post == null)
             {
-                var posts = await _fileRepository.GetBlogPostsAsync();
-                var result = new List<BlogPostRuntime>();
-                foreach (var blogPost in posts)
-                {
-                    var blogPostRuntime = await GetBlogPostRuntimeAsync(blogPost);
-                    result.Add(blogPostRuntime);
-                }
+                return NotFound($"Post with link not found: {link}");
+            }
 
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"{nameof(GetPostsAsync)} failed.");
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            var blogPostRuntime = await GetBlogPostRuntimeAsync(post, extractRuntime);
+            return Ok(blogPostRuntime);
         }
-
-        [HttpGet]
-        [Route("post/{link}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<BlogPostRuntime>> GetPostAsync([FromRoute] string link)
+        catch (Exception ex)
         {
-            try
-            {
-                var post = await _fileRepository.GetBlogPostAsync(link);
-                if (post == null)
-                {
-                    return NotFound($"Post with link not found: {link}");
-                }
-
-                var blogPostRuntime = await GetBlogPostRuntimeAsync(post);
-                return Ok(blogPostRuntime);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"{nameof(GetPostAsync)}({link}) failed.");
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            _logger.LogError(ex, $"{nameof(GetPostAsync)}({link}) failed.");
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
         }
+    }
 
-        private async Task<BlogPostRuntime> GetBlogPostRuntimeAsync(BlogPost post)
+    private async Task<BlogPostRuntime> GetBlogPostRuntimeAsync(BlogPost post, bool extractRuntime = true)
+    {
+        var blogPostRuntime = new BlogPostRuntime(post);
+        if (extractRuntime)
         {
-            var blogPostRuntime = new BlogPostRuntime(post);
             var blogPostAccess = await _fileRepository.GetBlogPostAccessAsync(post.Link);
             var blogTags = new List<BlogTag>();
             foreach (var blogPostTag in post.Tag)
@@ -112,168 +93,174 @@ namespace Laobian.Api.Controllers
             }
 
             blogPostRuntime.ExtractRuntimeData(blogPostAccess, blogTags);
-            return blogPostRuntime;
         }
 
-        [HttpPut]
-        [Route("post")]
-        [Consumes(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> AddBlogPost(BlogPost post)
+        return blogPostRuntime;
+    }
+
+    [HttpPost]
+    [Route("posts")]
+    [Consumes(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> AddBlogPost(BlogPost post)
+    {
+        try
         {
-            try
-            {
-                await _fileRepository.AddBlogPostAsync(post);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"{nameof(AddBlogPost)}({JsonUtil.Serialize(post)}) failed.");
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            await _fileRepository.AddBlogPostAsync(post);
+            return Ok(post);
         }
-
-        [HttpPost]
-        [Route("post")]
-        [Consumes(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateBlogPost(BlogPost post)
+        catch (Exception ex)
         {
-            try
-            {
-                await _fileRepository.UpdateBlogPostAsync(post);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"{nameof(UpdateBlogPost)}({JsonUtil.Serialize(post)}) failed.");
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            _logger.LogError(ex, $"{nameof(AddBlogPost)}({JsonUtil.Serialize(post)}) failed.");
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
         }
+    }
 
-        [HttpPost]
-        [Route("post/access/{link}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> AddBlogPostAccess([FromRoute] string link)
+    [HttpPut]
+    [Route("posts")]
+    [Consumes(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> UpdateBlogPost(BlogPost post, [FromQuery] string replacedPostLink)
+    {
+        try
         {
-            try
+            await _fileRepository.UpdateBlogPostAsync(post);
+            if (!string.IsNullOrEmpty(replacedPostLink))
             {
-                var post = await _fileRepository.GetBlogPostAsync(link);
-                if (post == null)
-                {
-                    _logger.LogWarning($"No post found with link {link}, new access will be discarded.");
-                }
-                else
-                {
-                    await _fileRepository.AddBlogPostAccessAsync(post, DateTime.Now, 1);
-                }
+                await _fileRepository.DeleteBlogPostAsync(replacedPostLink);
+            }
 
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"{nameof(AddBlogPostAccess)}({link}) failed.");
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            return Ok(post);
         }
-
-        [HttpGet]
-        [Route("tag")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<List<BlogTag>>> GetTagsAsync()
+        catch (Exception ex)
         {
-            try
-            {
-                var tags = await _fileRepository.GetBlogTagsAsync();
-                return Ok(tags);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"{nameof(GetTagsAsync)} failed.");
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            _logger.LogError(ex, $"{nameof(UpdateBlogPost)}({JsonUtil.Serialize(post)}) failed.");
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
         }
+    }
 
-        [HttpGet]
-        [Route("tag/{link}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<BlogTag>> GetTagAsync([FromRoute] string link)
+    [HttpPost]
+    [Route("posts/{link}/access")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> AddBlogPostAccess([FromRoute] string link)
+    {
+        try
         {
-            try
+            var post = await _fileRepository.GetBlogPostAsync(link);
+            if (post == null)
             {
-                var tag = await _fileRepository.GetBlogTagAsync(link);
-                if (tag == null)
-                {
-                    return NotFound($"Tag link = {link} not found.");
-                }
+                _logger.LogWarning($"No post found with link {link}, new access will be discarded.");
+            }
+            else
+            {
+                await _fileRepository.AddBlogPostAccessAsync(post, DateTime.Now, 1);
+            }
 
-                return tag;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"{nameof(GetTagAsync)} failed.");
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            return Ok();
         }
-
-        [HttpPut]
-        [Route("tag")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<BlogTag>> AddTagAsync(BlogTag tag)
+        catch (Exception ex)
         {
-            try
-            {
-                await _fileRepository.AddBlogTagAsync(tag);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"{nameof(AddTagAsync)} failed.");
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            _logger.LogError(ex, $"{nameof(AddBlogPostAccess)}({link}) failed.");
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
         }
+    }
 
-        [HttpPost]
-        [Route("tag")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<BlogTag>> UpdateTagAsync(BlogTag tag)
+    [HttpGet]
+    [Route("tags")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<List<BlogTag>>> GetTagsAsync()
+    {
+        try
         {
-            try
-            {
-                await _fileRepository.UpdateBlogTagAsync(tag);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"{nameof(UpdateTagAsync)} failed.");
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            var tags = await _fileRepository.GetBlogTagsAsync();
+            return Ok(tags);
         }
-
-        [HttpDelete]
-        [Route("tag/{link}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<bool>> DeleteTagAsync([FromRoute] string link)
+        catch (Exception ex)
         {
-            try
+            _logger.LogError(ex, $"{nameof(GetTagsAsync)} failed.");
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
+    }
+
+    [HttpGet]
+    [Route("tags/{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<BlogTag>> GetTagAsync([FromRoute] string id)
+    {
+        try
+        {
+            var tag = await _fileRepository.GetBlogTagAsync(id);
+            if (tag == null)
             {
-                await _fileRepository.DeleteBlogTagAsync(link);
-                return Ok();
+                return NotFound($"Tag id = {id} not found.");
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"{nameof(DeleteTagAsync)} failed.");
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+
+            return tag;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"{nameof(GetTagAsync)} failed.");
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
+    }
+
+    [HttpPost]
+    [Route("tags")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<BlogTag>> AddTagAsync(BlogTag tag)
+    {
+        try
+        {
+            await _fileRepository.AddBlogTagAsync(tag);
+            return Ok(tag);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"{nameof(AddTagAsync)} failed.");
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
+    }
+
+    [HttpPut]
+    [Route("tags")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<BlogTag>> UpdateTagAsync(BlogTag tag)
+    {
+        try
+        {
+            await _fileRepository.UpdateBlogTagAsync(tag);
+            return Ok(tag);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"{nameof(UpdateTagAsync)} failed.");
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
+    }
+
+    [HttpDelete]
+    [Route("tags/{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> DeleteTagAsync([FromRoute] string id)
+    {
+        try
+        {
+            await _fileRepository.DeleteBlogTagAsync(id);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"{nameof(DeleteTagAsync)} failed.");
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
         }
     }
 }

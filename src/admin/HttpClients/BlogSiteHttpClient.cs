@@ -7,33 +7,32 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Laobian.Admin.HttpClients
+namespace Laobian.Admin.HttpClients;
+
+public class BlogSiteHttpClient
 {
-    public class BlogSiteHttpClient
+    private readonly HttpClient _httpClient;
+    private readonly ILogger<BlogSiteHttpClient> _logger;
+
+    public BlogSiteHttpClient(HttpClient httpClient, ILogger<BlogSiteHttpClient> logger,
+        IOptions<AdminOptions> config)
     {
-        private readonly HttpClient _httpClient;
-        private readonly ILogger<BlogSiteHttpClient> _logger;
+        _logger = logger;
+        _httpClient = httpClient;
+        _httpClient.BaseAddress = new Uri(config.Value.BlogLocalEndpoint);
+    }
 
-        public BlogSiteHttpClient(HttpClient httpClient, ILogger<BlogSiteHttpClient> logger,
-            IOptions<LaobianAdminOption> config)
+    public async Task<bool> ReloadBlogDataAsync()
+    {
+        var response = await _httpClient.PostAsync("/api/cache/reload",
+            new StringContent(string.Empty, Encoding.UTF8, MediaTypeNames.Text.Plain));
+        if (response.StatusCode != HttpStatusCode.OK)
         {
-            _logger = logger;
-            _httpClient = httpClient;
-            _httpClient.BaseAddress = new Uri(config.Value.BlogLocalEndpoint);
+            _logger.LogError(
+                $"{nameof(ApiSiteHttpClient)}.{nameof(ReloadBlogDataAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+            return false;
         }
 
-        public async Task<bool> ReloadBlogDataAsync()
-        {
-            var response = await _httpClient.PostAsync("/api/reload-cache",
-                new StringContent(string.Empty, Encoding.UTF8, MediaTypeNames.Text.Plain));
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                _logger.LogError(
-                    $"{nameof(ApiSiteHttpClient)}.{nameof(ReloadBlogDataAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
-                return false;
-            }
-
-            return true;
-        }
+        return true;
     }
 }

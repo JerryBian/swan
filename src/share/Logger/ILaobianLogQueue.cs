@@ -1,9 +1,8 @@
-﻿namespace Laobian.Share.Logger
-{
-    public interface ILaobianLogQueue
-    {
-        void Add(LaobianLog log);
+﻿namespace Laobian.Share.Logger;
 
-        bool TryDequeue(out LaobianLog log);
-    }
+public interface ILaobianLogQueue
+{
+    void Add(LaobianLog log);
+
+    bool TryDequeue(out LaobianLog log);
 }

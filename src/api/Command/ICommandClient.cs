@@ -1,10 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Laobian.Api.Command
+namespace Laobian.Api.Command;
+
+public interface ICommandClient
 {
-    public interface ICommandClient
-    {
-        Task<string> RunAsync(string command, CancellationToken cancellationToken = default);
-    }
+    Task<string> RunAsync(string command, CancellationToken cancellationToken = default);
 }

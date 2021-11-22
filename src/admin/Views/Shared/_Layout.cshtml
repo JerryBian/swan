@@ -1,4 +1,4 @@
-﻿@inject IOptions<LaobianAdminOption> _config
+﻿@inject IOptions<AdminOptions> _config
 <!DOCTYPE html>
 <html lang="zh" class="w-100 min-vh-100">
 <head>
@@ -29,31 +29,32 @@
 
         <div class="collapse navbar-collapse" id="navLinks">
             <ul class="navbar-nav">
-                 <li class="nav-item">
+                <li class="nav-item">
                     <a class="nav-link" href="/log"><i class="fas fa-clipboard-list"></i> 日志</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/reads"><i class="fas fa-book-open"></i> 阅读</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-feather-alt"></i> 博客</a>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="/blog/post"><i class="fas fa-archive"></i> 所有文章</a>
-                        <a class="dropdown-item" href="/blog/tag"><i class="fas fa-tags"></i> 所有标签</a>
+                        <a class="dropdown-item" href="/blog/posts"><i class="fas fa-archive"></i> 所有文章</a>
+                        <a class="dropdown-item" href="/blog/tags"><i class="fas fa-tags"></i> 所有标签</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="javascript:;" onclick="forceReloadBlogData()"><i class="fas fa-broom"></i> 清除缓存</a>
                     </div>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/read"><i class="fas fa-book-open"></i> 阅读</a>
-                </li>
+                
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-sticky-note"></i> 笔记</a>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="/note/tag"><i class="fas fa-tags"></i> 所有标签</a>
+                        <a class="dropdown-item" href="/note/tags"><i class="fas fa-tags"></i> 所有标签</a>
                     </div>
                 </li>
             </ul>
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link btn btn-outline-success" href="javascript:;" onclick="persistent()"><i class="fas fa-save"></i> 持久化数据库</a>
+                    <a class="nav-link btn btn-outline-success" href="javascript:;" onclick="persistent('@Context.User.Identity.Name')"><i class="fas fa-save"></i> 持久化数据库</a>
                 </li>
                 @if (Context.User.Identity?.IsAuthenticated == true)
                 {
@@ -71,6 +72,12 @@
     </div>
 </nav>
 <main class="container p-2 my-3 visible" id="main1">
+    @if (ViewData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @ViewData["ErrorMessage"]
+        </div>
+    }
     @RenderBody()
 </main>
 <main class="d-flex align-items-center invisible" id="main2">

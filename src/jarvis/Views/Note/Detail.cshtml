@@ -1,5 +1,5 @@
 ﻿@model NoteRuntime
-@inject IOptions<JarvisOption> _option
+@inject IOptions<JarvisOptions> _option
 @{
     Layout = "_NoteLayout";
     ViewData["Title"] = $"笔记：{Model.Raw.Title}";
@@ -7,7 +7,7 @@
 <h2 class="mb-3">
     @Model.Raw.Title
 </h2>
-<hr />
+<hr/>
 <article class="article-content">
     @Html.Raw(Model.HtmlContent)
 </article>
@@ -19,7 +19,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <img id="modal-content" class="img-fluid" />
+                <img id="modal-content" class="img-fluid"/>
             </div>
             <div class="modal-footer justify-content-center" id="modal-caption">
             </div>

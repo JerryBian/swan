@@ -3,33 +3,32 @@ using Laobian.Blog.Service;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 
-namespace Laobian.Blog.Cache
+namespace Laobian.Blog.Cache;
+
+public class CacheClient : ICacheClient
 {
-    public class CacheClient : ICacheClient
+    private readonly IBlogService _blogService;
+    private readonly ILogger<CacheClient> _logger;
+    private readonly IMemoryCache _memoryCache;
+
+    public CacheClient(IMemoryCache memoryCache, IBlogService blogService, ILogger<CacheClient> logger)
     {
-        private readonly IBlogService _blogService;
-        private readonly ILogger<CacheClient> _logger;
-        private readonly IMemoryCache _memoryCache;
+        _logger = logger;
+        _blogService = blogService;
+        _memoryCache = memoryCache;
+    }
 
-        public CacheClient(IMemoryCache memoryCache, IBlogService blogService, ILogger<CacheClient> logger)
+    public T GetOrCreate<T>(string cacheKey, Func<T> func)
+    {
+        return _memoryCache.GetOrCreate(cacheKey, entry =>
         {
-            _logger = logger;
-            _blogService = blogService;
-            _memoryCache = memoryCache;
-        }
+            var val = func();
+            entry.Value = val;
+            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(1);
+            entry.ExpirationTokens.Add(new BlogChangeToken(_blogService));
 
-        public T GetOrCreate<T>(string cacheKey, Func<T> func)
-        {
-            return _memoryCache.GetOrCreate(cacheKey, entry =>
-            {
-                var val = func();
-                entry.Value = val;
-                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(1);
-                entry.ExpirationTokens.Add(new BlogChangeToken(_blogService));
-
-                _logger.LogInformation($"Blog cache created. Key: {cacheKey}.");
-                return val;
-            });
-        }
+            _logger.LogInformation($"Blog cache created. Key: {cacheKey}.");
+            return val;
+        });
     }
 }

@@ -1,15 +1,14 @@
 ﻿using System;
 
-namespace Laobian.Share.Option
-{
-    [AttributeUsage(AttributeTargets.Property)]
-    public class OptionEnvNameAttribute : Attribute
-    {
-        public OptionEnvNameAttribute(string envName)
-        {
-            EnvName = envName;
-        }
+namespace Laobian.Share.Option;
 
-        public string EnvName { get; init; }
+[AttributeUsage(AttributeTargets.Property)]
+public class OptionEnvNameAttribute : Attribute
+{
+    public OptionEnvNameAttribute(string envName)
+    {
+        EnvName = envName;
     }
+
+    public string EnvName { get; init; }
 }

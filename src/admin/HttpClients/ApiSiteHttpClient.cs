@@ -14,341 +14,352 @@ using Laobian.Share.Util;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Laobian.Admin.HttpClients
+namespace Laobian.Admin.HttpClients;
+
+public class ApiSiteHttpClient
 {
-    public class ApiSiteHttpClient
+    private readonly HttpClient _httpClient;
+    private readonly ILogger<ApiSiteHttpClient> _logger;
+
+    public ApiSiteHttpClient(HttpClient httpClient, ILogger<ApiSiteHttpClient> logger,
+        IOptions<AdminOptions> config)
     {
-        private readonly HttpClient _httpClient;
-        private readonly ILogger<ApiSiteHttpClient> _logger;
+        _logger = logger;
+        _httpClient = httpClient;
+        _httpClient.BaseAddress = new Uri(config.Value.ApiLocalEndpoint);
+    }
 
-        public ApiSiteHttpClient(HttpClient httpClient, ILogger<ApiSiteHttpClient> logger,
-            IOptions<LaobianAdminOption> config)
+    public async Task<bool> PersistentAsync(string message)
+    {
+        var response = await _httpClient.PostAsync("/persistent",
+            new StringContent(message, Encoding.UTF8, MediaTypeNames.Text.Plain));
+        if (response.StatusCode != HttpStatusCode.OK)
         {
-            _logger = logger;
-            _httpClient = httpClient;
-            _httpClient.BaseAddress = new Uri(config.Value.ApiLocalEndpoint);
+            _logger.LogError(
+                $"{nameof(ApiSiteHttpClient)}.{nameof(PersistentAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+            return false;
         }
 
-        public async Task<bool> PersistentAsync(string message)
-        {
-            var response = await _httpClient.PostAsync("/blog/persistent",
-                new StringContent(message, Encoding.UTF8, MediaTypeNames.Text.Plain));
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                _logger.LogError(
-                    $"{nameof(ApiSiteHttpClient)}.{nameof(PersistentAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
-                return false;
-            }
+        return true;
+    }
 
-            return true;
+    public async Task<List<BlogPostRuntime>> GetPostsAsync(bool extractRuntime)
+    {
+        var response = await _httpClient.GetAsync($"/blog/posts?extractRuntime={extractRuntime}");
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            _logger.LogError(
+                $"{nameof(ApiSiteHttpClient)}.{nameof(GetPostsAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+            return new List<BlogPostRuntime>();
         }
 
-        public async Task<List<BlogPostRuntime>> GetPostsAsync()
-        {
-            var response = await _httpClient.GetAsync("/blog/post");
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                _logger.LogError(
-                    $"{nameof(ApiSiteHttpClient)}.{nameof(GetPostsAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
-                return new List<BlogPostRuntime>();
-            }
+        await using var stream = await response.Content.ReadAsStreamAsync();
+        return await JsonUtil.DeserializeAsync<List<BlogPostRuntime>>(stream);
+    }
 
-            await using var stream = await response.Content.ReadAsStreamAsync();
-            return await JsonUtil.DeserializeAsync<List<BlogPostRuntime>>(stream);
+    public async Task<BlogPostRuntime> GetPostAsync(string link)
+    {
+        var response = await _httpClient.GetAsync($"/blog/posts/{link}");
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            _logger.LogError(
+                $"{nameof(ApiSiteHttpClient)}.{nameof(GetPostAsync)}({link}) failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+            return null;
         }
 
-        public async Task<BlogPostRuntime> GetPostAsync(string link)
-        {
-            var response = await _httpClient.GetAsync($"/blog/post/{link}");
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                _logger.LogError(
-                    $"{nameof(ApiSiteHttpClient)}.{nameof(GetPostAsync)}({link}) failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
-                return null;
-            }
+        await using var stream = await response.Content.ReadAsStreamAsync();
+        return await JsonUtil.DeserializeAsync<BlogPostRuntime>(stream);
+    }
 
-            await using var stream = await response.Content.ReadAsStreamAsync();
-            return await JsonUtil.DeserializeAsync<BlogPostRuntime>(stream);
+    public async Task<BlogPostRuntime> AddPostAsync(BlogPost post)
+    {
+        var response = await _httpClient.PostAsync("/blog/posts",
+            new StringContent(JsonUtil.Serialize(post), Encoding.UTF8, MediaTypeNames.Application.Json));
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            var message = await response.Content.ReadAsStringAsync();
+            _logger.LogError(
+                $"{nameof(ApiSiteHttpClient)}.{nameof(AddPostAsync)} failed. Status: {response.StatusCode}. Content: {message}");
+            throw new Exception(message);
         }
 
-        public async Task AddPostAsync(BlogPost post)
+        await using var stream = await response.Content.ReadAsStreamAsync();
+        return await JsonUtil.DeserializeAsync<BlogPostRuntime>(stream);
+    }
+
+    public async Task<BlogPostRuntime> UpdatePostAsync(BlogPost post, string replacedPostLink)
+    {
+        var response = await _httpClient.PutAsync($"/blog/posts?replacedPostLink={replacedPostLink}",
+            new StringContent(JsonUtil.Serialize(post), Encoding.UTF8, MediaTypeNames.Application.Json));
+        if (response.StatusCode != HttpStatusCode.OK)
         {
-            var response = await _httpClient.PutAsync("/blog/post",
-                new StringContent(JsonUtil.Serialize(post), Encoding.UTF8, MediaTypeNames.Application.Json));
+            var message = await response.Content.ReadAsStringAsync();
+            _logger.LogError(
+                $"{nameof(ApiSiteHttpClient)}.{nameof(UpdatePostAsync)} failed. Status: {response.StatusCode}. Content: {message}");
+            throw new Exception(message);
+        }
+
+        await using var stream = await response.Content.ReadAsStreamAsync();
+        return await JsonUtil.DeserializeAsync<BlogPostRuntime>(stream);
+    }
+
+    public async Task PostNewAccessAsync(string link)
+    {
+        var response = await _httpClient.PostAsync($"/blog/posts/{link}/access",
+            new StringContent(string.Empty));
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            _logger.LogError(
+                $"{nameof(ApiSiteHttpClient)}.{nameof(PostNewAccessAsync)}({link}) failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+        }
+    }
+
+    public async Task<List<BlogTag>> GetTagsAsync()
+    {
+        var response = await _httpClient.GetAsync("/blog/tags");
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            _logger.LogError(
+                $"{nameof(ApiSiteHttpClient)}.{nameof(GetTagsAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+            return new List<BlogTag>();
+        }
+
+        await using var stream = await response.Content.ReadAsStreamAsync();
+        return await JsonUtil.DeserializeAsync<List<BlogTag>>(stream);
+    }
+
+    public async Task<BlogTag> GetTagAsync(string id)
+    {
+        var response = await _httpClient.GetAsync($"/blog/tags/{id}");
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            _logger.LogError(
+                $"{nameof(ApiSiteHttpClient)}.{nameof(GetTagAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+            return null;
+        }
+
+        await using var stream = await response.Content.ReadAsStreamAsync();
+        return await JsonUtil.DeserializeAsync<BlogTag>(stream);
+    }
+
+    public async Task<BlogTag> AddTagAsync(BlogTag tag)
+    {
+        var response = await _httpClient.PostAsync("/blog/tags",
+            new StringContent(JsonUtil.Serialize(tag), Encoding.UTF8, MediaTypeNames.Application.Json));
+
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            var message = await response.Content.ReadAsStringAsync();
+            _logger.LogError(
+                $"{nameof(ApiSiteHttpClient)}.{nameof(AddTagAsync)} failed. Status: {response.StatusCode}. Content: {message}");
+            throw new Exception(message);
+        }
+
+        await using var stream = await response.Content.ReadAsStreamAsync();
+        return await JsonUtil.DeserializeAsync<BlogTag>(stream);
+    }
+
+    public async Task<BlogTag> UpdateTagAsync(BlogTag tag)
+    {
+        var response = await _httpClient.PutAsync("/blog/tags",
+            new StringContent(JsonUtil.Serialize(tag), Encoding.UTF8, MediaTypeNames.Application.Json));
+
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
             var content = await response.Content.ReadAsStringAsync();
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                _logger.LogError(
-                    $"{nameof(ApiSiteHttpClient)}.{nameof(AddPostAsync)} failed. Status: {response.StatusCode}. Content: {content}");
-            }
+            _logger.LogError(
+                $"{nameof(ApiSiteHttpClient)}.{nameof(UpdateTagAsync)} failed. Status: {response.StatusCode}. Content: {content}");
+            throw new Exception(content);
         }
 
-        public async Task UpdatePostAsync(BlogPost post)
+        await using var stream = await response.Content.ReadAsStreamAsync();
+        return await JsonUtil.DeserializeAsync<BlogTag>(stream);
+    }
+
+    public async Task<bool> DeleteTagAsync(string id)
+    {
+        var response = await _httpClient.DeleteAsync($"/blog/tags/{id}");
+        var content = await response.Content.ReadAsStringAsync();
+        if (response.StatusCode != HttpStatusCode.OK)
         {
-            var response = await _httpClient.PostAsync("/blog/post",
-                new StringContent(JsonUtil.Serialize(post), Encoding.UTF8, MediaTypeNames.Application.Json));
-            var content = await response.Content.ReadAsStringAsync();
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                _logger.LogError(
-                    $"{nameof(ApiSiteHttpClient)}.{nameof(UpdatePostAsync)} failed. Status: {response.StatusCode}. Content: {content}");
-            }
+            _logger.LogError(
+                $"{nameof(ApiSiteHttpClient)}.{nameof(DeleteTagAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+            return false;
         }
 
-        public async Task PostNewAccessAsync(string link)
+        return true;
+    }
+
+    public async Task SendLogsAsync(IEnumerable<LaobianLog> logs)
+    {
+        var response = await _httpClient.PostAsync("/log/admin",
+            new StringContent(JsonUtil.Serialize(logs), Encoding.UTF8, MediaTypeNames.Application.Json));
+        if (response.StatusCode != HttpStatusCode.OK)
         {
-            var response = await _httpClient.PostAsync($"/blog/post/access/{link}",
-                new StringContent(string.Empty));
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                _logger.LogError(
-                    $"{nameof(ApiSiteHttpClient)}.{nameof(PostNewAccessAsync)}({link}) failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
-            }
+            Console.WriteLine(
+                $"{nameof(ApiSiteHttpClient)}.{nameof(SendLogsAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+        }
+    }
+
+    public async Task<List<LaobianLog>> GetLogsAsync(string site, int days)
+    {
+        var response = await _httpClient.GetAsync($"/log/{site}?days={days}");
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            _logger.LogError(
+                $"{nameof(ApiSiteHttpClient)}.{nameof(GetLogsAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+            return new List<LaobianLog>();
         }
 
-        public async Task<List<BlogTag>> GetTagsAsync()
-        {
-            var response = await _httpClient.GetAsync("/blog/tag");
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                _logger.LogError(
-                    $"{nameof(ApiSiteHttpClient)}.{nameof(GetTagsAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
-                return new List<BlogTag>();
-            }
+        await using var stream = await response.Content.ReadAsStreamAsync();
+        return await JsonUtil.DeserializeAsync<List<LaobianLog>>(stream);
+    }
 
-            await using var stream = await response.Content.ReadAsStreamAsync();
-            return await JsonUtil.DeserializeAsync<List<BlogTag>>(stream);
+    public async Task<List<BookItem>> GetReadItemsAsync()
+    {
+        var response = await _httpClient.GetAsync("/read");
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            _logger.LogError(
+                $"{nameof(ApiSiteHttpClient)}.{nameof(GetReadItemsAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+            return null;
         }
 
-        public async Task<BlogTag> GetTagAsync(string link)
-        {
-            var response = await _httpClient.GetAsync($"/blog/tag/{link}");
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                _logger.LogError(
-                    $"{nameof(ApiSiteHttpClient)}.{nameof(GetTagAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
-                return null;
-            }
+        await using var stream = await response.Content.ReadAsStreamAsync();
+        return await JsonUtil.DeserializeAsync<List<BookItem>>(stream);
+    }
 
-            await using var stream = await response.Content.ReadAsStreamAsync();
-            return await JsonUtil.DeserializeAsync<BlogTag>(stream);
+    public async Task<BookItem> GetReadItemAsync(string id)
+    {
+        var response = await _httpClient.GetAsync($"/read/{id}");
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            _logger.LogError(
+                $"{nameof(ApiSiteHttpClient)}.{nameof(GetReadItemAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+            return null;
         }
 
-        public async Task<bool> AddTagAsync(BlogTag tag)
-        {
-            var response = await _httpClient.PutAsync("/blog/tag",
-                new StringContent(JsonUtil.Serialize(tag), Encoding.UTF8, MediaTypeNames.Application.Json));
-            var content = await response.Content.ReadAsStringAsync();
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                _logger.LogError(
-                    $"{nameof(ApiSiteHttpClient)}.{nameof(AddTagAsync)} failed. Status: {response.StatusCode}. Content: {content}");
-                return false;
-            }
+        await using var stream = await response.Content.ReadAsStreamAsync();
+        return await JsonUtil.DeserializeAsync<BookItem>(stream);
+    }
 
-            return true;
+    public async Task AddBookItemAsync(BookItem bookItem)
+    {
+        var response = await _httpClient.PutAsync("/read",
+            new StringContent(JsonUtil.Serialize(bookItem), Encoding.UTF8, MediaTypeNames.Application.Json));
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            Console.WriteLine(
+                $"{nameof(ApiSiteHttpClient)}.{nameof(AddBookItemAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+        }
+    }
+
+    public async Task UpdateBookItemAsync(BookItem bookItem)
+    {
+        var response = await _httpClient.PostAsync("/read",
+            new StringContent(JsonUtil.Serialize(bookItem), Encoding.UTF8, MediaTypeNames.Application.Json));
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            Console.WriteLine(
+                $"{nameof(ApiSiteHttpClient)}.{nameof(UpdateBookItemAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+        }
+    }
+
+    public async Task DeleteBookItemAsync(string id)
+    {
+        var response = await _httpClient.DeleteAsync($"/read/{id}");
+        var content = await response.Content.ReadAsStringAsync();
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            _logger.LogError(
+                $"{nameof(ApiSiteHttpClient)}.{nameof(DeleteTagAsync)} failed. Status: {response.StatusCode}. Content: {content}");
+        }
+    }
+
+    public async Task<string> UploadFileAsync(string fileName, byte[] content)
+    {
+        var response =
+            await _httpClient.PostAsync($"/file/upload?fileName={fileName}", new ByteArrayContent(content));
+        var url = await response.Content.ReadAsStringAsync();
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            Console.WriteLine(
+                $"{nameof(ApiSiteHttpClient)}.{nameof(UploadFileAsync)} failed. Status: {response.StatusCode}. Content: {url}");
+            return string.Empty;
         }
 
-        public async Task<bool> UpdateTagAsync(BlogTag tag)
-        {
-            var response = await _httpClient.PostAsync("/blog/tag",
-                new StringContent(JsonUtil.Serialize(tag), Encoding.UTF8, MediaTypeNames.Application.Json));
-            var content = await response.Content.ReadAsStringAsync();
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                _logger.LogError(
-                    $"{nameof(ApiSiteHttpClient)}.{nameof(UpdateTagAsync)} failed. Status: {response.StatusCode}. Content: {content}");
-                return false;
-            }
+        return url;
+    }
 
-            return true;
+    public async Task<DiaryRuntime> GetDiaryAsync(DateTime date)
+    {
+        var response = await _httpClient.GetAsync($"/diary/{date.ToDate()}");
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            _logger.LogError(
+                $"{nameof(ApiSiteHttpClient)}.{nameof(GetDiaryAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+            return null;
         }
 
-        public async Task<bool> DeleteTagAsync(string link)
-        {
-            var response = await _httpClient.DeleteAsync($"/blog/tag/{link}");
-            var content = await response.Content.ReadAsStringAsync();
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                _logger.LogError(
-                    $"{nameof(ApiSiteHttpClient)}.{nameof(DeleteTagAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
-                return false;
-            }
+        await using var stream = await response.Content.ReadAsStreamAsync();
+        return await JsonUtil.DeserializeAsync<DiaryRuntime>(stream);
+    }
 
-            return true;
+    public async Task AddDiaryAsync(Diary diary)
+    {
+        var response = await _httpClient.PutAsync("/diary",
+            new StringContent(JsonUtil.Serialize(diary), Encoding.UTF8, MediaTypeNames.Application.Json));
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            Console.WriteLine(
+                $"{nameof(ApiSiteHttpClient)}.{nameof(AddDiaryAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+        }
+    }
+
+    public async Task UpdateDiaryAsync(Diary diary)
+    {
+        var response = await _httpClient.PostAsync("/diary",
+            new StringContent(JsonUtil.Serialize(diary), Encoding.UTF8, MediaTypeNames.Application.Json));
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            Console.WriteLine(
+                $"{nameof(ApiSiteHttpClient)}.{nameof(UpdateDiaryAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+        }
+    }
+
+    public async Task<NoteRuntime> GetNoteAsync(string link)
+    {
+        var response = await _httpClient.GetAsync($"/note/{link}");
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            _logger.LogError(
+                $"{nameof(ApiSiteHttpClient)}.{nameof(GetNoteAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+            return null;
         }
 
-        public async Task SendLogsAsync(IEnumerable<LaobianLog> logs)
+        await using var stream = await response.Content.ReadAsStreamAsync();
+        return await JsonUtil.DeserializeAsync<NoteRuntime>(stream);
+    }
+
+    public async Task AddNoteAsync(Note note)
+    {
+        var response = await _httpClient.PutAsync("/note",
+            new StringContent(JsonUtil.Serialize(note), Encoding.UTF8, MediaTypeNames.Application.Json));
+        if (response.StatusCode != HttpStatusCode.OK)
         {
-            var response = await _httpClient.PostAsync("/log/admin",
-                new StringContent(JsonUtil.Serialize(logs), Encoding.UTF8, MediaTypeNames.Application.Json));
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                Console.WriteLine(
-                    $"{nameof(ApiSiteHttpClient)}.{nameof(SendLogsAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
-            }
+            Console.WriteLine(
+                $"{nameof(ApiSiteHttpClient)}.{nameof(AddNoteAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
         }
+    }
 
-        public async Task<List<LaobianLog>> GetLogsAsync(string site, int days)
+    public async Task UpdateNoteAsync(Note note)
+    {
+        var response = await _httpClient.PostAsync("/note",
+            new StringContent(JsonUtil.Serialize(note), Encoding.UTF8, MediaTypeNames.Application.Json));
+        if (response.StatusCode != HttpStatusCode.OK)
         {
-            var response = await _httpClient.GetAsync($"/log/{site}?days={days}");
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                _logger.LogError(
-                    $"{nameof(ApiSiteHttpClient)}.{nameof(GetLogsAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
-                return new List<LaobianLog>();
-            }
-
-            await using var stream = await response.Content.ReadAsStreamAsync();
-            return await JsonUtil.DeserializeAsync<List<LaobianLog>>(stream);
-        }
-
-        public async Task<List<BookItem>> GetReadItemsAsync()
-        {
-            var response = await _httpClient.GetAsync("/read");
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                _logger.LogError(
-                    $"{nameof(ApiSiteHttpClient)}.{nameof(GetReadItemsAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
-                return null;
-            }
-
-            await using var stream = await response.Content.ReadAsStreamAsync();
-            return await JsonUtil.DeserializeAsync<List<BookItem>>(stream);
-        }
-
-        public async Task<BookItem> GetReadItemAsync(string id)
-        {
-            var response = await _httpClient.GetAsync($"/read/{id}");
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                _logger.LogError(
-                    $"{nameof(ApiSiteHttpClient)}.{nameof(GetReadItemAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
-                return null;
-            }
-
-            await using var stream = await response.Content.ReadAsStreamAsync();
-            return await JsonUtil.DeserializeAsync<BookItem>(stream);
-        }
-
-        public async Task AddBookItemAsync(BookItem bookItem)
-        {
-            var response = await _httpClient.PutAsync("/read",
-                new StringContent(JsonUtil.Serialize(bookItem), Encoding.UTF8, MediaTypeNames.Application.Json));
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                Console.WriteLine(
-                    $"{nameof(ApiSiteHttpClient)}.{nameof(AddBookItemAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
-            }
-        }
-
-        public async Task UpdateBookItemAsync(BookItem bookItem)
-        {
-            var response = await _httpClient.PostAsync("/read",
-                new StringContent(JsonUtil.Serialize(bookItem), Encoding.UTF8, MediaTypeNames.Application.Json));
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                Console.WriteLine(
-                    $"{nameof(ApiSiteHttpClient)}.{nameof(UpdateBookItemAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
-            }
-        }
-
-        public async Task DeleteBookItemAsync(string id)
-        {
-            var response = await _httpClient.DeleteAsync($"/read/{id}");
-            var content = await response.Content.ReadAsStringAsync();
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                _logger.LogError(
-                    $"{nameof(ApiSiteHttpClient)}.{nameof(DeleteTagAsync)} failed. Status: {response.StatusCode}. Content: {content}");
-            }
-        }
-
-        public async Task<string> UploadFileAsync(string fileName, byte[] content)
-        {
-            var response =
-                await _httpClient.PostAsync($"/file/upload?fileName={fileName}", new ByteArrayContent(content));
-            var url = await response.Content.ReadAsStringAsync();
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                Console.WriteLine(
-                    $"{nameof(ApiSiteHttpClient)}.{nameof(UploadFileAsync)} failed. Status: {response.StatusCode}. Content: {url}");
-                return string.Empty;
-            }
-
-            return url;
-        }
-
-        public async Task<DiaryRuntime> GetDiaryAsync(DateTime date)
-        {
-            var response = await _httpClient.GetAsync($"/diary/{date.ToDate()}");
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                _logger.LogError(
-                    $"{nameof(ApiSiteHttpClient)}.{nameof(GetDiaryAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
-                return null;
-            }
-
-            await using var stream = await response.Content.ReadAsStreamAsync();
-            return await JsonUtil.DeserializeAsync<DiaryRuntime>(stream);
-        }
-
-        public async Task AddDiaryAsync(Diary diary)
-        {
-            var response = await _httpClient.PutAsync("/diary",
-                new StringContent(JsonUtil.Serialize(diary), Encoding.UTF8, MediaTypeNames.Application.Json));
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                Console.WriteLine(
-                    $"{nameof(ApiSiteHttpClient)}.{nameof(AddDiaryAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
-            }
-        }
-
-        public async Task UpdateDiaryAsync(Diary diary)
-        {
-            var response = await _httpClient.PostAsync("/diary",
-                new StringContent(JsonUtil.Serialize(diary), Encoding.UTF8, MediaTypeNames.Application.Json));
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                Console.WriteLine(
-                    $"{nameof(ApiSiteHttpClient)}.{nameof(UpdateDiaryAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
-            }
-        }
-
-        public async Task<NoteRuntime> GetNoteAsync(string link)
-        {
-            var response = await _httpClient.GetAsync($"/note/{link}");
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                _logger.LogError(
-                    $"{nameof(ApiSiteHttpClient)}.{nameof(GetNoteAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
-                return null;
-            }
-
-            await using var stream = await response.Content.ReadAsStreamAsync();
-            return await JsonUtil.DeserializeAsync<NoteRuntime>(stream);
-        }
-
-        public async Task AddNoteAsync(Note note)
-        {
-            var response = await _httpClient.PutAsync("/note",
-                new StringContent(JsonUtil.Serialize(note), Encoding.UTF8, MediaTypeNames.Application.Json));
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                Console.WriteLine(
-                    $"{nameof(ApiSiteHttpClient)}.{nameof(AddNoteAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
-            }
-        }
-
-        public async Task UpdateNoteAsync(Note note)
-        {
-            var response = await _httpClient.PostAsync("/note",
-                new StringContent(JsonUtil.Serialize(note), Encoding.UTF8, MediaTypeNames.Application.Json));
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                Console.WriteLine(
-                    $"{nameof(ApiSiteHttpClient)}.{nameof(UpdateNoteAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
-            }
+            Console.WriteLine(
+                $"{nameof(ApiSiteHttpClient)}.{nameof(UpdateNoteAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
         }
     }
 }
