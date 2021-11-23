@@ -18,6 +18,21 @@
     }
 }
 
+function sendRequest(url, success, setting) {
+    fetch(url, setting).then(response => response.json()).then(result => {
+        if (!result.ok) {
+            Swal.fire("错误！", result.message, "error");
+        } else {
+            if (result.redirectTo) {
+                window.location.href = result.redirectTo;
+            } else {
+                success(result.content);
+            }
+        }
+    })
+        .catch(error => Swal.fire("错误！", error, "error"));
+}
+
 function forceReloadBlogData() {
     Swal.fire({
         title: "确定要清除博客的缓存吗？",
@@ -40,6 +55,65 @@ function forceReloadBlogData() {
                 });
         }
     });
+}
+
+function submitRequest(url, option) {
+    if (option.form) {
+        if (option.form.classList.contains("needs-validation")) {
+            if (option.form.checkValidity()) {
+                option.form.classList.add("was-validated");
+            }
+        }
+    }
+
+    if (option.preAction) {
+        option.preAction();
+    }
+
+    let method = "POST";
+    if (option.method) {
+        method = option.method;
+    }
+
+    let contentType = "application/json";
+    if (option.contentType) {
+        contentType = option.contentType;
+    }
+
+    let body = "";
+    if (option.body) {
+        body = option.body;
+    }
+
+    fetch(url,
+        {
+            method: method,
+            headers: {
+                "Content-Type": contentType
+            },
+            body: body
+        }).then(response => response.json()).then(result => {
+            if (!result.ok) {
+                Swal.fire("错误！", result.message, "error");
+            } else {
+                if (result.redirectTo) {
+                    window.location.href = result.redirectTo;
+                } else {
+                    if(option.okAction){
+                        option.okAction(result.content);
+                    }
+                }
+            }
+
+            if (option.postAction) {
+                option.postAction();
+            }
+        }).catch(error => {
+            Swal.fire("错误！", error, "error");
+            if (option.postAction) {
+                option.postAction();
+            }
+        });
 }
 
 function persistent(user) {
@@ -66,20 +140,14 @@ function persistent(user) {
     });
 }
 
-function validateForms() {
-    const forms = document.querySelectorAll('.needs-validation');
-
-    // Loop over them and prevent submission
+function preventFormsSubmit() {
+    const forms = document.querySelectorAll('form');
     Array.prototype.slice.call(forms)
         .forEach(function (form) {
             form.addEventListener('submit',
                 function (event) {
-                    if (!form.checkValidity()) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                    }
-
-                    form.classList.add('was-validated');
+                    event.preventDefault();
+                    event.stopPropagation();
                 },
                 false);
         });

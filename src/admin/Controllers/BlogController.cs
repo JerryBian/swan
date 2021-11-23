@@ -125,10 +125,21 @@ public class BlogController : Controller
 
     [HttpPost]
     [Route("tags")]
-    public async Task<IActionResult> AddTagAsync([FromForm] BlogTag tag)
+    public async Task<ApiResponse<object>> AddTagAsync([FromBody] BlogTag tag)
     {
-        await _apiSiteHttpClient.AddTagAsync(tag);
-        return Redirect("/blog/tags");
+        var response = new ApiResponse<object>();
+        try
+        {
+            await _apiSiteHttpClient.AddTagAsync(tag);
+            response.RedirectTo = "/blog/tags";
+        }
+        catch (Exception ex)
+        {
+            response.IsOk = false;
+            response.Message = ex.Message;
+        }
+
+        return response;
     }
 
     [HttpGet("tags/{id}/update")]
