@@ -71,7 +71,7 @@ public class ApiSiteHttpClient
         return await JsonUtil.DeserializeAsync<BlogPostRuntime>(stream);
     }
 
-    public async Task<BlogPostRuntime> AddPostAsync(BlogPost post)
+    public async Task<BlogPost> AddPostAsync(BlogPost post)
     {
         var response = await _httpClient.PostAsync("/blog/posts",
             new StringContent(JsonUtil.Serialize(post), Encoding.UTF8, MediaTypeNames.Application.Json));
@@ -84,10 +84,10 @@ public class ApiSiteHttpClient
         }
 
         await using var stream = await response.Content.ReadAsStreamAsync();
-        return await JsonUtil.DeserializeAsync<BlogPostRuntime>(stream);
+        return await JsonUtil.DeserializeAsync<BlogPost>(stream);
     }
 
-    public async Task<BlogPostRuntime> UpdatePostAsync(BlogPost post, string replacedPostLink)
+    public async Task<BlogPost> UpdatePostAsync(BlogPost post, string replacedPostLink)
     {
         var response = await _httpClient.PutAsync($"/blog/posts?replacedPostLink={replacedPostLink}",
             new StringContent(JsonUtil.Serialize(post), Encoding.UTF8, MediaTypeNames.Application.Json));
@@ -100,18 +100,7 @@ public class ApiSiteHttpClient
         }
 
         await using var stream = await response.Content.ReadAsStreamAsync();
-        return await JsonUtil.DeserializeAsync<BlogPostRuntime>(stream);
-    }
-
-    public async Task PostNewAccessAsync(string link)
-    {
-        var response = await _httpClient.PostAsync($"/blog/posts/{link}/access",
-            new StringContent(string.Empty));
-        if (response.StatusCode != HttpStatusCode.OK)
-        {
-            _logger.LogError(
-                $"{nameof(ApiSiteHttpClient)}.{nameof(PostNewAccessAsync)}({link}) failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
-        }
+        return await JsonUtil.DeserializeAsync<BlogPost>(stream);
     }
 
     public async Task<List<BlogTag>> GetTagsAsync()

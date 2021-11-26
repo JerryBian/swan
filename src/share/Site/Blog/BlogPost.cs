@@ -50,6 +50,10 @@ public class BlogPost
     [JsonPropertyName("mdContent")]
     public string MdContent { get; set; }
 
+    [JsonPropertyOrder(12)]
+    [JsonPropertyName("wordsCount")]
+    public int WordsCount { get; set; }
+
     public bool IsPostPublished()
     {
         return IsPublished && PublishTime <= DateTime.Now;

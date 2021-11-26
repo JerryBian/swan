@@ -4,8 +4,11 @@ using System.Threading.Tasks;
 using Laobian.Admin.HttpClients;
 using Laobian.Admin.Models;
 using Laobian.Share;
+using Laobian.Share.Extension;
 using Laobian.Share.Site.Blog;
+using Laobian.Share.Util;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Laobian.Admin.Controllers;
@@ -16,9 +19,12 @@ public class BlogController : Controller
     private readonly AdminOptions _options;
     private readonly ApiSiteHttpClient _apiSiteHttpClient;
     private readonly BlogSiteHttpClient _blogSiteHttpClient;
+    private readonly ILogger<BlogController> _logger;
 
-    public BlogController(ApiSiteHttpClient apiSiteHttpClient, BlogSiteHttpClient blogSiteHttpClient, IOptions<AdminOptions> options)
+    public BlogController(ApiSiteHttpClient apiSiteHttpClient, BlogSiteHttpClient blogSiteHttpClient,
+        IOptions<AdminOptions> options, ILogger<BlogController> logger)
     {
+        _logger = logger;
         _options = options.Value;
         _apiSiteHttpClient = apiSiteHttpClient;
         _blogSiteHttpClient = blogSiteHttpClient;
@@ -32,11 +38,42 @@ public class BlogController : Controller
         return Ok();
     }
 
+    [HttpPost("posts/access")]
+    public async Task<ApiResponse<ChartResponse>> GetPostsAccess([FromQuery] int days)
+    {
+        var response = new ApiResponse<ChartResponse>();
+        try
+        {
+            var posts = await _apiSiteHttpClient.GetPostsAsync(true);
+            var access = posts.SelectMany(x => x.Accesses)
+                .Where(x => x.Date >= DateTime.Now.AddDays(-days) && x.Date <= DateTime.Now).GroupBy(x => x.Date).OrderBy(x => x.Key);
+            var chartResponse = new ChartResponse
+            {
+                Title = "访问量",
+                Type = "line"
+            };
+            foreach (var item in access)
+            {
+                chartResponse.Data.Add(item.Count());
+                chartResponse.Labels.Add(item.Key.ToChinaDate());
+            }
+
+            response.Content = chartResponse;
+        }
+        catch (Exception ex)
+        {
+            response.IsOk = false;
+            response.Message = ex.Message;
+            _logger.LogError(ex, $"Get posts access failed for {days} days.");
+        }
+
+        return response;
+    }
+
     [Route("posts")]
     public async Task<IActionResult> GetPostsAsync()
     {
-        var posts = await _apiSiteHttpClient.GetPostsAsync(false);
-        var tags = await _apiSiteHttpClient.GetTagsAsync();
+        var posts = await _apiSiteHttpClient.GetPostsAsync(true);
         var viewModel = posts.OrderByDescending(x => x.Raw.LastUpdateTime).ToList();
         return View("Posts", viewModel);
     }
@@ -48,14 +85,26 @@ public class BlogController : Controller
         return View("AddPost", tags);
     }
 
-    [HttpPost("posts/add")]
-    public async Task<IActionResult> AddPost([FromForm] BlogPost post)
+    [HttpPost("posts")]
+    public async Task<ApiResponse<object>> AddPost([FromForm] BlogPost post)
     {
-        post.ContainsMath = Request.Form["containsMath"] == "on";
-        post.IsPublished = Request.Form["isPublished"] == "on";
-        post.IsTopping = Request.Form["isTopping"] == "on";
-        var result = await _apiSiteHttpClient.AddPostAsync(post);
-        return Redirect(result.Raw.GetFullPath(_options.BlogRemoteEndpoint));
+        var response = new ApiResponse<object>();
+        try
+        {
+            post.ContainsMath = Request.Form["containsMath"] == "on";
+            post.IsPublished = Request.Form["isPublished"] == "on";
+            post.IsTopping = Request.Form["isTopping"] == "on";
+            var result = await _apiSiteHttpClient.AddPostAsync(post);
+            response.RedirectTo = result.GetFullPath(_options.BlogRemoteEndpoint);
+        }
+        catch (Exception ex)
+        {
+            response.IsOk = false;
+            response.Message = ex.Message;
+            _logger.LogError(ex, $"Add post failed. {Environment.NewLine}{JsonUtil.Serialize(post)}");
+        }
+
+        return response;
     }
 
     [HttpGet("posts/{postLink}/update")]
@@ -77,14 +126,14 @@ public class BlogController : Controller
         return View("UpdatePost", model);
     }
 
-    [HttpPost("posts/{postLink}")]
+    [HttpPut("posts/{postLink}")]
     public async Task<IActionResult> UpdatePost([FromForm] BlogPost post, [FromRoute] string postLink)
     {
         post.ContainsMath = Request.Form["containsMath"] == "on";
         post.IsPublished = Request.Form["isPublished"] == "on";
         post.IsTopping = Request.Form["isTopping"] == "on";
         var result = await _apiSiteHttpClient.UpdatePostAsync(post, postLink);
-        return Redirect(result.Raw.GetFullPath(_options.BlogRemoteEndpoint));
+        return Redirect(result.GetFullPath(_options.BlogRemoteEndpoint));
     }
 
     //[Route("posts/{link}")]

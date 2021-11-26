@@ -1,56 +1,109 @@
-﻿function toggleSpinner() {
-    let main1 = document.querySelector("#main1");
-    if (main1.classList.contains("visible")) {
-        main1.classList.remove("visible");
-        main1.classList.add("invisible");
-    } else {
-        main1.classList.remove("invisible");
-        main1.classList.add("visible");
+﻿function toggleContainers(c1, c2) {
+    if (c1.classList.contains("visible")) {
+        c1.classList.remove("visible");
+        c1.classList.add("invisible");
+    } else if (c1.classList.contains("invisible")) {
+        c1.classList.remove("invisible");
+        c1.classList.add("visible");
     }
 
-    let main2 = document.querySelector("#main2");
-    if (main2.classList.contains("visible")) {
-        main2.classList.remove("visible");
-        main2.classList.add("invisible");
-    } else {
-        main2.classList.remove("invisible");
-        main2.classList.add("visible");
+    if (c2.classList.contains("visible")) {
+        c2.classList.remove("visible");
+        c2.classList.add("invisible");
+    } else if (c2.classList.contains("invisible")) {
+        c2.classList.remove("invisible");
+        c2.classList.add("visible");
     }
 }
 
-function sendRequest(url, success, setting) {
-    fetch(url, setting).then(response => response.json()).then(result => {
-        if (!result.ok) {
-            Swal.fire("错误！", result.message, "error");
-        } else {
-            if (result.redirectTo) {
-                window.location.href = result.redirectTo;
-            } else {
-                success(result.content);
+function getRandomColor() {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+
+function createChart(canvas, res) {
+    if (!res.labels || !res.data || !res.type || !canvas) {
+        window.Swal.fire({
+            title: "错误",
+            text: "初始化 chart 失败！",
+            icon: "error",
+            backdrop: false,
+            buttonStyling: false
+        });
+
+        return;
+    }
+
+    if (res.labels.length !== res.data.length) {
+        window.Swal.fire({
+            title: "错误",
+            text: "chart 的 X Y 轴数量不一致",
+            icon: "error",
+            backdrop: false,
+            buttonStyling: false
+        });
+
+        return;
+    }
+
+    const bgColors = [];
+    const bdColors = [];
+    res.data.forEach(function() {
+        bgColors.push(getRandomColor());
+        bdColors.push(getRandomColor());
+    });
+    const data = {
+        labels: res.labels,
+        datasets: [
+            {
+                label: res.title,
+                backgroundColor: bgColors,
+                borderColor: bdColors,
+                borderWidth: 1,
+                data: res.data
+}]
+    };
+    const config = {
+        type: res.type,
+        data: data,
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
             }
         }
-    })
-        .catch(error => Swal.fire("错误！", error, "error"));
+    };
+
+    const chart = new Chart(canvas, config);
 }
 
 function forceReloadBlogData() {
-    Swal.fire({
-        title: "确定要清除博客的缓存吗？",
+    window.Swal.fire({
+        title: "确认",
+        text: "要清除博客的缓存吗？",
+        icon: "info",
         showCancelButton: true,
+        cancelButtonText: "取消",
         confirmButtonText: "确定"
     }).then((result) => {
         if (result.isConfirmed) {
-            fetch('/blog/cache/reload',
+            submitRequest("/blog/cache/reload",
                 {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'text/plain'
-                    },
-                    body: 'Request by Admin - Force Reload Blog Data button'
-                })
-                .then(response => {
-                    if (response.ok) {
-                        Swal.fire("清除成功", "", "success");
+                    contentType: "text/plain",
+                    body: "Request by Admin - Force Reload Blog Data button",
+                    postAction: function () {
+                        window.Swal.fire({
+                            title: "通知",
+                            text: "博客缓存清楚成功。",
+                            icon: "success",
+                            backdrop: false,
+                            buttonStyling: false
+                        });
                     }
                 });
         }
@@ -64,28 +117,34 @@ function submitRequest(url, option) {
                 option.form.classList.add("was-validated");
             }
         }
+
+        const fieldset = option.form.closest("fieldset");
+        if (fieldset) {
+            fieldset.disabled = true;
+        }
     }
 
     if (option.preAction) {
         option.preAction();
     }
 
-    let method = "POST";
-    if (option.method) {
-        method = option.method;
-    }
+    const method = option.method ?? "POST";
+    const contentType = option.contentType ?? "application/json";
+    const body = option.body ?? "";
+    const formPostAction = function () {
+        if (option.form) {
+            if (option.form.classList.contains("was-validated")) {
+                option.form.classList.remove("was-validated");
+            }
 
-    let contentType = "application/json";
-    if (option.contentType) {
-        contentType = option.contentType;
-    }
+            const fieldset = option.form.closest("fieldset");
+            if (fieldset) {
+                fieldset.disabled = false;
+            }
+        }
+    };
 
-    let body = "";
-    if (option.body) {
-        body = option.body;
-    }
-
-    fetch(url,
+    window.fetch(url,
         {
             method: method,
             headers: {
@@ -94,49 +153,71 @@ function submitRequest(url, option) {
             body: body
         }).then(response => response.json()).then(result => {
             if (!result.ok) {
-                Swal.fire("错误！", result.message, "error");
+                window.Swal.fire({
+                    title: "错误",
+                    text: result.message,
+                    icon: "error",
+                    backdrop: false,
+                    buttonStyling: false
+                });
             } else {
                 if (result.redirectTo) {
                     window.location.href = result.redirectTo;
                 } else {
-                    if(option.okAction){
+                    if (option.okAction) {
                         option.okAction(result.content);
                     }
                 }
             }
 
+            formPostAction();
             if (option.postAction) {
                 option.postAction();
             }
         }).catch(error => {
-            Swal.fire("错误！", error, "error");
-            if (option.postAction) {
-                option.postAction();
+            window.Swal.fire({
+                title: "错误",
+                text: error,
+                icon: "error",
+                backdrop: false,
+                buttonStyling: false
+            });
+
+            formPostAction();
+            if (option.form) {
+                const fieldset = option.form.closest("fieldset");
+                if (fieldset) {
+                    fieldset.disabled = false;
+                }
             }
         });
 }
 
 function persistent(user) {
-    Swal.fire({
-        title: "确定要持久化数据库吗？",
+    window.Swal.fire({
+        title: "确认",
+        text: "确定要持久化数据库吗？",
+        icon: "info",
         showCancelButton: true,
+        cancelButtonText: "取消",
         confirmButtonText: "确定"
     }).then((result) => {
         if (result.isConfirmed) {
-            fetch('/persistent',
+            submitRequest("/persistent",
                 {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'text/plain'
-                    },
-                    body: `:meat_on_bone: forced by ${user}`
-                })
-                .then(response => {
-                    if (response.ok) {
-                        Swal.fire("持久化数据库成功", "", "success");
+                    contentType: "text/plain",
+                    body: `:meat_on_bone: forced by ${user}`,
+                    postAction: function () {
+                        window.Swal.fire({
+                            title: "通知",
+                            text: "数据库持久化成功。",
+                            icon: "success",
+                            backdrop: false,
+                            buttonStyling: false
+                        });
                     }
                 });
-        }
+        };
     });
 }
 
@@ -179,7 +260,13 @@ function prepareEditor(textArea, u) {
             sbOnUploaded: "成功上传 #image_name#"
         },
         errorCallback: function (err) {
-            Swal.fire("文件上传错误！", err, "error");
+            window.Swal.fire({
+                title: "图片上传错误",
+                text: err,
+                icon: "error",
+                backdrop: false,
+                buttonStyling: false
+            });
         },
         renderingConfig: {
             codeSyntaxHighlighting: true,
