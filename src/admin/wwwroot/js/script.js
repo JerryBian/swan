@@ -26,7 +26,7 @@ function getRandomColor() {
 }
 
 function createChart(canvas, res) {
-    if (!res.labels || !res.data || !res.type || !canvas) {
+    if (!res.labels || !res.data || !res.type) {
         window.Swal.fire({
             title: "错误",
             text: "初始化 chart 失败！",
@@ -41,7 +41,7 @@ function createChart(canvas, res) {
     if (res.labels.length !== res.data.length) {
         window.Swal.fire({
             title: "错误",
-            text: "chart 的 X Y 轴数量不一致",
+            text: `chart(${res.title}) 的 X Y 轴数量不一致`,
             icon: "error",
             backdrop: false,
             buttonStyling: false
@@ -52,24 +52,23 @@ function createChart(canvas, res) {
 
     const bgColors = [];
     const bdColors = [];
-    res.data.forEach(function() {
+    res.labels.forEach(function () {
         bgColors.push(getRandomColor());
         bdColors.push(getRandomColor());
     });
-    const data = {
+    let data = {
         labels: res.labels,
-        datasets: [
-            {
-                label: res.title,
-                backgroundColor: bgColors,
-                borderColor: bdColors,
-                borderWidth: 1,
-                data: res.data
-}]
-    };
+        datasets: [{
+            label: res.title,
+            backgroundColor: bgColors,
+            borderColor: bdColors,
+            borderWidth: 1,
+            data: res.data
+        }]
+};
     const config = {
-        type: res.type,
         data: data,
+        type: res.type,
         options: {
             scales: {
                 y: {
@@ -79,7 +78,7 @@ function createChart(canvas, res) {
         }
     };
 
-    const chart = new Chart(canvas, config);
+    const chart = new window.Chart(canvas, config);
 }
 
 function forceReloadBlogData() {

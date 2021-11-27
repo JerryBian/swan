@@ -6,7 +6,7 @@
 
 <div class="container small">
     <div class="row">
-        <div class="col-7">
+        <div class="col-lg-7">
             <div class="table-responsive">
                 <table class="table caption-top align-middle table-bordered text-center">
                     <caption>文章总数: @Model.Count.ToThousandHuman() <a href="/blog/posts/add" class="btn btn-info float-end"><i class="fas fa-plus"></i> 添加新的文章</a></caption>
@@ -44,10 +44,15 @@
                 </table>
             </div>
         </div>
-        <div class="col-5">
-            <div></div>
+        <div class="col-lg-5">
             <div>
                 <canvas id="postsAccessChart"></canvas>
+            </div>
+            <div>
+                <canvas id="postsCountStats"></canvas>
+            </div>
+            <div>
+                <canvas id="postsWordsCountStats"></canvas>
             </div>
         </div>
     </div>
@@ -59,6 +64,18 @@
             {
                 okAction: function(chart) {
                     createChart(document.querySelector("#postsAccessChart"), chart);
+                }
+            });
+        submitRequest("/blog/posts/stats/words-count",
+            {
+                okAction: function(chart) {
+                    createChart(document.querySelector("#postsWordsCountStats"), chart);
+                }
+            });
+        submitRequest("/blog/posts/stats/count",
+            {
+                okAction: function(chart) {
+                    createChart(document.querySelector("#postsCountStats"), chart);
                 }
             });
     </script>

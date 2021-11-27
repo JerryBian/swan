@@ -38,6 +38,68 @@ public class BlogController : Controller
         return Ok();
     }
 
+    [HttpPost("posts/stats/words-count")]
+    public async Task<ApiResponse<ChartResponse>> GetPostsWordsCountStats()
+    {
+        var response = new ApiResponse<ChartResponse>();
+        try
+        {
+            var posts = await _apiSiteHttpClient.GetPostsAsync(true);
+            var items = posts.GroupBy(x => x.Raw.CreateTime.Year).OrderBy(x => x.Key);
+            var chartResponse = new ChartResponse
+            {
+                Title = "当年发表文章的总字数",
+                Type = "line"
+            };
+            foreach (var item in items)
+            {
+                chartResponse.Data.Add(item.Sum(x => x.Raw.WordsCount));
+                chartResponse.Labels.Add(item.Key.ToString());
+            }
+
+            response.Content = chartResponse;
+        }
+        catch (Exception ex)
+        {
+            response.IsOk = false;
+            response.Message = ex.Message;
+            _logger.LogError(ex, "Get posts stats for words count failed.");
+        }
+
+        return response;
+    }
+
+    [HttpPost("posts/stats/count")]
+    public async Task<ApiResponse<ChartResponse>> GetPostsCountStats()
+    {
+        var response = new ApiResponse<ChartResponse>();
+        try
+        {
+            var posts = await _apiSiteHttpClient.GetPostsAsync(true);
+            var items = posts.GroupBy(x => x.Raw.CreateTime.Year).OrderBy(x => x.Key);
+            var chartResponse = new ChartResponse
+            {
+                Title = "当年发表文章数",
+                Type = "line"
+            };
+            foreach (var item in items)
+            {
+                chartResponse.Data.Add(item.Count());
+                chartResponse.Labels.Add(item.Key.ToString());
+            }
+
+            response.Content = chartResponse;
+        }
+        catch (Exception ex)
+        {
+            response.IsOk = false;
+            response.Message = ex.Message;
+            _logger.LogError(ex, "Get posts stats for post count failed.");
+        }
+
+        return response;
+    }
+
     [HttpPost("posts/access")]
     public async Task<ApiResponse<ChartResponse>> GetPostsAccess([FromQuery] int days)
     {
@@ -47,11 +109,7 @@ public class BlogController : Controller
             var posts = await _apiSiteHttpClient.GetPostsAsync(true);
             var access = posts.SelectMany(x => x.Accesses)
                 .Where(x => x.Date >= DateTime.Now.AddDays(-days) && x.Date <= DateTime.Now).GroupBy(x => x.Date).OrderBy(x => x.Key);
-            var chartResponse = new ChartResponse
-            {
-                Title = "访问量",
-                Type = "line"
-            };
+            var chartResponse = new ChartResponse { Title = "访问量", Type = "line" };
             foreach (var item in access)
             {
                 chartResponse.Data.Add(item.Count());
