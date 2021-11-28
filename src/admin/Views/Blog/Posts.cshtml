@@ -1,82 +1,49 @@
 ﻿@model List<BlogPostRuntime>
 @inject IOptions<AdminOptions> _config
 @{
+    Layout = "_BlogLayout";
     ViewData["Title"] = "所有的博客文章";
 }
 
-<div class="container small">
-    <div class="row">
-        <div class="col-lg-7">
-            <div class="table-responsive">
-                <table class="table caption-top align-middle table-bordered text-center">
-                    <caption>文章总数: @Model.Count.ToThousandHuman() <a href="/blog/posts/add" class="btn btn-info float-end"><i class="fas fa-plus"></i> 添加新的文章</a></caption>
-                    <thead class="table-dark">
-                    <tr>
-                        <th scope="col">是否公开</th>
-                        <th scope="col">文章标题</th>
-                        <th scope="col">访问量</th>
-                        <th scope="col">操作</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach (var post in Model)
-                    {
-                        <tr>
-                            <th>@Html.Raw(post.Raw.IsPostPublished() ? "<i class=\"fas fa-eye\"></i>" : "<i class=\"fas fa-eye-slash\"></i>")</th>
-                            <th class="text-start">
-                                <i class="fas fa-external-link-alt"></i>
-                                <a href="@post.Raw.GetFullPath(_config.Value.BlogRemoteEndpoint)">@post.Raw.Title</a>
-                            </th>
-                            <th>
-                                @post.GetAccessCount().ToThousandHuman()
-                                <a href="">
-                                    <i class="fas fa-chart-line"></i>
-                                </a>
-                            </th>
-                            <th>
-                                <a class="btn btn-success" href="/blog/posts/@post.Raw.Link/update">
-                                    <i class="fas fa-edit"></i> 编辑
-                                </a>
-                            </th>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="col-lg-5">
-            <div>
-                <canvas id="postsAccessChart"></canvas>
-            </div>
-            <div>
-                <canvas id="postsCountStats"></canvas>
-            </div>
-            <div>
-                <canvas id="postsWordsCountStats"></canvas>
-            </div>
-        </div>
-    </div>
+<div class="table-responsive">
+    <table class="table caption-top align-middle table-bordered text-center">
+        <caption>文章总数: @Model.Count.ToThousandHuman() <a href="/blog/posts/add" class="btn btn-info float-end"><i class="fas fa-plus"></i> 添加新的文章</a></caption>
+        <thead class="table-dark">
+        <tr>
+            <th scope="col">是否公开</th>
+            <th scope="col">文章标题</th>
+            <th scope="col">访问量</th>
+            <th scope="col">操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var post in Model)
+        {
+            <tr>
+                <th>@Html.Raw(post.Raw.IsPostPublished() ? "<i class=\"fas fa-eye\"></i>" : "<i class=\"fas fa-eye-slash\"></i>")</th>
+                <th class="text-start">
+                    <i class="fas fa-external-link-alt"></i>
+                    <a href="@post.Raw.GetFullPath(_config.Value.BlogRemoteEndpoint)">@post.Raw.Title</a>
+                </th>
+                <th>
+                    @post.GetAccessCount().ToThousandHuman()
+                    <a href="">
+                        <i class="fas fa-chart-line"></i>
+                    </a>
+                </th>
+                <th>
+                    <a class="btn btn-success" href="/blog/posts/@post.Raw.Link/update">
+                        <i class="fas fa-edit"></i> 编辑
+                    </a>
+                </th>
+            </tr>
+        }
+        </tbody>
+    </table>
 </div>
 
 @section Scripts{
     <script>
-        submitRequest("/blog/posts/access?days=14",
-            {
-                okAction: function(chart) {
-                    createChart(document.querySelector("#postsAccessChart"), chart);
-                }
-            });
-        submitRequest("/blog/posts/stats/words-count",
-            {
-                okAction: function(chart) {
-                    createChart(document.querySelector("#postsWordsCountStats"), chart);
-                }
-            });
-        submitRequest("/blog/posts/stats/count",
-            {
-                okAction: function(chart) {
-                    createChart(document.querySelector("#postsCountStats"), chart);
-                }
-            });
+        activeNavItem("#nav_blog_posts");
     </script>
 }

@@ -1,4 +1,8 @@
-﻿function toggleContainers(c1, c2) {
+﻿function activeNavItem(id) {
+    document.querySelector(id).classList.add("active");
+}
+
+function toggleContainers(c1, c2) {
     if (c1.classList.contains("visible")) {
         c1.classList.remove("visible");
         c1.classList.add("invisible");
@@ -25,14 +29,15 @@ function getRandomColor() {
     return color;
 }
 
+Chart.defaults.font.size = 12;
+Chart.defaults.font.family = "Noto Sans SC";
 function createChart(canvas, res) {
     if (!res.labels || !res.data || !res.type) {
         window.Swal.fire({
             title: "错误",
             text: "初始化 chart 失败！",
             icon: "error",
-            backdrop: false,
-            buttonStyling: false
+            backdrop: false
         });
 
         return;
@@ -43,8 +48,7 @@ function createChart(canvas, res) {
             title: "错误",
             text: `chart(${res.title}) 的 X Y 轴数量不一致`,
             icon: "error",
-            backdrop: false,
-            buttonStyling: false
+            backdrop: false
         });
 
         return;
@@ -100,8 +104,7 @@ function forceReloadBlogData() {
                             title: "通知",
                             text: "博客缓存清楚成功。",
                             icon: "success",
-                            backdrop: false,
-                            buttonStyling: false
+                            backdrop: false
                         });
                     }
                 });
@@ -156,8 +159,7 @@ function submitRequest(url, option) {
                     title: "错误",
                     text: result.message,
                     icon: "error",
-                    backdrop: false,
-                    buttonStyling: false
+                    backdrop: false
                 });
             } else {
                 if (result.redirectTo) {
@@ -178,8 +180,7 @@ function submitRequest(url, option) {
                 title: "错误",
                 text: error,
                 icon: "error",
-                backdrop: false,
-                buttonStyling: false
+                backdrop: false
             });
 
             formPostAction();
@@ -199,7 +200,8 @@ function persistent(user) {
         icon: "info",
         showCancelButton: true,
         cancelButtonText: "取消",
-        confirmButtonText: "确定"
+        confirmButtonText: "确定",
+        buttonsStyling: false
     }).then((result) => {
         if (result.isConfirmed) {
             submitRequest("/persistent",
@@ -211,8 +213,7 @@ function persistent(user) {
                             title: "通知",
                             text: "数据库持久化成功。",
                             icon: "success",
-                            backdrop: false,
-                            buttonStyling: false
+                            backdrop: false
                         });
                     }
                 });
@@ -263,8 +264,7 @@ function prepareEditor(textArea, u) {
                 title: "图片上传错误",
                 text: err,
                 icon: "error",
-                backdrop: false,
-                buttonStyling: false
+                backdrop: false
             });
         },
         renderingConfig: {

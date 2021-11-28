@@ -30,6 +30,11 @@ public class BlogController : Controller
         _blogSiteHttpClient = blogSiteHttpClient;
     }
 
+    public IActionResult Index()
+    {
+        return View();
+    }
+
     [HttpPost]
     [Route("cache/reload")]
     public async Task<IActionResult> ReloadAsync()
@@ -185,22 +190,26 @@ public class BlogController : Controller
     }
 
     [HttpPut("posts/{postLink}")]
-    public async Task<IActionResult> UpdatePost([FromForm] BlogPost post, [FromRoute] string postLink)
+    public async Task<ApiResponse<object>> UpdatePost([FromForm] BlogPost post, [FromRoute] string postLink)
     {
-        post.ContainsMath = Request.Form["containsMath"] == "on";
-        post.IsPublished = Request.Form["isPublished"] == "on";
-        post.IsTopping = Request.Form["isTopping"] == "on";
-        var result = await _apiSiteHttpClient.UpdatePostAsync(post, postLink);
-        return Redirect(result.GetFullPath(_options.BlogRemoteEndpoint));
-    }
+        var response = new ApiResponse<object>();
+        try
+        {
+            post.ContainsMath = Request.Form["containsMath"] == "on";
+            post.IsPublished = Request.Form["isPublished"] == "on";
+            post.IsTopping = Request.Form["isTopping"] == "on";
+            var result = await _apiSiteHttpClient.UpdatePostAsync(post, postLink);
+            response.RedirectTo = result.GetFullPath(_options.BlogRemoteEndpoint);
+        }
+        catch (Exception ex)
+        {
+            response.IsOk = false;
+            response.Message = ex.Message;
+            _logger.LogError(ex, $"Update post({postLink}) failed: {JsonUtil.Serialize(post)}");
+        }
 
-    //[Route("posts/{link}")]
-    //public async Task<BlogPostRuntime> GetPostAsync([FromRoute] string link)
-    //{
-    //    var response = new ApiResponse<BlogPostRuntime>();
-    //    var post = await _apiSiteHttpClient.GetPostAsync(link);
-    //    return post;
-    //}
+        return response;
+    }
 
     [Route("tags")]
     public async Task<IActionResult> GetTagsAsync()

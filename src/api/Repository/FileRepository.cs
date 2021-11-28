@@ -93,7 +93,7 @@ public class FileRepository : IFileRepository
             cancellationToken);
     }
 
-    public async Task UpdateBlogPostAsync(BlogPost blogPost, CancellationToken cancellationToken = default)
+    public async Task UpdateBlogPostAsync(BlogPost blogPost,  CancellationToken cancellationToken = default)
     {
         if (blogPost == null)
         {

@@ -1,5 +1,6 @@
 ﻿@model IEnumerable<BlogTag>
 @{
+    Layout = "_BlogLayout";
     ViewData["Title"] = "添加新的文章";
 }
 
@@ -73,6 +74,7 @@
 
 @section Scripts{
     <script>
+        activeNavItem("#nav_blog_posts");
         const mdContentEditor = prepareEditor(document.querySelector("#mdContent"), "blog_post_add_md_content_@DateTime.Now.Ticks");
         const excerptEditor = prepareEditor(document.querySelector("#excerpt"), "blog_post_add_excerpt_@DateTime.Now.Ticks");
         const form = document.querySelector("form");
