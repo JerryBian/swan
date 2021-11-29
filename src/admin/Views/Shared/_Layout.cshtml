@@ -79,13 +79,8 @@
 </nav>
 <main class="container p-2 my-3 visible" id="main1">
     <div class="row">
-        <div class="col-lg-3">
-            <nav class="navbar navbar-light bg-light mb-3">
-                <div class="container-fluid">
-                    @await RenderSectionAsync("navbar", false)
-                </div>
-
-            </nav>
+        <div class="col-lg-3 mb-3">
+            @await RenderSectionAsync("navbar", false)
         </div>
         <div class="col-lg-9">@RenderBody()</div>
     </div>

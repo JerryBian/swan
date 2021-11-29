@@ -61,10 +61,17 @@
         </div>
     </div>
     <div class="d-grid">
-        <button class="btn btn-info btn-lg px-5" onclick="loadLogs()">加载</button>
+        <button class="btn btn-success btn-lg px-5" onclick="loadLogs()" id="reloadBtn">加载</button>
     </div>
 </div>
 <div class="list-group text-break" id="log_panel"></div>
+
+@section navbar
+{
+    <div>
+        <canvas id="logStats"></canvas>
+    </div>
+}
 
 @section Scripts{
     <script>
@@ -72,19 +79,51 @@
             const site = document.querySelector('input[name="site"]:checked').value;
             const minLevel = document.querySelector('input[name="minLevel"]:checked').value;
             const dateRange = document.querySelector('input[name="dateRange"]:checked').value;
+            const logPanel = document.querySelector("#log_panel");
+            const reloadBtn = document.querySelector("#reloadBtn");
 
-            toggleSpinner();
-            fetch(`/log?site=${site}&minLevel=${minLevel}&days=${dateRange}`,
-                    {
-                        method: 'POST'
-                    })
-                .then(response => response.text())
-                .then(x => {
-                    document.querySelector("#log_panel").innerHTML = x;
-                    toggleSpinner();
+            submitRequest(`/log?site=${site}&minLevel=${minLevel}&days=${dateRange}`,
+                {
+                    preAction: function() {
+                        logPanel.innerHTML = "";
+                        reloadBtn.disabled = true;
+                    },
+                    postAction: function() {
+                        reloadBtn.disabled = false;
+                    },
+                    okAction: function(logs) {
+                        let panelHtml = "";
+                        logs.forEach(function(log) {
+                            let bdClass = "";
+                            if (log.l === 3) {
+                                bdClass = "border-warning";
+                            } else if (log.l === 4) {
+                                bdClass = "border-danger";
+                            }
+                            panelHtml += `<div class='card mb-2 ${bdClass}'>`;
+                            panelHtml += `<h5 class='card-header'>${log.n}</h5>`;
+                            panelHtml += "<div class='card-body'>";
+                            panelHtml += `<p class="card-text">${log.m}</p>`;
+                            if (log.e) {
+                                const id = makeid(7);
+                                panelHtml += `<div class="d-grid"><button class="btn btn-danger" type="button" data-bs-toggle="collapse" data-bs-target="#${id}" aria-expanded="false" aria-controls="${id}">Toggle Exception Details</button></div>`;
+                                panelHtml += `<div class="collapse" id="${id}"><pre>${log.e}</pre></div>`;
+                            }
+
+                            panelHtml += "</div></div>";
+                        });
+
+                        logPanel.innerHTML = panelHtml;
+                    }
                 });
         }
 
         loadLogs();
+        submitRequest("/log/stats",
+            {
+                okAction: function(chart) {
+                    createChart(document.querySelector("#logStats"), chart);
+                }
+            });
     </script>
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Laobian.Api.Repository;
 using Laobian.Share.Logger;
@@ -53,7 +54,7 @@ public class LogController : ControllerBase
     [Route("{site}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetLogs([FromRoute] string site, [FromQuery] int days)
+    public async Task<IActionResult> GetLogs([FromRoute] string site, [FromQuery] int days, [FromQuery] int minLevel)
     {
         try
         {
@@ -62,13 +63,14 @@ public class LogController : ControllerBase
             {
                 if (laobianSite == LaobianSite.All)
                 {
-                    logs.AddRange(await ReadLogsAsync(LaobianSite.Admin, days));
-                    logs.AddRange(await ReadLogsAsync(LaobianSite.Blog, days));
-                    logs.AddRange(await ReadLogsAsync(LaobianSite.Api, days));
+                    logs.AddRange(await ReadLogsAsync(LaobianSite.Admin, days, minLevel));
+                    logs.AddRange(await ReadLogsAsync(LaobianSite.Blog, days, minLevel));
+                    logs.AddRange(await ReadLogsAsync(LaobianSite.Api, days, minLevel));
+                    logs.AddRange(await ReadLogsAsync(LaobianSite.Jarvis, days, minLevel));
                 }
                 else
                 {
-                    logs.AddRange(await ReadLogsAsync(laobianSite, days));
+                    logs.AddRange(await ReadLogsAsync(laobianSite, days, minLevel));
                 }
             }
 
@@ -81,13 +83,14 @@ public class LogController : ControllerBase
         }
     }
 
-    private async Task<List<LaobianLog>> ReadLogsAsync(LaobianSite site, int days)
+    private async Task<List<LaobianLog>> ReadLogsAsync(LaobianSite site, int days, int minLevel)
     {
         var result = new List<LaobianLog>();
         for (var i = 0; i <= days; i++)
         {
             var date = DateTime.Now.AddDays(-i);
-            result.AddRange(await _fileRepository.GetLogsAsync(site, date));
+            var logs = await _fileRepository.GetLogsAsync(site, date);
+            result.AddRange(logs.Where(x => (int)x.Level >= minLevel));
         }
 
         return result;

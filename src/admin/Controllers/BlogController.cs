@@ -129,7 +129,7 @@ public class BlogController : Controller
             foreach (var item in access)
             {
                 chartResponse.Data.Add(item.Count());
-                chartResponse.Labels.Add(item.Key.ToChinaDate());
+                chartResponse.Labels.Add(item.Key.ToRelativeDaysHuman());
             }
 
             response.Content = chartResponse;

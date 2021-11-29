@@ -190,9 +190,9 @@ public class ApiSiteHttpClient
         }
     }
 
-    public async Task<List<LaobianLog>> GetLogsAsync(string site, int days)
+    public async Task<List<LaobianLog>> GetLogsAsync(string site, int days, int minLevel)
     {
-        var response = await _httpClient.GetAsync($"/log/{site}?days={days}");
+        var response = await _httpClient.GetAsync($"/log/{site}?days={days}&minLevel={minLevel}");
         if (response.StatusCode != HttpStatusCode.OK)
         {
             _logger.LogError(

@@ -20,6 +20,17 @@ function toggleContainers(c1, c2) {
     }
 }
 
+function makeid(length) {
+    var result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() *
+            charactersLength));
+    }
+    return result;
+}
+
 function getRandomColor() {
     const letters = '0123456789ABCDEF';
     let color = '#';

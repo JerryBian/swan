@@ -4,6 +4,28 @@ namespace Laobian.Share.Extension;
 
 public static class DateTimeExtension
 {
+    public static string ToRelativeDaysHuman(this DateTime time)
+    {
+        var now = DateTime.Now;
+        if (time.Date == now.Date)
+        {
+            return "今天";
+        }
+
+        var diff = (now.Date - time.Date).TotalDays;
+        if (diff > 0)
+        {
+            return $"{diff}天前";
+        }
+
+        if (diff < 0)
+        {
+            return $"{diff}天后";
+        }
+
+        return string.Empty;
+    }
+
     public static string ToDateAndTime(this DateTime time)
     {
         return time.ToString("yyyy-MM-ddTHH:mm:ss");
