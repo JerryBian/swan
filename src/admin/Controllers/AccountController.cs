@@ -34,7 +34,7 @@ public class AccountController : Controller
 
     [HttpPost]
     [Route("/login")]
-    public async Task<IActionResult> Login(string userName, string password, string returnUrl = null)
+    public async Task<IActionResult> Login([FromForm]string userName, [FromForm]string password, [FromQuery]string returnUrl = null)
     {
         if (userName == _adminOptions.AdminUserName && password == _adminOptions.AdminPassword)
         {
