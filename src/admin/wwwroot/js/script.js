@@ -189,19 +189,6 @@ function persistent(user) {
     });
 }
 
-function preventFormsSubmit() {
-    const forms = document.querySelectorAll('form');
-    Array.prototype.slice.call(forms)
-        .forEach(function (form) {
-            form.addEventListener('submit',
-                function (event) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                },
-                false);
-        });
-}
-
 function prepareEditor(textArea, u) {
     const editor = new EasyMDE({
         element: textArea,

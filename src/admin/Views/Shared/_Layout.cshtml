@@ -99,12 +99,6 @@
     &copy; @DateTime.Now.Year
 </footer>
 <script src="/dist/script.min.js" asp-append-version="true"></script>
-<script>
-    document.addEventListener("DOMContentLoaded",
-        function() {
-            preventFormsSubmit();
-        });
-</script>
 @await RenderSectionAsync("Scripts", false)
 </body>
 </html>

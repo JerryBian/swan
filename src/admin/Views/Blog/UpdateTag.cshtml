@@ -34,7 +34,9 @@
         activeNavItem("#nav_blog_tags");
         const form = document.querySelector("form");
         form.addEventListener('submit',
-            function(e) {
+            function(event) {
+                event.preventDefault();
+                event.stopPropagation();
                 submitRequest("/blog/tags/@Model.Id", { form: form, body: new URLSearchParams(new FormData(form)), contentType: "application/x-www-form-urlencoded", method: "PUT" });
             });
     </script>

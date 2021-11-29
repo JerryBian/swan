@@ -102,7 +102,9 @@
         const excerptEditor = prepareEditor(document.querySelector("#excerpt"), "blog_post_update_excerpt_@Model.Post.Link");
         const form = document.querySelector("form");
         form.addEventListener('submit',
-            function(e) {
+            function(event) {
+                event.preventDefault();
+                event.stopPropagation();
                 submitRequest("/blog/posts/@Model.Post.Link", { form: form, body: new URLSearchParams(new FormData(form)), contentType: "application/x-www-form-urlencoded", method: "PUT" });
             });
     </script>
