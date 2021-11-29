@@ -22,7 +22,7 @@ public interface IFileRepository
 
     Task AddBlogPostAsync(BlogPost blogPost, CancellationToken cancellationToken = default);
 
-    Task UpdateBlogPostAsync(BlogPost blogPost, CancellationToken cancellationToken = default);
+    Task UpdateBlogPostAsync(BlogPost blogPost, string replacedPostLink, CancellationToken cancellationToken = default);
 
     Task DeleteBlogPostAsync(string postLink, CancellationToken cancellationToken = default);
 

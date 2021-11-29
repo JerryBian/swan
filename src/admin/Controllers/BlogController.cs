@@ -37,10 +37,21 @@ public class BlogController : Controller
 
     [HttpPost]
     [Route("cache/reload")]
-    public async Task<IActionResult> ReloadAsync()
+    public async Task<ApiResponse<object>> ReloadAsync()
     {
-        await _blogSiteHttpClient.ReloadBlogDataAsync();
-        return Ok();
+        var response = new ApiResponse<object>();
+        try
+        {
+            await _blogSiteHttpClient.ReloadBlogDataAsync();
+        }
+        catch (Exception ex)
+        {
+            response.IsOk = false;
+            response.Message = ex.Message;
+            _logger.LogError(ex, "Reload blog cache failed.");
+        }
+
+        return response;
     }
 
     [HttpPost("posts/stats/words-count")]
@@ -218,19 +229,23 @@ public class BlogController : Controller
         return View("Tags", tags.OrderByDescending(x => x.LastUpdatedAt));
     }
 
-    //[Route("tags/{id}")]
-    //public async Task<BlogTag> GetTagAsync([FromRoute] string id)
-    //{
-    //    var tag = await _apiSiteHttpClient.GetTagAsync(id);
-    //    return tag;
-    //}
-
     [HttpDelete]
     [Route("tags/{id}")]
-    public async Task<IActionResult> DeleteTagAsync([FromRoute] string id)
+    public async Task<ApiResponse<object>> DeleteTagAsync([FromRoute] string id)
     {
-        await _apiSiteHttpClient.DeleteTagAsync(id);
-        return Redirect("/blog/tags");
+        var response = new ApiResponse<object>();
+        try
+        {
+            await _apiSiteHttpClient.DeleteTagAsync(id);
+        }
+        catch (Exception ex)
+        {
+            response.IsOk = false;
+            response.Message = ex.Message;
+            _logger.LogError(ex, $"Delete blog tag {id} failed.");
+        }
+
+        return response;
     }
 
     [HttpGet("tags/add")]
@@ -270,11 +285,23 @@ public class BlogController : Controller
         return NotFound($"Tag with id \"{id}\" not found.");
     }
 
-    [HttpPost]
+    [HttpPut]
     [Route("tags/{id}")]
-    public async Task<IActionResult> UpdateTagAsync([FromForm] BlogTag tag, [FromRoute] string id)
+    public async Task<ApiResponse<object>> UpdateTagAsync([FromForm] BlogTag tag, [FromRoute] string id)
     {
-        await _apiSiteHttpClient.UpdateTagAsync(tag);
-        return Redirect("/blog/tags");
+        var response = new ApiResponse<object>();
+        try
+        {
+            await _apiSiteHttpClient.UpdateTagAsync(tag);
+            response.RedirectTo = "/blog/tags";
+        }
+        catch (Exception ex)
+        {
+            response.IsOk = false;
+            response.Message = ex.Message;
+            _logger.LogError(ex, $"Update tag failed. {JsonUtil.Serialize(tag)}");
+        }
+
+        return response;
     }
 }

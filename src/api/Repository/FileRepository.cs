@@ -93,7 +93,7 @@ public class FileRepository : IFileRepository
             cancellationToken);
     }
 
-    public async Task UpdateBlogPostAsync(BlogPost blogPost,  CancellationToken cancellationToken = default)
+    public async Task UpdateBlogPostAsync(BlogPost blogPost, string replacedPostLink,  CancellationToken cancellationToken = default)
     {
         if (blogPost == null)
         {
@@ -105,18 +105,35 @@ public class FileRepository : IFileRepository
             throw new Exception("Empty post link provided.");
         }
 
-        var existingData = await _fileSource.ReadBlogPostAsync(blogPost.Link, cancellationToken);
+        var existingData = await _fileSource.ReadBlogPostAsync(replacedPostLink, cancellationToken);
         if (existingData == null)
         {
-            throw new Exception($"Post with link \"{blogPost.Link}\" does not exists.");
+            throw new Exception($"Post with link \"{replacedPostLink}\" does not exists.");
         }
 
         var existingPost = JsonUtil.Deserialize<BlogPost>(existingData);
         blogPost.CreateTime = existingPost.CreateTime;
         blogPost.LastUpdateTime = DateTime.Now;
+
+        // The post link got changed
+        var postLinkChanged = !StringUtil.EqualsIgnoreCase(blogPost.Link, replacedPostLink);
+        if (postLinkChanged)
+        {
+            existingData = await _fileSource.ReadBlogPostAsync(blogPost.Link, cancellationToken);
+            if (existingData != null)
+            {
+                throw new Exception($"Post with link \"{blogPost.Link}\" already exists.");
+            }
+        }
         await _fileSource.WriteBlogPostAsync(blogPost.CreateTime.Year, blogPost.Link,
             JsonUtil.Serialize(blogPost),
             cancellationToken);
+
+        if (postLinkChanged)
+        {
+            await _fileSource.RenameBlogPostAccessAsync(blogPost.CreateTime.Year, replacedPostLink, blogPost.Link, cancellationToken);
+            await DeleteBlogPostAsync(replacedPostLink, cancellationToken);
+        }
     }
 
     public async Task DeleteBlogPostAsync(string postLink, CancellationToken cancellationToken = default)
@@ -228,13 +245,13 @@ public class FileRepository : IFileRepository
         }
 
         var tags = await GetBlogTagsAsync(cancellationToken);
-        var existingTag = tags.FirstOrDefault(x => StringUtil.EqualsIgnoreCase(x.Link, blogTag.Link));
+        var existingTag = tags.FirstOrDefault(x => StringUtil.EqualsIgnoreCase(x.Link, blogTag.Link) && x.Id != blogTag.Id);
         if (existingTag != null)
         {
             throw new Exception($"Tag with link \"{blogTag.Link}\" already exists.");
         }
 
-        existingTag = tags.FirstOrDefault(x => StringUtil.EqualsIgnoreCase(x.DisplayName, blogTag.DisplayName));
+        existingTag = tags.FirstOrDefault(x => StringUtil.EqualsIgnoreCase(x.DisplayName, blogTag.DisplayName) && x.Id != blogTag.Id);
         if (existingTag != null)
         {
             throw new Exception($"Tag with DisplayName \"{blogTag.DisplayName}\" already exists.");
@@ -249,6 +266,7 @@ public class FileRepository : IFileRepository
         existingTag.LastUpdatedAt = DateTime.Now;
         existingTag.Description = blogTag.Description;
         existingTag.DisplayName = blogTag.DisplayName;
+        existingTag.Link = blogTag.Link;
         await _fileSource.WriteBlogTagsAsync(JsonUtil.Serialize(tags), cancellationToken);
     }
 

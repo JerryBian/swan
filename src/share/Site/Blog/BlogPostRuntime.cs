@@ -76,9 +76,9 @@ public class BlogPostRuntime
 
         // assign tags
         Tags.Clear();
-        foreach (var tagLink in Raw.Tag)
+        foreach (var tagId in Raw.Tag)
         {
-            var tag = tags.FirstOrDefault(x => StringUtil.EqualsIgnoreCase(tagLink, x.Link));
+            var tag = tags.FirstOrDefault(x => StringUtil.EqualsIgnoreCase(tagId, x.Id));
             if (tag != null)
             {
                 Tags.Add(tag);

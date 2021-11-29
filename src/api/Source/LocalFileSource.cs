@@ -535,4 +535,31 @@ public class LocalFileSource : IFileSource
 
         await Task.CompletedTask;
     }
+
+    public async Task RenameBlogPostAccessAsync(int year, string oldPostLink, string newPostLink, CancellationToken cancellationToken = default)
+    {
+        FileLocker.WaitOne();
+        try
+        {
+            if (oldPostLink == newPostLink)
+            {
+                return;
+            }
+
+            var blogPostAccessSubFolder =
+                Path.Combine(_assetDbBlogFolder, Constants.AssetDbBlogAccessFolder, year.ToString("D4"));
+            Directory.CreateDirectory(blogPostAccessSubFolder);
+            var blogPostAccessFile = Path.Combine(blogPostAccessSubFolder, $"{oldPostLink}.json");
+            if (File.Exists(blogPostAccessFile))
+            {
+                File.Move(blogPostAccessFile, Path.Combine(blogPostAccessSubFolder, $"{newPostLink}.json"));
+            }
+            
+            await Task.CompletedTask;
+        }
+        finally
+        {
+            FileLocker.Set();
+        }
+    }
 }

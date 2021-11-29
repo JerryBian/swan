@@ -35,8 +35,7 @@ public abstract class SharedStartup
 
     protected IAsyncPolicy<HttpResponseMessage> GetHttpClientRetryPolicy()
     {
-        return HttpPolicyExtensions
-            .HandleTransientHttpError()
+        return Policy<HttpResponseMessage>.Handle<HttpRequestException>()
             .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2,
                 retryAttempt)));
     }

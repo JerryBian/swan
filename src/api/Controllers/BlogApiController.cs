@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Mime;
 using System.Threading.Tasks;
+using Laobian.Api.HttpClients;
 using Laobian.Api.Repository;
 using Laobian.Share.Site.Blog;
 using Laobian.Share.Util;
@@ -15,14 +16,16 @@ namespace Laobian.Api.Controllers;
 [Route("blog")]
 public class BlogApiController : ControllerBase
 {
+    private readonly BlogSiteHttpClient _blogSiteHttpClient;
     private readonly IFileRepository _fileRepository;
     private readonly ILogger<BlogApiController> _logger;
 
     public BlogApiController(IFileRepository fileRepository,
-        ILogger<BlogApiController> logger)
+        ILogger<BlogApiController> logger, BlogSiteHttpClient blogSiteHttpClient)
     {
         _logger = logger;
         _fileRepository = fileRepository;
+        _blogSiteHttpClient = blogSiteHttpClient;
     }
 
     [HttpGet]
@@ -108,6 +111,7 @@ public class BlogApiController : ControllerBase
         try
         {
             await _fileRepository.AddBlogPostAsync(post);
+            await _blogSiteHttpClient.ReloadBlogDataAsync();
             return Ok(post);
         }
         catch (Exception ex)
@@ -126,12 +130,8 @@ public class BlogApiController : ControllerBase
     {
         try
         {
-            await _fileRepository.UpdateBlogPostAsync(post);
-            if (!string.IsNullOrEmpty(replacedPostLink))
-            {
-                await _fileRepository.DeleteBlogPostAsync(replacedPostLink);
-            }
-
+            await _fileRepository.UpdateBlogPostAsync(post, replacedPostLink);
+            await _blogSiteHttpClient.ReloadBlogDataAsync();
             return Ok(post);
         }
         catch (Exception ex)
@@ -219,6 +219,7 @@ public class BlogApiController : ControllerBase
         try
         {
             await _fileRepository.AddBlogTagAsync(tag);
+            await _blogSiteHttpClient.ReloadBlogDataAsync();
             return Ok(tag);
         }
         catch (Exception ex)
@@ -237,6 +238,7 @@ public class BlogApiController : ControllerBase
         try
         {
             await _fileRepository.UpdateBlogTagAsync(tag);
+            await _blogSiteHttpClient.ReloadBlogDataAsync();
             return Ok(tag);
         }
         catch (Exception ex)
@@ -255,6 +257,16 @@ public class BlogApiController : ControllerBase
         try
         {
             await _fileRepository.DeleteBlogTagAsync(id);
+            var posts = await _fileRepository.GetBlogPostsAsync();
+            foreach (var blogPost in posts)
+            {
+                if (blogPost.Tag.Contains(id))
+                {
+                    blogPost.Tag.Remove(id);
+                    await _fileRepository.UpdateBlogPostAsync(blogPost, blogPost.Link);
+                }
+            }
+            await _blogSiteHttpClient.ReloadBlogDataAsync();
             return Ok();
         }
         catch (Exception ex)

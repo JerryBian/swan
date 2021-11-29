@@ -85,33 +85,6 @@ function createChart(canvas, res) {
     const chart = new window.Chart(canvas, config);
 }
 
-function forceReloadBlogData() {
-    window.Swal.fire({
-        title: "确认",
-        text: "要清除博客的缓存吗？",
-        icon: "info",
-        showCancelButton: true,
-        cancelButtonText: "取消",
-        confirmButtonText: "确定"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            submitRequest("/blog/cache/reload",
-                {
-                    contentType: "text/plain",
-                    body: "Request by Admin - Force Reload Blog Data button",
-                    postAction: function () {
-                        window.Swal.fire({
-                            title: "通知",
-                            text: "博客缓存清楚成功。",
-                            icon: "success",
-                            backdrop: false
-                        });
-                    }
-                });
-        }
-    });
-}
-
 function submitRequest(url, option) {
     if (option.form) {
         if (option.form.classList.contains("needs-validation")) {
@@ -161,6 +134,7 @@ function submitRequest(url, option) {
                     icon: "error",
                     backdrop: false
                 });
+                formPostAction();
             } else {
                 if (result.redirectTo) {
                     window.location.href = result.redirectTo;
@@ -171,8 +145,8 @@ function submitRequest(url, option) {
                 }
             }
 
-            formPostAction();
             if (option.postAction) {
+                formPostAction();
                 option.postAction();
             }
         }).catch(error => {
@@ -184,13 +158,7 @@ function submitRequest(url, option) {
             });
 
             formPostAction();
-            if (option.form) {
-                const fieldset = option.form.closest("fieldset");
-                if (fieldset) {
-                    fieldset.disabled = false;
-                }
-            }
-        });
+    });
 }
 
 function persistent(user) {

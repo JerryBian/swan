@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<BlogTag>
 @inject IOptions<AdminOptions> _config
 @{
+    Layout = "_BlogLayout";
     ViewData["Title"] = "所有的博客标签";
 }
 
@@ -21,7 +22,7 @@
                 <th>@tag.DisplayName</th>
                 <th>@tag.Link</th>
                 <th class="text-center">
-                    <a class="btn btn-info me-2" href="/blog/tag/@tag.Id/update"><i class="fas fa-edit"></i> 编辑</a>
+                    <a class="btn btn-info me-2" href="/blog/tags/@tag.Id/update"><i class="fas fa-edit"></i> 编辑</a>
                     <a class="btn btn-danger" href="javascript:;" onclick="deleteTag('@tag.Id')"><i class="fas fa-trash-alt"></i> 删除</a>
                 </th>
             </tr>
@@ -32,13 +33,16 @@
 
 @section Scripts {
     <script>
+        activeNavItem("#nav_blog_tags");
         function deleteTag(id) {
-            fetch(`/blog/tags/${id}`,
+            submitRequest(`/blog/tags/${id}`,
                 {
-                    method: "DELETE"
-                }).then(res => {
-                window.location.reload(true);
-            });
+                    method: "DELETE",
+                    contentType: "text/plain",
+                    postAction: function() {
+                        window.location.reload(true);
+                    }
+                });
         }
     </script>
 }

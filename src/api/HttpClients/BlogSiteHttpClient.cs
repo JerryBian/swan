@@ -24,7 +24,7 @@ public class BlogSiteHttpClient
 
     public async Task<bool> ReloadBlogDataAsync()
     {
-        var response = await _httpClient.PostAsync("/reload",
+        var response = await _httpClient.PostAsync("/api/cache/reload",
             new StringContent(string.Empty, Encoding.UTF8, MediaTypeNames.Text.Plain));
         if (response.StatusCode != HttpStatusCode.OK)
         {
