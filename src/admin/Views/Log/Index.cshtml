@@ -2,7 +2,14 @@
 @{
     ViewData["Title"] = "查看日志";
 }
-<div class="alert alert-light" role="alert">
+
+<div class="row">
+    <div class="col-lg-5 mb-3">
+        <div>
+            <canvas id="logStats"></canvas>
+        </div>
+    </div>
+    <div class="col-lg-7"><div class="alert alert-light" role="alert">
     <div class="mb-2">
         <span class="me-3 text-primary">Site: </span>
         <div class="form-check form-check-inline">
@@ -65,14 +72,8 @@
     </div>
 </div>
 <p class="text-muted small" id="log_summary"></p>
-<div class="list-group text-break" id="log_panel"></div>
-
-@section navbar
-{
-    <div>
-        <canvas id="logStats"></canvas>
-    </div>
-}
+<div class="list-group text-break" id="log_panel"></div></div>
+</div>
 
 @section Scripts{
     <script>
@@ -118,7 +119,7 @@
                             if (log.e) {
                                 const id = makeid(7);
                                 panelHtml += `<div class="d-grid"><button class="btn btn-danger" type="button" data-bs-toggle="collapse" data-bs-target="#${id}" aria-expanded="false" aria-controls="${id}">Toggle Exception Details</button></div>`;
-                                panelHtml += `<div class="collapse" id="${id}"><pre>${log.e}</pre></div>`;
+                                panelHtml += `<div class="collapse my-1" id="${id}"><pre>${log.e}</pre></div>`;
                             }
 
                             panelHtml += "</div></div>";

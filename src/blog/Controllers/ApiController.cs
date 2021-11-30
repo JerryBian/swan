@@ -1,11 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Laobian.Blog.Service;
-using Laobian.Share;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.Net.Http.Headers;
 
 namespace Laobian.Blog.Controllers;
 

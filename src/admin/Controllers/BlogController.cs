@@ -16,10 +16,10 @@ namespace Laobian.Admin.Controllers;
 [Route("blog")]
 public class BlogController : Controller
 {
-    private readonly AdminOptions _options;
     private readonly ApiSiteHttpClient _apiSiteHttpClient;
     private readonly BlogSiteHttpClient _blogSiteHttpClient;
     private readonly ILogger<BlogController> _logger;
+    private readonly AdminOptions _options;
 
     public BlogController(ApiSiteHttpClient apiSiteHttpClient, BlogSiteHttpClient blogSiteHttpClient,
         IOptions<AdminOptions> options, ILogger<BlogController> logger)
@@ -124,8 +124,9 @@ public class BlogController : Controller
         {
             var posts = await _apiSiteHttpClient.GetPostsAsync(true);
             var access = posts.SelectMany(x => x.Accesses)
-                .Where(x => x.Date >= DateTime.Now.AddDays(-days) && x.Date <= DateTime.Now).GroupBy(x => x.Date).OrderBy(x => x.Key);
-            var chartResponse = new ChartResponse { Title = "访问量", Type = "line" };
+                .Where(x => x.Date >= DateTime.Now.AddDays(-days) && x.Date <= DateTime.Now).GroupBy(x => x.Date)
+                .OrderBy(x => x.Key);
+            var chartResponse = new ChartResponse {Title = "访问量", Type = "line"};
             foreach (var item in access)
             {
                 chartResponse.Data.Add(item.Count());

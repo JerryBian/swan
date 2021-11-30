@@ -34,6 +34,7 @@
 @section Scripts {
     <script>
         activeNavItem("#nav_blog_tags");
+
         function deleteTag(id) {
             submitRequest(`/blog/tags/${id}`,
                 {

@@ -22,7 +22,8 @@ public interface IFileSource
     Task WriteBlogPostAccessAsync(int year, string postLink, string content,
         CancellationToken cancellationToken = default);
 
-    Task RenameBlogPostAccessAsync(int year, string oldPostLink, string newPostLink, CancellationToken cancellationToken = default);
+    Task RenameBlogPostAccessAsync(int year, string oldPostLink, string newPostLink,
+        CancellationToken cancellationToken = default);
 
     Task<string> ReadBlogTagsAsync(CancellationToken cancellationToken = default);
 

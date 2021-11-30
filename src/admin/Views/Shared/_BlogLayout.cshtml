@@ -2,30 +2,32 @@
     Layout = "_Layout";
 }
 
-<div>@RenderBody()</div>
-
-@section navbar
-{
-    <nav class="navbar navbar-light bg-light">
-        <div class="container-fluid">
-            <ul class="navbar-nav">
-                <li class="navbar-text">博客管理</li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/blog" id="nav_blog_index"><i class="fas fa-angle-right"></i> 首页</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/blog/posts" id="nav_blog_posts"><i class="fas fa-angle-right"></i> 文章</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/blog/tags" id="nav_blog_tags"><i class="fas fa-angle-right"></i> 标签</a>
-                </li>
-                <li class="nav-item ">
-                    <a class="nav-link text-warning" href="javascript:;" onclick="reloadBlogCache()"><i class="fas fa-angle-right"></i> 清除缓存</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-}
+<<div class="container">
+    <div class="row">
+    <div class="col-lg-2 mb-3">
+        <nav class="navbar navbar-light bg-light">
+            <div class="container-fluid">
+                <ul class="navbar-nav">
+                    <li class="navbar-text">博客管理</li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/blog" id="nav_blog_index"><i class="fas fa-angle-right"></i> 首页</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/blog/posts" id="nav_blog_posts"><i class="fas fa-angle-right"></i> 文章</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/blog/tags" id="nav_blog_tags"><i class="fas fa-angle-right"></i> 标签</a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link text-warning" href="javascript:;" onclick="reloadBlogCache()"><i class="fas fa-angle-right"></i> 清除缓存</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+    <div class="col-lg-10">@RenderBody()</div>
+</div>
+</div>
 
 @section Scripts
 {
@@ -46,7 +48,7 @@
                         {
                             contentType: "text/plain",
                             body: "Request by @(Context.User.Identity?.Name) - Force Reload Blog Data button",
-                            postAction: function () {
+                            postAction: function() {
                                 window.Swal.fire({
                                     title: "通知",
                                     text: "博客缓存清除成功。",

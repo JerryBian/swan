@@ -266,6 +266,7 @@ public class BlogApiController : ControllerBase
                     await _fileRepository.UpdateBlogPostAsync(blogPost, blogPost.Link);
                 }
             }
+
             await _blogSiteHttpClient.ReloadBlogDataAsync();
             return Ok();
         }

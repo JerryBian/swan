@@ -90,7 +90,7 @@ public class LogController : ControllerBase
         {
             var date = DateTime.Now.AddDays(-i);
             var logs = await _fileRepository.GetLogsAsync(site, date);
-            result.AddRange(logs.Where(x => (int)x.Level >= minLevel));
+            result.AddRange(logs.Where(x => (int) x.Level >= minLevel));
         }
 
         return result;

@@ -33,7 +33,7 @@
                     <a class="nav-link" href="/log" id="nav_log"><i class="fas fa-clipboard-list"></i> 日志</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/reads" id="nav_read"><i class="fas fa-book-open"></i> 阅读</a>
+                    <a class="nav-link" href="/read" id="nav_read"><i class="fas fa-book-open"></i> 阅读</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/blog" id="nav_blog"><i class="fas fa-feather-alt"></i> 博客</a>
@@ -50,7 +50,7 @@
                         <a class="dropdown-item" href="javascript:;" onclick="forceReloadBlogData()"><i class="fas fa-broom"></i> 清除缓存</a>
                     </div>
                 </li>*@
-                
+
                 @*<li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-sticky-note"></i> 笔记</a>
                     <div class="dropdown-menu">
@@ -77,18 +77,8 @@
         </div>
     </div>
 </nav>
-<main class="container p-2 my-3 visible" id="main1">
-    <div class="row">
-        <div class="col-lg-3 mb-3">
-            @await RenderSectionAsync("navbar", false)
-        </div>
-        <div class="col-lg-9">@RenderBody()</div>
-    </div>
-</main>
-<main class="d-flex align-items-center invisible" id="main2">
-    <div class="spinner-border" role="status">
-        <span class="visually-hidden">working...</span>
-    </div>
+<main class="container-fluid p-2 my-3">
+    @RenderBody()
 </main>
 <footer class="mt-auto text-center p-2">
     &copy; @DateTime.Now.Year

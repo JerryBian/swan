@@ -93,7 +93,8 @@ public class FileRepository : IFileRepository
             cancellationToken);
     }
 
-    public async Task UpdateBlogPostAsync(BlogPost blogPost, string replacedPostLink,  CancellationToken cancellationToken = default)
+    public async Task UpdateBlogPostAsync(BlogPost blogPost, string replacedPostLink,
+        CancellationToken cancellationToken = default)
     {
         if (blogPost == null)
         {
@@ -125,13 +126,15 @@ public class FileRepository : IFileRepository
                 throw new Exception($"Post with link \"{blogPost.Link}\" already exists.");
             }
         }
+
         await _fileSource.WriteBlogPostAsync(blogPost.CreateTime.Year, blogPost.Link,
             JsonUtil.Serialize(blogPost),
             cancellationToken);
 
         if (postLinkChanged)
         {
-            await _fileSource.RenameBlogPostAccessAsync(blogPost.CreateTime.Year, replacedPostLink, blogPost.Link, cancellationToken);
+            await _fileSource.RenameBlogPostAccessAsync(blogPost.CreateTime.Year, replacedPostLink, blogPost.Link,
+                cancellationToken);
             await DeleteBlogPostAsync(replacedPostLink, cancellationToken);
         }
     }
@@ -245,13 +248,15 @@ public class FileRepository : IFileRepository
         }
 
         var tags = await GetBlogTagsAsync(cancellationToken);
-        var existingTag = tags.FirstOrDefault(x => StringUtil.EqualsIgnoreCase(x.Link, blogTag.Link) && x.Id != blogTag.Id);
+        var existingTag =
+            tags.FirstOrDefault(x => StringUtil.EqualsIgnoreCase(x.Link, blogTag.Link) && x.Id != blogTag.Id);
         if (existingTag != null)
         {
             throw new Exception($"Tag with link \"{blogTag.Link}\" already exists.");
         }
 
-        existingTag = tags.FirstOrDefault(x => StringUtil.EqualsIgnoreCase(x.DisplayName, blogTag.DisplayName) && x.Id != blogTag.Id);
+        existingTag = tags.FirstOrDefault(x =>
+            StringUtil.EqualsIgnoreCase(x.DisplayName, blogTag.DisplayName) && x.Id != blogTag.Id);
         if (existingTag != null)
         {
             throw new Exception($"Tag with DisplayName \"{blogTag.DisplayName}\" already exists.");

@@ -1,8 +1,11 @@
 ﻿@{
     ViewData["Title"] = "添加新的阅读";
 }
-<h3>新阅读</h3>
-<form class="needs-validation" action="/read/add" method="post" novalidate>
+
+<div class="container">
+    <fieldset>
+        <legend>添加新的阅读</legend>
+        <form class="needs-validation" novalidate>
     <div class="mb-3">
         <label for="bookName" class="form-label">书籍名称</label>
         <input type="text" class="form-control" id="bookName" name="bookName" placeholder="书籍名称" autocomplete="off" autofocus required>
@@ -68,12 +71,20 @@
     </div>
     <div class="d-grid">
         <button type="submit" class="btn btn-primary btn-lg">提交</button>
-    </div>
-
-</form>
+    </div></form>
+    </fieldset>
+</div>
 
 @section Scripts {
     <script>
+        activeNavItem("#nav_read");
         const shortCommentEditor = prepareEditor(document.querySelector("#shortComment"), "read_add_short_comment");
+        const form = document.querySelector("form");
+        form.addEventListener('submit',
+            function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                submitRequest("/read", { form: form, body: new URLSearchParams(new FormData(form)), contentType: "application/x-www-form-urlencoded" });
+            });
     </script>
 }

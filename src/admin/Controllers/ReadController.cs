@@ -1,17 +1,23 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Laobian.Admin.HttpClients;
+using Laobian.Share;
 using Laobian.Share.Site.Read;
+using Laobian.Share.Util;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Laobian.Admin.Controllers;
 
 [Route("read")]
 public class ReadController : Controller
 {
+    private readonly ILogger<ReadController> _logger;
     private readonly ApiSiteHttpClient _apiSiteHttpClient;
 
-    public ReadController(ApiSiteHttpClient apiSiteHttpClient)
+    public ReadController(ApiSiteHttpClient apiSiteHttpClient, ILogger<ReadController> logger)
     {
+        _logger = logger;
         _apiSiteHttpClient = apiSiteHttpClient;
     }
 
@@ -34,35 +40,76 @@ public class ReadController : Controller
         return View();
     }
 
-    [HttpPost("add")]
-    public async Task<IActionResult> Add([FromForm] BookItem bookItem)
+    [HttpPost]
+    public async Task<ApiResponse<object>> Add([FromForm] BookItem bookItem)
     {
-        bookItem.IsCompleted = Request.Form["isCompleted"] == "on";
-        bookItem.IsPublished = Request.Form["isPublished"] == "on";
-        await _apiSiteHttpClient.AddBookItemAsync(bookItem);
-        return Redirect("/read");
+        var response = new ApiResponse<object>();
+        try
+        {
+            bookItem.IsCompleted = Request.Form["isCompleted"] == "on";
+            bookItem.IsPublished = Request.Form["isPublished"] == "on";
+            await _apiSiteHttpClient.AddBookItemAsync(bookItem);
+            response.RedirectTo = "/read";
+        }
+        catch (Exception ex)
+        {
+            response.IsOk = false;
+            response.Message = ex.Message;
+            _logger.LogError(ex, $"Add new read failed. {JsonUtil.Serialize(bookItem)}");
+        }
+
+        return response;
     }
 
-    [HttpGet("update/{id}")]
+    [HttpGet("{id}/update")]
     public async Task<IActionResult> Update([FromRoute] string id)
     {
         var bookItem = await _apiSiteHttpClient.GetReadItemAsync(id);
+        if (bookItem == null)
+        {
+            return NotFound();
+        }
+
         return View(bookItem);
     }
 
     [HttpPost("update")]
-    public async Task<IActionResult> Update([FromForm] BookItem bookItem)
+    public async Task<ApiResponse<object>> Update([FromForm] BookItem bookItem)
     {
-        bookItem.IsCompleted = Request.Form["isCompleted"] == "on";
-        bookItem.IsPublished = Request.Form["isPublished"] == "on";
-        await _apiSiteHttpClient.UpdateBookItemAsync(bookItem);
-        return Redirect("/read");
+        var response = new ApiResponse<object>();
+        try
+        {
+            bookItem.IsCompleted = Request.Form["isCompleted"] == "on";
+            bookItem.IsPublished = Request.Form["isPublished"] == "on";
+            await _apiSiteHttpClient.UpdateBookItemAsync(bookItem);
+            response.RedirectTo = "/read";
+        }
+        catch (Exception ex)
+        {
+            response.IsOk = false;
+            response.Message = ex.Message;
+            _logger.LogError(ex, $"Update read failed. {JsonUtil.Serialize(bookItem)}");
+        }
+
+        return response;
     }
 
     [HttpDelete]
     [Route("{id}")]
-    public async Task Delete([FromRoute] string id)
+    public async Task<ApiResponse<object>> Delete([FromRoute] string id)
     {
-        await _apiSiteHttpClient.DeleteBookItemAsync(id);
+        var response = new ApiResponse<object>();
+        try
+        {
+            await _apiSiteHttpClient.DeleteBookItemAsync(id);
+        }
+        catch (Exception ex)
+        {
+            response.IsOk = false;
+            response.Message = ex.Message;
+            _logger.LogError(ex, $"Delete read {id} failed.");
+        }
+
+        return response;
     }
 }

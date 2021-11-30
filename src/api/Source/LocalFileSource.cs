@@ -536,7 +536,8 @@ public class LocalFileSource : IFileSource
         await Task.CompletedTask;
     }
 
-    public async Task RenameBlogPostAccessAsync(int year, string oldPostLink, string newPostLink, CancellationToken cancellationToken = default)
+    public async Task RenameBlogPostAccessAsync(int year, string oldPostLink, string newPostLink,
+        CancellationToken cancellationToken = default)
     {
         FileLocker.WaitOne();
         try
@@ -554,7 +555,7 @@ public class LocalFileSource : IFileSource
             {
                 File.Move(blogPostAccessFile, Path.Combine(blogPostAccessSubFolder, $"{newPostLink}.json"));
             }
-            
+
             await Task.CompletedTask;
         }
         finally

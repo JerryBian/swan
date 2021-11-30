@@ -34,11 +34,15 @@
             function(event) {
                 event.preventDefault();
                 event.stopPropagation();
-                submitRequest("/blog/tags", { form: form, body: JSON.stringify({
-                    displayName: document.querySelector("#displayName").value,
-                    link: document.querySelector("#link").value,
-                    description: document.querySelector("#description").value
-                }) });
+                submitRequest("/blog/tags",
+                    {
+                        form: form,
+                        body: JSON.stringify({
+                            displayName: document.querySelector("#displayName").value,
+                            link: document.querySelector("#link").value,
+                            description: document.querySelector("#description").value
+                        })
+                    });
             });
     </script>
 }

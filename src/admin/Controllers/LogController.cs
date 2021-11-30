@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Laobian.Admin.HttpClients;
 using Laobian.Share;
 using Laobian.Share.Extension;
 using Laobian.Share.Logger;
-using Laobian.Share.Util;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -16,8 +14,8 @@ namespace Laobian.Admin.Controllers;
 [Route("log")]
 public class LogController : Controller
 {
-    private readonly ILogger<LogController> _logger;
     private readonly ApiSiteHttpClient _apiSiteHttpClient;
+    private readonly ILogger<LogController> _logger;
 
     public LogController(ApiSiteHttpClient apiSiteHttpClient, ILogger<LogController> logger)
     {
@@ -74,7 +72,7 @@ public class LogController : Controller
         {
             response.IsOk = false;
             response.Message = ex.Message;
-            _logger.LogError(ex, $"Get logs stats failed.");
+            _logger.LogError(ex, "Get logs stats failed.");
         }
 
         return response;
