@@ -112,8 +112,8 @@
                                 bdClass = "border-danger";
                                 errorNum++;
                             }
-                            panelHtml += `<div class='card mb-2 ${bdClass}'>`;
-                            panelHtml += `<h5 class='card-header'>${log.n}</h5>`;
+                            panelHtml += `<div class='card mb-3 ${bdClass}'>`;
+                            panelHtml += `<h5 class='card-header'>${log.n}<span class='float-end text-muted small'>${log.t}</span></h5>`;
                             panelHtml += "<div class='card-body'>";
                             panelHtml += `<p class="card-text">${log.m}</p>`;
                             if (log.e) {
