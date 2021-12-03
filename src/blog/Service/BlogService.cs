@@ -13,7 +13,7 @@ namespace Laobian.Blog.Service;
 
 public class BlogService : IBlogService
 {
-    private readonly List<BookItem> _allBookItems;
+    private readonly List<ReadItem> _allBookItems;
     private readonly List<BlogPostRuntime> _allPosts;
     private readonly List<BlogTag> _allTags;
     private readonly ApiSiteHttpClient _httpClient;
@@ -28,7 +28,7 @@ public class BlogService : IBlogService
         BootTime = DateTime.Now;
         _httpClient = httpClient;
         _allTags = new List<BlogTag>();
-        _allBookItems = new List<BookItem>();
+        _allBookItems = new List<ReadItem>();
         _allPosts = new List<BlogPostRuntime>();
         _postAccessQueue = new ConcurrentQueue<string>();
         _reloadLock = new ManualResetEventSlim(true);
@@ -48,7 +48,7 @@ public class BlogService : IBlogService
         return _allTags;
     }
 
-    public List<BookItem> GetBookItems()
+    public List<ReadItem> GetBookItems()
     {
         _reloadLock.Wait();
         return _allBookItems;

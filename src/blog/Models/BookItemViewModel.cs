@@ -11,5 +11,5 @@ public class BookItemViewModel
 
     public string Id { get; set; }
 
-    public List<BookItem> Items { get; } = new();
+    public List<ReadItem> Items { get; } = new();
 }

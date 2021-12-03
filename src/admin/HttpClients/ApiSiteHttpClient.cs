@@ -204,7 +204,7 @@ public class ApiSiteHttpClient
         return await JsonUtil.DeserializeAsync<List<LaobianLog>>(stream);
     }
 
-    public async Task<List<BookItem>> GetReadItemsAsync()
+    public async Task<List<ReadItem>> GetReadItemsAsync()
     {
         var response = await _httpClient.GetAsync("/read");
         if (response.StatusCode != HttpStatusCode.OK)
@@ -215,10 +215,10 @@ public class ApiSiteHttpClient
         }
 
         await using var stream = await response.Content.ReadAsStreamAsync();
-        return await JsonUtil.DeserializeAsync<List<BookItem>>(stream);
+        return await JsonUtil.DeserializeAsync<List<ReadItem>>(stream);
     }
 
-    public async Task<BookItem> GetReadItemAsync(string id)
+    public async Task<ReadItem> GetReadItemAsync(string id)
     {
         var response = await _httpClient.GetAsync($"/read/{id}");
         if (response.StatusCode != HttpStatusCode.OK)
@@ -229,32 +229,38 @@ public class ApiSiteHttpClient
         }
 
         await using var stream = await response.Content.ReadAsStreamAsync();
-        return await JsonUtil.DeserializeAsync<BookItem>(stream);
+        return await JsonUtil.DeserializeAsync<ReadItem>(stream);
     }
 
-    public async Task AddBookItemAsync(BookItem bookItem)
-    {
-        var response = await _httpClient.PutAsync("/read",
-            new StringContent(JsonUtil.Serialize(bookItem), Encoding.UTF8, MediaTypeNames.Application.Json));
-        if (response.StatusCode != HttpStatusCode.OK)
-        {
-            Console.WriteLine(
-                $"{nameof(ApiSiteHttpClient)}.{nameof(AddBookItemAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
-        }
-    }
-
-    public async Task UpdateBookItemAsync(BookItem bookItem)
+    public async Task<ReadItem> AddReadItemAsync(ReadItem readItem)
     {
         var response = await _httpClient.PostAsync("/read",
-            new StringContent(JsonUtil.Serialize(bookItem), Encoding.UTF8, MediaTypeNames.Application.Json));
+            new StringContent(JsonUtil.Serialize(readItem), Encoding.UTF8, MediaTypeNames.Application.Json));
         if (response.StatusCode != HttpStatusCode.OK)
         {
             Console.WriteLine(
-                $"{nameof(ApiSiteHttpClient)}.{nameof(UpdateBookItemAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+                $"{nameof(ApiSiteHttpClient)}.{nameof(AddReadItemAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
         }
+
+        await using var stream = await response.Content.ReadAsStreamAsync();
+        return await JsonUtil.DeserializeAsync<ReadItem>(stream);
     }
 
-    public async Task DeleteBookItemAsync(string id)
+    public async Task<ReadItem> UpdateReadItemAsync(ReadItem readItem)
+    {
+        var response = await _httpClient.PutAsync("/read",
+            new StringContent(JsonUtil.Serialize(readItem), Encoding.UTF8, MediaTypeNames.Application.Json));
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            Console.WriteLine(
+                $"{nameof(ApiSiteHttpClient)}.{nameof(UpdateReadItemAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+        }
+
+        await using var stream = await response.Content.ReadAsStreamAsync();
+        return await JsonUtil.DeserializeAsync<ReadItem>(stream);
+    }
+
+    public async Task DeleteReadItemAsync(string id)
     {
         var response = await _httpClient.DeleteAsync($"/read/{id}");
         var content = await response.Content.ReadAsStringAsync();

@@ -2,8 +2,10 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Laobian.Api.Repository;
+using Laobian.Share;
 using Laobian.Share.Site.Read;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 
 namespace Laobian.Api.Controllers;
 
@@ -19,17 +21,20 @@ public class ReadApiController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<BookItem>>> GetAll()
+    public async Task<ActionResult<List<ReadItem>>> GetAll()
     {
-        var readItems = await _fileRepository.GetBookItemsAsync();
+        var readItems = await _fileRepository.GetReadItemsAsync();
         return Ok(readItems);
     }
 
     [HttpGet]
     [Route("{id}")]
-    public async Task<ActionResult<BookItem>> Get([FromRoute] string id)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+    [ProducesDefaultResponseType]
+    public async Task<ActionResult<ReadItem>> Get([FromRoute] string id)
     {
-        var readItems = await _fileRepository.GetBookItemsAsync();
+        var readItems = await _fileRepository.GetReadItemsAsync();
         var result = readItems.FirstOrDefault(x => x.Id == id);
         if (result == null)
         {
@@ -39,25 +44,25 @@ public class ReadApiController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPut]
-    public async Task<IActionResult> Add(BookItem bookItem)
+    [HttpPost]
+    public async Task<ActionResult<ReadItem>> Add(ReadItem readItem)
     {
-        await _fileRepository.AddBookItemAsync(bookItem);
-        return Ok();
+        await _fileRepository.AddReadItemAsync(readItem);
+        return Ok(readItem);
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Update(BookItem bookItem)
+    [HttpPut]
+    public async Task<ActionResult<ReadItem>> Update(ReadItem readItem)
     {
-        await _fileRepository.UpdateBookItemAsync(bookItem);
-        return Ok();
+        await _fileRepository.UpdateReadItemAsync(readItem);
+        return Ok(readItem);
     }
 
     [HttpDelete]
     [Route("{id}")]
     public async Task<IActionResult> Delete([FromRoute] string id)
     {
-        await _fileRepository.DeleteBookItemAsync(id);
+        await _fileRepository.DeleteReadItemAsync(id);
         return Ok();
     }
 }

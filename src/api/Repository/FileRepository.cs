@@ -288,23 +288,23 @@ public class FileRepository : IFileRepository
         await _fileSource.WriteBlogTagsAsync(JsonUtil.Serialize(tags), cancellationToken);
     }
 
-    public async Task<List<BookItem>> GetBookItemsAsync(
+    public async Task<List<ReadItem>> GetReadItemsAsync(
         CancellationToken cancellationToken = default)
     {
-        var result = new List<BookItem>();
+        var result = new List<ReadItem>();
         var bookItems = await _fileSource.ReadBookItemsAsync(cancellationToken);
         if (bookItems != null)
         {
             foreach (var bookItem in bookItems)
             {
-                result.AddRange(JsonUtil.Deserialize<List<BookItem>>(bookItem.Value));
+                result.AddRange(JsonUtil.Deserialize<List<ReadItem>>(bookItem.Value));
             }
         }
 
         return result;
     }
 
-    public async Task<List<BookItem>> GetBookItemsAsync(int year, CancellationToken cancellationToken = default)
+    public async Task<List<ReadItem>> GetReadItemsAsync(int year, CancellationToken cancellationToken = default)
     {
         var bookItems = await _fileSource.ReadBookItemsAsync(year, cancellationToken);
         if (string.IsNullOrEmpty(bookItems))
@@ -312,68 +312,68 @@ public class FileRepository : IFileRepository
             return null;
         }
 
-        return JsonUtil.Deserialize<List<BookItem>>(bookItems);
+        return JsonUtil.Deserialize<List<ReadItem>>(bookItems);
     }
 
-    public async Task AddBookItemAsync(BookItem bookItem, CancellationToken cancellationToken = default)
+    public async Task AddReadItemAsync(ReadItem readItem, CancellationToken cancellationToken = default)
     {
-        var existingBookItems = await GetBookItemsAsync(bookItem.StartTime.Year, cancellationToken);
-        if (existingBookItems == null)
+        if (string.IsNullOrEmpty(readItem.Id))
         {
-            existingBookItems = new List<BookItem>();
+            readItem.Id = StringUtil.GenerateRandom();
         }
 
-        var allBookItems = await GetBookItemsAsync(cancellationToken);
-        if (allBookItems.FirstOrDefault(x => x.Id == bookItem.Id) != null)
+        var existingReadItems = await GetReadItemsAsync(readItem.StartTime.Year, cancellationToken) ?? new List<ReadItem>();
+        var allReadItems = await GetReadItemsAsync(cancellationToken);
+        if (allReadItems.FirstOrDefault(x => x.Id == readItem.Id) != null)
         {
-            throw new Exception($"BookItem with Id \"{bookItem.Id}\" already exists.");
+            throw new Exception($"ReadItem with Id \"{readItem.Id}\" already exists.");
         }
 
-        if (allBookItems.FirstOrDefault(x => x.BookName == bookItem.BookName) != null)
+        if (allReadItems.FirstOrDefault(x => x.BookName == readItem.BookName) != null)
         {
             _logger.LogWarning(
-                $"It appears you already added same book before: {bookItem.BookName}, however it's allowed.");
+                $"It appears you already added same book before: {readItem.BookName}, however it's allowed.");
         }
 
-        bookItem.LastUpdateTime = DateTime.Now;
-        existingBookItems.Add(bookItem);
-        await _fileSource.WriteBookItemsAsync(bookItem.StartTime.Year, JsonUtil.Serialize(existingBookItems),
+        readItem.LastUpdateTime = DateTime.Now;
+        existingReadItems.Add(readItem);
+        await _fileSource.WriteBookItemsAsync(readItem.StartTime.Year, JsonUtil.Serialize(existingReadItems),
             cancellationToken);
     }
 
-    public async Task UpdateBookItemAsync(BookItem bookItem, CancellationToken cancellationToken = default)
+    public async Task UpdateReadItemAsync(ReadItem readItem, CancellationToken cancellationToken = default)
     {
-        var existingBookItems = await GetBookItemsAsync(bookItem.StartTime.Year, cancellationToken);
-        if (existingBookItems == null)
+        var existingReadItems = await GetReadItemsAsync(readItem.StartTime.Year, cancellationToken);
+        if (existingReadItems == null)
         {
-            throw new Exception($"BookItem with Id \"{bookItem.Id}\" not exist.");
+            throw new Exception($"ReadItems at year \"{readItem.StartTime.Year}\" not exist.");
         }
 
-        var existingBookItem = existingBookItems.FirstOrDefault(x => x.Id == bookItem.Id);
+        var existingBookItem = existingReadItems.FirstOrDefault(x => x.Id == readItem.Id);
         if (existingBookItem == null)
         {
-            throw new Exception($"BookItem with Id \"{bookItem.Id}\" not exist.");
+            throw new Exception($"ReadItem with Id \"{readItem.Id}\" not exist.");
         }
 
-        bookItem.LastUpdateTime = DateTime.Now;
-        existingBookItems.Remove(existingBookItem);
-        existingBookItems.Add(bookItem);
-        await _fileSource.WriteBookItemsAsync(bookItem.StartTime.Year,
-            JsonUtil.Serialize(existingBookItems.OrderByDescending(x => x.StartTime)),
+        readItem.LastUpdateTime = DateTime.Now;
+        existingReadItems.Remove(existingBookItem);
+        existingReadItems.Add(readItem);
+        await _fileSource.WriteBookItemsAsync(readItem.StartTime.Year,
+            JsonUtil.Serialize(existingReadItems.OrderByDescending(x => x.StartTime)),
             cancellationToken);
     }
 
-    public async Task DeleteBookItemAsync(string bookItemId,
+    public async Task DeleteReadItemAsync(string id,
         CancellationToken cancellationToken = default)
     {
-        var allBookItems = await GetBookItemsAsync(cancellationToken);
-        var bookItem = allBookItems.FirstOrDefault(x => x.Id == bookItemId);
+        var allReadItems = await GetReadItemsAsync(cancellationToken);
+        var bookItem = allReadItems.FirstOrDefault(x => x.Id == id);
         if (bookItem != null)
         {
-            var existingBookItems = await GetBookItemsAsync(bookItem.StartTime.Year, cancellationToken);
+            var existingBookItems = await GetReadItemsAsync(bookItem.StartTime.Year, cancellationToken);
             if (existingBookItems != null)
             {
-                var existingBookItem = existingBookItems.FirstOrDefault(x => x.Id == bookItemId);
+                var existingBookItem = existingBookItems.FirstOrDefault(x => x.Id == id);
                 if (existingBookItem != null)
                 {
                     existingBookItems.Remove(existingBookItem);

@@ -4,7 +4,7 @@ using Laobian.Share.Converter;
 
 namespace Laobian.Share.Site.Read;
 
-public class BookItem
+public class ReadItem
 {
     [JsonPropertyOrder(1)]
     [JsonPropertyName("id")]

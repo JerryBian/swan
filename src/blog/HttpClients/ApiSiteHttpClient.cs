@@ -26,18 +26,18 @@ public class ApiSiteHttpClient
         _httpClient.BaseAddress = new Uri(config.Value.ApiLocalEndpoint);
     }
 
-    public async Task<List<BookItem>> GetBookItemsAsync()
+    public async Task<List<ReadItem>> GetBookItemsAsync()
     {
         var response = await _httpClient.GetAsync("/read");
         if (response.StatusCode != HttpStatusCode.OK)
         {
             _logger.LogError(
                 $"{nameof(ApiSiteHttpClient)}.{nameof(GetBookItemsAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
-            return new List<BookItem>();
+            return new List<ReadItem>();
         }
 
         await using var stream = await response.Content.ReadAsStreamAsync();
-        return await JsonUtil.DeserializeAsync<List<BookItem>>(stream);
+        return await JsonUtil.DeserializeAsync<List<ReadItem>>(stream);
     }
 
     public async Task<List<BlogPostRuntime>> GetPostsAsync()

@@ -42,15 +42,15 @@ public interface IFileRepository
 
     Task DeleteBlogTagAsync(string id, CancellationToken cancellationToken = default);
 
-    Task<List<BookItem>> GetBookItemsAsync(CancellationToken cancellationToken = default);
+    Task<List<ReadItem>> GetReadItemsAsync(CancellationToken cancellationToken = default);
 
-    Task<List<BookItem>> GetBookItemsAsync(int year, CancellationToken cancellationToken = default);
+    Task<List<ReadItem>> GetReadItemsAsync(int year, CancellationToken cancellationToken = default);
 
-    Task AddBookItemAsync(BookItem bookItem, CancellationToken cancellationToken = default);
+    Task AddReadItemAsync(ReadItem readItem, CancellationToken cancellationToken = default);
 
-    Task UpdateBookItemAsync(BookItem bookItem, CancellationToken cancellationToken = default);
+    Task UpdateReadItemAsync(ReadItem readItem, CancellationToken cancellationToken = default);
 
-    Task DeleteBookItemAsync(string bookItemId,
+    Task DeleteReadItemAsync(string id,
         CancellationToken cancellationToken = default);
 
     Task<List<LaobianLog>> GetLogsAsync(LaobianSite site, DateTime date,

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<BookItem>
+﻿@model IEnumerable<ReadItem>
 @inject IOptions<AdminOptions> _config
 @{
     ViewData["Title"] = "所有的阅读";
@@ -6,7 +6,7 @@
 
 <div class="row">
     <div class="col-lg-5 mb-3">
-        
+        <canvas id="read_stats"></canvas>
     </div>
     <div class="col-lg-7">
         <div class="table-responsive">
@@ -54,5 +54,12 @@
                     }
                 });
         }
+
+        submitRequest("/read/stats",
+            {
+                okAction: function(chart) {
+                    createChart(document.querySelector("#read_stats"), chart);
+                }
+            });
     </script>
 }
