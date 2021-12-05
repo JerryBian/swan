@@ -116,6 +116,36 @@ public class BlogController : Controller
         return response;
     }
 
+    [HttpPost("post/{postLink}/access")]
+    public async Task<ApiResponse<ChartResponse>> GetPostAccessChart([FromRoute] string postLink)
+    {
+        var response = new ApiResponse<ChartResponse>();
+        try
+        {
+            var post = await _apiSiteHttpClient.GetPostAsync(postLink);
+            var chartResponse = new ChartResponse
+            {
+                Title = "当天的访问量",
+                Type = "line"
+            };
+            foreach (var item in post.Accesses.Where(x => x.Date >= DateTime.Now.AddDays(-14)).GroupBy(x => x.Date).OrderBy(x => x.Key))
+            {
+                chartResponse.Data.Add(item.Count());
+                chartResponse.Labels.Add(item.Key.ToRelativeDaysHuman());
+            }
+
+            response.Content = chartResponse;
+        }
+        catch (Exception ex)
+        {
+            response.IsOk = false;
+            response.Message = ex.Message;
+            _logger.LogError(ex, $"Get post {postLink} access stats failed.");
+        }
+
+        return response;
+    }
+
     [HttpPost("posts/access")]
     public async Task<ApiResponse<ChartResponse>> GetPostsAccess([FromQuery] int days)
     {

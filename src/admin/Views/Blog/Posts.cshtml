@@ -27,7 +27,7 @@
                 </th>
                 <th>
                     @post.GetAccessCount().ToThousandHuman()
-                    <a href="">
+                    <a href="javascript:;" onclick="showPostAccessChart('@post.Raw.Link')">
                         <i class="fas fa-chart-line"></i>
                     </a>
                 </th>
@@ -42,8 +42,36 @@
     </table>
 </div>
 
+<div class="modal h-100" id="postAccessChartModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <canvas id="postAccessChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts{
     <script>
         activeNavItem("#nav_blog_posts");
+        const modalEl = document.querySelector("#postAccessChartModal");
+        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+        let chart;
+        function showPostAccessChart(postLink) {
+            submitRequest(`/blog/post/${postLink}/access`,
+                {
+                    okAction: function(chartResponse) {
+                        if (chart) {
+                            chart.destroy();
+                        }
+                        chart = createChart(document.querySelector("#postAccessChart"), chartResponse);
+                        modal.show();
+                    }
+                });
+        }
     </script>
 }

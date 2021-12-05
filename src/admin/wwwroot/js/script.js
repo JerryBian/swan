@@ -51,7 +51,7 @@ function createChart(canvas, res) {
             backdrop: false
         });
 
-        return;
+        return null;
     }
 
     if (res.labels.length !== res.data.length) {
@@ -62,7 +62,7 @@ function createChart(canvas, res) {
             backdrop: false
         });
 
-        return;
+        return null;
     }
 
     const bgColors = [];
@@ -93,7 +93,7 @@ function createChart(canvas, res) {
         }
     };
 
-    const chart = new window.Chart(canvas, config);
+    return new window.Chart(canvas, config);
 }
 
 function submitRequest(url, option) {
