@@ -1,38 +1,30 @@
 ﻿@{
     ViewData["Title"] = "登录";
 }
-<fieldset>
-    <legend>登录系统</legend>
-    <div class="d-flex align-items-center justify-content-center">
-        <form asp-controller="Account" asp-action="Login" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" role="form" class="w-100 p-3 needs-validation" novalidate>
-            <div class="mb-3">
-                <label for="userName" class="form-label">用户名</label>
-                <input type="text" name="userName" class="form-control" id="userName" placeholder="User Name" autocomplete="off" autofocus required>
-                <div class="invalid-feedback">
-                    必填
-                </div>
-            </div>
-            <div class="mb-3">
-                <label for="password" class="form-label">密码</label>
-                <input type="password" name="password" class="form-control" id="password" placeholder="Password" autocomplete="off" required>
-                <div class="invalid-feedback">
-                    必填
-                </div>
-            </div>
-            <div class="d-grid">
-                <button type="submit" class="btn btn-primary btn-lg">登录</button>
-            </div>
-        </form>
-    </div>
-</fieldset>
 
-@section navbar
-{
-    <nav class="navbar navbar-light bg-light">
-        <div class="container-fluid">
-            <ul class="navbar-nav">
-                <li class="navbar-text">Each attempt is recorded.</li>
-            </ul>
+<div class="container">
+    <fieldset>
+        <legend>登录系统</legend>
+        <div class="d-flex align-items-center justify-content-center">
+            <form asp-controller="Account" asp-action="Login" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" role="form" class="w-100 p-3 needs-validation" novalidate>
+                <div class="mb-3">
+                    <label for="userName" class="form-label">用户名</label>
+                    <input type="text" name="userName" class="form-control" id="userName" placeholder="User Name" autocomplete="off" autofocus required>
+                    <div class="invalid-feedback">
+                        必填
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">密码</label>
+                    <input type="password" name="password" class="form-control" id="password" placeholder="Password" autocomplete="off" required>
+                    <div class="invalid-feedback">
+                        必填
+                    </div>
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg">登录</button>
+                </div>
+            </form>
         </div>
-    </nav>
-}
+    </fieldset>
+</div>

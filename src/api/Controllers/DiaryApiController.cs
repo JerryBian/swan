@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Laobian.Api.Repository;
 using Laobian.Share.Site.Jarvis;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 
 namespace Laobian.Api.Controllers;
 
@@ -20,6 +21,9 @@ public class DiaryApiController : ControllerBase
 
     [HttpGet]
     [Route("{date}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesDefaultResponseType]
     public async Task<ActionResult<DiaryRuntime>> GetDiary([FromRoute] DateTime date)
     {
         var diary = await _fileRepository.GetDiaryAsync(date);
