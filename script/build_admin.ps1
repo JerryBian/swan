@@ -17,4 +17,5 @@ uglifyjs --compress -o $(Join-Path $WWWRootLoc dist script.min.js) `
     $(Join-Path $NodeModulesLoc "@fortawesome" fontawesome-free js fontawesome.js) `
     $(Join-Path $NodeModulesLoc sweetalert2 dist sweetalert2.js) `
     $(Join-Path $NodeModulesLoc easymde dist easymde.min.js) `
+    $(Join-Path $NodeModulesLoc chart.js dist chart.js) `
     $(Join-Path $WWWRootLoc js script.js)

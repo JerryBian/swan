@@ -1,16 +1,15 @@
 ﻿using System.Collections.Generic;
 using Laobian.Share.Site.Read;
 
-namespace Laobian.Blog.Models
+namespace Laobian.Blog.Models;
+
+public class BookItemViewModel
 {
-    public class BookItemViewModel
-    {
-        public string Title { get; set; }
+    public string Title { get; set; }
 
-        public int Count { get; set; }
+    public int Count { get; set; }
 
-        public string Id { get; set; }
+    public string Id { get; set; }
 
-        public List<BookItem> Items { get; } = new();
-    }
+    public List<ReadItem> Items { get; } = new();
 }

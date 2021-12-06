@@ -1,160 +1,338 @@
-﻿using System.IO;
+﻿using System;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Laobian.Admin.HttpClients;
 using Laobian.Admin.Models;
+using Laobian.Share;
+using Laobian.Share.Extension;
 using Laobian.Share.Site.Blog;
+using Laobian.Share.Util;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
-namespace Laobian.Admin.Controllers
+namespace Laobian.Admin.Controllers;
+
+[Route("blog")]
+public class BlogController : Controller
 {
-    [Route("blog")]
-    public class BlogController : Controller
+    private readonly ApiSiteHttpClient _apiSiteHttpClient;
+    private readonly BlogSiteHttpClient _blogSiteHttpClient;
+    private readonly ILogger<BlogController> _logger;
+    private readonly AdminOptions _options;
+
+    public BlogController(ApiSiteHttpClient apiSiteHttpClient, BlogSiteHttpClient blogSiteHttpClient,
+        IOptions<AdminOptions> options, ILogger<BlogController> logger)
     {
-        private readonly ApiSiteHttpClient _apiSiteHttpClient;
-        private readonly BlogSiteHttpClient _blogSiteHttpClient;
+        _logger = logger;
+        _options = options.Value;
+        _apiSiteHttpClient = apiSiteHttpClient;
+        _blogSiteHttpClient = blogSiteHttpClient;
+    }
 
-        public BlogController(ApiSiteHttpClient apiSiteHttpClient, BlogSiteHttpClient blogSiteHttpClient)
-        {
-            _apiSiteHttpClient = apiSiteHttpClient;
-            _blogSiteHttpClient = blogSiteHttpClient;
-        }
+    public IActionResult Index()
+    {
+        return View();
+    }
 
-        [HttpPost]
-        [Route("reload")]
-        public async Task<IActionResult> ReloadAsync()
+    [HttpPost]
+    [Route("cache/reload")]
+    public async Task<ApiResponse<object>> ReloadAsync()
+    {
+        var response = new ApiResponse<object>();
+        try
         {
             await _blogSiteHttpClient.ReloadBlogDataAsync();
-            return Ok();
         }
-
-        [HttpPost]
-        [Route("persistent")]
-        public async Task<bool> PersistentAsync()
+        catch (Exception ex)
         {
-            using var reader = new StreamReader(Request.Body, Encoding.UTF8);
-            var message = await reader.ReadToEndAsync();
-            return await _apiSiteHttpClient.PersistentAsync(message);
+            response.IsOk = false;
+            response.Message = ex.Message;
+            _logger.LogError(ex, "Reload blog cache failed.");
         }
 
-        [Route("post")]
-        public async Task<IActionResult> GetPostsAsync()
+        return response;
+    }
+
+    [HttpPost("posts/stats/words-count")]
+    public async Task<ApiResponse<ChartResponse>> GetPostsWordsCountStats()
+    {
+        var response = new ApiResponse<ChartResponse>();
+        try
         {
-            var posts = await _apiSiteHttpClient.GetPostsAsync();
-            var tags = await _apiSiteHttpClient.GetTagsAsync();
-            var viewModel = posts.OrderByDescending(x => x.Raw.LastUpdateTime).ToList();
-            return View("Posts", viewModel);
-        }
+            var posts = await _apiSiteHttpClient.GetPostsAsync(true);
+            var items = posts.GroupBy(x => x.Raw.CreateTime.Year).OrderBy(x => x.Key);
+            var chartResponse = new ChartResponse
+            {
+                Title = "当年发表文章的总字数",
+                Type = "line"
+            };
+            foreach (var item in items)
+            {
+                chartResponse.Data.Add(item.Sum(x => x.Raw.WordsCount));
+                chartResponse.Labels.Add(item.Key.ToString());
+            }
 
-        [HttpGet("post/add")]
-        public async Task<IActionResult> AddPost()
+            response.Content = chartResponse;
+        }
+        catch (Exception ex)
         {
-            var tags = await _apiSiteHttpClient.GetTagsAsync();
-            return View("AddPost", tags);
+            response.IsOk = false;
+            response.Message = ex.Message;
+            _logger.LogError(ex, "Get posts stats for words count failed.");
         }
 
-        [HttpPost("post/add")]
-        public async Task<IActionResult> AddPost([FromForm] BlogPost post)
+        return response;
+    }
+
+    [HttpPost("posts/stats/count")]
+    public async Task<ApiResponse<ChartResponse>> GetPostsCountStats()
+    {
+        var response = new ApiResponse<ChartResponse>();
+        try
         {
-            post.ContainsMath = Request.Form["containsMath"] == "on";
-            post.IsPublished = Request.Form["isPublished"] == "on";
-            post.IsTopping = Request.Form["isTopping"] == "on";
-            await _apiSiteHttpClient.AddPostAsync(post);
-            return Redirect("/blog/post");
+            var posts = await _apiSiteHttpClient.GetPostsAsync(true);
+            var items = posts.GroupBy(x => x.Raw.CreateTime.Year).OrderBy(x => x.Key);
+            var chartResponse = new ChartResponse
+            {
+                Title = "当年发表文章数",
+                Type = "line"
+            };
+            foreach (var item in items)
+            {
+                chartResponse.Data.Add(item.Count());
+                chartResponse.Labels.Add(item.Key.ToString());
+            }
+
+            response.Content = chartResponse;
+        }
+        catch (Exception ex)
+        {
+            response.IsOk = false;
+            response.Message = ex.Message;
+            _logger.LogError(ex, "Get posts stats for post count failed.");
         }
 
-        [HttpGet("post/update/{postLink}")]
-        public async Task<IActionResult> UpdatePost([FromRoute] string postLink)
+        return response;
+    }
+
+    [HttpPost("post/{postLink}/access")]
+    public async Task<ApiResponse<ChartResponse>> GetPostAccessChart([FromRoute] string postLink)
+    {
+        var response = new ApiResponse<ChartResponse>();
+        try
         {
             var post = await _apiSiteHttpClient.GetPostAsync(postLink);
-            if (post == null)
+            var chartResponse = new ChartResponse
             {
-                return NotFound($"Blog post with link \"{postLink}\" not found.");
+                Title = "当天的访问量",
+                Type = "line"
+            };
+            foreach (var item in post.Accesses.Where(x => x.Date >= DateTime.Now.AddDays(-14)).OrderBy(x => x.Date))
+            {
+                chartResponse.Data.Add(item.Count);
+                chartResponse.Labels.Add(item.Date.ToRelativeDaysHuman());
             }
 
-            var model = new BlogPostUpdateViewModel {Post = post.Raw};
-            var tags = await _apiSiteHttpClient.GetTagsAsync();
-            if (tags != null)
-            {
-                model.Tags.AddRange(tags);
-            }
-
-            return View("UpdatePost", model);
+            response.Content = chartResponse;
+        }
+        catch (Exception ex)
+        {
+            response.IsOk = false;
+            response.Message = ex.Message;
+            _logger.LogError(ex, $"Get post {postLink} access stats failed.");
         }
 
-        [HttpPost("post/update")]
-        public async Task<IActionResult> UpdatePost([FromForm] BlogPost post)
+        return response;
+    }
+
+    [HttpPost("posts/access")]
+    public async Task<ApiResponse<ChartResponse>> GetPostsAccess([FromQuery] int days)
+    {
+        var response = new ApiResponse<ChartResponse>();
+        try
+        {
+            var posts = await _apiSiteHttpClient.GetPostsAsync(true);
+            var access = posts.SelectMany(x => x.Accesses)
+                .Where(x => x.Date >= DateTime.Now.AddDays(-days) && x.Date <= DateTime.Now).GroupBy(x => x.Date)
+                .OrderBy(x => x.Key);
+            var chartResponse = new ChartResponse {Title = "访问量", Type = "line"};
+            foreach (var item in access)
+            {
+                chartResponse.Data.Add(item.Sum(x => x.Count));
+                chartResponse.Labels.Add(item.Key.ToRelativeDaysHuman());
+            }
+
+            response.Content = chartResponse;
+        }
+        catch (Exception ex)
+        {
+            response.IsOk = false;
+            response.Message = ex.Message;
+            _logger.LogError(ex, $"Get posts access failed for {days} days.");
+        }
+
+        return response;
+    }
+
+    [Route("posts")]
+    public async Task<IActionResult> GetPostsAsync()
+    {
+        var posts = await _apiSiteHttpClient.GetPostsAsync(true);
+        var viewModel = posts.OrderByDescending(x => x.Raw.LastUpdateTime).ToList();
+        return View("Posts", viewModel);
+    }
+
+    [HttpGet("posts/add")]
+    public async Task<IActionResult> AddPost()
+    {
+        var tags = await _apiSiteHttpClient.GetTagsAsync();
+        return View("AddPost", tags);
+    }
+
+    [HttpPost("posts")]
+    public async Task<ApiResponse<object>> AddPost([FromForm] BlogPost post)
+    {
+        var response = new ApiResponse<object>();
+        try
         {
             post.ContainsMath = Request.Form["containsMath"] == "on";
             post.IsPublished = Request.Form["isPublished"] == "on";
             post.IsTopping = Request.Form["isTopping"] == "on";
-            await _apiSiteHttpClient.UpdatePostAsync(post);
-            return Redirect("/blog/post");
+            var result = await _apiSiteHttpClient.AddPostAsync(post);
+            response.RedirectTo = result.GetFullPath(_options.BlogRemoteEndpoint);
         }
-
-        [Route("post/{link}")]
-        public async Task<BlogPostRuntime> GetPostAsync([FromRoute] string link)
+        catch (Exception ex)
         {
-            var post = await _apiSiteHttpClient.GetPostAsync(link);
-            return post;
+            response.IsOk = false;
+            response.Message = ex.Message;
+            _logger.LogError(ex, $"Add post failed. {Environment.NewLine}{JsonUtil.Serialize(post)}");
         }
 
+        return response;
+    }
 
-        [Route("tag")]
-        public async Task<IActionResult> GetTagsAsync()
+    [HttpGet("posts/{postLink}/update")]
+    public async Task<IActionResult> UpdatePost([FromRoute] string postLink)
+    {
+        var post = await _apiSiteHttpClient.GetPostAsync(postLink);
+        if (post == null)
         {
-            var tags = await _apiSiteHttpClient.GetTagsAsync();
-            return View("Tags", tags.OrderByDescending(x => x.LastUpdatedAt));
+            return NotFound($"Blog post with link \"{postLink}\" not found.");
         }
 
-        [Route("tag/{link}")]
-        public async Task<BlogTag> GetTagAsync([FromRoute] string link)
+        var model = new BlogPostUpdateViewModel {Post = post.Raw};
+        var tags = await _apiSiteHttpClient.GetTagsAsync();
+        if (tags != null)
         {
-            var tag = await _apiSiteHttpClient.GetTagAsync(link);
-            return tag;
+            model.Tags.AddRange(tags);
         }
 
-        [HttpDelete]
-        [Route("tag/{link}")]
-        public async Task<bool> DeleteTagAsync([FromRoute] string link)
+        return View("UpdatePost", model);
+    }
+
+    [HttpPut("posts/{postLink}")]
+    public async Task<ApiResponse<object>> UpdatePost([FromForm] BlogPost post, [FromRoute] string postLink)
+    {
+        var response = new ApiResponse<object>();
+        try
         {
-            var result = await _apiSiteHttpClient.DeleteTagAsync(link);
-            return result;
+            post.ContainsMath = Request.Form["containsMath"] == "on";
+            post.IsPublished = Request.Form["isPublished"] == "on";
+            post.IsTopping = Request.Form["isTopping"] == "on";
+            var result = await _apiSiteHttpClient.UpdatePostAsync(post, postLink);
+            response.RedirectTo = result.GetFullPath(_options.BlogRemoteEndpoint);
         }
-
-        [HttpGet("tag/add")]
-        public IActionResult AddTag()
+        catch (Exception ex)
         {
-            return View("AddTag");
+            response.IsOk = false;
+            response.Message = ex.Message;
+            _logger.LogError(ex, $"Update post({postLink}) failed: {JsonUtil.Serialize(post)}");
         }
 
-        [HttpPost]
-        [Route("tag/add")]
-        public async Task<IActionResult> AddTagAsync([FromForm] BlogTag tag)
+        return response;
+    }
+
+    [Route("tags")]
+    public async Task<IActionResult> GetTagsAsync()
+    {
+        var tags = await _apiSiteHttpClient.GetTagsAsync();
+        return View("Tags", tags.OrderByDescending(x => x.LastUpdatedAt));
+    }
+
+    [HttpDelete]
+    [Route("tags/{id}")]
+    public async Task<ApiResponse<object>> DeleteTagAsync([FromRoute] string id)
+    {
+        var response = new ApiResponse<object>();
+        try
+        {
+            await _apiSiteHttpClient.DeleteTagAsync(id);
+        }
+        catch (Exception ex)
+        {
+            response.IsOk = false;
+            response.Message = ex.Message;
+            _logger.LogError(ex, $"Delete blog tag {id} failed.");
+        }
+
+        return response;
+    }
+
+    [HttpGet("tags/add")]
+    public IActionResult AddTag()
+    {
+        return View("AddTag");
+    }
+
+    [HttpPost]
+    [Route("tags")]
+    public async Task<ApiResponse<object>> AddTagAsync([FromBody] BlogTag tag)
+    {
+        var response = new ApiResponse<object>();
+        try
         {
             await _apiSiteHttpClient.AddTagAsync(tag);
-            return Redirect("/blog/tag");
+            response.RedirectTo = "/blog/tags";
         }
-
-        [HttpGet("tag/update/{tagLink}")]
-        public async Task<IActionResult> UpdateTagAsync([FromRoute] string tagLink)
+        catch (Exception ex)
         {
-            var tag = await _apiSiteHttpClient.GetTagAsync(tagLink);
-            if (tag != null)
-            {
-                return View("UpdateTag", tag);
-            }
-
-            return NotFound($"Tag with link \"{tagLink}\" not found.");
+            response.IsOk = false;
+            response.Message = ex.Message;
         }
 
-        [HttpPost]
-        [Route("tag/update")]
-        public async Task<IActionResult> UpdateTagAsync([FromForm] BlogTag tag)
+        return response;
+    }
+
+    [HttpGet("tags/{id}/update")]
+    public async Task<IActionResult> UpdateTagAsync([FromRoute] string id)
+    {
+        var tag = await _apiSiteHttpClient.GetTagAsync(id);
+        if (tag != null)
+        {
+            return View("UpdateTag", tag);
+        }
+
+        return NotFound($"Tag with id \"{id}\" not found.");
+    }
+
+    [HttpPut]
+    [Route("tags/{id}")]
+    public async Task<ApiResponse<object>> UpdateTagAsync([FromForm] BlogTag tag, [FromRoute] string id)
+    {
+        var response = new ApiResponse<object>();
+        try
         {
             await _apiSiteHttpClient.UpdateTagAsync(tag);
-            return Redirect("/blog/tag");
+            response.RedirectTo = "/blog/tags";
         }
+        catch (Exception ex)
+        {
+            response.IsOk = false;
+            response.Message = ex.Message;
+            _logger.LogError(ex, $"Update tag failed. {JsonUtil.Serialize(tag)}");
+        }
+
+        return response;
     }
 }

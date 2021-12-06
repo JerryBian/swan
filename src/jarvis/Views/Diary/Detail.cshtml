@@ -1,5 +1,5 @@
 ﻿@model DiaryViewModel
-@inject IOptions<JarvisOption> _option
+@inject IOptions<JarvisOptions> _option
 @{
     Layout = "_DiaryLayout";
     ViewData["Title"] = $"日记：{Model.Current.Raw.Date.ToChinaDate()}";

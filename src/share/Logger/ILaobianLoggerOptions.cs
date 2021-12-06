@@ -1,9 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace Laobian.Share.Logger
+namespace Laobian.Share.Logger;
+
+public interface ILaobianLoggerOptions
 {
-    public interface ILaobianLoggerOptions
-    {
-        LogLevel MinLevel { get; set; }
-    }
+    LogLevel MinLevel { get; set; }
 }

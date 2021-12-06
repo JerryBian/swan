@@ -1,7 +1,6 @@
-﻿namespace Laobian.Share.Notify
+﻿namespace Laobian.Share.Notify;
+
+public class SendGridEmailMessage : NotifyMessage
 {
-    public class SendGridEmailMessage : NotifyMessage
-    {
-        public string SendGridApiKey { get; set; }
-    }
+    public string SendGridApiKey { get; set; }
 }

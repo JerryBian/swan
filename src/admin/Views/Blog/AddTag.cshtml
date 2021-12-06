@@ -2,7 +2,7 @@
     ViewData["Title"] = "添加新的标签";
 }
 <h3>新标签</h3>
-<form class="needs-validation" action="/blog/tag/add" method="post" novalidate>
+<form class="needs-validation" novalidate>
     <div class="mb-3">
         <label for="displayName" class="form-label">显示名称</label>
         <input type="text" class="form-control" id="displayName" name="displayName" placeholder="标签显示名称" autocomplete="off" autofocus required>
@@ -26,3 +26,23 @@
     </div>
 
 </form>
+
+@section Scripts{
+    <script>
+        const form = document.querySelector("form");
+        form.addEventListener('submit',
+            function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                submitRequest("/blog/tags",
+                    {
+                        form: form,
+                        body: JSON.stringify({
+                            displayName: document.querySelector("#displayName").value,
+                            link: document.querySelector("#link").value,
+                            description: document.querySelector("#description").value
+                        })
+                    });
+            });
+    </script>
+}

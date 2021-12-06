@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Text.Json.Serialization;
+using Laobian.Share.Converter;
 
-namespace Laobian.Share.Site.Blog
+namespace Laobian.Share.Site.Blog;
+
+public class BlogAccess
 {
-    public class BlogAccess
-    {
-        [JsonPropertyName("date")] public DateTime Date { get; set; }
+    [JsonPropertyOrder(1)]
+    [JsonPropertyName("date")]
+    [JsonConverter(typeof(DateOnlyConverter))]
+    public DateTime Date { get; set; }
 
-        [JsonPropertyName("count")] public int Count { get; set; }
-    }
+    [JsonPropertyOrder(2)]
+    [JsonPropertyName("count")]
+    public int Count { get; set; }
 }

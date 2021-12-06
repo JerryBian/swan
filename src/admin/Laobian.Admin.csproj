@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\dist\" />
+    <Folder Include="wwwroot\font\Noto_Sans_SC\" />
   </ItemGroup>
 
 </Project>

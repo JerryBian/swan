@@ -1,88 +1,203 @@
-﻿function toggleSpinner() {
-    let main1 = document.querySelector("#main1");
-    if (main1.classList.contains("visible")) {
-        main1.classList.remove("visible");
-        main1.classList.add("invisible");
-    } else {
-        main1.classList.remove("invisible");
-        main1.classList.add("visible");
+﻿function activeNavItem(id) {
+    document.querySelector(id).classList.add("active");
+}
+
+function toggleContainers(c1, c2) {
+    if (c1.classList.contains("visible")) {
+        c1.classList.remove("visible");
+        c1.classList.add("invisible");
+    } else if (c1.classList.contains("invisible")) {
+        c1.classList.remove("invisible");
+        c1.classList.add("visible");
     }
 
-    let main2 = document.querySelector("#main2");
-    if (main2.classList.contains("visible")) {
-        main2.classList.remove("visible");
-        main2.classList.add("invisible");
-    } else {
-        main2.classList.remove("invisible");
-        main2.classList.add("visible");
+    if (c2.classList.contains("visible")) {
+        c2.classList.remove("visible");
+        c2.classList.add("invisible");
+    } else if (c2.classList.contains("invisible")) {
+        c2.classList.remove("invisible");
+        c2.classList.add("visible");
     }
 }
 
-function forceReloadBlogData() {
-    Swal.fire({
-        title: "确定要清除博客的缓存吗？",
-        showCancelButton: true,
-        confirmButtonText: "确定"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            fetch('/blog/reload',
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'text/plain'
-                    },
-                    body: 'Request by Admin - Force Reload Blog Data button'
-                })
-                .then(response => {
-                    if (response.ok) {
-                        Swal.fire("清除成功", "", "success");
-                    }
-                });
-        }
-    });
+function makeid(length) {
+    var result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() *
+            charactersLength));
+    }
+    return result;
 }
 
-function persistent() {
-    Swal.fire({
-        title: "确定要持久化数据库吗？",
-        showCancelButton: true,
-        confirmButtonText: "确定"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            fetch('/blog/persistent',
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'text/plain'
-                    },
-                    body: ':meat_on_bone: forced by @Context.User.Identity?.Name'
-                })
-                .then(response => {
-                    if (response.ok) {
-                        Swal.fire("持久化数据库成功", "", "success");
-                    }
-                });
-        }
-    });
+function getRandomColor() {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
 }
 
-function validateForms() {
-    const forms = document.querySelectorAll('.needs-validation');
-
-    // Loop over them and prevent submission
-    Array.prototype.slice.call(forms)
-        .forEach(function (form) {
-            form.addEventListener('submit',
-                function (event) {
-                    if (!form.checkValidity()) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                    }
-
-                    form.classList.add('was-validated');
-                },
-                false);
+Chart.defaults.font.size = 12;
+Chart.defaults.font.family = "Noto Sans SC";
+function createChart(canvas, res) {
+    if (!res.labels || !res.data || !res.type) {
+        window.Swal.fire({
+            title: "错误",
+            text: "初始化 chart 失败！",
+            icon: "error",
+            backdrop: false
         });
+
+        return null;
+    }
+
+    if (res.labels.length !== res.data.length) {
+        window.Swal.fire({
+            title: "错误",
+            text: `chart(${res.title}) 的 X Y 轴数量不一致`,
+            icon: "error",
+            backdrop: false
+        });
+
+        return null;
+    }
+
+    const bgColors = [];
+    const bdColors = [];
+    res.labels.forEach(function () {
+        bgColors.push(getRandomColor());
+        bdColors.push(getRandomColor());
+    });
+    let data = {
+        labels: res.labels,
+        datasets: [{
+            label: res.title,
+            backgroundColor: bgColors,
+            borderColor: bdColors,
+            borderWidth: 1,
+            data: res.data
+        }]
+};
+    const config = {
+        data: data,
+        type: res.type,
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    };
+
+    return new window.Chart(canvas, config);
+}
+
+function submitRequest(url, option) {
+    if (option.form) {
+        if (option.form.classList.contains("needs-validation")) {
+            if (option.form.checkValidity()) {
+                option.form.classList.add("was-validated");
+            }
+        }
+
+        const fieldset = option.form.closest("fieldset");
+        if (fieldset) {
+            fieldset.disabled = true;
+        }
+    }
+
+    if (option.preAction) {
+        option.preAction();
+    }
+
+    const method = option.method ?? "POST";
+    const contentType = option.contentType ?? "application/json";
+    const body = option.body ?? "";
+    const formPostAction = function () {
+        if (option.form) {
+            if (option.form.classList.contains("was-validated")) {
+                option.form.classList.remove("was-validated");
+            }
+
+            const fieldset = option.form.closest("fieldset");
+            if (fieldset) {
+                fieldset.disabled = false;
+            }
+        }
+    };
+
+    window.fetch(url,
+        {
+            method: method,
+            headers: {
+                "Content-Type": contentType
+            },
+            body: body
+        }).then(response => response.json()).then(result => {
+            if (!result.ok) {
+                window.Swal.fire({
+                    title: "错误",
+                    text: result.message,
+                    icon: "error",
+                    backdrop: false
+                });
+                formPostAction();
+            } else {
+                if (result.redirectTo) {
+                    window.location.href = result.redirectTo;
+                } else {
+                    if (option.okAction) {
+                        option.okAction(result.content);
+                    }
+                }
+            }
+
+            if (option.postAction) {
+                formPostAction();
+                option.postAction();
+            }
+        }).catch(error => {
+            window.Swal.fire({
+                title: "错误",
+                text: error,
+                icon: "error",
+                backdrop: false
+            });
+
+            formPostAction();
+    });
+}
+
+function persistent(user) {
+    window.Swal.fire({
+        title: "确认",
+        text: "确定要持久化数据库吗？",
+        icon: "info",
+        showCancelButton: true,
+        cancelButtonText: "取消",
+        confirmButtonText: "确定",
+        buttonsStyling: false
+    }).then((result) => {
+        if (result.isConfirmed) {
+            submitRequest("/persistent",
+                {
+                    contentType: "text/plain",
+                    body: `:meat_on_bone: forced by ${user}`,
+                    postAction: function () {
+                        window.Swal.fire({
+                            title: "通知",
+                            text: "数据库持久化成功。",
+                            icon: "success",
+                            backdrop: false
+                        });
+                    }
+                });
+        };
+    });
 }
 
 function prepareEditor(textArea, u) {
@@ -111,7 +226,12 @@ function prepareEditor(textArea, u) {
             sbOnUploaded: "成功上传 #image_name#"
         },
         errorCallback: function (err) {
-            Swal.fire("文件上传错误！", err, "error");
+            window.Swal.fire({
+                title: "图片上传错误",
+                text: err,
+                icon: "error",
+                backdrop: false
+            });
         },
         renderingConfig: {
             codeSyntaxHighlighting: true,

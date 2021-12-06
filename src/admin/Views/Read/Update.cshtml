@@ -1,9 +1,9 @@
-﻿@model BookItem
+﻿@model ReadItem
 @{
     ViewData["Title"] = "编辑阅读";
 }
 <h3>编辑阅读</h3>
-<form class="needs-validation" action="/read/update" method="post" novalidate>
+<form method="post" novalidate>
     <div class="mb-3">
         <label for="bookName" class="form-label">书籍名称</label>
         <input type="text" class="form-control" id="bookName" name="bookName" placeholder="书籍名称" value="@Model.BookName" autocomplete="off" autofocus required>
@@ -90,6 +90,14 @@
 
 @section Scripts {
     <script>
+        activeNavItem("#nav_read");
         const shortCommentEditor = prepareEditor(document.querySelector("#shortComment"), "read_update_short_comment_@Model.Id");
+        const form = document.querySelector("form");
+        form.addEventListener('submit',
+            function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                submitRequest("/read", { form: form, method: "PUT", body: new URLSearchParams(new FormData(form)), contentType: "application/x-www-form-urlencoded" });
+            });
     </script>
 }

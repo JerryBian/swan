@@ -1,10 +1,13 @@
 .article-content {
-    line-height: 1.6em;
-    position: relative;
-    color: black;
+    color: #1e272e;
 
     p {
-        margin-bottom: 1.65rem;
+        margin-bottom: 1.7rem;
+    }
+
+    a{
+        padding-left: 1px;
+        padding-right: 1px;
     }
 
     *:not(pre) > code {
@@ -15,30 +18,32 @@
     }
 
     h3 {
-        background-color: $secondary;
+        background-color: rgba(0,0,0,0.03);
         margin-bottom: 0.8rem;
         margin-top: 1.5rem;
-        padding: 0.4rem;
+        padding: 0.5rem 0.1rem;
         transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+        border-radius: 1%;
     }
 
     h4 {
         border-bottom: 1px solid #eaecef;
         margin-bottom: 0.6rem;
         margin-top: 1rem;
-        padding: 0.4rem;
+        padding: 0.4rem 0.1rem;
     }
 
     blockquote {
-        background-color: #f8edeb;
-        border-left: 2px solid #fcd5ce;
+        background-color: #f5f6fa;
+        border-left: 2px solid #dcdde1;
         margin-bottom: 1.5rem;
         padding: 10px;
-        font-size: 97%;
+        font-size: 95%;
+        font-family: $font-family-code;
     }
 
     blockquote p {
-        margin-bottom: 0.8rem;
+        margin-bottom: 1.0rem;
     }
 
     blockquote *:last-child {

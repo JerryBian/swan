@@ -2,63 +2,67 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Laobian.Api.Repository;
+using Laobian.Share;
 using Laobian.Share.Site.Read;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 
-namespace Laobian.Api.Controllers
+namespace Laobian.Api.Controllers;
+
+[ApiController]
+[Route("read")]
+public class ReadApiController : ControllerBase
 {
-    [ApiController]
-    [Route("read")]
-    public class ReadApiController : ControllerBase
+    private readonly IFileRepository _fileRepository;
+
+    public ReadApiController(IFileRepository fileRepository)
     {
-        private readonly IFileRepository _fileRepository;
+        _fileRepository = fileRepository;
+    }
 
-        public ReadApiController(IFileRepository fileRepository)
+    [HttpGet]
+    public async Task<ActionResult<List<ReadItem>>> GetAll()
+    {
+        var readItems = await _fileRepository.GetReadItemsAsync();
+        return Ok(readItems);
+    }
+
+    [HttpGet]
+    [Route("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+    [ProducesDefaultResponseType]
+    public async Task<ActionResult<ReadItem>> Get([FromRoute] string id)
+    {
+        var readItems = await _fileRepository.GetReadItemsAsync();
+        var result = readItems.FirstOrDefault(x => x.Id == id);
+        if (result == null)
         {
-            _fileRepository = fileRepository;
+            return NotFound($"Book item with id \"{id}\" does not exist.");
         }
 
-        [HttpGet]
-        public async Task<ActionResult<List<BookItem>>> GetAll()
-        {
-            var readItems = await _fileRepository.GetBookItemsAsync();
-            return Ok(readItems);
-        }
+        return Ok(result);
+    }
 
-        [HttpGet]
-        [Route("{id}")]
-        public async Task<ActionResult<BookItem>> Get([FromRoute] string id)
-        {
-            var readItems = await _fileRepository.GetBookItemsAsync();
-            var result = readItems.FirstOrDefault(x => x.Id == id);
-            if (result == null)
-            {
-                return NotFound($"Book item with id \"{id}\" does not exist.");
-            }
+    [HttpPost]
+    public async Task<ActionResult<ReadItem>> Add(ReadItem readItem)
+    {
+        await _fileRepository.AddReadItemAsync(readItem);
+        return Ok(readItem);
+    }
 
-            return Ok(result);
-        }
+    [HttpPut]
+    public async Task<ActionResult<ReadItem>> Update(ReadItem readItem)
+    {
+        await _fileRepository.UpdateReadItemAsync(readItem);
+        return Ok(readItem);
+    }
 
-        [HttpPut]
-        public async Task<IActionResult> Add(BookItem bookItem)
-        {
-            await _fileRepository.AddBookItemAsync(bookItem);
-            return Ok();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Update(BookItem bookItem)
-        {
-            await _fileRepository.UpdateBookItemAsync(bookItem);
-            return Ok();
-        }
-
-        [HttpDelete]
-        [Route("{id}")]
-        public async Task<IActionResult> Delete([FromRoute] string id)
-        {
-            await _fileRepository.DeleteBookItemAsync(id);
-            return Ok();
-        }
+    [HttpDelete]
+    [Route("{id}")]
+    public async Task<IActionResult> Delete([FromRoute] string id)
+    {
+        await _fileRepository.DeleteReadItemAsync(id);
+        return Ok();
     }
 }

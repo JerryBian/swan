@@ -1,4 +1,4 @@
-﻿@inject IOptions<LaobianBlogOption> _config
+﻿@inject IOptions<BlogOptions> _config
 @inject IHostEnvironment _env
 <!DOCTYPE html>
 <html lang="zh" class="w-100 min-vh-100">
@@ -62,17 +62,17 @@
         </div>
     </div>
 </nav>
-<div class="container py-3">
+<div class="container py-4">
     <div class="row gx-4">
-        <main class="col-9 d-flex justify-content-center px-2 py-3 flex-grow-1">
+        <main class="col-9 d-flex justify-content-center px-2 flex-grow-1">
             <div class="wrapper-content">
                 @RenderBody()
             </div>
         </main>
-        <aside class="col-3 d-none d-lg-block fs-sm">
+        <aside class="col-3 d-none d-lg-block small">
             <div class="card mb-4">
+                <div class="card-header"><i class="fas fa-landmark"></i> 简介</div>
                 <div class="card-body">
-                    <h5 class="card-title"><i class="fas fa-landmark"></i> Welcome!</h5>
                     <div class="card-text">
                         @await Html.PartialAsync("_SharedAbout")
                     </div>
@@ -84,8 +84,8 @@
             <div class="position-sticky" style="top: 10px;">
                 @await RenderSectionAsync("Aside", false)
                 <div class="card mt-4">
+                    <div class="card-header"><i class="fas fa-exclamation-circle"></i> 声明</div>
                     <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-exclamation-circle"></i> 关于转载以及声明</h5>
                         <div class="card-text">
                             @await Html.PartialAsync("_SharedCopyright")
                         </div>
@@ -98,7 +98,7 @@
 
 </div>
 
-<footer class="navbar navbar-light bg-light mt-auto fs-sm">
+<footer class="navbar navbar-light bg-light mt-auto small">
     <nav class="container justify-content-center text-muted">
         &copy; @DateTime.Now.Year @_config.Value.AdminChineseName &middot;
         <i class="text-danger fas fa-heartbeat ms-1"></i>

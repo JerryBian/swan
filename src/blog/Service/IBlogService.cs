@@ -4,24 +4,23 @@ using System.Threading.Tasks;
 using Laobian.Share.Site.Blog;
 using Laobian.Share.Site.Read;
 
-namespace Laobian.Blog.Service
+namespace Laobian.Blog.Service;
+
+public interface IBlogService
 {
-    public interface IBlogService
-    {
-        DateTime BootTime { get; }
+    DateTime BootTime { get; }
 
-        List<BlogPostRuntime> GetAllPosts();
+    List<BlogPostRuntime> GetAllPosts();
 
-        List<BlogTag> GetAllTags();
+    List<BlogTag> GetAllTags();
 
-        List<BookItem> GetBookItems();
+    List<ReadItem> GetBookItems();
 
-        Task ReloadAsync();
+    Task ReloadAsync();
 
-        DateTime GetLastReloadTime();
+    DateTime GetLastReloadTime();
 
-        void EnqueuePostAccess(string link);
+    void EnqueuePostAccess(string link);
 
-        bool TryDequeuePostAccess(out string link);
-    }
+    bool TryDequeuePostAccess(out string link);
 }

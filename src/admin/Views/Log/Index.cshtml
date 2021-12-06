@@ -2,7 +2,14 @@
 @{
     ViewData["Title"] = "查看日志";
 }
-<div class="alert alert-light" role="alert">
+
+<div class="row">
+    <div class="col-lg-5 mb-3">
+        <div>
+            <canvas id="logStats"></canvas>
+        </div>
+    </div>
+    <div class="col-lg-7"><div class="alert alert-light" role="alert">
     <div class="mb-2">
         <span class="me-3 text-primary">Site: </span>
         <div class="form-check form-check-inline">
@@ -20,6 +27,10 @@
         <div class="form-check form-check-inline">
             <input class="form-check-input" type="radio" name="site" id="site_admin" value="admin">
             <label class="form-check-label" for="site_admin">Admin</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="site" id="site_jarvis" value="jarvis">
+            <label class="form-check-label" for="site_jarvis">Jarvis</label>
         </div>
     </div>
     <div class="mb-2">
@@ -57,30 +68,75 @@
         </div>
     </div>
     <div class="d-grid">
-        <button class="btn btn-info btn-lg px-5" onclick="loadLogs()">加载</button>
+        <button class="btn btn-success btn-lg px-5" onclick="loadLogs()" id="reloadBtn">加载</button>
     </div>
 </div>
-<div class="list-group text-break" id="log_panel"></div>
+<p class="text-muted small" id="log_summary"></p>
+<div class="list-group text-break" id="log_panel"></div></div>
+</div>
 
 @section Scripts{
     <script>
+        activeNavItem("#nav_log");
+
         function loadLogs() {
             const site = document.querySelector('input[name="site"]:checked').value;
             const minLevel = document.querySelector('input[name="minLevel"]:checked').value;
             const dateRange = document.querySelector('input[name="dateRange"]:checked').value;
+            const logPanel = document.querySelector("#log_panel");
+            const logSummary = document.querySelector("#log_summary");
+            const reloadBtn = document.querySelector("#reloadBtn");
 
-            toggleSpinner();
-            fetch(`/log?site=${site}&minLevel=${minLevel}&days=${dateRange}`,
-                    {
-                        method: 'POST'
-                    })
-                .then(response => response.text())
-                .then(x => {
-                    document.querySelector("#log_panel").innerHTML = x;
-                    toggleSpinner();
+            submitRequest(`/log?site=${site}&minLevel=${minLevel}&days=${dateRange}`,
+                {
+                    preAction: function() {
+                        logPanel.innerHTML = "";
+                        reloadBtn.disabled = true;
+                    },
+                    postAction: function() {
+                        reloadBtn.disabled = false;
+                    },
+                    okAction: function(logs) {
+                        let panelHtml = "";
+                        let infoNum = 0;
+                        let warnNum = 0;
+                        let errorNum = 0;
+                        logs.forEach(function(log) {
+                            let bdClass = "";
+                            if (log.l === 2) {
+                                infoNum++;
+                            } else if (log.l === 3) {
+                                bdClass = "border-warning";
+                                warnNum++;
+                            } else if (log.l === 4) {
+                                bdClass = "border-danger";
+                                errorNum++;
+                            }
+                            panelHtml += `<div class='card mb-3 ${bdClass}'>`;
+                            panelHtml += `<h5 class='card-header'>${log.n}<span class='float-end text-muted small'>${log.t}</span></h5>`;
+                            panelHtml += "<div class='card-body'>";
+                            panelHtml += `<p class="card-text">${log.m}</p>`;
+                            if (log.e) {
+                                const id = makeid(7);
+                                panelHtml += `<div class="d-grid"><button class="btn btn-danger" type="button" data-bs-toggle="collapse" data-bs-target="#${id}" aria-expanded="false" aria-controls="${id}">Toggle Exception Details</button></div>`;
+                                panelHtml += `<div class="collapse my-1" id="${id}"><pre>${log.e}</pre></div>`;
+                            }
+
+                            panelHtml += "</div></div>";
+                        });
+
+                        logPanel.innerHTML = panelHtml;
+                        logSummary.innerHTML = `总计：${infoNum + warnNum + errorNum} <i class="fas fa-angle-double-right"></i> Info: ${infoNum}, Warn: ${warnNum}, Error: ${errorNum}`;
+                    }
                 });
         }
 
         loadLogs();
+        submitRequest("/log/stats",
+            {
+                okAction: function(chart) {
+                    createChart(document.querySelector("#logStats"), chart);
+                }
+            });
     </script>
 }

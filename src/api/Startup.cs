@@ -1,7 +1,6 @@
 using System;
 using System.Text.Encodings.Web;
 using Laobian.Api.Command;
-using Laobian.Api.Filters;
 using Laobian.Api.HostedServices;
 using Laobian.Api.HttpClients;
 using Laobian.Api.Logger;
@@ -9,6 +8,7 @@ using Laobian.Api.Repository;
 using Laobian.Api.Source;
 using Laobian.Share;
 using Laobian.Share.Converter;
+using Laobian.Share.Filters;
 using Laobian.Share.Site;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -17,66 +17,65 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Laobian.Api
+namespace Laobian.Api;
+
+public class Startup : SharedStartup
 {
-    public class Startup : SharedStartup
+    public Startup(IConfiguration configuration, IHostEnvironment env) : base(configuration, env)
     {
-        public Startup(IConfiguration configuration, IHostEnvironment env) : base(configuration, env)
+        Site = LaobianSite.Api;
+    }
+
+    // This method gets called by the runtime. Use this method to add services to the container.
+    public override void ConfigureServices(IServiceCollection services)
+    {
+        base.ConfigureServices(services);
+        services.Configure<ApiOptions>(o => { o.FetchFromEnv(Configuration); });
+
+        services.AddSingleton<ICommandClient, ProcessCommandClient>();
+        services.AddSingleton<IFileRepository, FileRepository>();
+        if (CurrentEnv.IsDevelopment())
         {
-            Site = LaobianSite.Api;
+            services.AddSingleton<IFileSource, LocalFileSource>();
+        }
+        else
+        {
+            services.AddSingleton<IFileSource, GitFileSource>();
         }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public override void ConfigureServices(IServiceCollection services)
+        services.AddHostedService<GitFileLogHostedService>();
+        services.AddHostedService<DbDataHostedService>();
+
+        services.AddHttpClient<BlogSiteHttpClient>(SetHttpClient).SetHandlerLifetime(TimeSpan.FromDays(1))
+            .AddPolicyHandler(GetHttpClientRetryPolicy());
+
+        services.AddLogging(config =>
         {
-            base.ConfigureServices(services);
-            services.Configure<LaobianApiOption>(o => { o.FetchFromEnv(Configuration); });
+            config.SetMinimumLevel(LogLevel.Debug);
+            config.AddDebug();
+            config.AddConsole();
+            config.AddGitFile(c => { c.LoggerName = "api"; });
+        });
 
-            services.AddSingleton<ICommandClient, ProcessCommandClient>();
-            services.AddSingleton<IFileRepository, FileRepository>();
-            if (CurrentEnv.IsDevelopment())
+        var httpRequestToken = Configuration.GetValue<string>(Constants.EnvHttpRequestToken);
+        services.AddControllers(o => { o.Filters.Add(new VerifyTokenActionFilter(httpRequestToken)); })
+            .AddJsonOptions(config =>
             {
-                services.AddSingleton<IFileSource, LocalFileSource>();
-            }
-            else
-            {
-                services.AddSingleton<IFileSource, GitFileSource>();
-            }
-
-            services.AddHostedService<GitFileLogHostedService>();
-            services.AddHostedService<DbDataHostedService>();
-
-            var httpRequestToken = Configuration.GetValue<string>(Constants.EnvHttpRequestToken);
-            services.AddHttpClient<BlogSiteHttpClient>(SetHttpClient).SetHandlerLifetime(TimeSpan.FromDays(1))
-                .AddPolicyHandler(GetHttpClientRetryPolicy());
-
-            services.AddLogging(config =>
-            {
-                config.SetMinimumLevel(LogLevel.Debug);
-                config.AddDebug();
-                config.AddConsole();
-                config.AddGitFile(c => { c.LoggerName = "api"; });
+                config.JsonSerializerOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
+                var converter = new IsoDateTimeConverter();
+                config.JsonSerializerOptions.Converters.Add(converter);
             });
+    }
 
-            services.AddControllers(o => { o.Filters.Add(new VerifyTokenActionFilter(httpRequestToken)); })
-                .AddJsonOptions(config =>
-                {
-                    config.JsonSerializerOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
-                    var converter = new IsoDateTimeConverter();
-                    config.JsonSerializerOptions.Converters.Add(converter);
-                });
-        }
+    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    public void Configure(IApplicationBuilder app, IHostApplicationLifetime appLifetime)
+    {
+        var config = app.ApplicationServices.GetRequiredService<IOptions<ApiOptions>>().Value;
+        Configure(app, appLifetime, config);
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostApplicationLifetime appLifetime)
-        {
-            var config = app.ApplicationServices.GetRequiredService<IOptions<LaobianApiOption>>().Value;
-            Configure(app, appLifetime, config);
-
-            app.UseRouting();
-            app.UseAuthentication();
-            app.UseAuthorization();
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-        }
+        app.UseRouting();
+        app.UseAuthentication();
+        app.UseAuthorization();
+        app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
     }
 }

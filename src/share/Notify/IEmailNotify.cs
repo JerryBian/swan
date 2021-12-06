@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace Laobian.Share.Notify
+namespace Laobian.Share.Notify;
+
+public interface IEmailNotify
 {
-    public interface IEmailNotify
-    {
-        Task<bool> SendAsync(NotifyMessage message);
-    }
+    Task<bool> SendAsync(NotifyMessage message);
 }

@@ -7,55 +7,54 @@ using Laobian.Admin.HttpClients;
 using Laobian.Share.Logger;
 using Microsoft.Extensions.Hosting;
 
-namespace Laobian.Admin.HostedService
+namespace Laobian.Admin.HostedService;
+
+public class RemoteLogHostedService : BackgroundService
 {
-    public class RemoteLogHostedService : BackgroundService
+    private readonly ApiSiteHttpClient _apiSiteHttpClient;
+    private readonly ILaobianLogQueue _logQueue;
+
+    public RemoteLogHostedService(ILaobianLogQueue logQueue, ApiSiteHttpClient apiSiteHttpClient)
     {
-        private readonly ApiSiteHttpClient _apiSiteHttpClient;
-        private readonly ILaobianLogQueue _logQueue;
+        _logQueue = logQueue;
+        _apiSiteHttpClient = apiSiteHttpClient;
+    }
 
-        public RemoteLogHostedService(ILaobianLogQueue logQueue, ApiSiteHttpClient apiSiteHttpClient)
-        {
-            _logQueue = logQueue;
-            _apiSiteHttpClient = apiSiteHttpClient;
-        }
-
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-        {
-            while (!stoppingToken.IsCancellationRequested)
-            {
-                await SendLogsAsync();
-                await Task.Delay(TimeSpan.FromMilliseconds(100), stoppingToken);
-            }
-        }
-
-        public override async Task StopAsync(CancellationToken cancellationToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        while (!stoppingToken.IsCancellationRequested)
         {
             await SendLogsAsync();
-            await base.StopAsync(cancellationToken);
+            await Task.Delay(TimeSpan.FromMilliseconds(100), stoppingToken);
+        }
+    }
+
+    public override async Task StopAsync(CancellationToken cancellationToken)
+    {
+        await SendLogsAsync();
+        await base.StopAsync(cancellationToken);
+    }
+
+    private async Task SendLogsAsync()
+    {
+        var logs = new List<LaobianLog>();
+        while (_logQueue.TryDequeue(out var log))
+        {
+            logs.Add(log);
         }
 
-        private async Task SendLogsAsync()
+        if (logs.Any())
         {
-            var logs = new List<LaobianLog>();
-            while (_logQueue.TryDequeue(out var log))
+            try
             {
-                logs.Add(log);
+                await _apiSiteHttpClient.SendLogsAsync(logs);
             }
-
-            if (logs.Any())
+            catch (Exception ex)
             {
-                try
+                Console.WriteLine($"Sent logs failed. {ex}");
+                foreach (var laobianLog in logs)
                 {
-                    await _apiSiteHttpClient.SendLogsAsync(logs);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Sent logs failed. {ex}");
-                    foreach (var laobianLog in logs)
-                    {
-                        Console.WriteLine(laobianLog);
-                    }
+                    Console.WriteLine(laobianLog);
                 }
             }
         }

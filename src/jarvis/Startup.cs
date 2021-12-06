@@ -1,5 +1,6 @@
 using System;
 using System.Text.Encodings.Web;
+using Laobian.Jarvis.HostedServices;
 using Laobian.Jarvis.HttpClients;
 using Laobian.Jarvis.Middleware;
 using Laobian.Share;
@@ -15,64 +16,66 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Laobian.Jarvis
+namespace Laobian.Jarvis;
+
+public class Startup : SharedStartup
 {
-    public class Startup : SharedStartup
+    public Startup(IConfiguration configuration, IWebHostEnvironment env) : base(configuration, env)
     {
-        public Startup(IConfiguration configuration, IWebHostEnvironment env) : base(configuration, env)
-        {
-            Site = LaobianSite.Jarvis;
-        }
+        Site = LaobianSite.Jarvis;
+    }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public override void ConfigureServices(IServiceCollection services)
-        {
-            base.ConfigureServices(services);
-            services.Configure<JarvisOption>(o => { o.FetchFromEnv(Configuration); });
+    // This method gets called by the runtime. Use this method to add services to the container.
+    public override void ConfigureServices(IServiceCollection services)
+    {
+        base.ConfigureServices(services);
+        services.Configure<JarvisOptions>(o => { o.FetchFromEnv(Configuration); });
 
-            services.AddHttpClient<ApiSiteHttpClient>(SetHttpClient)
-                .SetHandlerLifetime(TimeSpan.FromDays(1))
-                .AddPolicyHandler(GetHttpClientRetryPolicy());
-            services.AddLogging(config =>
+        services.AddHttpClient<ApiSiteHttpClient>(SetHttpClient)
+            .SetHandlerLifetime(TimeSpan.FromDays(1))
+            .AddPolicyHandler(GetHttpClientRetryPolicy());
+
+        services.AddHostedService<RemoteLogHostedService>();
+
+        services.AddLogging(config =>
+        {
+            config.SetMinimumLevel(LogLevel.Debug);
+            config.AddDebug();
+            config.AddConsole();
+            config.AddRemote(c => { c.LoggerName = "jarvis"; });
+        });
+
+        services.AddControllersWithViews()
+            .AddJsonOptions(config =>
             {
-                config.SetMinimumLevel(LogLevel.Debug);
-                config.AddDebug();
-                config.AddConsole();
-                config.AddRemote(c => { c.LoggerName = "jarvis"; });
+                config.JsonSerializerOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
+                var converter = new IsoDateTimeConverter();
+                config.JsonSerializerOptions.Converters.Add(converter);
             });
+    }
 
-            services.AddControllersWithViews()
-                .AddJsonOptions(config =>
-                {
-                    config.JsonSerializerOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
-                    var converter = new IsoDateTimeConverter();
-                    config.JsonSerializerOptions.Converters.Add(converter);
-                });
-        }
+    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    public void Configure(IApplicationBuilder app, IHostApplicationLifetime appLifetime)
+    {
+        var config = app.ApplicationServices.GetRequiredService<IOptions<JarvisOptions>>().Value;
+        Configure(app, appLifetime, config);
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostApplicationLifetime appLifetime)
+        app.UseStatusCodePages();
+        var fileContentTypeProvider = new FileExtensionContentTypeProvider();
+        fileContentTypeProvider.Mappings[".webmanifest"] = "application/manifest+json";
+        app.UseStaticFiles(new StaticFileOptions {ContentTypeProvider = fileContentTypeProvider});
+
+        app.UseRouting();
+
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        app.UsePostAuthentication();
+        app.UseEndpoints(endpoints =>
         {
-            var config = app.ApplicationServices.GetRequiredService<IOptions<JarvisOption>>().Value;
-            Configure(app, appLifetime, config);
-
-            app.UseStatusCodePages();
-            var fileContentTypeProvider = new FileExtensionContentTypeProvider();
-            fileContentTypeProvider.Mappings[".webmanifest"] = "application/manifest+json";
-            app.UseStaticFiles(new StaticFileOptions {ContentTypeProvider = fileContentTypeProvider});
-
-            app.UseRouting();
-
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            app.UsePostAuthentication();
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllerRoute(
-                    "default",
-                    "{controller=Home}/{action=Index}/{id?}");
-            });
-        }
+            endpoints.MapControllerRoute(
+                "default",
+                "{controller=Home}/{action=Index}/{id?}");
+        });
     }
 }

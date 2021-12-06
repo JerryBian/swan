@@ -10,81 +10,81 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 
-namespace Laobian.Admin.Controllers
+namespace Laobian.Admin.Controllers;
+
+[AllowAnonymous]
+public class AccountController : Controller
 {
-    [AllowAnonymous]
-    public class AccountController : Controller
+    private readonly AdminOptions _adminOptions;
+    private readonly ILogger<AccountController> _logger;
+
+    public AccountController(ILogger<AccountController> logger, IOptions<AdminOptions> options)
     {
-        private readonly LaobianAdminOption _laobianAdminOption;
-        private readonly ILogger<AccountController> _logger;
+        _logger = logger;
+        _adminOptions = options.Value;
+    }
 
-        public AccountController(ILogger<AccountController> logger, IOptions<LaobianAdminOption> options)
-        {
-            _logger = logger;
-            _laobianAdminOption = options.Value;
-        }
+    [HttpGet]
+    [Route("/login")]
+    public IActionResult Login([FromQuery] string returnUrl)
+    {
+        ViewData["ReturnUrl"] = returnUrl;
+        return View();
+    }
 
-        [HttpGet]
-        [Route("/login")]
-        public IActionResult Login([FromQuery] string returnUrl)
+    [HttpPost]
+    [Route("/login")]
+    public async Task<IActionResult> Login([FromForm] string userName, [FromForm] string password,
+        [FromQuery] string returnUrl = null)
+    {
+        if (userName == _adminOptions.AdminUserName && password == _adminOptions.AdminPassword)
         {
-            ViewData["ReturnUrl"] = returnUrl;
-            return View();
-        }
-
-        [HttpPost]
-        [Route("/login")]
-        public async Task<IActionResult> Login(string userName, string password, string returnUrl = null)
-        {
-            if (userName == _laobianAdminOption.AdminUserName && password == _laobianAdminOption.AdminPassword)
+            var claims = new List<Claim>
             {
-                var claims = new List<Claim>
-                {
-                    new("user", userName),
-                    new("role", "admin")
-                };
+                new("user", userName),
+                new("role", "admin")
+            };
 
-                var authProperty = new AuthenticationProperties
-                {
-                    ExpiresUtc = DateTimeOffset.UtcNow.AddDays(7),
-                    IsPersistent = true,
-                    IssuedUtc = DateTimeOffset.UtcNow
-                };
-                await HttpContext.SignInAsync(
-                    new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme,
-                        "user", "role")), authProperty);
+            var authProperty = new AuthenticationProperties
+            {
+                ExpiresUtc = DateTimeOffset.UtcNow.AddDays(7),
+                IsPersistent = true,
+                IssuedUtc = DateTimeOffset.UtcNow
+            };
+            await HttpContext.SignInAsync(
+                new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme,
+                    "user", "role")), authProperty);
 
-                if (string.IsNullOrEmpty(returnUrl))
+            if (string.IsNullOrEmpty(returnUrl))
+            {
+                returnUrl = "/";
+            }
+            else if (!Url.IsLocalUrl(returnUrl))
+            {
+                var uri = new Uri(returnUrl);
+                if (!uri.Host.EndsWith("localhost") && !uri.Host.EndsWith(".laobian.me"))
                 {
+                    _logger.LogWarning($"Invalid Return Url: {returnUrl}");
                     returnUrl = "/";
                 }
-                else if (!Url.IsLocalUrl(returnUrl))
-                {
-                    var uri = new Uri(returnUrl);
-                    if (!uri.Host.EndsWith("localhost") && !uri.Host.EndsWith(".laobian.me"))
-                    {
-                        _logger.LogWarning($"Invalid Return Url: {returnUrl}");
-                        returnUrl = "/";
-                    }
-                }
-
-                _logger.LogInformation($"Login successfully, user={userName}.");
-                return Redirect(returnUrl);
             }
 
-            _logger.LogWarning(
-                $"Login failed. User Name = {userName}, Password = {password}. IP: {HttpContext.Connection.RemoteIpAddress}, User Agent: {Request.Headers[HeaderNames.UserAgent]}");
-            return Redirect("/");
+            _logger.LogInformation($"Login successfully, user={userName}.");
+            return Redirect(returnUrl);
         }
 
-        [Route("/logout")]
-        [Authorize]
-        public async Task<IActionResult> Logout()
-        {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        _logger.LogWarning(
+            $"Login failed. User Name = {userName}, Password = {password}. IP: {HttpContext.Connection.RemoteIpAddress}, User Agent: {Request.Headers[HeaderNames.UserAgent]}");
+        return Redirect("/");
+    }
 
-            _logger.LogInformation("Logout successfully.");
-            return Redirect("/");
-        }
+    [Route("/logout")]
+    [Authorize]
+    public async Task<IActionResult> Logout()
+    {
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+        _logger.LogInformation("Logout successfully.");
+        return Redirect("/");
     }
 }

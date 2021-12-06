@@ -1,24 +1,23 @@
 ﻿using System.Collections.Concurrent;
 
-namespace Laobian.Share.Logger
+namespace Laobian.Share.Logger;
+
+public class LaobianLogQueue : ILaobianLogQueue
 {
-    public class LaobianLogQueue : ILaobianLogQueue
+    private readonly ConcurrentQueue<LaobianLog> _logs;
+
+    public LaobianLogQueue()
     {
-        private readonly ConcurrentQueue<LaobianLog> _logs;
+        _logs = new ConcurrentQueue<LaobianLog>();
+    }
 
-        public LaobianLogQueue()
-        {
-            _logs = new ConcurrentQueue<LaobianLog>();
-        }
+    public void Add(LaobianLog log)
+    {
+        _logs.Enqueue(log);
+    }
 
-        public void Add(LaobianLog log)
-        {
-            _logs.Enqueue(log);
-        }
-
-        public bool TryDequeue(out LaobianLog log)
-        {
-            return _logs.TryDequeue(out log);
-        }
+    public bool TryDequeue(out LaobianLog log)
+    {
+        return _logs.TryDequeue(out log);
     }
 }

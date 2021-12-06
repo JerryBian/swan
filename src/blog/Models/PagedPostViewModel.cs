@@ -1,39 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Laobian.Blog.Models
+namespace Laobian.Blog.Models;
+
+public class PagedPostViewModel
 {
-    public class PagedPostViewModel
+    public PagedPostViewModel(int currentPage, int postCount, int postsPerPage)
     {
-        public PagedPostViewModel(int currentPage, int postCount, int postsPerPage)
+        if (postCount < 0)
         {
-            if (postCount < 0)
-            {
-                postCount = 0;
-            }
-
-            TotalPages = Convert.ToInt32(Math.Ceiling(postCount / (double) postsPerPage));
-
-            if (currentPage <= 0)
-            {
-                currentPage = 1;
-            }
-
-            if (currentPage > TotalPages)
-            {
-                currentPage = TotalPages;
-            }
-
-            CurrentPage = currentPage;
-            Posts = new List<PostViewModel>();
+            postCount = 0;
         }
 
-        public int TotalPages { get; }
+        TotalPages = Convert.ToInt32(Math.Ceiling(postCount / (double) postsPerPage));
 
-        public int CurrentPage { get; }
+        if (currentPage <= 0)
+        {
+            currentPage = 1;
+        }
 
-        public List<PostViewModel> Posts { get; }
+        if (currentPage > TotalPages)
+        {
+            currentPage = TotalPages;
+        }
 
-        public string Url { get; set; }
+        CurrentPage = currentPage;
+        Posts = new List<PostViewModel>();
     }
+
+    public int TotalPages { get; }
+
+    public int CurrentPage { get; }
+
+    public List<PostViewModel> Posts { get; }
+
+    public string Url { get; set; }
 }

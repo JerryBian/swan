@@ -7,6 +7,7 @@ using Laobian.Blog.HttpClients;
 using Laobian.Blog.Service;
 using Laobian.Share;
 using Laobian.Share.Converter;
+using Laobian.Share.Filters;
 using Laobian.Share.Logger.Remote;
 using Laobian.Share.Site;
 using Microsoft.AspNetCore.Builder;
@@ -20,91 +21,92 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Laobian.Blog
+namespace Laobian.Blog;
+
+public class Startup : SharedStartup
 {
-    public class Startup : SharedStartup
+    public Startup(IConfiguration configuration, IWebHostEnvironment env) : base(configuration, env)
     {
-        public Startup(IConfiguration configuration, IWebHostEnvironment env) : base(configuration, env)
+        Site = LaobianSite.Blog;
+    }
+
+    // This method gets called by the runtime. Use this method to add services to the container.
+    public override void ConfigureServices(IServiceCollection services)
+    {
+        base.ConfigureServices(services);
+        services.Configure<BlogOptions>(o => { o.FetchFromEnv(Configuration); });
+
+        services.AddSingleton<ICacheClient, CacheClient>();
+        services.AddSingleton<IBlogService, BlogService>();
+
+
+        services.AddHttpClient<ApiSiteHttpClient>(SetHttpClient)
+            .SetHandlerLifetime(TimeSpan.FromDays(1))
+            .AddPolicyHandler(GetHttpClientRetryPolicy());
+
+        services.AddHostedService<RemoteLogHostedService>();
+        services.AddHostedService<BlogHostedService>();
+        services.AddHostedService<PostAccessHostedService>();
+
+        services.AddLogging(config =>
         {
-            Site = LaobianSite.Blog;
-        }
+            config.SetMinimumLevel(LogLevel.Debug);
+            config.AddDebug();
+            config.AddConsole();
+            config.AddRemote(c => { c.LoggerName = "blog"; });
+        });
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public override void ConfigureServices(IServiceCollection services)
+        var httpRequestToken = Configuration.GetValue<string>(Constants.EnvHttpRequestToken);
+        services.AddControllersWithViews(option =>
         {
-            base.ConfigureServices(services);
-            services.Configure<LaobianBlogOption>(o => { o.FetchFromEnv(Configuration); });
-
-            services.AddSingleton<ICacheClient, CacheClient>();
-            services.AddSingleton<IBlogService, BlogService>();
-
-
-            services.AddHttpClient<ApiSiteHttpClient>(SetHttpClient)
-                .SetHandlerLifetime(TimeSpan.FromDays(1))
-                .AddPolicyHandler(GetHttpClientRetryPolicy());
-
-            services.AddHostedService<RemoteLogHostedService>();
-            services.AddHostedService<BlogHostedService>();
-            services.AddHostedService<PostAccessHostedService>();
-
-            services.AddLogging(config =>
+            option.Filters.Add(new VerifyTokenActionFilter(httpRequestToken, new[] {"/api"}));
+            option.CacheProfiles.Add(Constants.CacheProfileName, new CacheProfile
             {
-                config.SetMinimumLevel(LogLevel.Debug);
-                config.AddDebug();
-                config.AddConsole();
-                config.AddRemote(c => { c.LoggerName = "blog"; });
+                Duration = (int) TimeSpan.FromMinutes(1).TotalSeconds,
+                Location = ResponseCacheLocation.Client,
+                VaryByHeader = "User-Agent"
             });
-
-            services.AddControllersWithViews(option =>
-            {
-                option.CacheProfiles.Add(Constants.CacheProfileName, new CacheProfile
-                {
-                    Duration = (int) TimeSpan.FromMinutes(1).TotalSeconds,
-                    Location = ResponseCacheLocation.Client,
-                    VaryByHeader = "User-Agent"
-                });
-            }).AddJsonOptions(config =>
-            {
-                config.JsonSerializerOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
-                var converter = new IsoDateTimeConverter();
-                config.JsonSerializerOptions.Converters.Add(converter);
-            });
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime appLifetime)
+        }).AddJsonOptions(config =>
         {
-            var config = app.ApplicationServices.GetRequiredService<IOptions<LaobianBlogOption>>().Value;
-            Configure(app, appLifetime, config);
+            config.JsonSerializerOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
+            var converter = new IsoDateTimeConverter();
+            config.JsonSerializerOptions.Converters.Add(converter);
+        });
+    }
 
-            app.UseStatusCodePages();
+    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime appLifetime)
+    {
+        var config = app.ApplicationServices.GetRequiredService<IOptions<BlogOptions>>().Value;
+        Configure(app, appLifetime, config);
 
-            var fileContentTypeProvider = new FileExtensionContentTypeProvider();
-            fileContentTypeProvider.Mappings[".webmanifest"] = "application/manifest+json";
-            app.UseStaticFiles(new StaticFileOptions {ContentTypeProvider = fileContentTypeProvider});
+        app.UseStatusCodePages();
 
-            if (env.IsDevelopment())
+        var fileContentTypeProvider = new FileExtensionContentTypeProvider();
+        fileContentTypeProvider.Mappings[".webmanifest"] = "application/manifest+json";
+        app.UseStaticFiles(new StaticFileOptions {ContentTypeProvider = fileContentTypeProvider});
+
+        if (env.IsDevelopment())
+        {
+            var dir = Path.Combine(config.AssetLocation, Constants.AssetDbFileFolder);
+            Directory.CreateDirectory(dir);
+            app.UseStaticFiles(new StaticFileOptions
             {
-                var dir = Path.Combine(config.AssetLocation, Constants.AssetDbFileFolder);
-                Directory.CreateDirectory(dir);
-                app.UseStaticFiles(new StaticFileOptions
-                {
-                    FileProvider = new PhysicalFileProvider(Path.GetFullPath(dir)),
-                    RequestPath = ""
-                });
-            }
-
-            app.UseRouting();
-
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllerRoute(
-                    "default",
-                    "{controller=Home}/{action=Index}/{id?}");
+                FileProvider = new PhysicalFileProvider(Path.GetFullPath(dir)),
+                RequestPath = ""
             });
         }
+
+        app.UseRouting();
+
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllerRoute(
+                "default",
+                "{controller=Home}/{action=Index}/{id?}");
+        });
     }
 }

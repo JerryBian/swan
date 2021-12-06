@@ -2,24 +2,23 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Laobian.Share.Converter
+namespace Laobian.Share.Converter;
+
+public class IsoDateTimeConverter : JsonConverter<DateTime>
 {
-    public class IsoDateTimeConverter : JsonConverter<DateTime>
+    public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        var str = reader.GetString();
+        if (string.IsNullOrEmpty(str))
         {
-            var str = reader.GetString();
-            if (string.IsNullOrEmpty(str))
-            {
-                return DateTime.MinValue;
-            }
-
-            return DateTime.Parse(str ?? string.Empty);
+            return DateTime.MinValue;
         }
 
-        public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
-        {
-            writer.WriteStringValue(value.ToString("yyyy-MM-ddTHH:mm:ss"));
-        }
+        return DateTime.Parse(str);
+    }
+
+    public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
+    {
+        writer.WriteStringValue(value.ToString("yyyy-MM-ddTHH:mm:ss"));
     }
 }
