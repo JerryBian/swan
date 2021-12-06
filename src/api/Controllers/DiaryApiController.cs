@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Api.Repository;
 using Laobian.Share.Site.Jarvis;
@@ -17,6 +18,12 @@ public class DiaryApiController : ControllerBase
     public DiaryApiController(IFileRepository fileRepository)
     {
         _fileRepository = fileRepository;
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<List<DiaryRuntime>>> GetDiaries()
+    {
+        throw new AbandonedMutexException();
     }
 
     [HttpGet]

@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Laobian.Admin.HttpClients;
+using Laobian.Share;
 using Laobian.Share.Extension;
 using Laobian.Share.Site.Jarvis;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Laobian.Admin.Controllers;
@@ -13,11 +16,43 @@ public class DiaryController : Controller
 {
     private readonly ApiSiteHttpClient _httpClient;
     private readonly AdminOptions _options;
+    private readonly ILogger<DiaryController> _logger;
 
-    public DiaryController(IOptions<AdminOptions> option, ApiSiteHttpClient httpClient)
+    public DiaryController(IOptions<AdminOptions> option, ApiSiteHttpClient httpClient, ILogger<DiaryController> logger)
     {
+        _logger = logger;
         _httpClient = httpClient;
         _options = option.Value;
+    }
+
+    [HttpPost("chart/count-per-year")]
+    public async Task<ApiResponse<ChartResponse>> GetChartForCountPerYear()
+    {
+        var response = new ApiResponse<ChartResponse>();
+        try
+        {
+            var diaries = await _httpClient.GetDiariesAsync();
+            var chart = new ChartResponse
+            {
+                Title = "每年的日志数",
+                Type = "line"
+            };
+            foreach (var item in diaries.GroupBy(x => x.Raw.CreateTime.Year).OrderBy(x => x.Key))
+            {
+                chart.Data.Add(item.Count());
+                chart.Labels.Add(item.Key.ToString());
+            }
+
+            response.Content = chart;
+        }
+        catch (Exception ex)
+        {
+            response.IsOk = false;
+            response.Message = ex.Message;
+            _logger.LogError(ex, "Get chart for count per year failed.");
+        }
+
+        return response;
     }
 
     [HttpGet]

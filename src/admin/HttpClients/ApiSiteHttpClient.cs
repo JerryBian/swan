@@ -286,6 +286,20 @@ public class ApiSiteHttpClient
         return url;
     }
 
+    public async Task<List<DiaryRuntime>> GetDiariesAsync()
+    {
+        var response = await _httpClient.GetAsync("/diary");
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            _logger.LogError(
+                $"{nameof(ApiSiteHttpClient)}.{nameof(GetDiariesAsync)} failed. Status: {response.StatusCode}. Content: {await response.Content.ReadAsStringAsync()}");
+            return null;
+        }
+
+        await using var stream = await response.Content.ReadAsStreamAsync();
+        return await JsonUtil.DeserializeAsync<List<DiaryRuntime>>(stream);
+    }
+
     public async Task<DiaryRuntime> GetDiaryAsync(DateTime date)
     {
         var response = await _httpClient.GetAsync($"/diary/{date.ToDate()}");

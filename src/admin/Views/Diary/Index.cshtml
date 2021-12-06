@@ -1,0 +1,45 @@
+﻿
+<div class="container">
+    <div>
+        <canvas id="diary_chart_count_per_year"></canvas>
+    </div>
+    <div>
+        <canvas id="diary_chart_words_per_year"></canvas>
+    </div>
+    <div>
+        <canvas id="diary_chart_count_per_month"></canvas>
+    </div>
+    <div>
+        <canvas id="diary_chart_words_per_month"></canvas>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        activeNavItem("#nav_diary");
+        submitRequest("/diary/chart/count-per-year",
+            {
+                okAction: function(chart) {
+                    createChart(document.querySelector("#diary_chart_count_per_year"), chart);
+                }
+            });
+        submitRequest("/diary/chart/words-per-year",
+            {
+                okAction: function(chart) {
+                    createChart(document.querySelector("#diary_chart_words_per_year"), chart);
+                }
+            });
+        submitRequest("/diary/chart/count-per-month",
+            {
+                okAction: function(chart) {
+                    createChart(document.querySelector("#diary_chart_count_per_month"), chart);
+                }
+            });
+        submitRequest("/diary/chart/words-per-month",
+            {
+                okAction: function(chart) {
+                    createChart(document.querySelector("#diary_chart_words_per_month"), chart);
+                }
+            });
+    </script>
+}
