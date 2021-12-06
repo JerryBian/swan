@@ -128,10 +128,10 @@ public class BlogController : Controller
                 Title = "当天的访问量",
                 Type = "line"
             };
-            foreach (var item in post.Accesses.Where(x => x.Date >= DateTime.Now.AddDays(-14)).GroupBy(x => x.Date).OrderBy(x => x.Key))
+            foreach (var item in post.Accesses.Where(x => x.Date >= DateTime.Now.AddDays(-14)).OrderBy(x => x.Date))
             {
-                chartResponse.Data.Add(item.Count());
-                chartResponse.Labels.Add(item.Key.ToRelativeDaysHuman());
+                chartResponse.Data.Add(item.Count);
+                chartResponse.Labels.Add(item.Date.ToRelativeDaysHuman());
             }
 
             response.Content = chartResponse;
@@ -159,7 +159,7 @@ public class BlogController : Controller
             var chartResponse = new ChartResponse {Title = "访问量", Type = "line"};
             foreach (var item in access)
             {
-                chartResponse.Data.Add(item.Count());
+                chartResponse.Data.Add(item.Sum(x => x.Count));
                 chartResponse.Labels.Add(item.Key.ToRelativeDaysHuman());
             }
 
