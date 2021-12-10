@@ -16,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using ProtoBuf.Grpc.Server;
 
 namespace Laobian.Api;
 
@@ -31,6 +32,7 @@ public class Startup : SharedStartup
     {
         base.ConfigureServices(services);
         services.Configure<ApiOptions>(o => { o.FetchFromEnv(Configuration); });
+        services.AddCodeFirstGrpc();
 
         services.AddSingleton<ICommandClient, ProcessCommandClient>();
         services.AddSingleton<IFileRepository, FileRepository>();
@@ -76,6 +78,10 @@ public class Startup : SharedStartup
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
-        app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+            endpoints.MapGrpcService<Test>();
+        });
     }
 }

@@ -1,3 +1,18 @@
-﻿<div class="text-center">
+﻿@using Grpc.Net.Client
+@using Laobian.Share
+@using ProtoBuf.Grpc.Client
+@using System.Net.Http
+<div class="text-center">
     <h1 class="display-4">Welcome!</h1>
 </div>
+
+@{
+    var httpHandler = new HttpClientHandler();
+    // Return `true` to allow certificates that are untrusted/invalid
+    httpHandler.ServerCertificateCustomValidationCallback = 
+        HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+    using var channel = GrpcChannel.ForAddress("https://api:5021", new GrpcChannelOptions{HttpHandler = httpHandler});
+    var client = channel.CreateGrpcService<ITest>();
+    var reply = await client.GetNow(new TestRequest());
+    <h2>Now: @reply.Now</h2>
+}

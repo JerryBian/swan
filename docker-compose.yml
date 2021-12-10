@@ -9,7 +9,7 @@ services:
       - DOTNET_TieredPGO=1
       - DOTNET_TC_QuickJitForLoops=1
       - DOTNET_ReadyToRun=0
-      - ASPNETCORE_URLS=http://0.0.0.0:5011
+      - ASPNETCORE_URLS=http://0.0.0.0:5011;https://0.0.0.0:5021
       - ASPNETCORE_ENVIRONMENT
       - ENV_HOME_PAGE_ENDPOINT
       - ENV_BLOG_LOCAL_ENDPOINT=http://blog:5013
