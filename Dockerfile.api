@@ -8,7 +8,6 @@ RUN dotnet publish \
     -o /publish \
     --self-contained true \
     -v normal \
-    -p:PublishTrimmed=true \
     -p:PublishSingleFile=true \
     -p:IncludeNativeLibrariesForSelfExtract=true \
     -r linux-x64 \
