@@ -61,6 +61,7 @@
         const modalEl = document.querySelector("#postAccessChartModal");
         const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
         let chart;
+
         function showPostAccessChart(postLink) {
             submitRequest(`/blog/post/${postLink}/access`,
                 {

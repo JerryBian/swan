@@ -13,8 +13,8 @@ namespace Laobian.Admin.Controllers;
 [Route("read")]
 public class ReadController : Controller
 {
-    private readonly ILogger<ReadController> _logger;
     private readonly ApiSiteHttpClient _apiSiteHttpClient;
+    private readonly ILogger<ReadController> _logger;
 
     public ReadController(ApiSiteHttpClient apiSiteHttpClient, ILogger<ReadController> logger)
     {

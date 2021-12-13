@@ -3,23 +3,27 @@ using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Blog.HttpClients;
 using Laobian.Blog.Service;
+using Laobian.Share.Grpc;
+using Laobian.Share.Grpc.Request;
+using Laobian.Share.Grpc.Service;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
-namespace Laobian.Blog.HostedService;
+namespace Laobian.Blog.HostedServices;
 
 public class PostAccessHostedService : BackgroundService
 {
     private readonly IBlogService _blogService;
-    private readonly ApiSiteHttpClient _httpClient;
+    private readonly IBlogGrpcService _blogGrpcService;
     private readonly ILogger<PostAccessHostedService> _logger;
 
-    public PostAccessHostedService(IBlogService blogService, ApiSiteHttpClient httpClient,
+    public PostAccessHostedService(IBlogService blogService, IOptions<BlogOptions> options,
         ILogger<PostAccessHostedService> logger)
     {
         _logger = logger;
-        _httpClient = httpClient;
         _blogService = blogService;
+        _blogGrpcService = GrpcClientHelper.CreateClient<IBlogGrpcService>(options.Value.ApiLocalEndpoint);
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -43,7 +47,12 @@ public class PostAccessHostedService : BackgroundService
         {
             try
             {
-                await _httpClient.AddPostAccess(link);
+                var request = new BlogRequest {Link = link};
+                var response = await _blogGrpcService.AddPostAccessAsync(request);
+                if (!response.IsOk)
+                {
+                    _logger.LogError($"Add post access for {link} failed: {response.Message}");
+                }
             }
             catch (Exception ex)
             {

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Laobian.Blog.Service;
 using Microsoft.Extensions.Hosting;
 
-namespace Laobian.Blog.HostedService;
+namespace Laobian.Blog.HostedServices;
 
 public class BlogHostedService : BackgroundService
 {

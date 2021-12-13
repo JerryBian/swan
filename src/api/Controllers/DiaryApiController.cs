@@ -4,8 +4,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Api.Repository;
 using Laobian.Share.Site.Jarvis;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Laobian.Api.Controllers;
 

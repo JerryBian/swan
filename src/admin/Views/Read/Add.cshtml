@@ -6,72 +6,73 @@
     <fieldset>
         <legend>添加新的阅读</legend>
         <form class="needs-validation" novalidate>
-    <div class="mb-3">
-        <label for="bookName" class="form-label">书籍名称</label>
-        <input type="text" class="form-control" id="bookName" name="bookName" placeholder="书籍名称" autocomplete="off" autofocus required>
-        <div class="invalid-feedback">
-            必填
-        </div>
-    </div>
-    <div class="mb-3">
-        <label for="bookName2" class="form-label">书籍名称2</label>
-        <input type="text" class="form-control" id="bookName2" name="bookName2" placeholder="书籍名称2" autocomplete="off">
-    </div>
-    <div class="mb-3">
-        <label for="authorName" class="form-label">作者</label>
-        <input type="text" class="form-control" id="authorName" name="authorName" placeholder="作者" autocomplete="off">
-    </div>
-    <div class="mb-3">
-        <label for="authorCountry" class="form-label">作者国籍</label>
-        <input type="text" class="form-control" id="authorCountry" name="authorCountry" placeholder="作者国籍" autocomplete="off">
-    </div>
-    <div class="mb-3">
-        <label for="translator" class="form-label">译者</label>
-        <input type="text" class="form-control" id="translator" name="translator" placeholder="译者" autocomplete="off">
-    </div>
-    <div class="mb-3">
-        <label for="publisherName" class="form-label">出版社</label>
-        <input type="text" class="form-control" id="publisherName" name="publisherName" placeholder="出版社" autocomplete="off">
-    </div>
-    <div class="mb-3">
-        <label for="publishTime" class="form-label">出版时间</label>
-        <input type="date" class="form-control" id="publishTime" name="publishTime" autocomplete="off">
-    </div>
-    <div class="mb-3">
-        <label for="startTime" class="form-label">开始时间</label>
-        <input type="date" class="form-control" id="startTime" name="startTime" value="@DateTime.Now.ToDate()" autocomplete="off">
-        <div class="invalid-feedback">
-            必填
-        </div>
-    </div>
-    <div class="mb-3">
-        <label for="endTime" class="form-label">结束时间</label>
-        <input type="date" class="form-control" id="endTime" name="endTime" autocomplete="off">
-    </div>
-    <div class="mb-3">
-        <label for="blogPostLink" class="form-label">博客链接</label>
-        <input type="text" class="form-control" id="blogPostLink" name="blogPostLink" placeholder="博客链接" autocomplete="off">
-    </div>
-    <div class="mb-3">
-        <label for="shortComment" class="form-label">短评</label>
-        <textarea class="form-control" id="shortComment" name="shortComment" rows="3" placeholder="短评" autocomplete="off"></textarea>
-    </div>
-    <div class="mb-3">
-        <label for="grade" class="form-label">评分</label>
-        <input type="number" class="form-control" id="grade" name="grade" value="0" min="-1" max="1" step="1" autocomplete="off" aria-describedby="gradeHelp">
-        <div id="gradeHelp" class="form-text">-1：差评；0：一般般；1：好评</div>
-    </div>
-    <div class="form-check form-switch mb-3">
-        <input class="form-check-input" type="checkbox" id="isCompleted" name="isCompleted">
-        <label class="form-check-label" for="isCompleted">标记为完成</label>
-    </div>
-    <div class="form-check form-switch mb-3">
-        <input class="form-check-input" type="checkbox" id="isPublished" name="isPublished">
-        <label class="form-check-label" for="isPublished">公开发布</label>
-    </div>
-    <div class="d-grid">
-        <button type="submit" class="btn btn-primary btn-lg">提交</button>
-    </div></form>
+            <div class="mb-3">
+                <label for="bookName" class="form-label">书籍名称</label>
+                <input type="text" class="form-control" id="bookName" name="bookName" placeholder="书籍名称" autocomplete="off" autofocus required>
+                <div class="invalid-feedback">
+                    必填
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="bookName2" class="form-label">书籍名称2</label>
+                <input type="text" class="form-control" id="bookName2" name="bookName2" placeholder="书籍名称2" autocomplete="off">
+            </div>
+            <div class="mb-3">
+                <label for="authorName" class="form-label">作者</label>
+                <input type="text" class="form-control" id="authorName" name="authorName" placeholder="作者" autocomplete="off">
+            </div>
+            <div class="mb-3">
+                <label for="authorCountry" class="form-label">作者国籍</label>
+                <input type="text" class="form-control" id="authorCountry" name="authorCountry" placeholder="作者国籍" autocomplete="off">
+            </div>
+            <div class="mb-3">
+                <label for="translator" class="form-label">译者</label>
+                <input type="text" class="form-control" id="translator" name="translator" placeholder="译者" autocomplete="off">
+            </div>
+            <div class="mb-3">
+                <label for="publisherName" class="form-label">出版社</label>
+                <input type="text" class="form-control" id="publisherName" name="publisherName" placeholder="出版社" autocomplete="off">
+            </div>
+            <div class="mb-3">
+                <label for="publishTime" class="form-label">出版时间</label>
+                <input type="date" class="form-control" id="publishTime" name="publishTime" autocomplete="off">
+            </div>
+            <div class="mb-3">
+                <label for="startTime" class="form-label">开始时间</label>
+                <input type="date" class="form-control" id="startTime" name="startTime" value="@DateTime.Now.ToDate()" autocomplete="off">
+                <div class="invalid-feedback">
+                    必填
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="endTime" class="form-label">结束时间</label>
+                <input type="date" class="form-control" id="endTime" name="endTime" autocomplete="off">
+            </div>
+            <div class="mb-3">
+                <label for="blogPostLink" class="form-label">博客链接</label>
+                <input type="text" class="form-control" id="blogPostLink" name="blogPostLink" placeholder="博客链接" autocomplete="off">
+            </div>
+            <div class="mb-3">
+                <label for="shortComment" class="form-label">短评</label>
+                <textarea class="form-control" id="shortComment" name="shortComment" rows="3" placeholder="短评" autocomplete="off"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="grade" class="form-label">评分</label>
+                <input type="number" class="form-control" id="grade" name="grade" value="0" min="-1" max="1" step="1" autocomplete="off" aria-describedby="gradeHelp">
+                <div id="gradeHelp" class="form-text">-1：差评；0：一般般；1：好评</div>
+            </div>
+            <div class="form-check form-switch mb-3">
+                <input class="form-check-input" type="checkbox" id="isCompleted" name="isCompleted">
+                <label class="form-check-label" for="isCompleted">标记为完成</label>
+            </div>
+            <div class="form-check form-switch mb-3">
+                <input class="form-check-input" type="checkbox" id="isPublished" name="isPublished">
+                <label class="form-check-label" for="isPublished">公开发布</label>
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary btn-lg">提交</button>
+            </div>
+        </form>
     </fieldset>
 </div>
 

@@ -4,20 +4,26 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Blog.HttpClients;
+using Laobian.Share.Grpc;
+using Laobian.Share.Grpc.Request;
+using Laobian.Share.Grpc.Service;
 using Laobian.Share.Logger;
+using Laobian.Share.Site;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
-namespace Laobian.Blog.HostedService;
+namespace Laobian.Blog.HostedServices;
 
 public class RemoteLogHostedService : BackgroundService
 {
-    private readonly ApiSiteHttpClient _apiSiteHttpClient;
+    private readonly ILogGrpcService _logGrpcService;
+    private readonly IOptions<BlogOptions> _options;
     private readonly ILaobianLogQueue _logQueue;
 
-    public RemoteLogHostedService(ILaobianLogQueue logQueue, ApiSiteHttpClient apiSiteHttpClient)
+    public RemoteLogHostedService(ILaobianLogQueue logQueue, IOptions<BlogOptions> options)
     {
         _logQueue = logQueue;
-        _apiSiteHttpClient = apiSiteHttpClient;
+        _logGrpcService = GrpcClientHelper.CreateClient<ILogGrpcService>(options.Value.ApiLocalEndpoint);
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -47,7 +53,12 @@ public class RemoteLogHostedService : BackgroundService
         {
             try
             {
-                await _apiSiteHttpClient.SendLogsAsync(logs);
+                var request = new LogRequest {Logger = LaobianSite.Blog.ToString(), Logs = logs};
+                var response = await _logGrpcService.AddLogsAsync(request);
+                if (!response.IsOk)
+                {
+                    Console.WriteLine($"Send logs failed: {response.Message}");
+                }
             }
             catch (Exception ex)
             {

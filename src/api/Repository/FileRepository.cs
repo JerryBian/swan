@@ -324,7 +324,8 @@ public class FileRepository : IFileRepository
             readItem.Id = StringUtil.GenerateRandom();
         }
 
-        var existingReadItems = await GetReadItemsAsync(readItem.StartTime.Year, cancellationToken) ?? new List<ReadItem>();
+        var existingReadItems =
+            await GetReadItemsAsync(readItem.StartTime.Year, cancellationToken) ?? new List<ReadItem>();
         var allReadItems = await GetReadItemsAsync(cancellationToken);
         if (allReadItems.FirstOrDefault(x => x.Id == readItem.Id) != null)
         {

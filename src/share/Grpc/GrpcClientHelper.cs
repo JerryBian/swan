@@ -2,31 +2,30 @@
 using Grpc.Net.Client;
 using ProtoBuf.Grpc.Client;
 
-namespace Laobian.Share.Grpc
+namespace Laobian.Share.Grpc;
+
+public static class GrpcClientHelper
 {
-    public static class GrpcClientHelper
+    private static readonly ConcurrentDictionary<string, GrpcChannel> Channels;
+
+    static GrpcClientHelper()
     {
-        private static readonly ConcurrentDictionary<string, GrpcChannel> Channels;
+        Channels = new ConcurrentDictionary<string, GrpcChannel>();
+    }
 
-        static GrpcClientHelper()
+    public static T CreateClient<T>(string address) where T : class
+    {
+        var channel = Channels.GetOrAdd(address, s =>
         {
-            Channels = new ConcurrentDictionary<string, GrpcChannel>();
-        }
-
-        public static T CreateClient<T>(string address) where T: class
-        {
-            var channel = Channels.GetOrAdd(address, s =>
+            var c = GrpcChannel.ForAddress(address, new GrpcChannelOptions
             {
-                var c = GrpcChannel.ForAddress(address, new GrpcChannelOptions
-                {
-                    MaxRetryAttempts = 3,
-                    MaxSendMessageSize = 1024 * 10
-                });
-
-                return c;
+                MaxRetryAttempts = 3,
+                MaxSendMessageSize = 1024 * 10
             });
 
-            return channel.CreateGrpcService<T>();
-        }
+            return c;
+        });
+
+        return channel.CreateGrpcService<T>();
     }
 }

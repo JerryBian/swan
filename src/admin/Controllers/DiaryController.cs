@@ -15,8 +15,8 @@ namespace Laobian.Admin.Controllers;
 public class DiaryController : Controller
 {
     private readonly ApiSiteHttpClient _httpClient;
-    private readonly AdminOptions _options;
     private readonly ILogger<DiaryController> _logger;
+    private readonly AdminOptions _options;
 
     public DiaryController(IOptions<AdminOptions> option, ApiSiteHttpClient httpClient, ILogger<DiaryController> logger)
     {

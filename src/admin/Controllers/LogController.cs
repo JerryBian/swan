@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Laobian.Admin.HttpClients;
 using Laobian.Share;
 using Laobian.Share.Extension;
 using Laobian.Share.Grpc;
@@ -18,13 +17,13 @@ namespace Laobian.Admin.Controllers;
 [Route("log")]
 public class LogController : Controller
 {
-    private readonly ILogService _logService;
     private readonly ILogger<LogController> _logger;
+    private readonly ILogGrpcService _logGrpcService;
 
     public LogController(IOptions<AdminOptions> options, ILogger<LogController> logger)
     {
         _logger = logger;
-        _logService = GrpcClientHelper.CreateClient<ILogService>(options.Value.ApiLocalEndpoint);
+        _logGrpcService = GrpcClientHelper.CreateClient<ILogGrpcService>(options.Value.ApiLocalEndpoint);
     }
 
     public IActionResult Index()
@@ -46,7 +45,7 @@ public class LogController : Controller
                 Logger = site,
                 MinLevel = minLevel
             };
-            var logResponse = await _logService.GetLogsAsync(request);
+            var logResponse = await _logGrpcService.GetLogsAsync(request);
             if (logResponse.IsOk)
             {
                 var logs = logResponse.Logs.OrderByDescending(x => x.TimeStamp).ToList();
@@ -81,11 +80,11 @@ public class LogController : Controller
                 Logger = "all",
                 MinLevel = 3
             };
-            var logResponse = await _logService.GetLogsAsync(request);
+            var logResponse = await _logGrpcService.GetLogsAsync(request);
             if (logResponse.IsOk)
             {
                 var groupedLogs = logResponse.Logs.GroupBy(x => x.TimeStamp.Date).OrderBy(x => x.Key);
-                var chartResponse = new ChartResponse { Title = "# Logs are warning and error", Type = "line" };
+                var chartResponse = new ChartResponse {Title = "# Logs are warning and error", Type = "line"};
                 foreach (var item in groupedLogs)
                 {
                     chartResponse.Labels.Add(item.Key.ToRelativeDaysHuman());
@@ -99,7 +98,6 @@ public class LogController : Controller
                 response.IsOk = false;
                 response.Message = logResponse.Message;
             }
-            
         }
         catch (Exception ex)
         {

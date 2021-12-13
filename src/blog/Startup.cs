@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Text.Encodings.Web;
 using Laobian.Blog.Cache;
-using Laobian.Blog.HostedService;
+using Laobian.Blog.HostedServices;
 using Laobian.Blog.HttpClients;
 using Laobian.Blog.Service;
 using Laobian.Share;

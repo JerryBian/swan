@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using HtmlAgilityPack;
 using Laobian.Share.Util;
@@ -8,6 +9,7 @@ using Markdig;
 
 namespace Laobian.Share.Site.Blog;
 
+[DataContract]
 public class BlogPostRuntime
 {
     public BlogPostRuntime()
@@ -19,23 +21,41 @@ public class BlogPostRuntime
         Raw = raw;
     }
 
-    [JsonPropertyName("raw")] public BlogPost Raw { get; set; }
+    [DataMember(Order = 1)]
+    [JsonPropertyName("raw")]
+    public BlogPost Raw { get; set; }
 
-    [JsonPropertyName("tags")] public List<BlogTag> Tags { get; set; } = new();
+    [DataMember(Order = 2)]
+    [JsonPropertyName("tags")]
+    public List<BlogTag> Tags { get; set; } = new();
 
-    [JsonPropertyName("accesses")] public List<BlogAccess> Accesses { get; set; } = new();
+    [DataMember(Order = 3)]
+    [JsonPropertyName("accesses")]
+    public List<BlogAccess> Accesses { get; set; } = new();
 
-    [JsonPropertyName("htmlContent")] public string HtmlContent { get; set; }
+    [DataMember(Order = 4)]
+    [JsonPropertyName("htmlContent")]
+    public string HtmlContent { get; set; }
 
-    [JsonPropertyName("excerptHtml")] public string ExcerptHtml { get; set; }
+    [DataMember(Order = 5)]
+    [JsonPropertyName("excerptHtml")]
+    public string ExcerptHtml { get; set; }
 
-    [JsonPropertyName("excerptPlainText")] public string ExcerptPlainText { get; set; }
+    [DataMember(Order = 6)]
+    [JsonPropertyName("excerptPlainText")]
+    public string ExcerptPlainText { get; set; }
 
-    [JsonPropertyName("thumbnail")] public string ThumbnailHtml { get; set; }
+    [DataMember(Order = 7)]
+    [JsonPropertyName("thumbnail")]
+    public string ThumbnailHtml { get; set; }
 
-    [JsonPropertyName("thumbnailUrl")] public string ThumbnailImageUrl { get; set; }
+    [DataMember(Order = 8)]
+    [JsonPropertyName("thumbnailUrl")]
+    public string ThumbnailImageUrl { get; set; }
 
-    [JsonPropertyName("outline")] public List<BlogPostOutline> Outlines { get; set; } = new();
+    [DataMember(Order = 9)]
+    [JsonPropertyName("outline")]
+    public List<BlogPostOutline> Outlines { get; set; } = new();
 
     private void SetPostThumbnail(HtmlNode imageNode)
     {

@@ -15,9 +15,8 @@ namespace Laobian.Admin.HostedService;
 
 public class RemoteLogHostedService : BackgroundService
 {
-    private readonly AdminOptions _options;
-
     private readonly ILaobianLogQueue _logQueue;
+    private readonly AdminOptions _options;
 
     public RemoteLogHostedService(ILaobianLogQueue logQueue, IOptions<AdminOptions> options)
     {
@@ -52,7 +51,7 @@ public class RemoteLogHostedService : BackgroundService
         {
             try
             {
-                var client = GrpcClientHelper.CreateClient<ILogService>(_options.ApiLocalEndpoint);
+                var client = GrpcClientHelper.CreateClient<ILogGrpcService>(_options.ApiLocalEndpoint);
                 var request = new LogRequest {Logger = LaobianSite.Admin.ToString(), Logs = logs};
                 await client.AddLogsAsync(request);
             }
