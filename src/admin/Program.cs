@@ -1,5 +1,6 @@
 using System;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
@@ -22,6 +23,7 @@ public class Program
                 webBuilder.UseSetting(WebHostDefaults.DetailedErrorsKey, "true");
                 webBuilder.UseShutdownTimeout(TimeSpan.FromMinutes(10));
                 webBuilder.UseStartup<Startup>();
+                
             });
     }
 }
