@@ -4,13 +4,14 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Laobian.Share.Logger;
 
-namespace Laobian.Share
+namespace Laobian.Share.Grpc.Response
 {
     [DataContract]
-    public class TestRequest
+    public class LogResponse : ResponseBase
     {
         [DataMember(Order = 1)]
-        public int Id { get; set; }
+        public List<LaobianLog> Logs { get; set; }
     }
 }

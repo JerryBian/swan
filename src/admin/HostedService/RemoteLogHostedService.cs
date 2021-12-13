@@ -3,21 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Laobian.Admin.HttpClients;
+using Laobian.Share.Grpc;
+using Laobian.Share.Grpc.Request;
+using Laobian.Share.Grpc.Service;
 using Laobian.Share.Logger;
+using Laobian.Share.Site;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
 namespace Laobian.Admin.HostedService;
 
 public class RemoteLogHostedService : BackgroundService
 {
-    private readonly ApiSiteHttpClient _apiSiteHttpClient;
+    private readonly AdminOptions _options;
+
     private readonly ILaobianLogQueue _logQueue;
 
-    public RemoteLogHostedService(ILaobianLogQueue logQueue, ApiSiteHttpClient apiSiteHttpClient)
+    public RemoteLogHostedService(ILaobianLogQueue logQueue, IOptions<AdminOptions> options)
     {
         _logQueue = logQueue;
-        _apiSiteHttpClient = apiSiteHttpClient;
+        _options = options.Value;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -47,7 +52,9 @@ public class RemoteLogHostedService : BackgroundService
         {
             try
             {
-                await _apiSiteHttpClient.SendLogsAsync(logs);
+                var client = GrpcClientHelper.CreateClient<ILogService>(_options.ApiLocalEndpoint);
+                var request = new LogRequest {Logger = LaobianSite.Admin.ToString(), Logs = logs};
+                await client.AddLogsAsync(request);
             }
             catch (Exception ex)
             {

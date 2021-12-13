@@ -1,6 +1,7 @@
 using System;
 using System.Text.Encodings.Web;
 using Laobian.Api.Command;
+using Laobian.Api.Grpc;
 using Laobian.Api.HostedServices;
 using Laobian.Api.HttpClients;
 using Laobian.Api.Logger;
@@ -81,7 +82,7 @@ public class Startup : SharedStartup
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
-            endpoints.MapGrpcService<Test>();
+            endpoints.MapGrpcService<LogService>();
         });
     }
 }
