@@ -4,7 +4,7 @@ using Laobian.Share.Site.Blog;
 namespace Laobian.Share.Grpc.Request;
 
 [DataContract]
-public class BlogRequest
+public class BlogGrpcRequest
 {
     [DataMember(Order = 1)] public bool ExtractRuntime { get; set; }
 

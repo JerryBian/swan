@@ -1,47 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.ServiceModel;
-using System.Text;
+﻿using System.ServiceModel;
 using System.Threading.Tasks;
 using Laobian.Share.Grpc.Request;
 using Laobian.Share.Grpc.Response;
-using Laobian.Share.Site.Blog;
 using ProtoBuf.Grpc;
 
-namespace Laobian.Share.Grpc.Service
+namespace Laobian.Share.Grpc.Service;
+
+[ServiceContract]
+public interface IBlogGrpcService
 {
-    [ServiceContract]
-    public interface IBlogGrpcService
-    {
-        [OperationContract]
-        Task<BlogResponse> GetPostsAsync(BlogRequest request, CallContext context = default);
+    [OperationContract]
+    Task<BlogGrpcResponse> GetPostsAsync(BlogGrpcRequest request, CallContext context = default);
 
-        [OperationContract]
-        Task<BlogResponse> GetPostAsync(BlogRequest request, CallContext context = default);
+    [OperationContract]
+    Task<BlogGrpcResponse> GetPostAsync(BlogGrpcRequest request, CallContext context = default);
 
-        [OperationContract]
-        Task<BlogResponse> AddPostAsync(BlogRequest request, CallContext context = default);
+    [OperationContract]
+    Task<BlogGrpcResponse> AddPostAsync(BlogGrpcRequest request, CallContext context = default);
 
-        [OperationContract]
-        Task<BlogResponse> UpdatePostAsync(BlogRequest request, CallContext context = default);
+    [OperationContract]
+    Task<BlogGrpcResponse> UpdatePostAsync(BlogGrpcRequest request, CallContext context = default);
 
-        [OperationContract]
-        Task<BlogResponse> AddPostAccessAsync(BlogRequest request, CallContext context = default);
+    [OperationContract]
+    Task<BlogGrpcResponse> AddPostAccessAsync(BlogGrpcRequest request, CallContext context = default);
 
-        [OperationContract]
-        Task<BlogResponse> GetTagsAsync(CallContext context = default);
+    [OperationContract]
+    Task<BlogGrpcResponse> GetTagsAsync(CallContext context = default);
 
-        [OperationContract]
-        Task<BlogResponse> GetTagAsync(BlogRequest request, CallContext context = default);
+    [OperationContract]
+    Task<BlogGrpcResponse> GetTagAsync(BlogGrpcRequest request, CallContext context = default);
 
-        [OperationContract]
-        Task<BlogResponse> AddTagAsync(BlogRequest request, CallContext context = default);
+    [OperationContract]
+    Task<BlogGrpcResponse> AddTagAsync(BlogGrpcRequest request, CallContext context = default);
 
-        [OperationContract]
-        Task<BlogResponse> UpdateTagAsync(BlogRequest request, CallContext context = default);
+    [OperationContract]
+    Task<BlogGrpcResponse> UpdateTagAsync(BlogGrpcRequest request, CallContext context = default);
 
-        [OperationContract]
-        Task<BlogResponse> DeleteTagAsync(BlogRequest request, CallContext context = default);
-    }
+    [OperationContract]
+    Task<BlogGrpcResponse> DeleteTagAsync(BlogGrpcRequest request, CallContext context = default);
 }

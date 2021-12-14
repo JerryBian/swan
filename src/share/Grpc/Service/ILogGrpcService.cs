@@ -10,8 +10,8 @@ namespace Laobian.Share.Grpc.Service;
 public interface ILogGrpcService
 {
     [OperationContract]
-    Task<LogResponse> AddLogsAsync(LogRequest request, CallContext context = default);
+    Task<LogGrpcResponse> AddLogsAsync(LogGrpcRequest request, CallContext context = default);
 
     [OperationContract]
-    Task<LogResponse> GetLogsAsync(LogRequest request, CallContext context = default);
+    Task<LogGrpcResponse> GetLogsAsync(LogGrpcRequest request, CallContext context = default);
 }

@@ -3,7 +3,6 @@ using System.IO;
 using System.Text.Encodings.Web;
 using Laobian.Blog.Cache;
 using Laobian.Blog.HostedServices;
-using Laobian.Blog.HttpClients;
 using Laobian.Blog.Service;
 using Laobian.Share;
 using Laobian.Share.Converter;
@@ -38,11 +37,6 @@ public class Startup : SharedStartup
 
         services.AddSingleton<ICacheClient, CacheClient>();
         services.AddSingleton<IBlogService, BlogService>();
-
-
-        services.AddHttpClient<ApiSiteHttpClient>(SetHttpClient)
-            .SetHandlerLifetime(TimeSpan.FromDays(1))
-            .AddPolicyHandler(GetHttpClientRetryPolicy());
 
         services.AddHostedService<RemoteLogHostedService>();
         services.AddHostedService<BlogHostedService>();

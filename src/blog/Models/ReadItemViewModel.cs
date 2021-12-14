@@ -3,7 +3,7 @@ using Laobian.Share.Site.Read;
 
 namespace Laobian.Blog.Models;
 
-public class BookItemViewModel
+public class ReadItemViewModel
 {
     public string Title { get; set; }
 
@@ -11,5 +11,5 @@ public class BookItemViewModel
 
     public string Id { get; set; }
 
-    public List<ReadItem> Items { get; } = new();
+    public List<ReadItemRuntime> Items { get; } = new();
 }

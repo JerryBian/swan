@@ -5,7 +5,7 @@ using Laobian.Share.Site.Blog;
 namespace Laobian.Share.Grpc.Response;
 
 [DataContract]
-public class BlogResponse : ResponseBase
+public class BlogGrpcResponse : GrpcResponseBase
 {
     [DataMember(Order = 1)] public List<BlogPostRuntime> Posts { get; set; }
 

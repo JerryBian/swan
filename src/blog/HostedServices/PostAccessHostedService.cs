@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Laobian.Blog.HttpClients;
 using Laobian.Blog.Service;
 using Laobian.Share.Grpc;
 using Laobian.Share.Grpc.Request;
@@ -14,8 +13,8 @@ namespace Laobian.Blog.HostedServices;
 
 public class PostAccessHostedService : BackgroundService
 {
-    private readonly IBlogService _blogService;
     private readonly IBlogGrpcService _blogGrpcService;
+    private readonly IBlogService _blogService;
     private readonly ILogger<PostAccessHostedService> _logger;
 
     public PostAccessHostedService(IBlogService blogService, IOptions<BlogOptions> options,
@@ -47,7 +46,7 @@ public class PostAccessHostedService : BackgroundService
         {
             try
             {
-                var request = new BlogRequest {Link = link};
+                var request = new BlogGrpcRequest {Link = link};
                 var response = await _blogGrpcService.AddPostAccessAsync(request);
                 if (!response.IsOk)
                 {

@@ -39,7 +39,7 @@ public class LogController : Controller
         var response = new ApiResponse<List<LaobianLog>>();
         try
         {
-            var request = new LogRequest
+            var request = new LogGrpcRequest
             {
                 Days = days,
                 Logger = site,
@@ -74,7 +74,7 @@ public class LogController : Controller
         var response = new ApiResponse<ChartResponse>();
         try
         {
-            var request = new LogRequest
+            var request = new LogGrpcRequest
             {
                 Days = 14,
                 Logger = "all",

@@ -52,7 +52,7 @@ public class RemoteLogHostedService : BackgroundService
             try
             {
                 var client = GrpcClientHelper.CreateClient<ILogGrpcService>(_options.ApiLocalEndpoint);
-                var request = new LogRequest {Logger = LaobianSite.Admin.ToString(), Logs = logs};
+                var request = new LogGrpcRequest {Logger = LaobianSite.Admin.ToString(), Logs = logs};
                 await client.AddLogsAsync(request);
             }
             catch (Exception ex)

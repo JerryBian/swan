@@ -5,7 +5,7 @@ using Laobian.Share.Logger;
 namespace Laobian.Share.Grpc.Request;
 
 [DataContract]
-public class LogRequest
+public class LogGrpcRequest
 {
     [DataMember(Order = 1)] public string Logger { get; set; }
 

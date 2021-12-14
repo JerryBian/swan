@@ -1,4 +1,4 @@
-﻿@model List<BookItemViewModel>
+﻿@model List<ReadItemViewModel>
 @{
     ViewData["Title"] = "我的阅读";
 }
@@ -10,62 +10,62 @@
         <div class="list-group mb-5">
             @foreach (var book in item.Items)
             {
-                var c = book.IsPublished ? string.Empty : "list-group-item-danger";
+                var c = book.Raw.IsPublished ? string.Empty : "list-group-item-danger";
                 <div class="list-group-item @c">
                     <div class="d-flex w-100 justify-content-between">
                         <h4 class="mb-1">
-                            @book.BookName
-                            @if (book.Grade == 1)
+                            @book.Raw.BookName
+                            @if (book.Raw.Grade == 1)
                             {
                                 <i class="text-success fas fa-thumbs-up"></i>
                             }
-                            else if (book.Grade == -1)
+                            else if (book.Raw.Grade == -1)
                             {
                                 <i class="text-danger fas fa-thumbs-down"></i>
                             }
                         </h4>
-                        @if (book.IsCompleted)
+                        @if (book.Raw.IsCompleted)
                         {
-                            <small title="结束于 @book.EndTime.ToChinaDate()">@book.StartTime.ToChinaDate()</small>
+                            <small title="结束于 @book.Raw.EndTime.ToChinaDate()">@book.Raw.StartTime.ToChinaDate()</small>
                         }
                         else
                         {
-                            <small class="text-success" title="开始于 @book.StartTime.ToChinaDate()">正在阅读</small>
+                            <small class="text-success" title="开始于 @book.Raw.StartTime.ToChinaDate()">正在阅读</small>
                         }
                     </div>
 
                     @{
                         var info = new List<string>();
-                        @if (!string.IsNullOrEmpty(book.BookName2))
+                        @if (!string.IsNullOrEmpty(book.Raw.BookName2))
                         {
-                            info.Add($"（又名）{book.BookName2}");
+                            info.Add($"（又名）{book.Raw.BookName2}");
                         }
 
-                        if (!string.IsNullOrEmpty(book.AuthorName))
+                        if (!string.IsNullOrEmpty(book.Raw.AuthorName))
                         {
-                            var author = book.AuthorName;
-                            if (!string.IsNullOrEmpty(book.AuthorCountry))
+                            var author = book.Raw.AuthorName;
+                            if (!string.IsNullOrEmpty(book.Raw.AuthorCountry))
                             {
-                                author = $"{author}（{book.AuthorCountry}）";
+                                author = $"{author}（{book.Raw.AuthorCountry}）";
                             }
 
                             info.Add(author);
                         }
 
-                        if (!string.IsNullOrEmpty(book.Translator))
+                        if (!string.IsNullOrEmpty(book.Raw.Translator))
                         {
-                            info.Add($"{book.Translator}（译）");
+                            info.Add($"{book.Raw.Translator}（译）");
                         }
 
-                        if (!string.IsNullOrEmpty(book.PublisherName))
+                        if (!string.IsNullOrEmpty(book.Raw.PublisherName))
                         {
-                            var publisher = book.PublisherName;
+                            var publisher = book.Raw.PublisherName;
                             info.Add(publisher);
                         }
 
-                        if (book.PublishTime != default)
+                        if (book.Raw.PublishTime != default)
                         {
-                            info.Add(book.PublishTime.ToDate());
+                            info.Add(book.Raw.PublishTime.ToDate());
                         }
 
                         <small class="small text-muted d-block mb-3">@string.Join(" / ", info)</small>
@@ -76,11 +76,11 @@
                         <div class="my-3 alert bg-light small font-monospace">@Html.Raw(book.ShortCommentHtml)</div>
                     }
 
-                    @if (!string.IsNullOrEmpty(book.BlogPostLink))
+                    @if (!string.IsNullOrEmpty(book.Raw.BlogPostLink))
                     {
                         <div class="my-3 alert bg-light small font-monospace">
                             <i class="text-primary fas fa-link"></i>
-                            <a href="@book.BlogPostLink">@book.BlogPostTitle</a>
+                            <a href="@book.Raw.BlogPostLink">@book.BlogPostTitle</a>
                         </div>
                     }
                 </div>

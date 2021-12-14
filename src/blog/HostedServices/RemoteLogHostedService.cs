@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Laobian.Blog.HttpClients;
 using Laobian.Share.Grpc;
 using Laobian.Share.Grpc.Request;
 using Laobian.Share.Grpc.Service;
@@ -17,8 +16,8 @@ namespace Laobian.Blog.HostedServices;
 public class RemoteLogHostedService : BackgroundService
 {
     private readonly ILogGrpcService _logGrpcService;
-    private readonly IOptions<BlogOptions> _options;
     private readonly ILaobianLogQueue _logQueue;
+    private readonly IOptions<BlogOptions> _options;
 
     public RemoteLogHostedService(ILaobianLogQueue logQueue, IOptions<BlogOptions> options)
     {
@@ -53,7 +52,7 @@ public class RemoteLogHostedService : BackgroundService
         {
             try
             {
-                var request = new LogRequest {Logger = LaobianSite.Blog.ToString(), Logs = logs};
+                var request = new LogGrpcRequest {Logger = LaobianSite.Blog.ToString(), Logs = logs};
                 var response = await _logGrpcService.AddLogsAsync(request);
                 if (!response.IsOk)
                 {

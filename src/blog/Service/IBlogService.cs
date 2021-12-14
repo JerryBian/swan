@@ -14,7 +14,7 @@ public interface IBlogService
 
     List<BlogTag> GetAllTags();
 
-    List<ReadItem> GetBookItems();
+    List<ReadItemRuntime> GetReadItems();
 
     Task ReloadAsync();
 

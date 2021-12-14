@@ -84,6 +84,7 @@ public class Startup : SharedStartup
             endpoints.MapControllers();
             endpoints.MapGrpcService<LogGrpcService>();
             endpoints.MapGrpcService<BlogGrpcService>();
+            endpoints.MapGrpcService<ReadGrpcService>();
         });
     }
 }

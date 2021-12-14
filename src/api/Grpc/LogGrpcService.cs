@@ -27,9 +27,9 @@ public class LogGrpcService : ILogGrpcService
         _laobianLogQueue = laobianLogQueue;
     }
 
-    public async Task<LogResponse> AddLogsAsync(LogRequest request, CallContext context = default)
+    public async Task<LogGrpcResponse> AddLogsAsync(LogGrpcRequest request, CallContext context = default)
     {
-        var response = new LogResponse();
+        var response = new LogGrpcResponse();
         try
         {
             foreach (var log in request.Logs)
@@ -48,9 +48,9 @@ public class LogGrpcService : ILogGrpcService
         return await Task.FromResult(response);
     }
 
-    public async Task<LogResponse> GetLogsAsync(LogRequest request, CallContext context = default)
+    public async Task<LogGrpcResponse> GetLogsAsync(LogGrpcRequest request, CallContext context = default)
     {
-        var response = new LogResponse();
+        var response = new LogGrpcResponse();
         try
         {
             var logs = new List<LaobianLog>();
