@@ -88,7 +88,6 @@ public class FileRepository : IFileRepository
 
         blogPost.CreateTime = DateTime.Now;
         blogPost.LastUpdateTime = DateTime.Now;
-        blogPost.WordsCount = blogPost.MdContent.Length;
         await _fileSource.WriteBlogPostAsync(blogPost.CreateTime.Year, blogPost.Link,
             JsonUtil.Serialize(blogPost),
             cancellationToken);
@@ -116,7 +115,6 @@ public class FileRepository : IFileRepository
         var existingPost = JsonUtil.Deserialize<BlogPost>(existingData);
         blogPost.CreateTime = existingPost.CreateTime;
         blogPost.LastUpdateTime = DateTime.Now;
-        blogPost.WordsCount = blogPost.MdContent.Length;
 
         // The post link got changed
         var postLinkChanged = !StringUtil.EqualsIgnoreCase(blogPost.Link, replacedPostLink);

@@ -22,40 +22,34 @@ public class BlogPostRuntime
     }
 
     [DataMember(Order = 1)]
-    [JsonPropertyName("raw")]
     public BlogPost Raw { get; set; }
 
     [DataMember(Order = 2)]
-    [JsonPropertyName("tags")]
     public List<BlogTag> Tags { get; set; } = new();
 
     [DataMember(Order = 3)]
-    [JsonPropertyName("accesses")]
     public List<BlogAccess> Accesses { get; set; } = new();
 
     [DataMember(Order = 4)]
-    [JsonPropertyName("htmlContent")]
     public string HtmlContent { get; set; }
 
     [DataMember(Order = 5)]
-    [JsonPropertyName("excerptHtml")]
     public string ExcerptHtml { get; set; }
 
     [DataMember(Order = 6)]
-    [JsonPropertyName("excerptPlainText")]
     public string ExcerptPlainText { get; set; }
 
     [DataMember(Order = 7)]
-    [JsonPropertyName("thumbnail")]
     public string ThumbnailHtml { get; set; }
 
     [DataMember(Order = 8)]
-    [JsonPropertyName("thumbnailUrl")]
     public string ThumbnailImageUrl { get; set; }
 
     [DataMember(Order = 9)]
-    [JsonPropertyName("outline")]
     public List<BlogPostOutline> Outlines { get; set; } = new();
+
+    [DataMember(Order = 10)]
+    public int WordsCount { get; set; }
 
     private void SetPostThumbnail(HtmlNode imageNode)
     {
@@ -72,6 +66,8 @@ public class BlogPostRuntime
         {
             Raw.MdContent = "Post content is empty.";
         }
+
+        WordsCount = Raw.MdContent.Length;
 
         var html = Markdown.ToHtml(Raw.MdContent);
         var htmlDoc = new HtmlDocument();

@@ -32,6 +32,7 @@ public class Startup : SharedStartup
         base.ConfigureServices(services);
         services.Configure<AdminOptions>(o => { o.FetchFromEnv(Configuration); });
 
+
         services.AddHttpClient<ApiSiteHttpClient>(SetHttpClient).SetHandlerLifetime(TimeSpan.FromDays(1))
             .AddPolicyHandler(GetHttpClientRetryPolicy());
 

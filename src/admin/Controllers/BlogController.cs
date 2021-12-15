@@ -5,6 +5,9 @@ using Laobian.Admin.HttpClients;
 using Laobian.Admin.Models;
 using Laobian.Share;
 using Laobian.Share.Extension;
+using Laobian.Share.Grpc;
+using Laobian.Share.Grpc.Request;
+using Laobian.Share.Grpc.Service;
 using Laobian.Share.Site.Blog;
 using Laobian.Share.Util;
 using Microsoft.AspNetCore.Mvc;
@@ -16,17 +19,19 @@ namespace Laobian.Admin.Controllers;
 [Route("blog")]
 public class BlogController : Controller
 {
-    private readonly ApiSiteHttpClient _apiSiteHttpClient;
+    private readonly IBlogGrpcService _blogGrpcService;
     private readonly BlogSiteHttpClient _blogSiteHttpClient;
     private readonly ILogger<BlogController> _logger;
     private readonly AdminOptions _options;
+    private readonly BlogGrpcRequest _blogGrpcRequest;
 
-    public BlogController(ApiSiteHttpClient apiSiteHttpClient, BlogSiteHttpClient blogSiteHttpClient,
+    public BlogController(BlogSiteHttpClient blogSiteHttpClient,
         IOptions<AdminOptions> options, ILogger<BlogController> logger)
     {
         _logger = logger;
         _options = options.Value;
-        _apiSiteHttpClient = apiSiteHttpClient;
+        _blogGrpcRequest = new BlogGrpcRequest();
+            _blogGrpcService = GrpcClientHelper.CreateClient<IBlogGrpcService>(options.Value.ApiLocalEndpoint);
         _blogSiteHttpClient = blogSiteHttpClient;
     }
 
@@ -60,20 +65,29 @@ public class BlogController : Controller
         var response = new ApiResponse<ChartResponse>();
         try
         {
-            var posts = await _apiSiteHttpClient.GetPostsAsync(true);
-            var items = posts.GroupBy(x => x.Raw.CreateTime.Year).OrderBy(x => x.Key);
-            var chartResponse = new ChartResponse
+            _blogGrpcRequest.ExtractRuntime = true;
+            var blogResponse = await _blogGrpcService.GetPostsAsync(_blogGrpcRequest);
+            if (blogResponse.IsOk)
             {
-                Title = "当年发表文章的总字数",
-                Type = "line"
-            };
-            foreach (var item in items)
-            {
-                chartResponse.Data.Add(item.Sum(x => x.Raw.WordsCount));
-                chartResponse.Labels.Add(item.Key.ToString());
-            }
+                var items = blogResponse.Posts.GroupBy(x => x.Raw.CreateTime.Year).OrderBy(x => x.Key);
+                var chartResponse = new ChartResponse
+                {
+                    Title = "当年文章的总字数",
+                    Type = "line"
+                };
+                foreach (var item in items)
+                {
+                    chartResponse.Data.Add(item.Sum(x => x.WordsCount));
+                    chartResponse.Labels.Add(item.Key.ToString());
+                }
 
-            response.Content = chartResponse;
+                response.Content = chartResponse;
+            }
+            else
+            {
+                response.IsOk = false;
+                response.Message = blogResponse.Message;
+            }
         }
         catch (Exception ex)
         {
@@ -91,20 +105,29 @@ public class BlogController : Controller
         var response = new ApiResponse<ChartResponse>();
         try
         {
-            var posts = await _apiSiteHttpClient.GetPostsAsync(true);
-            var items = posts.GroupBy(x => x.Raw.CreateTime.Year).OrderBy(x => x.Key);
-            var chartResponse = new ChartResponse
+            _blogGrpcRequest.ExtractRuntime = true;
+            var blogResponse = await _blogGrpcService.GetPostsAsync(_blogGrpcRequest);
+            if (blogResponse.IsOk)
             {
-                Title = "当年发表文章数",
-                Type = "line"
-            };
-            foreach (var item in items)
-            {
-                chartResponse.Data.Add(item.Count());
-                chartResponse.Labels.Add(item.Key.ToString());
-            }
+                var items = blogResponse.Posts.GroupBy(x => x.Raw.CreateTime.Year).OrderBy(x => x.Key);
+                var chartResponse = new ChartResponse
+                {
+                    Title = "当年发表文章数",
+                    Type = "line"
+                };
+                foreach (var item in items)
+                {
+                    chartResponse.Data.Add(item.Count());
+                    chartResponse.Labels.Add(item.Key.ToString());
+                }
 
-            response.Content = chartResponse;
+                response.Content = chartResponse;
+            }
+            else
+            {
+                response.IsOk = false;
+                response.Message = blogResponse.Message;
+            }
         }
         catch (Exception ex)
         {
@@ -122,19 +145,32 @@ public class BlogController : Controller
         var response = new ApiResponse<ChartResponse>();
         try
         {
-            var post = await _apiSiteHttpClient.GetPostAsync(postLink);
-            var chartResponse = new ChartResponse
+            _blogGrpcRequest.ExtractRuntime = true;
+            _blogGrpcRequest.Link = postLink;
+            var blogResponse = await _blogGrpcService.GetPostAsync(_blogGrpcRequest);
+            if (blogResponse.IsOk)
             {
-                Title = "当天的访问量",
-                Type = "line"
-            };
-            foreach (var item in post.Accesses.Where(x => x.Date >= DateTime.Now.AddDays(-14)).OrderBy(x => x.Date))
-            {
-                chartResponse.Data.Add(item.Count);
-                chartResponse.Labels.Add(item.Date.ToRelativeDaysHuman());
-            }
+                var chartResponse = new ChartResponse
+                {
+                    Title = "当天的访问量",
+                    Type = "line"
+                };
 
-            response.Content = chartResponse;
+                for (var i = 0; i < 15; i++)
+                {
+                    var date = DateTime.Now.Date.AddDays(-i);
+                    var item = blogResponse.PostRuntime.Accesses.FirstOrDefault(x => x.Date == date);
+                    chartResponse.Data.Add(item?.Count ?? 0);
+                    chartResponse.Labels.Add(date.ToRelativeDaysHuman());
+                }
+
+                response.Content = chartResponse;
+            }
+            else
+            {
+                response.IsOk = false;
+                response.Message = blogResponse.Message;
+            }
         }
         catch (Exception ex)
         {
@@ -152,18 +188,27 @@ public class BlogController : Controller
         var response = new ApiResponse<ChartResponse>();
         try
         {
-            var posts = await _apiSiteHttpClient.GetPostsAsync(true);
-            var access = posts.SelectMany(x => x.Accesses)
-                .Where(x => x.Date >= DateTime.Now.AddDays(-days) && x.Date <= DateTime.Now).GroupBy(x => x.Date)
-                .OrderBy(x => x.Key);
-            var chartResponse = new ChartResponse {Title = "访问量", Type = "line"};
-            foreach (var item in access)
+            _blogGrpcRequest.ExtractRuntime = true;
+            var blogResponse = await _blogGrpcService.GetPostsAsync(_blogGrpcRequest);
+            if (blogResponse.IsOk)
             {
-                chartResponse.Data.Add(item.Sum(x => x.Count));
-                chartResponse.Labels.Add(item.Key.ToRelativeDaysHuman());
-            }
+                var access = blogResponse.Posts.SelectMany(x => x.Accesses)
+                    .Where(x => x.Date >= DateTime.Now.AddDays(-days) && x.Date <= DateTime.Now).GroupBy(x => x.Date)
+                    .OrderBy(x => x.Key);
+                var chartResponse = new ChartResponse { Title = "访问量", Type = "line" };
+                foreach (var item in access)
+                {
+                    chartResponse.Data.Add(item.Sum(x => x.Count));
+                    chartResponse.Labels.Add(item.Key.ToRelativeDaysHuman());
+                }
 
-            response.Content = chartResponse;
+                response.Content = chartResponse;
+            }
+            else
+            {
+                response.IsOk = false;
+                response.Message = blogResponse.Message;
+            }
         }
         catch (Exception ex)
         {
@@ -178,16 +223,27 @@ public class BlogController : Controller
     [Route("posts")]
     public async Task<IActionResult> GetPostsAsync()
     {
-        var posts = await _apiSiteHttpClient.GetPostsAsync(true);
-        var viewModel = posts.OrderByDescending(x => x.Raw.LastUpdateTime).ToList();
-        return View("Posts", viewModel);
+        _blogGrpcRequest.ExtractRuntime = true;
+        var blogResponse = await _blogGrpcService.GetPostsAsync(_blogGrpcRequest);
+        if (blogResponse.IsOk)
+        {
+            var viewModel = blogResponse.Posts.OrderByDescending(x => x.Raw.LastUpdateTime).ToList();
+            return View("Posts", viewModel);
+        }
+
+        return NotFound(blogResponse.Message);
     }
 
     [HttpGet("posts/add")]
     public async Task<IActionResult> AddPost()
     {
-        var tags = await _apiSiteHttpClient.GetTagsAsync();
-        return View("AddPost", tags);
+        var blogResponse = await _blogGrpcService.GetTagsAsync();
+        if (blogResponse.IsOk)
+        {
+            return View("AddPost", blogResponse.Tags);
+        }
+
+        return NotFound(blogResponse.Message);
     }
 
     [HttpPost("posts")]
@@ -199,8 +255,17 @@ public class BlogController : Controller
             post.ContainsMath = Request.Form["containsMath"] == "on";
             post.IsPublished = Request.Form["isPublished"] == "on";
             post.IsTopping = Request.Form["isTopping"] == "on";
-            var result = await _apiSiteHttpClient.AddPostAsync(post);
-            response.RedirectTo = result.GetFullPath(_options.BlogRemoteEndpoint);
+            _blogGrpcRequest.Post = post;
+            var blogResponse = await _blogGrpcService.AddPostAsync(_blogGrpcRequest);
+            if (blogResponse.IsOk)
+            {
+                response.RedirectTo = blogResponse.Post.GetFullPath(_options.BlogRemoteEndpoint);
+            }
+            else
+            {
+                response.IsOk = false;
+                response.Message = blogResponse.Message;
+            }
         }
         catch (Exception ex)
         {
@@ -215,20 +280,24 @@ public class BlogController : Controller
     [HttpGet("posts/{postLink}/update")]
     public async Task<IActionResult> UpdatePost([FromRoute] string postLink)
     {
-        var post = await _apiSiteHttpClient.GetPostAsync(postLink);
-        if (post == null)
+        _blogGrpcRequest.Link = postLink;
+        var blogResponse = await _blogGrpcService.GetPostAsync(_blogGrpcRequest);
+        if (blogResponse.IsOk)
         {
-            return NotFound($"Blog post with link \"{postLink}\" not found.");
+            var model = new BlogPostUpdateViewModel { Post = blogResponse.PostRuntime.Raw };
+            blogResponse = await _blogGrpcService.GetTagsAsync();
+            if (blogResponse.IsOk)
+            {
+                model.Tags.AddRange(blogResponse.Tags);
+                return View("UpdatePost", model);
+            }
+            else
+            {
+                return NotFound(blogResponse.Message);
+            }
         }
 
-        var model = new BlogPostUpdateViewModel {Post = post.Raw};
-        var tags = await _apiSiteHttpClient.GetTagsAsync();
-        if (tags != null)
-        {
-            model.Tags.AddRange(tags);
-        }
-
-        return View("UpdatePost", model);
+        return NotFound(blogResponse.Message);
     }
 
     [HttpPut("posts/{postLink}")]
@@ -240,8 +309,18 @@ public class BlogController : Controller
             post.ContainsMath = Request.Form["containsMath"] == "on";
             post.IsPublished = Request.Form["isPublished"] == "on";
             post.IsTopping = Request.Form["isTopping"] == "on";
-            var result = await _apiSiteHttpClient.UpdatePostAsync(post, postLink);
-            response.RedirectTo = result.GetFullPath(_options.BlogRemoteEndpoint);
+            _blogGrpcRequest.Post = post;
+            _blogGrpcRequest.ReplacedPostLink = postLink;
+            var blogResponse = await _blogGrpcService.UpdatePostAsync(_blogGrpcRequest);
+            if (blogResponse.IsOk)
+            {
+                response.RedirectTo = blogResponse.Post.GetFullPath(_options.BlogRemoteEndpoint);
+            }
+            else
+            {
+                response.IsOk = false;
+                response.Message = blogResponse.Message;
+            }
         }
         catch (Exception ex)
         {
@@ -256,8 +335,15 @@ public class BlogController : Controller
     [Route("tags")]
     public async Task<IActionResult> GetTagsAsync()
     {
-        var tags = await _apiSiteHttpClient.GetTagsAsync();
-        return View("Tags", tags.OrderByDescending(x => x.LastUpdatedAt));
+        var blogResponse = await _blogGrpcService.GetTagsAsync();
+        if (blogResponse.IsOk)
+        {
+            return View("Tags", blogResponse.Tags.OrderByDescending(x => x.LastUpdatedAt));
+        }
+        else
+        {
+            return NotFound(blogResponse.Message);
+        }
     }
 
     [HttpDelete]
@@ -267,7 +353,8 @@ public class BlogController : Controller
         var response = new ApiResponse<object>();
         try
         {
-            await _apiSiteHttpClient.DeleteTagAsync(id);
+            _blogGrpcRequest.TagId = id;
+            await _blogGrpcService.DeleteTagAsync(_blogGrpcRequest);
         }
         catch (Exception ex)
         {
@@ -292,8 +379,17 @@ public class BlogController : Controller
         var response = new ApiResponse<object>();
         try
         {
-            await _apiSiteHttpClient.AddTagAsync(tag);
-            response.RedirectTo = "/blog/tags";
+            _blogGrpcRequest.Tag = tag;
+            var blogResponse = await _blogGrpcService.AddTagAsync(_blogGrpcRequest);
+            if (blogResponse.IsOk)
+            {
+                response.RedirectTo = "/blog/tags";
+            }
+            else
+            {
+                response.IsOk = false;
+                response.Message = blogResponse.Message;
+            }
         }
         catch (Exception ex)
         {
@@ -307,13 +403,14 @@ public class BlogController : Controller
     [HttpGet("tags/{id}/update")]
     public async Task<IActionResult> UpdateTagAsync([FromRoute] string id)
     {
-        var tag = await _apiSiteHttpClient.GetTagAsync(id);
-        if (tag != null)
+        _blogGrpcRequest.TagId = id;
+        var blogResponse = await _blogGrpcService.GetTagAsync(_blogGrpcRequest);
+        if (blogResponse.IsOk)
         {
-            return View("UpdateTag", tag);
+            return View("UpdateTag", blogResponse.Tag);
         }
-
-        return NotFound($"Tag with id \"{id}\" not found.");
+        
+        return NotFound(blogResponse.Message);
     }
 
     [HttpPut]
@@ -323,8 +420,17 @@ public class BlogController : Controller
         var response = new ApiResponse<object>();
         try
         {
-            await _apiSiteHttpClient.UpdateTagAsync(tag);
-            response.RedirectTo = "/blog/tags";
+            _blogGrpcRequest.Tag = tag;
+            var blogResponse = await _blogGrpcService.UpdateTagAsync(_blogGrpcRequest);
+            if (blogResponse.IsOk)
+            {
+                response.RedirectTo = "/blog/tags";
+            }
+            else
+            {
+                response.IsOk = false;
+                response.Message = blogResponse.Message;
+            }
         }
         catch (Exception ex)
         {

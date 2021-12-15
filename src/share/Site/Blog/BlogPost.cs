@@ -63,11 +63,6 @@ public class BlogPost
     [JsonPropertyName("mdContent")]
     public string MdContent { get; set; }
 
-    [DataMember(Order = 12)]
-    [JsonPropertyOrder(12)]
-    [JsonPropertyName("wordsCount")]
-    public int WordsCount { get; set; }
-
     public bool IsPostPublished()
     {
         return IsPublished && PublishTime <= DateTime.Now;

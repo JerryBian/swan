@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ReadItem>
+﻿@model IEnumerable<ReadItemRuntime>
 @inject IOptions<AdminOptions> _config
 @{
     ViewData["Title"] = "所有的阅读";
@@ -25,12 +25,12 @@
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <th class="text-start">@item.BookName @Html.Raw(!item.IsPublished ? "<i class='fas fa-eye-slash text-danger'></i>" : "")</th>
-                        <th>@item.StartTime.ToChinaDate()</th>
-                        <th>@Html.Raw(item.IsCompleted ? "<i class='fas fa-check text-success'></i>" : "<i class='fas fa-book-reader text-info'></i>")</th>
+                        <th class="text-start">@item.Raw.BookName @Html.Raw(!item.Raw.IsPublished ? "<i class='fas fa-eye-slash text-danger'></i>" : "")</th>
+                        <th>@item.Raw.StartTime.ToChinaDate()</th>
+                        <th>@Html.Raw(item.Raw.IsCompleted ? "<i class='fas fa-check text-success'></i>" : "<i class='fas fa-book-reader text-info'></i>")</th>
                         <th>
-                            <a class="btn btn-info me-2" href="/read/@item.Id/update"><i class="fas fa-edit"></i> 编辑</a>
-                            <a class="btn btn-danger" href="javascript:;" onclick="deleteBookItem('@item.Id')"><i class="fas fa-trash-alt"></i> 删除</a>
+                            <a class="btn btn-info me-2" href="/read/@item.Raw.Id/update"><i class="fas fa-edit"></i> 编辑</a>
+                            <a class="btn btn-danger" href="javascript:;" onclick="deleteBookItem('@item.Raw.Id')"><i class="fas fa-trash-alt"></i> 删除</a>
                         </th>
                     </tr>
                 }

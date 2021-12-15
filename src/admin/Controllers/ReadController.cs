@@ -3,23 +3,27 @@ using System.Linq;
 using System.Threading.Tasks;
 using Laobian.Admin.HttpClients;
 using Laobian.Share;
+using Laobian.Share.Grpc;
+using Laobian.Share.Grpc.Request;
+using Laobian.Share.Grpc.Service;
 using Laobian.Share.Site.Read;
 using Laobian.Share.Util;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Laobian.Admin.Controllers;
 
 [Route("read")]
 public class ReadController : Controller
 {
-    private readonly ApiSiteHttpClient _apiSiteHttpClient;
+    private readonly IReadGrpcService _readGrpcService;
     private readonly ILogger<ReadController> _logger;
 
-    public ReadController(ApiSiteHttpClient apiSiteHttpClient, ILogger<ReadController> logger)
+    public ReadController(IOptions<AdminOptions> options, ILogger<ReadController> logger)
     {
         _logger = logger;
-        _apiSiteHttpClient = apiSiteHttpClient;
+        _readGrpcService = GrpcClientHelper.CreateClient<IReadGrpcService>(options.Value.ApiLocalEndpoint);
     }
 
     [HttpPost("stats")]
@@ -28,15 +32,24 @@ public class ReadController : Controller
         var response = new ApiResponse<ChartResponse>();
         try
         {
-            var items = await _apiSiteHttpClient.GetReadItemsAsync();
-            var chartResponse = new ChartResponse {Title = "xxxx", Type = "bar"};
-            foreach (var item in items.GroupBy(x => x.StartTime.Year).OrderBy(x => x.Key))
+            var request = new ReadGrpcRequest();
+            var itemsResponse = await _readGrpcService.GetReadItemsAsync(request);
+            if (itemsResponse.IsOk)
             {
-                chartResponse.Data.Add(item.Count());
-                chartResponse.Labels.Add(item.Key.ToString());
-            }
+                var chartResponse = new ChartResponse { Title = "当年阅读数", Type = "bar" };
+                foreach (var item in itemsResponse.ReadItems.GroupBy(x => x.Raw.StartTime.Year).OrderBy(x => x.Key))
+                {
+                    chartResponse.Data.Add(item.Count());
+                    chartResponse.Labels.Add(item.Key.ToString());
+                }
 
-            response.Content = chartResponse;
+                response.Content = chartResponse;
+            }
+            else
+            {
+                response.IsOk = false;
+                response.Message = itemsResponse.Message;
+            }
         }
         catch (Exception ex)
         {
@@ -50,15 +63,25 @@ public class ReadController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var model = await _apiSiteHttpClient.GetReadItemsAsync();
-        return View(model);
-    }
-
-    [HttpGet]
-    [Route("{id}")]
-    public async Task<ReadItem> Get([FromRoute] string id)
-    {
-        return await _apiSiteHttpClient.GetReadItemAsync(id);
+        try
+        {
+            var request = new ReadGrpcRequest();
+            var itemsResponse = await _readGrpcService.GetReadItemsAsync(request);
+            if (itemsResponse.IsOk)
+            {
+                return View(itemsResponse.ReadItems);
+            }
+            else
+            {
+                return NotFound(itemsResponse.Message);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Index page error");
+            return NotFound(ex.Message);
+        }
+        
     }
 
     [HttpGet("add")]
@@ -75,8 +98,17 @@ public class ReadController : Controller
         {
             readItem.IsCompleted = Request.Form["isCompleted"] == "on";
             readItem.IsPublished = Request.Form["isPublished"] == "on";
-            await _apiSiteHttpClient.AddReadItemAsync(readItem);
-            response.RedirectTo = "/read";
+            var readRequest = new ReadGrpcRequest { ReadItem = readItem };
+            var readResponse = await _readGrpcService.AddReadItemAsync(readRequest);
+            if (readResponse.IsOk)
+            {
+                response.RedirectTo = "/read";
+            }
+            else
+            {
+                response.IsOk = false;
+                response.Message = readResponse.Message;
+            }
         }
         catch (Exception ex)
         {
@@ -91,13 +123,14 @@ public class ReadController : Controller
     [HttpGet("{id}/update")]
     public async Task<IActionResult> Update([FromRoute] string id)
     {
-        var bookItem = await _apiSiteHttpClient.GetReadItemAsync(id);
-        if (bookItem == null)
+        var readRequest = new ReadGrpcRequest { ReadItemId = id};
+        var readResponse = await _readGrpcService.GetReadItemAsync(readRequest);
+        if (readResponse.IsOk)
         {
-            return NotFound();
+            return View(readResponse.ReadItemRuntime.Raw);
         }
 
-        return View(bookItem);
+        return NotFound(readResponse.Message);
     }
 
     [HttpPut]
@@ -108,8 +141,17 @@ public class ReadController : Controller
         {
             readItem.IsCompleted = Request.Form["isCompleted"] == "on";
             readItem.IsPublished = Request.Form["isPublished"] == "on";
-            await _apiSiteHttpClient.UpdateReadItemAsync(readItem);
-            response.RedirectTo = "/read";
+            var readRequest = new ReadGrpcRequest { ReadItem = readItem };
+            var readResponse = await _readGrpcService.UpdateReadItemAsync(readRequest);
+            if (readResponse.IsOk)
+            {
+                response.RedirectTo = "/read";
+            }
+            else
+            {
+                response.IsOk = false;
+                response.Message = readResponse.Message;
+            }
         }
         catch (Exception ex)
         {
@@ -128,7 +170,13 @@ public class ReadController : Controller
         var response = new ApiResponse<object>();
         try
         {
-            await _apiSiteHttpClient.DeleteReadItemAsync(id);
+            var readRequest = new ReadGrpcRequest { ReadItemId = id};
+            var readResponse = await _readGrpcService.DeleteReadItemAsync(readRequest);
+            if (!readResponse.IsOk)
+            {
+                response.IsOk = false;
+                response.Message = readResponse.Message;
+            }
         }
         catch (Exception ex)
         {
