@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Laobian.Api.HttpClients;
 using Laobian.Api.Repository;
+using Laobian.Api.Service;
 using Laobian.Share.Grpc.Request;
 using Laobian.Share.Grpc.Response;
 using Laobian.Share.Grpc.Service;
@@ -16,14 +17,14 @@ namespace Laobian.Api.Grpc;
 public class BlogGrpcService : IBlogGrpcService
 {
     private readonly BlogSiteHttpClient _blogSiteHttpClient;
-    private readonly IFileRepository _fileRepository;
+    private readonly IBlogFileService _blogFileService;
     private readonly ILogger<BlogGrpcService> _logger;
 
-    public BlogGrpcService(IFileRepository fileRepository,
+    public BlogGrpcService(IBlogFileService blogFileService,
         ILogger<BlogGrpcService> logger, BlogSiteHttpClient blogSiteHttpClient)
     {
         _logger = logger;
-        _fileRepository = fileRepository;
+        _blogFileService = blogFileService;
         _blogSiteHttpClient = blogSiteHttpClient;
     }
 
@@ -32,15 +33,7 @@ public class BlogGrpcService : IBlogGrpcService
         var response = new BlogGrpcResponse();
         try
         {
-            var post = await _fileRepository.GetBlogPostAsync(request.Link);
-            if (post == null)
-            {
-                _logger.LogWarning($"No post found with link {request.Link}, new access will be discarded.");
-            }
-            else
-            {
-                await _fileRepository.AddBlogPostAccessAsync(post, DateTime.Now, 1);
-            }
+            await _blogFileService.AddBlogPostAccessAsync(request.Link, DateTime.Now, 1);
         }
         catch (Exception ex)
         {
@@ -57,7 +50,7 @@ public class BlogGrpcService : IBlogGrpcService
         var response = new BlogGrpcResponse();
         try
         {
-            await _fileRepository.AddBlogPostAsync(request.Post);
+            await _blogFileService.AddBlogPostAsync(request.Post);
             await _blogSiteHttpClient.ReloadBlogDataAsync();
             response.Post = request.Post;
         }
@@ -76,7 +69,7 @@ public class BlogGrpcService : IBlogGrpcService
         var response = new BlogGrpcResponse();
         try
         {
-            await _fileRepository.AddBlogTagAsync(request.Tag);
+            await _blogFileService.AddBlogTagAsync(request.Tag);
             await _blogSiteHttpClient.ReloadBlogDataAsync();
             response.Tag = request.Tag;
         }
@@ -95,14 +88,14 @@ public class BlogGrpcService : IBlogGrpcService
         var response = new BlogGrpcResponse();
         try
         {
-            await _fileRepository.DeleteBlogTagAsync(request.TagId);
-            var posts = await _fileRepository.GetBlogPostsAsync();
+            await _blogFileService.DeleteBlogTagAsync(request.TagId);
+            var posts = await _blogFileService.GetBlogPostsAsync();
             foreach (var blogPost in posts)
             {
                 if (blogPost.Tag.Contains(request.TagId))
                 {
                     blogPost.Tag.Remove(request.TagId);
-                    await _fileRepository.UpdateBlogPostAsync(blogPost, blogPost.Link);
+                    await _blogFileService.UpdateBlogPostAsync(blogPost, blogPost.Link);
                 }
             }
 
@@ -123,7 +116,7 @@ public class BlogGrpcService : IBlogGrpcService
         var response = new BlogGrpcResponse();
         try
         {
-            var post = await _fileRepository.GetBlogPostAsync(request.Link);
+            var post = await _blogFileService.GetBlogPostAsync(request.Link);
             if (post == null)
             {
                 response.IsOk = false;
@@ -150,7 +143,7 @@ public class BlogGrpcService : IBlogGrpcService
         var response = new BlogGrpcResponse();
         try
         {
-            var posts = await _fileRepository.GetBlogPostsAsync();
+            var posts = await _blogFileService.GetBlogPostsAsync();
             var result = new List<BlogPostRuntime>();
             foreach (var blogPost in posts)
             {
@@ -175,7 +168,7 @@ public class BlogGrpcService : IBlogGrpcService
         var response = new BlogGrpcResponse();
         try
         {
-            var tag = await _fileRepository.GetBlogTagAsync(request.TagId);
+            var tag = await _blogFileService.GetBlogTagAsync(request.TagId);
             if (tag == null)
             {
                 response.IsOk = false;
@@ -201,7 +194,7 @@ public class BlogGrpcService : IBlogGrpcService
         var response = new BlogGrpcResponse();
         try
         {
-            var tags = await _fileRepository.GetBlogTagsAsync();
+            var tags = await _blogFileService.GetBlogTagsAsync();
             response.Tags = tags;
         }
         catch (Exception ex)
@@ -219,7 +212,7 @@ public class BlogGrpcService : IBlogGrpcService
         var response = new BlogGrpcResponse();
         try
         {
-            await _fileRepository.UpdateBlogPostAsync(request.Post, request.ReplacedPostLink);
+            await _blogFileService.UpdateBlogPostAsync(request.Post, request.ReplacedPostLink);
             await _blogSiteHttpClient.ReloadBlogDataAsync();
             response.Post = request.Post;
         }
@@ -238,7 +231,7 @@ public class BlogGrpcService : IBlogGrpcService
         var response = new BlogGrpcResponse();
         try
         {
-            await _fileRepository.UpdateBlogTagAsync(request.Tag);
+            await _blogFileService.UpdateBlogTagAsync(request.Tag);
             await _blogSiteHttpClient.ReloadBlogDataAsync();
             response.Tag = request.Tag;
         }
@@ -257,11 +250,11 @@ public class BlogGrpcService : IBlogGrpcService
         var blogPostRuntime = new BlogPostRuntime(post);
         if (extractRuntime)
         {
-            var blogPostAccess = await _fileRepository.GetBlogPostAccessAsync(post.Link);
+            var blogPostAccess = await _blogFileService.GetBlogPostAccessAsync(post.Link);
             var blogTags = new List<BlogTag>();
             foreach (var blogPostTag in post.Tag)
             {
-                var tag = await _fileRepository.GetBlogTagAsync(blogPostTag);
+                var tag = await _blogFileService.GetBlogTagAsync(blogPostTag);
                 if (tag != null)
                 {
                     blogTags.Add(tag);

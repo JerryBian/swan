@@ -6,6 +6,7 @@ using Laobian.Api.HostedServices;
 using Laobian.Api.HttpClients;
 using Laobian.Api.Logger;
 using Laobian.Api.Repository;
+using Laobian.Api.Service;
 using Laobian.Api.Source;
 using Laobian.Share;
 using Laobian.Share.Converter;
@@ -37,6 +38,8 @@ public class Startup : SharedStartup
 
         services.AddSingleton<ICommandClient, ProcessCommandClient>();
         services.AddSingleton<IFileRepository, FileRepository>();
+        services.AddSingleton<IBlogFileSource, BlogFileSource>();
+        services.AddSingleton<IBlogFileService, BlogFileService>();
         if (CurrentEnv.IsDevelopment())
         {
             services.AddSingleton<IFileSource, LocalFileSource>();
