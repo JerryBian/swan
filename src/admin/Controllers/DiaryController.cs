@@ -9,6 +9,7 @@ using Laobian.Share.Grpc;
 using Laobian.Share.Grpc.Request;
 using Laobian.Share.Grpc.Service;
 using Laobian.Share.Site.Jarvis;
+using Laobian.Share.Util;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -211,37 +212,94 @@ public class DiaryController : Controller
         return View();
     }
 
-    //[HttpPost]
-    //[Route("add")]
-    //public async Task<IActionResult> AddDiary([FromForm] Diary diary)
-    //{
-    //    if (diary.Date == default)
-    //    {
-    //        diary.Date = DateTime.Now;
-    //    }
+    [HttpPost]
+    [Route("add")]
+    public async Task<ApiResponse<object>> AddDiary([FromForm] Diary diary)
+    {
+        if (diary.Date == default)
+        {
+            diary.Date = DateTime.Now;
+        }
 
-    //    await _httpClient.AddDiaryAsync(diary);
-    //    return Redirect(diary.GetFullPath(_options));
-    //}
+        var response = new ApiResponse<object>();
+        try
+        {
+            var request = new DiaryGrpcRequest { Diary = diary };
+            var diaryResponse = await _diaryGrpcService.AddDiaryAsync(request);
+            if (diaryResponse.IsOk)
+            {
+                response.RedirectTo = diaryResponse.Diary.GetFullPath(_options);
+            }
+            else
+            {
+                response.IsOk = false;
+                response.Message = diaryResponse.Message;
+            }
+        }
+        catch (Exception ex)
+        {
+            response.IsOk = false;
+            response.Message = ex.Message;
+            _logger.LogError(ex, $"Add diary failed: {JsonUtil.Serialize(diary)}");
+        }
 
-    //[HttpGet]
-    //[Route("update/{date}")]
-    //public async Task<IActionResult> UpdateDiary(DateTime date)
-    //{
-    //    var item = await _httpClient.GetDiaryAsync(date);
-    //    if (item == null)
-    //    {
-    //        return Redirect($"/diary/add?date={date.ToDate()}");
-    //    }
+        return response;
+    }
 
-    //    return View(item);
-    //}
+    [HttpGet]
+    [Route("update")]
+    public async Task<IActionResult> UpdateDiary([FromQuery]DateTime date)
+    {
+        var request = new DiaryGrpcRequest {Date = date};
+        try
+        {
+            var response = await _diaryGrpcService.GetDiaryAsync(request);
+            if (response.IsOk)
+            {
+                if (!response.NotFound)
+                {
+                    return View(response.DiaryRuntime.Raw);
+                }
+                else
+                {
+                    return Redirect($"/diary/add?date={date.ToDate()}");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Update page has error: {date}");
+        }
 
-    //[HttpPost]
-    //[Route("update")]
-    //public async Task<IActionResult> UpdateDiary([FromForm] Diary diary)
-    //{
-    //    await _httpClient.UpdateDiaryAsync(diary);
-    //    return Redirect(diary.GetFullPath(_options));
-    //}
+        return NotFound();
+    }
+
+    [HttpPut]
+    [Route("update")]
+    public async Task<ApiResponse<object>> UpdateDiary([FromForm] Diary diary)
+    {
+        var response = new ApiResponse<object>();
+        try
+        {
+            var request = new DiaryGrpcRequest { Diary = diary };
+            var diaryResponse = await _diaryGrpcService.UpdateDiaryAsync(request);
+            if (diaryResponse.IsOk)
+            {
+                response.RedirectTo = diaryResponse.Diary.GetFullPath(_options);
+            }
+            else
+            {
+                response.IsOk = false;
+                response.Message = diaryResponse.Message;
+            }
+        }
+        catch (Exception ex)
+        {
+            response.IsOk = false;
+            response.Message = ex.Message;
+            _logger.LogError(ex, $"Update diary failed: {JsonUtil.Serialize(diary)}");
+        }
+
+        return response;
+    }
 }

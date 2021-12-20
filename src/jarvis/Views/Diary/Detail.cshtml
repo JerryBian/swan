@@ -14,7 +14,7 @@
 
 @section Aside{
     <div class="d-grid mb-3">
-        <a class="btn btn-secondary" href="@_option.Value.AdminRemoteEndpoint/diary/update/@Model.Raw.Date.ToDate()"><i class="fas fa-edit"></i> 编辑日记</a>
+        <a class="btn btn-secondary" href="@_option.Value.AdminRemoteEndpoint/diary/update?date=@Model.Raw.Date.ToDate()"><i class="fas fa-edit"></i> 编辑日记</a>
     </div>
 
     <div class="list-group">

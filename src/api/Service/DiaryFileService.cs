@@ -125,7 +125,7 @@ public class DiaryFileService : IDiaryFileService
         if (existingDiary != null)
         {
             throw new Exception(
-                $"Diary with date({diary.Date.ToDate()}) already exists. Requested diary: {JsonUtil.Serialize(diary)}");
+                $"Diary with date({diary.Date.ToDate()}) already exists.");
         }
 
         diary.CreateTime = diary.LastUpdateTime = DateTime.Now;
@@ -145,7 +145,7 @@ public class DiaryFileService : IDiaryFileService
         if (existingDiary == null)
         {
             throw new Exception(
-                $"Diary with date({diary.Date.ToDate()}) not exists. Requested diary: {JsonUtil.Serialize(diary)}");
+                $"Diary with date({diary.Date.ToDate()}) not exists.");
         }
 
         diary.CreateTime = existingDiary.CreateTime;

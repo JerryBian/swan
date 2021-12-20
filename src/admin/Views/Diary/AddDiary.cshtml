@@ -20,5 +20,12 @@
 @section Scripts {
     <script>
         const markdownContent = prepareEditor(document.querySelector("#markdownContent"), "diary_add_@ViewData["Date"]");
+        const form = document.querySelector("form");
+        form.addEventListener('submit',
+            function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                submitRequest("/diary/add", { form: form, body: new URLSearchParams(new FormData(form)), contentType: "application/x-www-form-urlencoded" });
+            });
     </script>
 }

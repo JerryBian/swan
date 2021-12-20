@@ -121,13 +121,13 @@ public class DiaryController : Controller
     public async Task<IActionResult> Detail([FromRoute] int year, [FromRoute] int month, [FromRoute] int day)
     {
         var date = new DateTime(year, month, day);
-        var request = new DiaryGrpcRequest {Date = date, ExtractRuntime = true};
+        var request = new DiaryGrpcRequest {Date = date, ExtractRuntime = true, ExtractNext = true, ExtractPrev = true};
         var response = await _diaryGrpcService.GetDiaryAsync(request);
         if (response.IsOk)
         {
             if (response.NotFound)
             {
-                return Redirect($"{_options.AdminRemoteEndpoint}/diary/add/{date.ToDate()}");
+                return Redirect($"{_options.AdminRemoteEndpoint}/diary/add?date={date.ToDate()}");
             }
 
             return View(response.DiaryRuntime);
