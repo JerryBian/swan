@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Laobian.Api.Repository;
+using Laobian.Api.Service;
 using Laobian.Share.Grpc.Request;
 using Laobian.Share.Grpc.Response;
 using Laobian.Share.Grpc.Service;
@@ -15,13 +16,13 @@ namespace Laobian.Api.Grpc
 {
     public class ReadGrpcService : IReadGrpcService
     {
-        private readonly IFileRepository _fileRepository;
+        private readonly IReadFileService _readFileService;
         private readonly ILogger<ReadGrpcService> _logger;
 
-        public ReadGrpcService(IFileRepository fileRepository, ILogger<ReadGrpcService> logger)
+        public ReadGrpcService(IReadFileService readFileService, ILogger<ReadGrpcService> logger)
         {
             _logger = logger;
-            _fileRepository = fileRepository;
+            _readFileService = readFileService;
         }
 
         private ReadItemRuntime GetReadItemRuntime(ReadItem readItem, bool extractRuntime)
@@ -41,7 +42,7 @@ namespace Laobian.Api.Grpc
             try
             {
                 var readItemRuntime = new List<ReadItemRuntime>();
-                var readItems = await _fileRepository.GetReadItemsAsync();
+                var readItems = await _readFileService.GetReadItemsAsync();
                 foreach (var readItem in readItems)
                 {
                     readItemRuntime.Add(GetReadItemRuntime(readItem, request.ExtractRuntime));
@@ -64,8 +65,8 @@ namespace Laobian.Api.Grpc
             var response = new ReadGrpcResponse();
             try
             {
-                var readItems = await _fileRepository.GetReadItemsAsync();
-                var readItem = readItems.FirstOrDefault(x => x.Id == request.ReadItemId);
+                var readItems = await _readFileService.GetReadItemsAsync();
+                var readItem = readItems.FirstOrDefault(x => StringUtil.EqualsIgnoreCase(request.ReadItemId, x.Id));
                 response.ReadItemRuntime = GetReadItemRuntime(readItem, request.ExtractRuntime);
             }
             catch (Exception ex)
@@ -83,7 +84,7 @@ namespace Laobian.Api.Grpc
             var response = new ReadGrpcResponse();
             try
             {
-                await _fileRepository.AddReadItemAsync(request.ReadItem);
+                await _readFileService.AddReadItemAsync(request.ReadItem);
                 response.ReadItem = request.ReadItem;
             }
             catch (Exception ex)
@@ -101,7 +102,7 @@ namespace Laobian.Api.Grpc
             var response = new ReadGrpcResponse();
             try
             {
-                await _fileRepository.UpdateReadItemAsync(request.ReadItem);
+                await _readFileService.UpdateReadItemAsync(request.ReadItem);
                 response.ReadItem = request.ReadItem;
             }
             catch (Exception ex)
@@ -119,7 +120,7 @@ namespace Laobian.Api.Grpc
             var response = new ReadGrpcResponse();
             try
             {
-                await _fileRepository.DeleteReadItemAsync(request.ReadItemId);
+                await _readFileService.DeleteReadItemAsync(request.ReadItemId);
                 response.ReadItem = request.ReadItem;
             }
             catch (Exception ex)

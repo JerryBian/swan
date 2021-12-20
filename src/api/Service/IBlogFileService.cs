@@ -8,8 +8,6 @@ namespace Laobian.Api.Service
 {
     public interface IBlogFileService
     {
-        #region Blog
-
         Task<List<BlogPost>> GetBlogPostsAsync(CancellationToken cancellationToken = default);
 
         Task<BlogPost> GetBlogPostAsync(string postLink, CancellationToken cancellationToken = default);
@@ -35,7 +33,5 @@ namespace Laobian.Api.Service
         Task UpdateBlogTagAsync(BlogTag blogTag, CancellationToken cancellationToken = default);
 
         Task DeleteBlogTagAsync(string id, CancellationToken cancellationToken = default);
-
-        #endregion
     }
 }

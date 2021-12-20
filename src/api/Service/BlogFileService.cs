@@ -24,8 +24,6 @@ namespace Laobian.Api.Service
             _blogFileSource = blogFileSource;
         }
 
-        #region Blog
-
         public async Task<List<BlogPost>> GetBlogPostsAsync(CancellationToken cancellationToken = default)
         {
             var posts = new List<BlogPost>();
@@ -315,7 +313,5 @@ namespace Laobian.Api.Service
             tags.Remove(existingTag);
             await _blogFileSource.WriteAsync("tag.json", JsonUtil.Serialize(tags.OrderByDescending(x => x.LastUpdatedAt), true), cancellationToken);
         }
-
-#endregion
     }
 }

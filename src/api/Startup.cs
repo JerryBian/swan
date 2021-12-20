@@ -40,6 +40,9 @@ public class Startup : SharedStartup
         services.AddSingleton<IFileRepository, FileRepository>();
         services.AddSingleton<IBlogFileSource, BlogFileSource>();
         services.AddSingleton<IBlogFileService, BlogFileService>();
+        services.AddSingleton<IReadFileRepository, ReadFileRepository>();
+        services.AddSingleton<IReadFileService, ReadFileService>();
+
         if (CurrentEnv.IsDevelopment())
         {
             services.AddSingleton<IFileSource, LocalFileSource>();
