@@ -13,11 +13,13 @@ public class GitFileLogHostedService : BackgroundService
 {
     private readonly ILogFileService _fileRepository;
     private readonly ILaobianLogQueue _logQueue;
+    private bool _readyToRun;
 
-    public GitFileLogHostedService(ILaobianLogQueue logQueue, ILogFileService fileRepository)
+    public GitFileLogHostedService(ILaobianLogQueue logQueue, ILogFileService fileRepository, IHostApplicationLifetime applicationLifetime)
     {
         _logQueue = logQueue;
         _fileRepository = fileRepository;
+        applicationLifetime.ApplicationStarted.Register(() => _readyToRun = true);
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -31,7 +33,8 @@ public class GitFileLogHostedService : BackgroundService
 
     private async Task ProcessLogsAsync(CancellationToken stoppingToken)
     {
-        while (_logQueue.TryDequeue(out var log))
+        // The Git repository has to be cloned successfully before writing logs
+        while (_readyToRun && _logQueue.TryDequeue(out var log))
         {
             try
             {
