@@ -181,5 +181,25 @@ namespace Laobian.Api.Source
                 _autoResetEvent.Set();
             }
         }
+
+        public async Task AddFileAsync(string path, byte[] content, CancellationToken cancellationToken = default)
+        {
+            _autoResetEvent.WaitOne();
+            try
+            {
+                EnsureBasePath();
+                var dir = Path.GetDirectoryName(path);
+                if (!string.IsNullOrEmpty(dir))
+                {
+                    Directory.CreateDirectory(dir);
+                }
+
+                await File.WriteAllBytesAsync(Path.Combine(BasePath, path), content, cancellationToken);
+            }
+            finally
+            {
+                _autoResetEvent.Set();
+            }
+        }
     }
 }

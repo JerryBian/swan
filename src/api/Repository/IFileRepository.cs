@@ -16,8 +16,7 @@ public interface IFileRepository
 
     Task SaveAsync(string message);
 
-    Task<string> AddRawFileAsync(string fileName, byte[] content,
-        CancellationToken cancellationToken = default);
+    
 
     Task<Diary> GetDiaryAsync(DateTime date, CancellationToken cancellationToken = default);
 

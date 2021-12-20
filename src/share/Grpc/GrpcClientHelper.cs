@@ -20,7 +20,7 @@ public static class GrpcClientHelper
             var c = GrpcChannel.ForAddress(address, new GrpcChannelOptions
             {
                 MaxRetryAttempts = 3,
-                MaxSendMessageSize = 1024 * 10
+                MaxSendMessageSize = 1024 * 1024 * 20
             });
 
             return c;

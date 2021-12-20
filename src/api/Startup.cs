@@ -34,7 +34,10 @@ public class Startup : SharedStartup
     {
         base.ConfigureServices(services);
         services.Configure<ApiOptions>(o => { o.FetchFromEnv(Configuration); });
-        services.AddCodeFirstGrpc();
+        services.AddCodeFirstGrpc(o =>
+        {
+            o.MaxReceiveMessageSize = 20 * 1024 * 1024;
+        });
 
         services.AddSingleton<ICommandClient, ProcessCommandClient>();
         services.AddSingleton<IFileRepository, FileRepository>();
@@ -44,6 +47,8 @@ public class Startup : SharedStartup
         services.AddSingleton<IReadFileService, ReadFileService>();
         services.AddSingleton<ILogFileRepository, LogFileRepository>();
         services.AddSingleton<ILogFileService, LogFileService>();
+        services.AddSingleton<IRawFileRepository, RawFileRepository>();
+        services.AddSingleton<IRawFileService, RawFileService>();
 
         if (CurrentEnv.IsDevelopment())
         {
@@ -93,6 +98,7 @@ public class Startup : SharedStartup
             endpoints.MapGrpcService<LogGrpcService>();
             endpoints.MapGrpcService<BlogGrpcService>();
             endpoints.MapGrpcService<ReadGrpcService>();
+            endpoints.MapGrpcService<FileGrpcService>();
         });
     }
 }

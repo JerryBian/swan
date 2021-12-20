@@ -38,41 +38,6 @@ public class FileRepository : IFileRepository
         await _fileSource.FlushAsync(message);
     }
 
-    public async Task<List<LaobianLog>> GetLogsAsync(LaobianSite site, DateTime date,
-        CancellationToken cancellationToken = default)
-    {
-        var result = new List<LaobianLog>();
-        var logs = await _fileSource.ReadLogsAsync(site, date, cancellationToken);
-        if (!string.IsNullOrEmpty(logs))
-        {
-            using var sr = new StringReader(logs);
-            string line;
-            while ((line = await sr.ReadLineAsync()) != null)
-            {
-                result.Add(JsonUtil.Deserialize<LaobianLog>(line));
-            }
-        }
-
-        return result;
-    }
-
-    public async Task AddLogAsync(LaobianLog log, CancellationToken cancellationToken = default)
-    {
-        var site = LaobianSite.Api;
-        if (Enum.TryParse(log.LoggerName, true, out LaobianSite temp))
-        {
-            site = temp;
-        }
-
-        await _fileSource.AppendLogAsync(site, log.TimeStamp.Date, JsonUtil.Serialize(log), cancellationToken);
-    }
-
-    public async Task<string> AddRawFileAsync(string fileName, byte[] content,
-        CancellationToken cancellationToken = default)
-    {
-        return await _fileSource.AddRawFileAsync(fileName, content, cancellationToken);
-    }
-
     public async Task<Diary> GetDiaryAsync(DateTime date, CancellationToken cancellationToken = default)
     {
         Diary result = null;

@@ -21,5 +21,7 @@ namespace Laobian.Api.Source
         Task RenameAsync(string oldPath, string newPath, CancellationToken cancellationToken = default);
 
         Task<bool> FileExistsAsync(string path, CancellationToken cancellationToken = default);
+
+        Task AddFileAsync(string path, byte[] content, CancellationToken cancellationToken = default);
     }
 }
