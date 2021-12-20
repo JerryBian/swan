@@ -16,11 +16,6 @@ public interface IFileRepository
 
     Task SaveAsync(string message);
 
-    Task<List<LaobianLog>> GetLogsAsync(LaobianSite site, DateTime date,
-        CancellationToken cancellationToken = default);
-
-    Task AddLogAsync(LaobianLog log, CancellationToken cancellationToken = default);
-
     Task<string> AddRawFileAsync(string fileName, byte[] content,
         CancellationToken cancellationToken = default);
 

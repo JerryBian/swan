@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Api.Repository;
+using Laobian.Api.Service;
 using Laobian.Share.Logger;
 using Laobian.Share.Site;
 using Microsoft.Extensions.Hosting;
@@ -10,10 +11,10 @@ namespace Laobian.Api.HostedServices;
 
 public class GitFileLogHostedService : BackgroundService
 {
-    private readonly IFileRepository _fileRepository;
+    private readonly ILogFileService _fileRepository;
     private readonly ILaobianLogQueue _logQueue;
 
-    public GitFileLogHostedService(ILaobianLogQueue logQueue, IFileRepository fileRepository)
+    public GitFileLogHostedService(ILaobianLogQueue logQueue, ILogFileService fileRepository)
     {
         _logQueue = logQueue;
         _fileRepository = fileRepository;

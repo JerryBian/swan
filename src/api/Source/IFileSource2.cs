@@ -8,7 +8,7 @@ namespace Laobian.Api.Source
     {
         string BasePath { get; set; }
 
-        Task AppendAsync(string path, string content, CancellationToken cancellationToken = default);
+        Task AppendLineAsync(string path, string content, CancellationToken cancellationToken = default);
 
         Task WriteAsync(string path, string content, CancellationToken cancellationToken = default);
 

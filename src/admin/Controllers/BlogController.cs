@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Laobian.Admin.HttpClients;
@@ -69,6 +70,7 @@ public class BlogController : Controller
             var blogResponse = await _blogGrpcService.GetPostsAsync(_blogGrpcRequest);
             if (blogResponse.IsOk)
             {
+                blogResponse.Posts ??= new List<BlogPostRuntime>();
                 var items = blogResponse.Posts.GroupBy(x => x.Raw.CreateTime.Year).OrderBy(x => x.Key);
                 var chartResponse = new ChartResponse
                 {
@@ -109,6 +111,7 @@ public class BlogController : Controller
             var blogResponse = await _blogGrpcService.GetPostsAsync(_blogGrpcRequest);
             if (blogResponse.IsOk)
             {
+                blogResponse.Posts ??= new List<BlogPostRuntime>();
                 var items = blogResponse.Posts.GroupBy(x => x.Raw.CreateTime.Year).OrderBy(x => x.Key);
                 var chartResponse = new ChartResponse
                 {
@@ -159,6 +162,7 @@ public class BlogController : Controller
                 for (var i = 0; i < 15; i++)
                 {
                     var date = DateTime.Now.Date.AddDays(-i);
+                    blogResponse.PostRuntime.Accesses ??= new List<BlogAccess>();
                     var item = blogResponse.PostRuntime.Accesses.FirstOrDefault(x => x.Date == date);
                     chartResponse.Data.Add(item?.Count ?? 0);
                     chartResponse.Labels.Add(date.ToRelativeDaysHuman());
@@ -192,6 +196,7 @@ public class BlogController : Controller
             var blogResponse = await _blogGrpcService.GetPostsAsync(_blogGrpcRequest);
             if (blogResponse.IsOk)
             {
+                blogResponse.Posts ??= new List<BlogPostRuntime>();
                 var access = blogResponse.Posts.SelectMany(x => x.Accesses)
                     .Where(x => x.Date >= DateTime.Now.AddDays(-days) && x.Date <= DateTime.Now).GroupBy(x => x.Date)
                     .OrderBy(x => x.Key);
@@ -227,6 +232,7 @@ public class BlogController : Controller
         var blogResponse = await _blogGrpcService.GetPostsAsync(_blogGrpcRequest);
         if (blogResponse.IsOk)
         {
+            blogResponse.Posts ??= new List<BlogPostRuntime>();
             var viewModel = blogResponse.Posts.OrderByDescending(x => x.Raw.LastUpdateTime).ToList();
             return View("Posts", viewModel);
         }

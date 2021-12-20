@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Laobian.Api.Repository;
+using Laobian.Api.Service;
 using Laobian.Share.Grpc.Request;
 using Laobian.Share.Grpc.Response;
 using Laobian.Share.Grpc.Service;
@@ -15,15 +16,15 @@ namespace Laobian.Api.Grpc;
 
 public class LogGrpcService : ILogGrpcService
 {
-    private readonly IFileRepository _fileRepository;
+    private readonly ILogFileService _logFileService;
     private readonly ILaobianLogQueue _laobianLogQueue;
     private readonly ILogger<LogGrpcService> _logger;
 
     public LogGrpcService(ILogger<LogGrpcService> logger, ILaobianLogQueue laobianLogQueue,
-        IFileRepository fileRepository)
+        ILogFileService logFileService)
     {
         _logger = logger;
-        _fileRepository = fileRepository;
+        _logFileService = logFileService;
         _laobianLogQueue = laobianLogQueue;
     }
 
@@ -89,7 +90,7 @@ public class LogGrpcService : ILogGrpcService
         for (var i = 0; i <= days; i++)
         {
             var date = DateTime.Now.AddDays(-i);
-            var logs = await _fileRepository.GetLogsAsync(site, date);
+            var logs = await _logFileService.GetLogsAsync(site, date);
             result.AddRange(logs.Where(x => (int) x.Level >= minLevel));
         }
 

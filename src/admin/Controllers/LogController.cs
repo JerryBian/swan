@@ -48,7 +48,8 @@ public class LogController : Controller
             var logResponse = await _logGrpcService.GetLogsAsync(request);
             if (logResponse.IsOk)
             {
-                var logs = logResponse.Logs.OrderByDescending(x => x.TimeStamp).ToList();
+                logResponse.Logs = logResponse.Logs ?? new List<LaobianLog>();
+                    var logs = logResponse.Logs.OrderByDescending(x => x.TimeStamp).ToList();
                 response.Content = logs;
             }
             else
@@ -83,6 +84,7 @@ public class LogController : Controller
             var logResponse = await _logGrpcService.GetLogsAsync(request);
             if (logResponse.IsOk)
             {
+                logResponse.Logs = logResponse.Logs ?? new List<LaobianLog>();
                 var groupedLogs = logResponse.Logs.GroupBy(x => x.TimeStamp.Date).OrderBy(x => x.Key);
                 var chartResponse = new ChartResponse {Title = "# Logs are warning and error", Type = "line"};
                 foreach (var item in groupedLogs)

@@ -87,9 +87,9 @@ public class BlogService : IBlogService
                 return;
             }
 
-            var posts = postsResponse.Posts;
-            var tags = tagsResponse.Tags;
-            var readItems = readResponse.ReadItems;
+            var posts = postsResponse.Posts ?? new List<BlogPostRuntime>();
+            var tags = tagsResponse.Tags ?? new List<BlogTag>();
+            var readItems = readResponse.ReadItems ?? new List<ReadItemRuntime>();
 
             _allPosts.Clear();
             _allPosts.AddRange(posts.OrderByDescending(x => x.Raw.PublishTime));

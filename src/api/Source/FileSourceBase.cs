@@ -29,19 +29,20 @@ namespace Laobian.Api.Source
             Directory.CreateDirectory(BasePath);
         }
 
-        public virtual async Task AppendAsync(string path, string content, CancellationToken cancellationToken = default)
+        public virtual async Task AppendLineAsync(string path, string content, CancellationToken cancellationToken = default)
         {
             _autoResetEvent.WaitOne();
             try
             {
                 EnsureBasePath();
                 var fullPath = Path.Combine(BasePath, path);
-                if (!File.Exists(fullPath))
+                var dir = Path.GetDirectoryName(fullPath);
+                if (!string.IsNullOrEmpty(dir))
                 {
-                    throw new Exception($"Path not found: {fullPath}");
+                    Directory.CreateDirectory(dir);
                 }
 
-                await File.AppendAllTextAsync(fullPath, content, Encoding.UTF8, cancellationToken);
+                await File.AppendAllLinesAsync(fullPath, new[] { content }, Encoding.UTF8, cancellationToken);
             }
             finally
             {
@@ -56,6 +57,12 @@ namespace Laobian.Api.Source
             {
                 EnsureBasePath();
                 var fullPath = Path.Combine(BasePath, path);
+                var dir = Path.GetDirectoryName(fullPath);
+                if (!string.IsNullOrEmpty(dir))
+                {
+                    Directory.CreateDirectory(dir);
+                }
+
                 await File.WriteAllTextAsync(fullPath, content, Encoding.UTF8, cancellationToken);
             }
             finally
@@ -71,11 +78,17 @@ namespace Laobian.Api.Source
             {
                 EnsureBasePath();
                 var searchPath = string.IsNullOrEmpty(relativePath) ? BasePath : Path.Combine(BasePath, relativePath);
+                var dir = Path.GetDirectoryName(pattern);
+                if (!string.IsNullOrEmpty(dir))
+                {
+                    searchPath = Path.Combine(searchPath, dir);
+                    pattern = Path.GetFileName(pattern);
+                }
+
                 if (!Directory.Exists(searchPath))
                 {
                     return Enumerable.Empty<string>();
                 }
-
                 return await Task.FromResult(Directory.EnumerateFiles(searchPath, pattern, SearchOption.AllDirectories).Select(x => Path.GetRelativePath(BasePath, x)));
             }
             finally

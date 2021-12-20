@@ -42,6 +42,8 @@ public class Startup : SharedStartup
         services.AddSingleton<IBlogFileService, BlogFileService>();
         services.AddSingleton<IReadFileRepository, ReadFileRepository>();
         services.AddSingleton<IReadFileService, ReadFileService>();
+        services.AddSingleton<ILogFileRepository, LogFileRepository>();
+        services.AddSingleton<ILogFileService, LogFileService>();
 
         if (CurrentEnv.IsDevelopment())
         {
