@@ -344,6 +344,7 @@ public class BlogController : Controller
         var blogResponse = await _blogGrpcService.GetTagsAsync();
         if (blogResponse.IsOk)
         {
+            blogResponse.Tags ??= new List<BlogTag>();
             return View("Tags", blogResponse.Tags.OrderByDescending(x => x.LastUpdatedAt));
         }
         else

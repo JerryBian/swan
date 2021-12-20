@@ -1,12 +1,18 @@
-﻿@model List<DateTime>
+﻿@model PagedViewModel<DiaryRuntime>
 @{
     Layout = "_DiaryLayout";
     ViewData["Title"] = "所有日记";
 }
 
-<ul>
-    @foreach (var item in Model.GroupBy(x => x.Year).OrderByDescending(x => x.Key))
-    {
-        <li><a href="/diary/@item.Key.ToString("D4")">@item.Key 年</a> （@item.Count()）</li>
-    }
-</ul>
+@foreach (var item in Model.Items)
+{
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">@item.Raw.Date.ToChinaDate()</h5>
+            <div class="card-text">@Html.Raw(item.HtmlContent)</div>
+            <a href="#" class="btn btn-primary">阅读全文</a>
+        </div>
+    </div>
+}
+
+<page total-pages="@Model.TotalPages" current-page="@Model.CurrentPage" url="@Model.Url"></page>

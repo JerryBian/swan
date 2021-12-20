@@ -56,14 +56,14 @@ public class HomeController : Controller
                 posts.InsertRange(0, toppedPosts);
 
                 var postsPerPage = Convert.ToInt32(_blogOptions.PostsPerPage);
-                var model = new PagedPostViewModel(page, posts.Count, postsPerPage) {Url = Request.Path};
+                var model = new PagedViewModel<PostViewModel>(page, posts.Count, postsPerPage) {Url = Request.Path};
 
                 foreach (var blogPost in posts.Chunk(postsPerPage).ElementAtOrDefault(model.CurrentPage - 1) ??
                                          Enumerable.Empty<BlogPostRuntime>())
                 {
                     var postViewModel = new PostViewModel {Current = blogPost};
                     postViewModel.SetAdditionalInfo();
-                    model.Posts.Add(postViewModel);
+                    model.Items.Add(postViewModel);
                 }
 
                 return model;

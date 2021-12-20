@@ -87,7 +87,6 @@ namespace Laobian.Api.Source
 
                 if (!Directory.Exists(searchPath))
                 {
-                    Console.WriteLine(searchPath);
                     return Enumerable.Empty<string>();
                 }
 

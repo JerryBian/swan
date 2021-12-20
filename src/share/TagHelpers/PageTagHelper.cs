@@ -2,7 +2,7 @@
 using System.Text;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
-namespace Laobian.Blog.TagHelpers;
+namespace Laobian.Share.TagHelpers;
 
 public class PageTagHelper : TagHelper
 {

@@ -4,8 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Laobian.Jarvis.HttpClients;
 using Laobian.Jarvis.Models;
+using Laobian.Share;
 using Laobian.Share.Extension;
+using Laobian.Share.Grpc;
+using Laobian.Share.Grpc.Request;
+using Laobian.Share.Grpc.Service;
+using Laobian.Share.Site.Jarvis;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Laobian.Jarvis.Controllers;
@@ -13,47 +19,105 @@ namespace Laobian.Jarvis.Controllers;
 [Route("diary")]
 public class DiaryController : Controller
 {
-    private readonly ApiSiteHttpClient _httpClient;
+    private readonly IDiaryGrpcService _diaryGrpcService;
     private readonly JarvisOptions _options;
+    private readonly ILogger<DiaryController> _logger;
 
-    public DiaryController(ApiSiteHttpClient httpClient, IOptions<JarvisOptions> option)
+    public DiaryController(IOptions<JarvisOptions> option, ILogger<DiaryController> logger)
     {
+        _logger = logger;
         _options = option.Value;
-        _httpClient = httpClient;
+        _diaryGrpcService = GrpcClientHelper.CreateClient<IDiaryGrpcService>(option.Value.ApiLocalEndpoint);
     }
 
-    public async Task<IActionResult> Index()
-    {
-        var diaries = await _httpClient.ListDiariesAsync();
-        return View(diaries);
-    }
+
 
     [HttpGet]
-    [Route("{year}/{month}")]
-    public async Task<IActionResult> ListMonth([FromRoute] int year, [FromRoute] int month)
+    public async Task<IActionResult> Index([FromQuery]int page)
     {
-        var diaries = await _httpClient.ListDiariesAsync(year, month);
-        return View(diaries.OrderByDescending(x => x).ToList());
+        try
+        {
+            var viewModel = await GetViewModel(page, null, null);
+
+            if (viewModel != null)
+            {
+                return View(viewModel);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Index page has error.");
+        }
+
+        return NotFound();
+    }
+
+    private async Task<PagedViewModel<DiaryRuntime>> GetViewModel(int page, int? year, int? month)
+    {
+        PagedViewModel<DiaryRuntime> viewModel = null;
+        const int itemsPerPage = 2;
+        var request = new DiaryGrpcRequest{Year = year, Month = month};
+        var response = await _diaryGrpcService.GetDiariesCountAsync(request);
+        if (response.IsOk)
+        {
+            viewModel = new PagedViewModel<DiaryRuntime>(page, response.Count, itemsPerPage) {Url = Request.Path};
+            request.Count = itemsPerPage;
+            request.ExtractRuntime = true;
+            request.Offset = (viewModel.CurrentPage - 1) * itemsPerPage;
+            response = await _diaryGrpcService.GetDiariesAsync(request);
+            if (response.IsOk)
+            {
+                response.DiaryRuntimeList ??= new List<DiaryRuntime>();
+                foreach (var diaryRuntime in response.DiaryRuntimeList)
+                {
+                    viewModel.Items.Add(diaryRuntime);
+                }
+            }
+        }
+
+        return viewModel;
     }
 
     [HttpGet]
     [Route("{year}")]
-    public async Task<IActionResult> ListYear([FromRoute] int year)
+    public async Task<IActionResult> ListYear([FromRoute] int year, [FromQuery] int page)
     {
-        var diaries = await _httpClient.ListDiariesAsync(year);
-        var result = new Dictionary<int, List<DateTime>>();
-        foreach (var item in diaries.GroupBy(x => x.Month).OrderByDescending(x => x.Key))
+        try
         {
-            var list = new List<DateTime>();
-            foreach (var d in item.OrderByDescending(x => x))
-            {
-                list.Add(d);
-            }
+            var viewModel = await GetViewModel(page, year, null);
 
-            result.Add(item.Key, list);
+            if (viewModel != null)
+            {
+                return View("Index", viewModel);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "ListYear page has error.");
         }
 
-        return View(result);
+        return NotFound();
+    }
+
+    [HttpGet]
+    [Route("{year}/{month}")]
+    public async Task<IActionResult> ListMonth([FromRoute] int year, [FromRoute] int month, [FromQuery] int page)
+    {
+        try
+        {
+            var viewModel = await GetViewModel(page, year, month);
+
+            if (viewModel != null)
+            {
+                return View("Index", viewModel);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "ListYear page has error.");
+        }
+
+        return NotFound();
     }
 
     [HttpGet]
@@ -61,35 +125,18 @@ public class DiaryController : Controller
     public async Task<IActionResult> Detail([FromRoute] int year, [FromRoute] int month, [FromRoute] int day)
     {
         var date = new DateTime(year, month, day);
-        var diary = await _httpClient.GetDiaryAsync(date);
-        if (diary == null)
+        var request = new DiaryGrpcRequest {Date = date, ExtractRuntime = true};
+        var response = await _diaryGrpcService.GetDiaryAsync(request);
+        if (response.IsOk)
         {
-            return Redirect($"{_options.AdminRemoteEndpoint}/diary/add/{date.ToDate()}");
+            if (response.NotFound)
+            {
+                return Redirect($"{_options.AdminRemoteEndpoint}/diary/add/{date.ToDate()}");
+            }
+
+            return View(response.DiaryRuntime);
         }
 
-        if (diary.Raw.Date.Year != year)
-        {
-            return NotFound();
-        }
-
-        var model = new DiaryViewModel
-        {
-            Current = diary
-        };
-
-        var diaries = (await _httpClient.ListDiariesAsync(year)).OrderByDescending(x => x).ToList();
-        var prevDate = diaries.FirstOrDefault(x => x < date);
-        if (prevDate != default)
-        {
-            model.Prev = await _httpClient.GetDiaryAsync(prevDate);
-        }
-
-        var nextDate = diaries.LastOrDefault(x => x > date);
-        if (nextDate != default)
-        {
-            model.Next = await _httpClient.GetDiaryAsync(nextDate);
-        }
-
-        return View(model);
+        return NotFound();
     }
 }

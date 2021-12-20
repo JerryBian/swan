@@ -1,20 +1,20 @@
-﻿@model DiaryViewModel
+﻿@model DiaryRuntime
 @inject IOptions<JarvisOptions> _option
 @{
     Layout = "_DiaryLayout";
-    ViewData["Title"] = $"日记：{Model.Current.Raw.Date.ToChinaDate()}";
+    ViewData["Title"] = $"日记：{Model.Raw.Date.ToChinaDate()}";
 }
 <h2 class="mb-3">
-    @Model.Current.Raw.Date.ToChinaDate()
+    @Model.Raw.Date.ToChinaDate()
 </h2>
 <hr/>
 <article class="article-content">
-    @Html.Raw(Model.Current.HtmlContent)
+    @Html.Raw(Model.HtmlContent)
 </article>
 
 @section Aside{
     <div class="d-grid mb-3">
-        <a class="btn btn-secondary" href="@_option.Value.AdminRemoteEndpoint/diary/update/@Model.Current.Raw.Date.ToDate()"><i class="fas fa-edit"></i> 编辑日记</a>
+        <a class="btn btn-secondary" href="@_option.Value.AdminRemoteEndpoint/diary/update/@Model.Raw.Date.ToDate()"><i class="fas fa-edit"></i> 编辑日记</a>
     </div>
 
     <div class="list-group">
@@ -27,7 +27,7 @@
             <a href="@Model.Next.Raw.GetFullPath(_option.Value)" class="list-group-item list-group-item-success list-group-item-action">后一篇：@Model.Next.Raw.Date.ToChinaDate()</a>
         }
 
-        <div class="list-group-item">创建于：@Model.Current.Raw.CreateTime.ToDateAndTime()</div>
-        <div class="list-group-item">修改于：@Model.Current.Raw.LastUpdateTime.ToDateAndTime()</div>
+        <div class="list-group-item">创建于：@Model.Raw.CreateTime.ToDateAndTime()</div>
+        <div class="list-group-item">修改于：@Model.Raw.LastUpdateTime.ToDateAndTime()</div>
     </div>
 }

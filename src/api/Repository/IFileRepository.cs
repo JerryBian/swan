@@ -16,17 +16,6 @@ public interface IFileRepository
 
     Task SaveAsync(string message);
 
-    
-
-    Task<Diary> GetDiaryAsync(DateTime date, CancellationToken cancellationToken = default);
-
-    Task<List<DateTime>> ListDiariesAsync(int? year = null, int? month = null,
-        CancellationToken cancellationToken = default);
-
-    Task AddDiaryAsync(Diary diary, CancellationToken cancellationToken = default);
-
-    Task UpdateDiaryAsync(Diary diary, CancellationToken cancellationToken = default);
-
     Task<List<Note>> GetNotesAsync(int? year = null, CancellationToken cancellationToken = default);
 
     Task<Note> GetNoteAsync(string link, CancellationToken cancellationToken = default);

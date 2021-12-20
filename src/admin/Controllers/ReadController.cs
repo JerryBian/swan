@@ -37,6 +37,7 @@ public class ReadController : Controller
             var itemsResponse = await _readGrpcService.GetReadItemsAsync(request);
             if (itemsResponse.IsOk)
             {
+                itemsResponse.ReadItems ??= new List<ReadItemRuntime>();
                 var chartResponse = new ChartResponse { Title = "当年阅读数", Type = "bar" };
                 foreach (var item in itemsResponse.ReadItems.GroupBy(x => x.Raw.StartTime.Year).OrderBy(x => x.Key))
                 {
