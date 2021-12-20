@@ -8,34 +8,33 @@ using Laobian.Share.Util;
 using Microsoft.Extensions.Logging;
 using ProtoBuf.Grpc;
 
-namespace Laobian.Api.Grpc
+namespace Laobian.Api.Grpc;
+
+public class FileGrpcService : IFileGrpcService
 {
-    public class FileGrpcService : IFileGrpcService
+    private readonly ILogger<FileGrpcService> _logger;
+    private readonly IRawFileService _rawFileService;
+
+    public FileGrpcService(IRawFileService rawFileService, ILogger<FileGrpcService> logger)
     {
-        private readonly IRawFileService _rawFileService;
-        private readonly ILogger<FileGrpcService> _logger;
+        _logger = logger;
+        _rawFileService = rawFileService;
+    }
 
-        public FileGrpcService(IRawFileService rawFileService, ILogger<FileGrpcService> logger)
+    public async Task<FileGrpcResponse> AddFileAsync(FileGrpcRequest request, CallContext context = default)
+    {
+        var response = new FileGrpcResponse();
+        try
         {
-            _logger = logger;
-            _rawFileService = rawFileService;
+            response.Url = await _rawFileService.AddRawFileAsync(request.FileName, request.Content);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Add file failed, {JsonUtil.Serialize(request)}");
+            response.IsOk = false;
+            response.Message = ex.Message;
         }
 
-        public async Task<FileGrpcResponse> AddFileAsync(FileGrpcRequest request, CallContext context = default)
-        {
-            var response = new FileGrpcResponse();
-            try
-            {
-                response.Url = await _rawFileService.AddRawFileAsync(request.FileName, request.Content);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Add file failed, {JsonUtil.Serialize(request)}");
-                response.IsOk = false;
-                response.Message = ex.Message;
-            }
-
-            return response;
-        }
+        return response;
     }
 }

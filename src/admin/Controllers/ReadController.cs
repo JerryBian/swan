@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Laobian.Admin.HttpClients;
 using Laobian.Share;
 using Laobian.Share.Grpc;
 using Laobian.Share.Grpc.Request;
@@ -18,8 +17,8 @@ namespace Laobian.Admin.Controllers;
 [Route("read")]
 public class ReadController : Controller
 {
-    private readonly IReadGrpcService _readGrpcService;
     private readonly ILogger<ReadController> _logger;
+    private readonly IReadGrpcService _readGrpcService;
 
     public ReadController(IOptions<AdminOptions> options, ILogger<ReadController> logger)
     {
@@ -38,7 +37,7 @@ public class ReadController : Controller
             if (itemsResponse.IsOk)
             {
                 itemsResponse.ReadItems ??= new List<ReadItemRuntime>();
-                var chartResponse = new ChartResponse { Title = "当年阅读数", Type = "bar" };
+                var chartResponse = new ChartResponse {Title = "当年阅读数", Type = "bar"};
                 foreach (var item in itemsResponse.ReadItems.GroupBy(x => x.Raw.StartTime.Year).OrderBy(x => x.Key))
                 {
                     chartResponse.Data.Add(item.Count());
@@ -73,17 +72,14 @@ public class ReadController : Controller
             {
                 return View(itemsResponse.ReadItems ?? new List<ReadItemRuntime>());
             }
-            else
-            {
-                return NotFound(itemsResponse.Message);
-            }
+
+            return NotFound(itemsResponse.Message);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Index page error");
             return NotFound(ex.Message);
         }
-        
     }
 
     [HttpGet("add")]
@@ -100,7 +96,7 @@ public class ReadController : Controller
         {
             readItem.IsCompleted = Request.Form["isCompleted"] == "on";
             readItem.IsPublished = Request.Form["isPublished"] == "on";
-            var readRequest = new ReadGrpcRequest { ReadItem = readItem };
+            var readRequest = new ReadGrpcRequest {ReadItem = readItem};
             var readResponse = await _readGrpcService.AddReadItemAsync(readRequest);
             if (readResponse.IsOk)
             {
@@ -125,7 +121,7 @@ public class ReadController : Controller
     [HttpGet("{id}/update")]
     public async Task<IActionResult> Update([FromRoute] string id)
     {
-        var readRequest = new ReadGrpcRequest { ReadItemId = id};
+        var readRequest = new ReadGrpcRequest {ReadItemId = id};
         var readResponse = await _readGrpcService.GetReadItemAsync(readRequest);
         if (readResponse.IsOk)
         {
@@ -143,7 +139,7 @@ public class ReadController : Controller
         {
             readItem.IsCompleted = Request.Form["isCompleted"] == "on";
             readItem.IsPublished = Request.Form["isPublished"] == "on";
-            var readRequest = new ReadGrpcRequest { ReadItem = readItem };
+            var readRequest = new ReadGrpcRequest {ReadItem = readItem};
             var readResponse = await _readGrpcService.UpdateReadItemAsync(readRequest);
             if (readResponse.IsOk)
             {
@@ -172,7 +168,7 @@ public class ReadController : Controller
         var response = new ApiResponse<object>();
         try
         {
-            var readRequest = new ReadGrpcRequest { ReadItemId = id};
+            var readRequest = new ReadGrpcRequest {ReadItemId = id};
             var readResponse = await _readGrpcService.DeleteReadItemAsync(readRequest);
             if (!readResponse.IsOk)
             {

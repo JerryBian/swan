@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Laobian.Jarvis.HttpClients;
-using Laobian.Jarvis.Models;
 using Laobian.Share;
 using Laobian.Share.Extension;
 using Laobian.Share.Grpc;
@@ -20,8 +17,8 @@ namespace Laobian.Jarvis.Controllers;
 public class DiaryController : Controller
 {
     private readonly IDiaryGrpcService _diaryGrpcService;
-    private readonly JarvisOptions _options;
     private readonly ILogger<DiaryController> _logger;
+    private readonly JarvisOptions _options;
 
     public DiaryController(IOptions<JarvisOptions> option, ILogger<DiaryController> logger)
     {
@@ -31,9 +28,8 @@ public class DiaryController : Controller
     }
 
 
-
     [HttpGet]
-    public async Task<IActionResult> Index([FromQuery]int page)
+    public async Task<IActionResult> Index([FromQuery] int page)
     {
         try
         {
@@ -56,11 +52,11 @@ public class DiaryController : Controller
     {
         PagedViewModel<DiaryRuntime> viewModel = null;
         const int itemsPerPage = 2;
-        var request = new DiaryGrpcRequest{Year = year, Month = month};
-        var response = await _diaryGrpcService.GetDiariesCountAsync(request);
+        var request = new DiaryGrpcRequest {Year = year, Month = month};
+        var response = await _diaryGrpcService.GetDiaryDatesAsync(request);
         if (response.IsOk)
         {
-            viewModel = new PagedViewModel<DiaryRuntime>(page, response.Count, itemsPerPage) {Url = Request.Path};
+            viewModel = new PagedViewModel<DiaryRuntime>(page, response.DiaryDates?.Count ?? 0, itemsPerPage) {Url = Request.Path};
             request.Count = itemsPerPage;
             request.ExtractRuntime = true;
             request.Offset = (viewModel.CurrentPage - 1) * itemsPerPage;

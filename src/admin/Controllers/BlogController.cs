@@ -20,11 +20,11 @@ namespace Laobian.Admin.Controllers;
 [Route("blog")]
 public class BlogController : Controller
 {
+    private readonly BlogGrpcRequest _blogGrpcRequest;
     private readonly IBlogGrpcService _blogGrpcService;
     private readonly BlogSiteHttpClient _blogSiteHttpClient;
     private readonly ILogger<BlogController> _logger;
     private readonly AdminOptions _options;
-    private readonly BlogGrpcRequest _blogGrpcRequest;
 
     public BlogController(BlogSiteHttpClient blogSiteHttpClient,
         IOptions<AdminOptions> options, ILogger<BlogController> logger)
@@ -32,7 +32,7 @@ public class BlogController : Controller
         _logger = logger;
         _options = options.Value;
         _blogGrpcRequest = new BlogGrpcRequest();
-            _blogGrpcService = GrpcClientHelper.CreateClient<IBlogGrpcService>(options.Value.ApiLocalEndpoint);
+        _blogGrpcService = GrpcClientHelper.CreateClient<IBlogGrpcService>(options.Value.ApiLocalEndpoint);
         _blogSiteHttpClient = blogSiteHttpClient;
     }
 
@@ -200,7 +200,7 @@ public class BlogController : Controller
                 var access = blogResponse.Posts.SelectMany(x => x.Accesses)
                     .Where(x => x.Date >= DateTime.Now.AddDays(-days) && x.Date <= DateTime.Now).GroupBy(x => x.Date)
                     .OrderBy(x => x.Key);
-                var chartResponse = new ChartResponse { Title = "访问量", Type = "line" };
+                var chartResponse = new ChartResponse {Title = "访问量", Type = "line"};
                 foreach (var item in access)
                 {
                     chartResponse.Data.Add(item.Sum(x => x.Count));
@@ -290,17 +290,15 @@ public class BlogController : Controller
         var blogResponse = await _blogGrpcService.GetPostAsync(_blogGrpcRequest);
         if (blogResponse.IsOk)
         {
-            var model = new BlogPostUpdateViewModel { Post = blogResponse.PostRuntime.Raw };
+            var model = new BlogPostUpdateViewModel {Post = blogResponse.PostRuntime.Raw};
             blogResponse = await _blogGrpcService.GetTagsAsync();
             if (blogResponse.IsOk)
             {
                 model.Tags.AddRange(blogResponse.Tags);
                 return View("UpdatePost", model);
             }
-            else
-            {
-                return NotFound(blogResponse.Message);
-            }
+
+            return NotFound(blogResponse.Message);
         }
 
         return NotFound(blogResponse.Message);
@@ -347,10 +345,8 @@ public class BlogController : Controller
             blogResponse.Tags ??= new List<BlogTag>();
             return View("Tags", blogResponse.Tags.OrderByDescending(x => x.LastUpdatedAt));
         }
-        else
-        {
-            return NotFound(blogResponse.Message);
-        }
+
+        return NotFound(blogResponse.Message);
     }
 
     [HttpDelete]
@@ -416,7 +412,7 @@ public class BlogController : Controller
         {
             return View("UpdateTag", blogResponse.Tag);
         }
-        
+
         return NotFound(blogResponse.Message);
     }
 

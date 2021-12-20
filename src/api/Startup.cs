@@ -34,10 +34,7 @@ public class Startup : SharedStartup
     {
         base.ConfigureServices(services);
         services.Configure<ApiOptions>(o => { o.FetchFromEnv(Configuration); });
-        services.AddCodeFirstGrpc(o =>
-        {
-            o.MaxReceiveMessageSize = 20 * 1024 * 1024;
-        });
+        services.AddCodeFirstGrpc(o => { o.MaxReceiveMessageSize = 20 * 1024 * 1024; });
 
         services.AddSingleton<ICommandClient, ProcessCommandClient>();
         services.AddSingleton<IFileRepository, FileRepository>();

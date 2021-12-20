@@ -1,12 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Laobian.Api.Source;
-using Laobian.Share.Site.Read;
+﻿using Laobian.Api.Source;
 
-namespace Laobian.Api.Repository
+namespace Laobian.Api.Repository;
+
+public interface IReadFileRepository : IFileSource2
 {
-    public interface IReadFileRepository : IFileSource2
-    {
-    }
 }

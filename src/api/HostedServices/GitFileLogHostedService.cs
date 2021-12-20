@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Laobian.Api.Repository;
 using Laobian.Api.Service;
 using Laobian.Share.Logger;
 using Laobian.Share.Site;
@@ -15,7 +14,8 @@ public class GitFileLogHostedService : BackgroundService
     private readonly ILaobianLogQueue _logQueue;
     private bool _readyToRun;
 
-    public GitFileLogHostedService(ILaobianLogQueue logQueue, ILogFileService fileRepository, IHostApplicationLifetime applicationLifetime)
+    public GitFileLogHostedService(ILaobianLogQueue logQueue, ILogFileService fileRepository,
+        IHostApplicationLifetime applicationLifetime)
     {
         _logQueue = logQueue;
         _fileRepository = fileRepository;

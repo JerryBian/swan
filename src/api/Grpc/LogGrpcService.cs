@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Laobian.Api.Repository;
 using Laobian.Api.Service;
 using Laobian.Share.Grpc.Request;
 using Laobian.Share.Grpc.Response;
@@ -16,8 +15,8 @@ namespace Laobian.Api.Grpc;
 
 public class LogGrpcService : ILogGrpcService
 {
-    private readonly ILogFileService _logFileService;
     private readonly ILaobianLogQueue _laobianLogQueue;
+    private readonly ILogFileService _logFileService;
     private readonly ILogger<LogGrpcService> _logger;
 
     public LogGrpcService(ILogger<LogGrpcService> logger, ILaobianLogQueue laobianLogQueue,

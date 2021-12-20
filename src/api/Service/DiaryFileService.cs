@@ -11,148 +11,147 @@ using Laobian.Share.Site.Jarvis;
 using Laobian.Share.Util;
 using Microsoft.Extensions.Logging;
 
-namespace Laobian.Api.Service
+namespace Laobian.Api.Service;
+
+public class DiaryFileService : IDiaryFileService
 {
-    public class DiaryFileService : IDiaryFileService
+    private readonly IDiaryFileRepository _diaryFileRepository;
+    private readonly ILogger<DiaryFileService> _logger;
+
+    public DiaryFileService(ILogger<DiaryFileService> logger, IDiaryFileRepository diaryFileRepository)
     {
-        private readonly ILogger<DiaryFileService> _logger;
-        private readonly IDiaryFileRepository _diaryFileRepository;
+        _logger = logger;
+        _diaryFileRepository = diaryFileRepository;
+    }
 
-        public DiaryFileService(ILogger<DiaryFileService> logger, IDiaryFileRepository diaryFileRepository)
+    public async Task<List<Diary>> GetDiariesAsync(int offset = 0, int? count = null, int? year = null,
+        int? month = null,
+        CancellationToken cancellationToken = default)
+    {
+        var searchPath = string.Empty;
+        if (year != null)
         {
-            _logger = logger;
-            _diaryFileRepository = diaryFileRepository;
+            searchPath = Path.Combine(searchPath, year.Value.ToString("D4"));
         }
 
-        public async Task<List<Diary>> GetDiariesAsync(int offset = 0, int? count = null, int? year = null, int? month = null,
-            CancellationToken cancellationToken = default)
+        var diaries = new List<Diary>();
+        var searchPattern = year.HasValue && month.HasValue ? $"{year.Value:D4}-{month.Value:D2}" : string.Empty;
+        var diaryFiles =
+            await _diaryFileRepository.SearchAsync($"{searchPattern}*.json", searchPath, cancellationToken);
+        foreach (var diaryFile in count.HasValue
+                     ? diaryFiles.OrderByDescending(x => x).Skip(offset).Take(count.Value)
+                     : diaryFiles.OrderByDescending(x => x).Skip(offset))
         {
-            var searchPath = string.Empty;
-            if (year != null)
+            var diaryJson = await _diaryFileRepository.ReadAsync(diaryFile, cancellationToken);
+            if (!DateTime.TryParseExact(Path.GetFileNameWithoutExtension(diaryFile), "yyyy-MM-dd",
+                    CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
             {
-                if (month.HasValue)
-                {
-                    searchPath = Path.Combine(searchPath, year.Value.ToString("D4"), month.Value.ToString("D2"));
-                }
-                else
-                {
-                    searchPath = Path.Combine(searchPath, year.Value.ToString("D4"));
-                }
+                _logger.LogWarning($"Diary file is invalid: {diaryFile}");
+                continue;
             }
 
-            var diaries = new List<Diary>();
-            var diaryFiles = await _diaryFileRepository.SearchAsync("*.json", searchPath, cancellationToken);
-            foreach (var diaryFile in count.HasValue? diaryFiles.OrderByDescending(x => x).Skip(offset).Take(count.Value) : diaryFiles.OrderByDescending(x => x).Skip(offset))
+            if (string.IsNullOrEmpty(diaryJson))
             {
-                var diaryJson = await _diaryFileRepository.ReadAsync(diaryFile, cancellationToken);
-                if (!DateTime.TryParseExact(Path.GetFileNameWithoutExtension(diaryFile), "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
-                {
-                    _logger.LogWarning($"Diary file is invalid: {diaryFile}");
-                    continue;
-                }
-
-                if (string.IsNullOrEmpty(diaryJson))
-                {
-                    _logger.LogWarning($"Diary is empty: {diaryFile}");
-                    continue;
-                }
-
-                diaries.Add(JsonUtil.Deserialize<Diary>(diaryJson));
+                _logger.LogWarning($"Diary is empty: {diaryFile}");
+                continue;
             }
 
-            return diaries;
+            diaries.Add(JsonUtil.Deserialize<Diary>(diaryJson));
         }
 
-        public async Task<int> GetDiaryCountAsync(int? year = null, int? month = null, CancellationToken cancellationToken = default)
+        return diaries;
+    }
+
+    public async Task<List<DateTime>> GetDiaryDatesAsync(int? year = null, int? month = null,
+        CancellationToken cancellationToken = default)
+    {
+        var dates = new List<DateTime>();
+        var searchPath = string.Empty;
+        if (year != null)
         {
-            var count = 0;
-            var searchPath = string.Empty;
-            if (year != null)
-            {
-                if (month.HasValue)
-                {
-                    searchPath = Path.Combine(searchPath, year.Value.ToString("D4"), month.Value.ToString("D2"));
-                }
-                else
-                {
-                    searchPath = Path.Combine(searchPath, year.Value.ToString("D4"));
-                }
-            }
-            var diaryFiles = await _diaryFileRepository.SearchAsync("*.json", searchPath, cancellationToken: cancellationToken);
-            foreach (var diaryFile in diaryFiles)
-            {
-                var diaryJson = await _diaryFileRepository.ReadAsync(diaryFile, cancellationToken);
-                if (!DateTime.TryParseExact(Path.GetFileNameWithoutExtension(diaryFile), "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
-                {
-                    _logger.LogWarning($"Diary file is invalid: {diaryFile}");
-                    continue;
-                }
-
-                if (string.IsNullOrEmpty(diaryJson))
-                {
-                    _logger.LogWarning($"Diary is empty: {diaryFile}");
-                    continue;
-                }
-
-                count++;
-            }
-
-            return count;
+            searchPath = Path.Combine(searchPath, year.Value.ToString("D4"));
         }
 
-        public async Task<Diary> GetDiaryAsync(DateTime date, CancellationToken cancellationToken = default)
+        var searchPattern = year.HasValue && month.HasValue ? $"{year.Value:D4}-{month.Value:D2}" : string.Empty;
+        var diaryFiles =
+            await _diaryFileRepository.SearchAsync($"{searchPattern}*.json", searchPath, cancellationToken);
+        foreach (var diaryFile in diaryFiles)
         {
-            var diaryFile =
-                (await _diaryFileRepository.SearchAsync($"{date.ToDate()}.json", cancellationToken: cancellationToken)).FirstOrDefault();
-            if (!string.IsNullOrEmpty(diaryFile))
+            var diaryJson = await _diaryFileRepository.ReadAsync(diaryFile, cancellationToken);
+            if (!DateTime.TryParseExact(Path.GetFileNameWithoutExtension(diaryFile), "yyyy-MM-dd",
+                    CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
             {
-                var diaryJson = await _diaryFileRepository.ReadAsync(diaryFile, cancellationToken);
-                if (!string.IsNullOrEmpty(diaryJson))
-                {
-                    return JsonUtil.Deserialize<Diary>(diaryJson);
-                }
+                _logger.LogWarning($"Diary file is invalid: {diaryFile}");
+                continue;
             }
 
-            return null;
+            if (string.IsNullOrEmpty(diaryJson))
+            {
+                _logger.LogWarning($"Diary is empty: {diaryFile}");
+                continue;
+            }
+
+            dates.Add(date);
         }
 
-        public async Task AddDiaryAsync(Diary diary, CancellationToken cancellationToken = default)
+        return dates;
+    }
+
+    public async Task<Diary> GetDiaryAsync(DateTime date, CancellationToken cancellationToken = default)
+    {
+        var diaryFile =
+            (await _diaryFileRepository.SearchAsync($"{date.ToDate()}.json", cancellationToken: cancellationToken))
+            .FirstOrDefault();
+        if (!string.IsNullOrEmpty(diaryFile))
         {
-            if (diary == null)
+            var diaryJson = await _diaryFileRepository.ReadAsync(diaryFile, cancellationToken);
+            if (!string.IsNullOrEmpty(diaryJson))
             {
-                return;
+                return JsonUtil.Deserialize<Diary>(diaryJson);
             }
-
-            var existingDiary = await GetDiaryAsync(diary.Date, cancellationToken);
-            if (existingDiary != null)
-            {
-                throw new Exception($"Diary with date({diary.Date.ToDate()}) already exists. Requested diary: {JsonUtil.Serialize(diary)}");
-            }
-
-            diary.CreateTime = diary.LastUpdateTime = DateTime.Now;
-            await _diaryFileRepository.WriteAsync(
-                Path.Combine(diary.Date.Year.ToString("D4"), $"{diary.Date.ToDate()}.json"),
-                JsonUtil.Serialize(diary, true), cancellationToken);
         }
 
-        public async Task UpdateDiaryAsync(Diary diary, CancellationToken cancellationToken = default)
+        return null;
+    }
+
+    public async Task AddDiaryAsync(Diary diary, CancellationToken cancellationToken = default)
+    {
+        if (diary == null)
         {
-            if (diary == null)
-            {
-                return;
-            }
-
-            var existingDiary = await GetDiaryAsync(diary.Date, cancellationToken);
-            if (existingDiary == null)
-            {
-                throw new Exception($"Diary with date({diary.Date.ToDate()}) not exists. Requested diary: {JsonUtil.Serialize(diary)}");
-            }
-
-            diary.CreateTime = existingDiary.CreateTime;
-            diary.LastUpdateTime = DateTime.Now;
-            await _diaryFileRepository.WriteAsync(
-                Path.Combine(diary.Date.Year.ToString("D4"), $"{diary.Date.ToDate()}.json"),
-                JsonUtil.Serialize(diary, true), cancellationToken);
+            return;
         }
+
+        var existingDiary = await GetDiaryAsync(diary.Date, cancellationToken);
+        if (existingDiary != null)
+        {
+            throw new Exception(
+                $"Diary with date({diary.Date.ToDate()}) already exists. Requested diary: {JsonUtil.Serialize(diary)}");
+        }
+
+        diary.CreateTime = diary.LastUpdateTime = DateTime.Now;
+        await _diaryFileRepository.WriteAsync(
+            Path.Combine(diary.Date.Year.ToString("D4"), $"{diary.Date.ToDate()}.json"),
+            JsonUtil.Serialize(diary, true), cancellationToken);
+    }
+
+    public async Task UpdateDiaryAsync(Diary diary, CancellationToken cancellationToken = default)
+    {
+        if (diary == null)
+        {
+            return;
+        }
+
+        var existingDiary = await GetDiaryAsync(diary.Date, cancellationToken);
+        if (existingDiary == null)
+        {
+            throw new Exception(
+                $"Diary with date({diary.Date.ToDate()}) not exists. Requested diary: {JsonUtil.Serialize(diary)}");
+        }
+
+        diary.CreateTime = existingDiary.CreateTime;
+        diary.LastUpdateTime = DateTime.Now;
+        await _diaryFileRepository.WriteAsync(
+            Path.Combine(diary.Date.Year.ToString("D4"), $"{diary.Date.ToDate()}.json"),
+            JsonUtil.Serialize(diary, true), cancellationToken);
     }
 }

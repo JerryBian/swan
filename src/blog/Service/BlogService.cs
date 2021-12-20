@@ -16,13 +16,13 @@ namespace Laobian.Blog.Service;
 
 public class BlogService : IBlogService
 {
-    private readonly List<ReadItemRuntime> _allReadItems;
     private readonly List<BlogPostRuntime> _allPosts;
+    private readonly List<ReadItemRuntime> _allReadItems;
     private readonly List<BlogTag> _allTags;
     private readonly IBlogGrpcService _blogGrpcService;
-    private readonly IReadGrpcService _readGrpcService;
     private readonly ILogger<BlogService> _logger;
     private readonly ConcurrentQueue<string> _postAccessQueue;
+    private readonly IReadGrpcService _readGrpcService;
     private readonly ManualResetEventSlim _reloadLock;
     private DateTime _lastReloadTime;
 

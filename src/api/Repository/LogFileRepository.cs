@@ -3,14 +3,13 @@ using Laobian.Api.Source;
 using Laobian.Share;
 using Microsoft.Extensions.Options;
 
-namespace Laobian.Api.Repository
+namespace Laobian.Api.Repository;
+
+public class LogFileRepository : FileSourceBase, ILogFileRepository
 {
-    public class LogFileRepository : FileSourceBase, ILogFileRepository
+    public LogFileRepository(IOptions<ApiOptions> options)
     {
-        public LogFileRepository(IOptions<ApiOptions> options)
-        {
-            var assetPath = Path.Combine(options.Value.AssetLocation, Constants.AssetDbFolder);
-            BasePath = Path.Combine(assetPath, Constants.AssetDbLogFolder);
-        }
+        var assetPath = Path.Combine(options.Value.AssetLocation, Constants.AssetDbFolder);
+        BasePath = Path.Combine(assetPath, Constants.AssetDbLogFolder);
     }
 }

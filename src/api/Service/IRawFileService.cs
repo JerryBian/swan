@@ -1,11 +1,10 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Laobian.Api.Service
+namespace Laobian.Api.Service;
+
+public interface IRawFileService
 {
-    public interface IRawFileService
-    {
-        Task<string> AddRawFileAsync(string fileName, byte[] content,
-            CancellationToken cancellationToken = default);
-    }
+    Task<string> AddRawFileAsync(string fileName, byte[] content,
+        CancellationToken cancellationToken = default);
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
 using HtmlAgilityPack;
 using Laobian.Share.Util;
 using Markdig;
@@ -21,35 +20,25 @@ public class BlogPostRuntime
         Raw = raw;
     }
 
-    [DataMember(Order = 1)]
-    public BlogPost Raw { get; set; }
+    [DataMember(Order = 1)] public BlogPost Raw { get; set; }
 
-    [DataMember(Order = 2)]
-    public List<BlogTag> Tags { get; set; } = new();
+    [DataMember(Order = 2)] public List<BlogTag> Tags { get; set; } = new();
 
-    [DataMember(Order = 3)]
-    public List<BlogAccess> Accesses { get; set; } = new();
+    [DataMember(Order = 3)] public List<BlogAccess> Accesses { get; set; } = new();
 
-    [DataMember(Order = 4)]
-    public string HtmlContent { get; set; }
+    [DataMember(Order = 4)] public string HtmlContent { get; set; }
 
-    [DataMember(Order = 5)]
-    public string ExcerptHtml { get; set; }
+    [DataMember(Order = 5)] public string ExcerptHtml { get; set; }
 
-    [DataMember(Order = 6)]
-    public string ExcerptPlainText { get; set; }
+    [DataMember(Order = 6)] public string ExcerptPlainText { get; set; }
 
-    [DataMember(Order = 7)]
-    public string ThumbnailHtml { get; set; }
+    [DataMember(Order = 7)] public string ThumbnailHtml { get; set; }
 
-    [DataMember(Order = 8)]
-    public string ThumbnailImageUrl { get; set; }
+    [DataMember(Order = 8)] public string ThumbnailImageUrl { get; set; }
 
-    [DataMember(Order = 9)]
-    public List<BlogPostOutline> Outlines { get; set; } = new();
+    [DataMember(Order = 9)] public List<BlogPostOutline> Outlines { get; set; } = new();
 
-    [DataMember(Order = 10)]
-    public int WordsCount { get; set; }
+    [DataMember(Order = 10)] public int WordsCount { get; set; }
 
     private void SetPostThumbnail(HtmlNode imageNode)
     {

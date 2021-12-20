@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
-using Laobian.Admin.HttpClients;
 using Laobian.Share.Grpc;
 using Laobian.Share.Grpc.Request;
 using Laobian.Share.Grpc.Service;
@@ -16,8 +15,8 @@ namespace Laobian.Admin.Controllers;
 [Route("file")]
 public class FileController : Controller
 {
-    private readonly ILogger<FileController> _logger;
     private readonly IFileGrpcService _fileGrpcService;
+    private readonly ILogger<FileController> _logger;
 
     public FileController(IOptions<AdminOptions> options, ILogger<FileController> logger)
     {
@@ -40,7 +39,7 @@ public class FileController : Controller
             var response = await _fileGrpcService.AddFileAsync(request);
             if (response.IsOk)
             {
-                var okObj = new { data = new { filePath = response.Url } };
+                var okObj = new {data = new {filePath = response.Url}};
                 return Json(okObj);
             }
         }
@@ -49,7 +48,7 @@ public class FileController : Controller
             _logger.LogError(ex, "File upload failed.");
         }
 
-        var errorObj = new { error = "Server Error." };
+        var errorObj = new {error = "Server Error."};
         return Json(errorObj);
     }
 }

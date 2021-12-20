@@ -49,7 +49,7 @@ public class LogController : Controller
             if (logResponse.IsOk)
             {
                 logResponse.Logs = logResponse.Logs ?? new List<LaobianLog>();
-                    var logs = logResponse.Logs.OrderByDescending(x => x.TimeStamp).ToList();
+                var logs = logResponse.Logs.OrderByDescending(x => x.TimeStamp).ToList();
                 response.Content = logs;
             }
             else

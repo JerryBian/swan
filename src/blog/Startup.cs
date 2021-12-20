@@ -7,7 +7,6 @@ using Laobian.Blog.Service;
 using Laobian.Share;
 using Laobian.Share.Converter;
 using Laobian.Share.Filters;
-using Laobian.Share.Grpc.Service;
 using Laobian.Share.Logger.Remote;
 using Laobian.Share.Site;
 using Microsoft.AspNetCore.Builder;

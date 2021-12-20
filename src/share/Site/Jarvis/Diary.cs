@@ -33,7 +33,7 @@ public class Diary
 
     public string GetFullPath(SharedOptions option)
     {
-        return $"{option.JarvisRemoteEndpoint}/diary/{Date.Year:D4}/{GetDateString()}.html";
+        return $"{option.JarvisRemoteEndpoint}/diary/{Date.Year:D4}/{Date.Month:D2}/{Date.Day:D2}.html";
     }
 
     public string GetDateString()

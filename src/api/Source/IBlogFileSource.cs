@@ -1,6 +1,5 @@
-﻿namespace Laobian.Api.Source
+﻿namespace Laobian.Api.Source;
+
+public interface IBlogFileSource : IFileSource2
 {
-    public interface IBlogFileSource : IFileSource2
-    {
-    }
 }

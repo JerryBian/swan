@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Laobian.Api.HttpClients;
-using Laobian.Api.Repository;
 using Laobian.Api.Service;
 using Laobian.Share.Grpc.Request;
 using Laobian.Share.Grpc.Response;
@@ -16,8 +15,8 @@ namespace Laobian.Api.Grpc;
 
 public class BlogGrpcService : IBlogGrpcService
 {
-    private readonly BlogSiteHttpClient _blogSiteHttpClient;
     private readonly IBlogFileService _blogFileService;
+    private readonly BlogSiteHttpClient _blogSiteHttpClient;
     private readonly ILogger<BlogGrpcService> _logger;
 
     public BlogGrpcService(IBlogFileService blogFileService,
