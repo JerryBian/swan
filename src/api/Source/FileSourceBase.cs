@@ -87,8 +87,10 @@ namespace Laobian.Api.Source
 
                 if (!Directory.Exists(searchPath))
                 {
+                    Console.WriteLine(searchPath);
                     return Enumerable.Empty<string>();
                 }
+
                 return await Task.FromResult(Directory.EnumerateFiles(searchPath, pattern, SearchOption.AllDirectories).Select(x => Path.GetRelativePath(BasePath, x)));
             }
             finally

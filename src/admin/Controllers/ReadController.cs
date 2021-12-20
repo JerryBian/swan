@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Laobian.Admin.HttpClients;
@@ -69,7 +70,7 @@ public class ReadController : Controller
             var itemsResponse = await _readGrpcService.GetReadItemsAsync(request);
             if (itemsResponse.IsOk)
             {
-                return View(itemsResponse.ReadItems);
+                return View(itemsResponse.ReadItems ?? new List<ReadItemRuntime>());
             }
             else
             {
