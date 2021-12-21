@@ -12,7 +12,7 @@ RUN dotnet publish \
 FROM mcr.microsoft.com/dotnet/aspnet:6.0
 WORKDIR /app
 COPY --from=build /publish ./
-RUN apt update -y && apt install git -y
+RUN apt install git -y
 ENV TZ=Asia/Shanghai
 
 ENTRYPOINT ["dotnet", "laobian.api.dll"]
