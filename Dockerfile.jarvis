@@ -6,12 +6,9 @@ COPY ./Directory.Build.props ./
 RUN dotnet publish \
     -c Release \
     -o /publish \
-    --self-contained true \
     -v normal \
-    -p:PublishTrimmed=true \
-    -p:PublishSingleFile=true \
-    -p:IncludeNativeLibrariesForSelfExtract=true \
-    -r linux-x64 \./jarvis/Laobian.Jarvis.csproj
+    ./jarvis/Laobian.Jarvis.csproj
+
 COPY ./script/wait-for-it.sh /publish
 COPY ./script/start-after-api.sh /publish
 
@@ -19,8 +16,8 @@ FROM mcr.microsoft.com/dotnet/aspnet:6.0
 WORKDIR /app
 COPY --from=build /publish ./
 
-RUN chmod +x ./laobian.jarvis ./wait-for-it.sh ./start-after-api.sh
+RUN chmod +x ./wait-for-it.sh ./start-after-api.sh
 ENV TZ=Asia/Shanghai
 
 ENTRYPOINT ["./start-after-api.sh"]
-CMD ["./laobian.jarvis"]
+CMD ["dotnet", "laobian.jarvis.dll"]
