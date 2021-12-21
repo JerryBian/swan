@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.Serialization;
 
-namespace Laobian.Share.Grpc.Response
+namespace Laobian.Share.Grpc.Response;
+
+[DataContract]
+public class NoteGrpcResponse : GrpcResponseBase
 {
-    [DataContract]
-    public class NoteGrpcResponse : GrpcResponseBase
-    {
-    }
 }

@@ -1,8 +1,7 @@
 ﻿using Laobian.Share.Grpc.Service;
 
-namespace Laobian.Api.Grpc
+namespace Laobian.Api.Grpc;
+
+public class NoteGrpcService : INoteGrpcService
 {
-    public class NoteGrpcService : INoteGrpcService
-    {
-    }
 }

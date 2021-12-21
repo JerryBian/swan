@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Api.Source;
-using Laobian.Share.Extension;
 using Laobian.Share.Site.Jarvis;
 using Laobian.Share.Util;
 using Microsoft.Extensions.Logging;
@@ -80,57 +79,9 @@ public class FileRepository : IFileRepository
         existingNote.LastUpdateTime = DateTime.Now;
         existingNote.MdContent = note.MdContent;
         existingNote.Title = note.Title;
-        existingNote.Tag = note.Tag;
+        existingNote.Tags = note.Tags;
         await _fileSource.WriteNoteAsync(note.Link, note.CreateTime.Year,
             JsonUtil.Serialize(existingNote),
-            cancellationToken);
-    }
-
-    public async Task<Diary> GetDiaryAsync(DateTime date, CancellationToken cancellationToken = default)
-    {
-        Diary result = null;
-        var diary = await _fileSource.ReadDiaryAsync(date, cancellationToken);
-        if (!string.IsNullOrEmpty(diary))
-        {
-            result = JsonUtil.Deserialize<Diary>(diary);
-        }
-
-        return result;
-    }
-
-    public async Task<List<DateTime>> ListDiariesAsync(int? year = null, int? month = null,
-        CancellationToken cancellationToken = default)
-    {
-        var dates = await _fileSource.ListDiariesAsync(year, month, cancellationToken);
-        return dates;
-    }
-
-    public async Task AddDiaryAsync(Diary diary, CancellationToken cancellationToken = default)
-    {
-        var existingDiary = await GetDiaryAsync(diary.Date, cancellationToken);
-        if (existingDiary != null)
-        {
-            throw new Exception($"Diary with date({diary.Date.ToDate()}) already exists.");
-        }
-
-        diary.CreateTime = diary.LastUpdateTime = DateTime.Now;
-        await _fileSource.WriteDiaryAsync(diary.Date,
-            JsonUtil.Serialize(diary),
-            cancellationToken);
-    }
-
-    public async Task UpdateDiaryAsync(Diary diary, CancellationToken cancellationToken = default)
-    {
-        var existingDiary = await GetDiaryAsync(diary.Date, cancellationToken);
-        if (existingDiary == null)
-        {
-            throw new Exception($"Diary with date({diary.Date.ToDate()}) not exists.");
-        }
-
-        diary.CreateTime = existingDiary.CreateTime;
-        diary.LastUpdateTime = DateTime.Now;
-        await _fileSource.WriteDiaryAsync(diary.Date,
-            JsonUtil.Serialize(diary),
             cancellationToken);
     }
 }

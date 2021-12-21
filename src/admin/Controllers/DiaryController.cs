@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Laobian.Admin.HttpClients;
 using Laobian.Share;
 using Laobian.Share.Extension;
 using Laobian.Share.Grpc;
@@ -82,7 +81,7 @@ public class DiaryController : Controller
         var response = new ApiResponse<ChartResponse>();
         try
         {
-            var request = new DiaryGrpcRequest{Year = DateTime.Now.Year};
+            var request = new DiaryGrpcRequest {Year = DateTime.Now.Year};
             var diaryResponse = await _diaryGrpcService.GetDiaryDatesAsync(request);
             if (diaryResponse.IsOk)
             {
@@ -123,7 +122,7 @@ public class DiaryController : Controller
         var response = new ApiResponse<ChartResponse>();
         try
         {
-            var request = new DiaryGrpcRequest { Year = DateTime.Now.Year, ExtractRuntime = true};
+            var request = new DiaryGrpcRequest {Year = DateTime.Now.Year, ExtractRuntime = true};
             var diaryResponse = await _diaryGrpcService.GetDiariesAsync(request);
             if (diaryResponse.IsOk)
             {
@@ -164,7 +163,7 @@ public class DiaryController : Controller
         var response = new ApiResponse<ChartResponse>();
         try
         {
-            var request = new DiaryGrpcRequest { ExtractRuntime = true };
+            var request = new DiaryGrpcRequest {ExtractRuntime = true};
             var diaryResponse = await _diaryGrpcService.GetDiariesAsync(request);
             if (diaryResponse.IsOk)
             {
@@ -224,7 +223,7 @@ public class DiaryController : Controller
         var response = new ApiResponse<object>();
         try
         {
-            var request = new DiaryGrpcRequest { Diary = diary };
+            var request = new DiaryGrpcRequest {Diary = diary};
             var diaryResponse = await _diaryGrpcService.AddDiaryAsync(request);
             if (diaryResponse.IsOk)
             {
@@ -248,7 +247,7 @@ public class DiaryController : Controller
 
     [HttpGet]
     [Route("update")]
-    public async Task<IActionResult> UpdateDiary([FromQuery]DateTime date)
+    public async Task<IActionResult> UpdateDiary([FromQuery] DateTime date)
     {
         var request = new DiaryGrpcRequest {Date = date};
         try
@@ -260,10 +259,8 @@ public class DiaryController : Controller
                 {
                     return View(response.DiaryRuntime.Raw);
                 }
-                else
-                {
-                    return Redirect($"/diary/add?date={date.ToDate()}");
-                }
+
+                return Redirect($"/diary/add?date={date.ToDate()}");
             }
         }
         catch (Exception ex)
@@ -281,7 +278,7 @@ public class DiaryController : Controller
         var response = new ApiResponse<object>();
         try
         {
-            var request = new DiaryGrpcRequest { Diary = diary };
+            var request = new DiaryGrpcRequest {Diary = diary};
             var diaryResponse = await _diaryGrpcService.UpdateDiaryAsync(request);
             if (diaryResponse.IsOk)
             {

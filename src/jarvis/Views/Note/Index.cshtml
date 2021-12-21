@@ -1,4 +1,5 @@
 ﻿@model List<NoteRuntime>
+@inject IOptions<JarvisOptions> _options
 @{
     Layout = "_NoteLayout";
     ViewData["Title"] = "所有笔记";
@@ -9,7 +10,7 @@
         @foreach (var item in Model.OrderByDescending(x => x.Raw.CreateTime))
         {
             <li>
-                <a href="@item.Raw.GetFullPath()">@item.Raw.Title</a>
+                <a href="@item.Raw.GetFullPath(_options.Value)">@item.Raw.Title</a>
             </li>
         }
     </ul>

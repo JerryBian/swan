@@ -1,21 +1,22 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json.Serialization;
+using System.Runtime.Serialization;
 using HtmlAgilityPack;
 using Laobian.Share.Util;
 using Markdig;
 
 namespace Laobian.Share.Site.Jarvis;
 
+[DataContract]
 public class NoteRuntime
 {
-    [JsonPropertyName("raw")] public Note Raw { get; set; }
+    [DataMember(Order = 1)] public Note Raw { get; set; }
 
-    [JsonPropertyName("tags")] public List<NoteTag> Tags { get; set; } = new();
+    [DataMember(Order = 2)] public List<NoteTag> Tags { get; set; } = new();
 
-    [JsonPropertyName("htmlContent")] public string HtmlContent { get; set; }
+    [DataMember(Order = 3)] public string HtmlContent { get; set; }
 
-    [JsonPropertyName("outline")] public List<NoteOutline> Outlines { get; set; } = new();
+    [DataMember(Order = 4)] public List<NoteOutline> Outlines { get; set; } = new();
 
     private void SetOutlines(HtmlDocument htmlDoc)
     {
@@ -64,7 +65,7 @@ public class NoteRuntime
 
         // assign tags
         Tags.Clear();
-        foreach (var tagLink in Raw.Tag)
+        foreach (var tagLink in Raw.Tags)
         {
             var tag = tags.FirstOrDefault(x => StringUtil.EqualsIgnoreCase(tagLink, x.Link));
             if (tag != null)

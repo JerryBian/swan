@@ -56,7 +56,7 @@
                 anchors.options = {
                     placement: 'right',
                     visible: 'hover',
-                    base: '@Model.Raw.GetFullPath()'
+                    base: '@Model.Raw.GetFullPath(_option.Value)'
                 };
                 anchors.add('.article-content h3, .article-content h4');
 

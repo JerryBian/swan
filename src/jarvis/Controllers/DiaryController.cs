@@ -56,7 +56,8 @@ public class DiaryController : Controller
         var response = await _diaryGrpcService.GetDiaryDatesAsync(request);
         if (response.IsOk)
         {
-            viewModel = new PagedViewModel<DiaryRuntime>(page, response.DiaryDates?.Count ?? 0, itemsPerPage) {Url = Request.Path};
+            viewModel = new PagedViewModel<DiaryRuntime>(page, response.DiaryDates?.Count ?? 0, itemsPerPage)
+                {Url = Request.Path};
             request.Count = itemsPerPage;
             request.ExtractRuntime = true;
             request.Offset = (viewModel.CurrentPage - 1) * itemsPerPage;

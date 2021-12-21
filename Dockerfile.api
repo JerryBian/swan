@@ -6,17 +6,13 @@ COPY ./Directory.Build.props ./
 RUN dotnet publish \
     -c Release \
     -o /publish \
-    --self-contained true \
     -v normal \
-    -p:PublishSingleFile=true \
-    -p:IncludeNativeLibrariesForSelfExtract=true \
-    -r linux-x64 \
     ./api/Laobian.Api.csproj
 
 FROM mcr.microsoft.com/dotnet/aspnet:6.0
 WORKDIR /app
 COPY --from=build /publish ./
-RUN apt update -y && apt install git -y && chmod +x laobian.api
+RUN apt update -y && apt install git -y
 ENV TZ=Asia/Shanghai
 
-ENTRYPOINT ["./laobian.api"]
+ENTRYPOINT ["dotnet", "laobian.api.dll"]

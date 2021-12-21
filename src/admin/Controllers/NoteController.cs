@@ -36,7 +36,7 @@ public class NoteController : Controller
         note.LastUpdateTime = DateTime.Now;
         note.Link = StringUtil.GenerateRandom();
         await _httpClient.AddNoteAsync(note);
-        return Redirect($"{_options.JarvisRemoteEndpoint}{note.GetFullPath()}");
+        return Redirect($"{_options.JarvisRemoteEndpoint}{note.GetFullPath(_options)}");
     }
 
     [HttpGet]
@@ -57,6 +57,6 @@ public class NoteController : Controller
     public async Task<IActionResult> UpdateNote([FromForm] Note note)
     {
         await _httpClient.UpdateNoteAsync(note);
-        return Redirect($"{_options.JarvisRemoteEndpoint}{note.GetFullPath()}");
+        return Redirect($"{_options.JarvisRemoteEndpoint}{note.GetFullPath(_options)}");
     }
 }
