@@ -48,6 +48,8 @@ public class Startup : SharedStartup
         services.AddSingleton<IRawFileService, RawFileService>();
         services.AddSingleton<IDiaryFileRepository, DiaryFileRepository>();
         services.AddSingleton<IDiaryFileService, DiaryFileService>();
+        services.AddSingleton<INoteFileRepository, NoteFileRepository>();
+        services.AddSingleton<INoteFileService, NoteFileService>();
 
         if (CurrentEnv.IsDevelopment())
         {
@@ -99,6 +101,7 @@ public class Startup : SharedStartup
             endpoints.MapGrpcService<ReadGrpcService>();
             endpoints.MapGrpcService<FileGrpcService>();
             endpoints.MapGrpcService<DiaryGrpcService>();
+            endpoints.MapGrpcService<NoteGrpcService>();
         });
     }
 }

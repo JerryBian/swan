@@ -135,7 +135,7 @@ public class DiaryGrpcService : IDiaryGrpcService
         {
             response.IsOk = false;
             response.Message = ex.Message;
-            _logger.LogError(ex, $"Get diaries failed: {JsonUtil.Serialize(request)}");
+            _logger.LogError(ex, $"Add diary failed: {JsonUtil.Serialize(request)}");
         }
 
         return response;
@@ -153,7 +153,7 @@ public class DiaryGrpcService : IDiaryGrpcService
         {
             response.IsOk = false;
             response.Message = ex.Message;
-            _logger.LogError(ex, $"Get diaries failed: {JsonUtil.Serialize(request)}");
+            _logger.LogError(ex, $"Update diary failed: {JsonUtil.Serialize(request)}");
         }
 
         return response;
