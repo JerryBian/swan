@@ -34,7 +34,7 @@ public class NoteController : Controller
     {
         note.CreateTime = DateTime.Now;
         note.LastUpdateTime = DateTime.Now;
-        note.Link = StringUtil.GenerateRandom();
+        note.Id = StringUtil.GenerateRandom();
         await _httpClient.AddNoteAsync(note);
         return Redirect($"{_options.JarvisRemoteEndpoint}{note.GetFullPath(_options)}");
     }

@@ -57,30 +57,30 @@ public class FileRepository : IFileRepository
 
     public async Task AddNoteAsync(Note note, CancellationToken cancellationToken = default)
     {
-        var existingNote = await GetNoteAsync(note.Link, cancellationToken);
+        var existingNote = await GetNoteAsync(note.Id, cancellationToken);
         if (existingNote != null)
         {
-            throw new Exception($"Note with link({note.Link}) already exists.");
+            throw new Exception($"Note with link({note.Id}) already exists.");
         }
 
-        await _fileSource.WriteNoteAsync(note.Link, note.CreateTime.Year,
+        await _fileSource.WriteNoteAsync(note.Id, note.CreateTime.Year,
             JsonUtil.Serialize(note),
             cancellationToken);
     }
 
     public async Task UpdateNoteAsync(Note note, CancellationToken cancellationToken = default)
     {
-        var existingNote = await GetNoteAsync(note.Link, cancellationToken);
+        var existingNote = await GetNoteAsync(note.Id, cancellationToken);
         if (existingNote == null)
         {
-            throw new Exception($"Note with link({note.Link}) not exists.");
+            throw new Exception($"Note with link({note.Id}) not exists.");
         }
 
         existingNote.LastUpdateTime = DateTime.Now;
         existingNote.MdContent = note.MdContent;
         existingNote.Title = note.Title;
         existingNote.Tags = note.Tags;
-        await _fileSource.WriteNoteAsync(note.Link, note.CreateTime.Year,
+        await _fileSource.WriteNoteAsync(note.Id, note.CreateTime.Year,
             JsonUtil.Serialize(existingNote),
             cancellationToken);
     }

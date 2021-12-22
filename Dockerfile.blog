@@ -1,7 +1,8 @@
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 
-COPY ./src ./
+COPY ./src/blog ./blog
+COPY ./src/share ./share
 COPY ./Directory.Build.props ./
 RUN dotnet publish \
     -c Release \

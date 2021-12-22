@@ -43,19 +43,6 @@ public class DiaryFileService : IDiaryFileService
                      : diaryFiles.OrderByDescending(x => x).Skip(offset))
         {
             var diaryJson = await _diaryFileRepository.ReadAsync(diaryFile, cancellationToken);
-            if (!DateTime.TryParseExact(Path.GetFileNameWithoutExtension(diaryFile), "yyyy-MM-dd",
-                    CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
-            {
-                _logger.LogWarning($"Diary file is invalid: {diaryFile}");
-                continue;
-            }
-
-            if (string.IsNullOrEmpty(diaryJson))
-            {
-                _logger.LogWarning($"Diary is empty: {diaryFile}");
-                continue;
-            }
-
             diaries.Add(JsonUtil.Deserialize<Diary>(diaryJson));
         }
 
@@ -77,18 +64,10 @@ public class DiaryFileService : IDiaryFileService
             await _diaryFileRepository.SearchAsync($"{searchPattern}*.json", searchPath, cancellationToken);
         foreach (var diaryFile in diaryFiles)
         {
-            var diaryJson = await _diaryFileRepository.ReadAsync(diaryFile, cancellationToken);
             if (!DateTime.TryParseExact(Path.GetFileNameWithoutExtension(diaryFile), "yyyy-MM-dd",
                     CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
             {
-                _logger.LogWarning($"Diary file is invalid: {diaryFile}");
-                continue;
-            }
-
-            if (string.IsNullOrEmpty(diaryJson))
-            {
-                _logger.LogWarning($"Diary is empty: {diaryFile}");
-                continue;
+                throw new Exception($"Diary file is invalid: {diaryFile}");
             }
 
             dates.Add(date);

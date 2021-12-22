@@ -11,8 +11,8 @@ public class Note
 {
     [DataMember(Order = 1)]
     [JsonPropertyOrder(1)]
-    [JsonPropertyName("link")]
-    public string Link { get; set; }
+    [JsonPropertyName("id")]
+    public string Id { get; set; }
 
     [DataMember(Order = 2)]
     [JsonPropertyOrder(2)]
@@ -42,7 +42,7 @@ public class Note
     public string GetFullPath(SharedOptions options)
     {
         var path =
-            $"{options.JarvisRemoteEndpoint}/note/{Link}.html";
+            $"{options.JarvisRemoteEndpoint}/note/{Id}.html";
         return path;
     }
 }

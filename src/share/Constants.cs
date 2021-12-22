@@ -30,6 +30,8 @@ public class Constants
 
     public const string AssetDbBlogPostFolder = "post";
 
+    public const string AssetDbNotePostFolder = "post";
+
     #endregion
 
     #region Personalization

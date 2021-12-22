@@ -21,12 +21,12 @@
     <div class="d-grid">
         <button type="submit" class="btn btn-primary btn-lg">提交</button>
     </div>
-    <input type="hidden" name="link" value="@Model.Link"/>
+    <input type="hidden" name="link" value="@Model.Id"/>
     <input type="hidden" name="createTime" value="@Model.CreateTime.ToDateAndTime()"/>
 </form>
 
 @section Scripts {
     <script>
-        const markdownContent = prepareEditor(document.querySelector("#mdContent"), "note_update_@Model.Link");
+        const markdownContent = prepareEditor(document.querySelector("#mdContent"), "note_update_@Model.Id");
     </script>
 }

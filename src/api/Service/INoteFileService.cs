@@ -7,7 +7,7 @@ namespace Laobian.Api.Service;
 
 public interface INoteFileService
 {
-    Task<List<Note>> GetNotesAsync(int offset = 0, int? count = null,
+    Task<List<Note>> GetNotesAsync(int? year = null,
         CancellationToken cancellationToken = default);
 
     Task<Note> GetNoteAsync(string id, CancellationToken cancellationToken = default);
@@ -20,7 +20,9 @@ public interface INoteFileService
 
     Task<List<NoteTag>> GetNoteTagsAsync(CancellationToken cancellationToken = default);
 
-    Task<NoteTag> GetNoteTagAsync(string id, CancellationToken cancellationToken = default);
+    Task<NoteTag> GetNoteTagByIdAsync(string id, CancellationToken cancellationToken = default);
+
+    Task<NoteTag> GetNoteTagByLinkAsync(string link, CancellationToken cancellationToken = default);
 
     Task AddNoteTagAsync(NoteTag tag, CancellationToken cancellationToken = default);
 
