@@ -1,0 +1,12 @@
+﻿@model NoteTagRuntime
+@inject IOptions<JarvisOptions> _options
+
+@{
+    Layout = "_NoteLayout";
+    ViewData["Title"] = "所有笔记";
+}
+
+@foreach (var note in Model.Notes)
+    {
+        <p><a href="@note.GetFullPath(_options.Value)">@note.Title</a></p>
+    }

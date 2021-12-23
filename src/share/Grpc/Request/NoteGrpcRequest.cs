@@ -20,4 +20,13 @@ public class NoteGrpcRequest
 
     [DataMember(Order = 5)]
     public NoteTag Tag { get; set; }
+
+    [DataMember(Order = 6)]
+    public string TagLink { get; set; }
+
+    [DataMember(Order = 7)]
+    public int? Offset { get; set; }
+
+    [DataMember(Order = 8)]
+    public int Count { get; set; }
 }

@@ -10,6 +10,13 @@ namespace Laobian.Share.Site.Jarvis;
 [DataContract]
 public class NoteRuntime
 {
+    public NoteRuntime(){}
+
+    public NoteRuntime(Note note)
+    {
+        Raw = note;
+    }
+
     [DataMember(Order = 1)] public Note Raw { get; set; }
 
     [DataMember(Order = 2)] public List<NoteTag> Tags { get; set; } = new();
@@ -17,6 +24,9 @@ public class NoteRuntime
     [DataMember(Order = 3)] public string HtmlContent { get; set; }
 
     [DataMember(Order = 4)] public List<NoteOutline> Outlines { get; set; } = new();
+
+    [DataMember(Order = 5)]
+    public int WordsCount { get; set; }
 
     private void SetOutlines(HtmlDocument htmlDoc)
     {
@@ -73,6 +83,8 @@ public class NoteRuntime
                 Tags.Add(tag);
             }
         }
+
+        WordsCount = Raw.MdContent.Length;
     }
 
     private void SetImageNodes(HtmlDocument htmlDoc)

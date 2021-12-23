@@ -10,13 +10,16 @@ namespace Laobian.Share.Grpc.Service;
 public interface INoteGrpcService
 {
     [OperationContract]
-    Task<NoteGrpcResponse> GetNoteStatCountPerYearAsync(NoteGrpcRequest request, CallContext context = default);
+    Task<NoteGrpcResponse> GetStatNotesPerYearAsync(NoteGrpcRequest request, CallContext context = default);
 
     [OperationContract]
-    Task<NoteGrpcResponse> GetNoteStatWordsPerYearAsync(NoteGrpcRequest request, CallContext context = default);
+    Task<NoteGrpcResponse> GetStatWordsPerYearAsync(NoteGrpcRequest request, CallContext context = default);
 
     [OperationContract]
     Task<NoteGrpcResponse> GetNotesAsync(NoteGrpcRequest request, CallContext context = default);
+
+    [OperationContract]
+    Task<NoteGrpcResponse> GetNotesCountAsync(NoteGrpcRequest request, CallContext context = default);
 
     [OperationContract]
     Task<NoteGrpcResponse> GetNoteAsync(NoteGrpcRequest request, CallContext context = default);
@@ -31,7 +34,7 @@ public interface INoteGrpcService
     Task<NoteGrpcResponse> DeleteNoteAsync(NoteGrpcRequest request, CallContext context = default);
 
     [OperationContract]
-    Task<NoteGrpcResponse> GetNoteTagStatCountPerYearAsync(NoteGrpcRequest request, CallContext context = default);
+    Task<NoteGrpcResponse> GetStatNotesPerTagAsync(NoteGrpcRequest request, CallContext context = default);
 
     [OperationContract]
     Task<NoteGrpcResponse> GetNoteTagsAsync(NoteGrpcRequest request, CallContext context = default);

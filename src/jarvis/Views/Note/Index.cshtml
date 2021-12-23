@@ -1,17 +1,19 @@
-﻿@model List<NoteRuntime>
+﻿@model PagedViewModel<NoteRuntime>
 @inject IOptions<JarvisOptions> _options
 @{
     Layout = "_NoteLayout";
     ViewData["Title"] = "所有笔记";
 }
 
-<div>
-    <ul>
-        @foreach (var item in Model.OrderByDescending(x => x.Raw.CreateTime))
-        {
-            <li>
-                <a href="@item.Raw.GetFullPath(_options.Value)">@item.Raw.Title</a>
-            </li>
-        }
-    </ul>
+@foreach (var item in Model.Items)
+{
+<div class="card mb-3">
+    <div class="card-body">
+        <h5 class="card-title">@item.Raw.Title</h5>
+        <div class="card-text">@Html.Raw(item.HtmlContent)</div>
+        <a href="@item.Raw.GetFullPath(_options.Value)" class="btn btn-primary">阅读全文</a>
+    </div>
 </div>
+}
+
+<page total-pages="@Model.TotalPages" current-page="@Model.CurrentPage" url="@Model.Url"></page>

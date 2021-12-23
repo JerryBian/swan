@@ -1,0 +1,49 @@
+﻿@model IEnumerable<NoteTag>
+@inject IOptions<AdminOptions> _config
+@{
+    Layout = "_NoteLayout";
+    ViewData["Title"] = "所有的笔记标签";
+}
+
+<div class="table-responsive">
+    <table class="table caption-top align-middle table-bordered">
+        <caption>标签总数: @Model.Count().ToThousandHuman() <a href="/note/tag/add" class="btn btn-info float-end"><i class="fas fa-plus"></i> 添加新的标签</a></caption>
+        <thead class="table-light">
+        <tr>
+            <th scope="col">显示名称</th>
+            <th scope="col">标签链接</th>
+            <th scope="col" class="text-center">操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var tag in Model)
+        {
+            <tr>
+                <th>@tag.DisplayName</th>
+                <th>@tag.Link</th>
+                <th class="text-center">
+                    <a class="btn btn-info me-2" href="/note/tag/@tag.Id/update"><i class="fas fa-edit"></i> 编辑</a>
+                    <a class="btn btn-danger" href="javascript:;" onclick="deleteTag('@tag.Id')"><i class="fas fa-trash-alt"></i> 删除</a>
+                </th>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        activeNavItem("#nav_note_tag");
+
+        function deleteTag(id) {
+            submitRequest(`/note/tag/${id}`,
+                {
+                    method: "DELETE",
+                    contentType: "text/plain",
+                    postAction: function() {
+                        window.location.reload(true);
+                    }
+                });
+        }
+    </script>
+}

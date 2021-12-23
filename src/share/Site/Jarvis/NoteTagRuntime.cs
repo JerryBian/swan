@@ -19,7 +19,7 @@ public class NoteTagRuntime
 
     [DataMember(Order = 1)] public NoteTag Raw { get; set; }
 
-    [DataMember(Order = 2)] public List<Note> Notes { get; set; }
+    [DataMember(Order = 2)] public List<Note> Notes { get; set; } = new();
 
     public void ExtractRuntime(List<Note> notes)
     {

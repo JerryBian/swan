@@ -1,0 +1,38 @@
+﻿@{
+    Layout = "_NoteLayout";
+}
+
+<div class="mb-3 bg-light p-1">
+    <canvas id="notesPerYearChart"></canvas>
+</div>
+<div class="mb-3 bg-light p-1">
+    <canvas id="wordsPerYearChart"></canvas>
+</div>
+<div class="bg-light p-1">
+    <canvas id="notesPerTagChart"></canvas>
+</div>
+
+@section Scripts
+{
+    <script>
+        activeNavItem("#nav_note_index");
+        submitRequest("/note/stats/notes-per-year",
+            {
+                okAction: function(chart) {
+                    createChart(document.querySelector("#notesPerYearChart"), chart);
+                }
+            });
+        submitRequest("/note/stats/words-per-year",
+            {
+                okAction: function(chart) {
+                    createChart(document.querySelector("#wordsPerYearChart"), chart);
+                }
+            });
+        submitRequest("/note/stats/notes-per-tag",
+            {
+                okAction: function(chart) {
+                    createChart(document.querySelector("#notesPerTagChart"), chart);
+                }
+            });
+    </script>
+}
