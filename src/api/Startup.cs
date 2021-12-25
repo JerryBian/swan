@@ -102,6 +102,7 @@ public class Startup : SharedStartup
             endpoints.MapGrpcService<FileGrpcService>();
             endpoints.MapGrpcService<DiaryGrpcService>();
             endpoints.MapGrpcService<NoteGrpcService>();
+            endpoints.MapGrpcService<MiscGrpcService>();
         });
     }
 }
