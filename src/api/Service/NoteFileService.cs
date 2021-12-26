@@ -34,7 +34,7 @@ public class NoteFileService : INoteFileService
         }
 
         var noteFiles =
-            await _noteFileRepository.SearchAsync("*.json", searchPath, cancellationToken);
+            await _noteFileRepository.SearchFilesAsync("*.json", searchPath, cancellationToken: cancellationToken);
         foreach (var noteFile in noteFiles)
         {
             var diaryJson = await _noteFileRepository.ReadAsync(noteFile, cancellationToken);
@@ -47,7 +47,7 @@ public class NoteFileService : INoteFileService
     public async Task<Note> GetNoteAsync(string id, CancellationToken cancellationToken = default)
     {
         var noteFile =
-            (await _noteFileRepository.SearchAsync($"{id.ToLowerInvariant()}.json", Constants.AssetDbNotePostFolder,
+            (await _noteFileRepository.SearchFilesAsync($"{id.ToLowerInvariant()}.json", Constants.AssetDbNotePostFolder,
                 cancellationToken: cancellationToken)).FirstOrDefault();
         if (!string.IsNullOrEmpty(noteFile))
         {

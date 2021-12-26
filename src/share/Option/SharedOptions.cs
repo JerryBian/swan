@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Dynamic;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using Microsoft.Extensions.Configuration;
 
@@ -21,6 +22,9 @@ public class SharedOptions
 
     [OptionEnvName("JARVIS_REMOTE_ENDPOINT")]
     public string JarvisRemoteEndpoint { get; set; }
+
+    [OptionEnvName("JARVIS_LOCAL_ENDPOINT")]
+    public string JarvisLocalEndpoint { get; set; }
 
     [OptionEnvName("ADMIN_USER_NAME")] public string AdminUserName { get; set; }
 

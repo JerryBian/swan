@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 
 namespace Laobian.Api.Repository;
 
-public class LogFileRepository : FileSourceBase, ILogFileRepository
+public class LogFileRepository : GitFileRepository, ILogFileRepository
 {
     public LogFileRepository(IOptions<ApiOptions> options)
     {

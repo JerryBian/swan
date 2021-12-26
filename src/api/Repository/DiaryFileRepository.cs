@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 
 namespace Laobian.Api.Repository;
 
-public class DiaryFileRepository : FileSourceBase, IDiaryFileRepository
+public class DiaryFileRepository : GitFileRepository, IDiaryFileRepository
 {
     public DiaryFileRepository(IOptions<ApiOptions> options)
     {

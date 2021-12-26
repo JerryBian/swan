@@ -2,6 +2,6 @@
 
 namespace Laobian.Api.Repository;
 
-public interface INoteFileRepository : IFileSource2
+public interface INoteFileRepository : IFileRepository
 {
 }

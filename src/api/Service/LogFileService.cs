@@ -26,7 +26,7 @@ public class LogFileService : ILogFileService
     {
         var result = new List<LaobianLog>();
         var logFile =
-            (await _logFileRepository.SearchAsync(
+            (await _logFileRepository.SearchFilesAsync(
                 Path.Combine(site.ToString().ToLowerInvariant(), date.Year.ToString("D4"), $"{date.ToDate()}.log"),
                 cancellationToken: cancellationToken)).FirstOrDefault();
         if (!string.IsNullOrEmpty(logFile))

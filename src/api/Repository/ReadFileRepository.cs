@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 
 namespace Laobian.Api.Repository;
 
-public class ReadFileRepository : FileSourceBase, IReadFileRepository
+public class ReadFileRepository : GitFileRepository, IReadFileRepository
 {
     public ReadFileRepository(IOptions<ApiOptions> options)
     {

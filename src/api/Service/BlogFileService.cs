@@ -14,22 +14,22 @@ namespace Laobian.Api.Service;
 
 public class BlogFileService : IBlogFileService
 {
-    private readonly IBlogFileSource _blogFileSource;
+    private readonly IBlogFileRepository _blogFileRepository;
     private readonly ILogger<BlogFileService> _logger;
 
-    public BlogFileService(IBlogFileSource blogFileSource, ILogger<BlogFileService> logger)
+    public BlogFileService(IBlogFileRepository blogFileRepository, ILogger<BlogFileService> logger)
     {
         _logger = logger;
-        _blogFileSource = blogFileSource;
+        _blogFileRepository = blogFileRepository;
     }
 
     public async Task<List<BlogPost>> GetBlogPostsAsync(CancellationToken cancellationToken = default)
     {
         var posts = new List<BlogPost>();
-        foreach (var item in await _blogFileSource.SearchAsync("*.json", Constants.AssetDbBlogPostFolder,
-                     cancellationToken))
+        foreach (var item in await _blogFileRepository.SearchFilesAsync("*.json", Constants.AssetDbBlogPostFolder,
+                     cancellationToken: cancellationToken))
         {
-            var postJson = await _blogFileSource.ReadAsync(item, cancellationToken);
+            var postJson = await _blogFileRepository.ReadAsync(item, cancellationToken);
             if (string.IsNullOrEmpty(postJson))
             {
                 _logger.LogWarning($"Post file is empty: {item}");
@@ -46,11 +46,11 @@ public class BlogFileService : IBlogFileService
     public async Task<BlogPost> GetBlogPostAsync(string postLink, CancellationToken cancellationToken = default)
     {
         postLink = postLink.ToLowerInvariant();
-        var postFile = (await _blogFileSource.SearchAsync($"{postLink}.json", Constants.AssetDbBlogPostFolder,
-            cancellationToken)).FirstOrDefault();
+        var postFile = (await _blogFileRepository.SearchFilesAsync($"{postLink}.json", Constants.AssetDbBlogPostFolder,
+            cancellationToken: cancellationToken)).FirstOrDefault();
         if (postFile != null)
         {
-            var postJson = await _blogFileSource.ReadAsync(postFile, cancellationToken);
+            var postJson = await _blogFileRepository.ReadAsync(postFile, cancellationToken);
             if (string.IsNullOrEmpty(postJson))
             {
                 _logger.LogWarning($"Post file is empty: {postFile}");
@@ -84,7 +84,7 @@ public class BlogFileService : IBlogFileService
 
         blogPost.CreateTime = DateTime.Now;
         blogPost.LastUpdateTime = DateTime.Now;
-        await _blogFileSource.WriteAsync(
+        await _blogFileRepository.WriteAsync(
             Path.Combine(Constants.AssetDbBlogPostFolder, blogPost.CreateTime.Year.ToString("D4"),
                 $"{blogPost.Link}.json"),
             JsonUtil.Serialize(blogPost, true),
@@ -119,7 +119,7 @@ public class BlogFileService : IBlogFileService
         if (postLinkChanged)
         {
             var existingData =
-                (await _blogFileSource.SearchAsync($"{blogPost.Link}.json", cancellationToken: cancellationToken))
+                (await _blogFileRepository.SearchFilesAsync($"{blogPost.Link}.json", cancellationToken: cancellationToken))
                 .FirstOrDefault();
             if (!string.IsNullOrEmpty(existingData))
             {
@@ -127,7 +127,7 @@ public class BlogFileService : IBlogFileService
             }
         }
 
-        await _blogFileSource.WriteAsync(
+        await _blogFileRepository.WriteAsync(
             Path.Combine(Constants.AssetDbBlogPostFolder, blogPost.CreateTime.Year.ToString("D4"),
                 $"{blogPost.Link}.json"),
             JsonUtil.Serialize(blogPost, true),
@@ -137,11 +137,11 @@ public class BlogFileService : IBlogFileService
         {
             var oldAccessFile = Path.Combine(Constants.AssetDbBlogAccessFolder, blogPost.CreateTime.Year.ToString("D4"),
                 $"{originalPostLink}.json");
-            if (await _blogFileSource.FileExistsAsync(oldAccessFile, cancellationToken))
+            if (await _blogFileRepository.FileExistsAsync(oldAccessFile, cancellationToken))
             {
                 var newAccessFile = Path.Combine(Constants.AssetDbBlogAccessFolder,
                     blogPost.CreateTime.Year.ToString("D4"), $"{blogPost.Link}.json");
-                await _blogFileSource.RenameAsync(oldAccessFile, newAccessFile, cancellationToken);
+                await _blogFileRepository.RenameAsync(oldAccessFile, newAccessFile, cancellationToken);
             }
 
             await DeleteBlogPostAsync(originalPostLink, cancellationToken);
@@ -150,11 +150,11 @@ public class BlogFileService : IBlogFileService
 
     public async Task DeleteBlogPostAsync(string postLink, CancellationToken cancellationToken = default)
     {
-        var postFile = (await _blogFileSource.SearchAsync($"{postLink.ToLowerInvariant()}.json",
+        var postFile = (await _blogFileRepository.SearchFilesAsync($"{postLink.ToLowerInvariant()}.json",
             cancellationToken: cancellationToken)).FirstOrDefault();
         if (!string.IsNullOrEmpty(postFile))
         {
-            await _blogFileSource.DeleteAsync(postFile, cancellationToken);
+            await _blogFileRepository.DeleteAsync(postFile, cancellationToken);
         }
     }
 
@@ -170,9 +170,9 @@ public class BlogFileService : IBlogFileService
 
         var accessFile = Path.Combine(Constants.AssetDbBlogAccessFolder, blogPost.CreateTime.Year.ToString("D4"),
             $"{postLink.ToLowerInvariant()}.json");
-        if (await _blogFileSource.FileExistsAsync(accessFile, cancellationToken))
+        if (await _blogFileRepository.FileExistsAsync(accessFile, cancellationToken))
         {
-            var accessJson = await _blogFileSource.ReadAsync(accessFile, cancellationToken);
+            var accessJson = await _blogFileRepository.ReadAsync(accessFile, cancellationToken);
             if (!string.IsNullOrEmpty(accessJson))
             {
                 blogAccesses.AddRange(JsonUtil.Deserialize<IEnumerable<BlogAccess>>(accessJson));
@@ -202,7 +202,7 @@ public class BlogFileService : IBlogFileService
         }
 
         dateAccess.Count += count;
-        await _blogFileSource.WriteAsync(accessFile,
+        await _blogFileRepository.WriteAsync(accessFile,
             JsonUtil.Serialize(existingData.OrderByDescending(x => x.Date)), cancellationToken);
     }
 
@@ -210,9 +210,9 @@ public class BlogFileService : IBlogFileService
     {
         var blogTags = new List<BlogTag>();
         const string tagFile = "tag.json";
-        if (await _blogFileSource.FileExistsAsync(tagFile, cancellationToken))
+        if (await _blogFileRepository.FileExistsAsync(tagFile, cancellationToken))
         {
-            var tagJson = await _blogFileSource.ReadAsync(tagFile, cancellationToken);
+            var tagJson = await _blogFileRepository.ReadAsync(tagFile, cancellationToken);
             if (!string.IsNullOrEmpty(tagJson))
             {
                 blogTags.AddRange(JsonUtil.Deserialize<IEnumerable<BlogTag>>(tagJson));
@@ -261,7 +261,7 @@ public class BlogFileService : IBlogFileService
         blogTag.Id ??= StringUtil.GenerateRandom();
         blogTag.LastUpdatedAt = DateTime.Now;
         tags.Add(blogTag);
-        await _blogFileSource.WriteAsync("tag.json",
+        await _blogFileRepository.WriteAsync("tag.json",
             JsonUtil.Serialize(tags.OrderByDescending(x => x.LastUpdatedAt), true), cancellationToken);
     }
 
@@ -307,7 +307,7 @@ public class BlogFileService : IBlogFileService
         existingTag.Description = blogTag.Description;
         existingTag.DisplayName = blogTag.DisplayName;
         existingTag.Link = blogTag.Link;
-        await _blogFileSource.WriteAsync("tag.json",
+        await _blogFileRepository.WriteAsync("tag.json",
             JsonUtil.Serialize(tags.OrderByDescending(x => x.LastUpdatedAt), true), cancellationToken);
     }
 
@@ -321,7 +321,7 @@ public class BlogFileService : IBlogFileService
         }
 
         tags.Remove(existingTag);
-        await _blogFileSource.WriteAsync("tag.json",
+        await _blogFileRepository.WriteAsync("tag.json",
             JsonUtil.Serialize(tags.OrderByDescending(x => x.LastUpdatedAt), true), cancellationToken);
     }
 }

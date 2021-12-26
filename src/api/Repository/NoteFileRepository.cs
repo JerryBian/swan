@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 
 namespace Laobian.Api.Repository;
 
-public class NoteFileRepository : FileSourceBase, INoteFileRepository
+public class NoteFileRepository : GitFileRepository, INoteFileRepository
 {
     public NoteFileRepository(IOptions<ApiOptions> options)
     {

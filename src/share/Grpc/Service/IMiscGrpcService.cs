@@ -14,6 +14,9 @@ namespace Laobian.Share.Grpc.Service
     public interface IMiscGrpcService
     {
         [OperationContract]
+        Task<MiscGrpcResponse> ReloadBlogCacheAsync(MiscGrpcRequest request, CallContext context = default);
+
+        [OperationContract]
         Task<MiscGrpcResponse> ShutdownSiteAsync(MiscGrpcRequest request, CallContext context = default);
 
         [OperationContract]

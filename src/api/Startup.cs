@@ -37,8 +37,9 @@ public class Startup : SharedStartup
         services.AddCodeFirstGrpc(o => { o.MaxReceiveMessageSize = 20 * 1024 * 1024; });
 
         services.AddSingleton<ICommandClient, ProcessCommandClient>();
-        services.AddSingleton<IFileRepository, FileRepository>();
-        services.AddSingleton<IBlogFileSource, BlogFileSource>();
+        services.AddSingleton<IFileRepository, GitFileRepository>();
+        services.AddSingleton<IGitFileService, GitFileService>();
+        services.AddSingleton<IBlogFileRepository, BlogFileRepository>();
         services.AddSingleton<IBlogFileService, BlogFileService>();
         services.AddSingleton<IReadFileRepository, ReadFileRepository>();
         services.AddSingleton<IReadFileService, ReadFileService>();
@@ -50,15 +51,6 @@ public class Startup : SharedStartup
         services.AddSingleton<IDiaryFileService, DiaryFileService>();
         services.AddSingleton<INoteFileRepository, NoteFileRepository>();
         services.AddSingleton<INoteFileService, NoteFileService>();
-
-        if (CurrentEnv.IsDevelopment())
-        {
-            services.AddSingleton<IFileSource, LocalFileSource>();
-        }
-        else
-        {
-            services.AddSingleton<IFileSource, GitFileSource>();
-        }
 
         services.AddHostedService<GitFileLogHostedService>();
         services.AddHostedService<DbDataHostedService>();

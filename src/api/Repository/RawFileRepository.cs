@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 
 namespace Laobian.Api.Repository;
 
-public class RawFileRepository : FileSourceBase, IRawFileRepository
+public class RawFileRepository : GitFileRepository, IRawFileRepository
 {
     public RawFileRepository(IOptions<ApiOptions> options)
     {

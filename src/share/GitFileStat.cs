@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Laobian.Share
 {
     [DataContract]
-    public class DbStat
+    public class GitFileStat
     {
         [DataMember(Order = 1)]
         [JsonPropertyName("fn")]

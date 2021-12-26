@@ -5,16 +5,23 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Laobian.Share;
+using Microsoft.Extensions.Options;
 
-namespace Laobian.Api.Source;
+namespace Laobian.Api.Repository;
 
-public class FileSourceBase : IFileSource2
+public class GitFileRepository : IFileRepository
 {
     private readonly AutoResetEvent _autoResetEvent;
 
-    public FileSourceBase()
+    public GitFileRepository()
     {
         _autoResetEvent = new AutoResetEvent(true);
+    }
+
+    public GitFileRepository(IOptions<ApiOptions> options)
+    {
+        BasePath = Path.Combine(options.Value.AssetLocation, Constants.AssetDbFolder);
     }
 
     public string BasePath { get; set; }
@@ -62,7 +69,7 @@ public class FileSourceBase : IFileSource2
         }
     }
 
-    public virtual async Task<IEnumerable<string>> SearchAsync(string pattern, string relativePath = null,
+    public virtual async Task<IEnumerable<string>> SearchFilesAsync(string pattern, string relativePath = null, bool topDirectoryOnly = false,
         CancellationToken cancellationToken = default)
     {
         _autoResetEvent.WaitOne();
@@ -82,7 +89,36 @@ public class FileSourceBase : IFileSource2
                 return Enumerable.Empty<string>();
             }
 
-            return await Task.FromResult(Directory.EnumerateFiles(searchPath, pattern, SearchOption.AllDirectories)
+            return await Task.FromResult(Directory.EnumerateFiles(searchPath, pattern, topDirectoryOnly ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories)
+                .Select(x => Path.GetRelativePath(BasePath, x)));
+        }
+        finally
+        {
+            _autoResetEvent.Set();
+        }
+    }
+
+    public async Task<IEnumerable<string>> SearchDirectoriesAsync(string pattern, string relativePath = null, bool topDirectoryOnly = false,
+        CancellationToken cancellationToken = default)
+    {
+        _autoResetEvent.WaitOne();
+        try
+        {
+            EnsureBasePath();
+            var searchPath = string.IsNullOrEmpty(relativePath) ? BasePath : Path.Combine(BasePath, relativePath);
+            var dir = Path.GetDirectoryName(pattern);
+            if (!string.IsNullOrEmpty(dir))
+            {
+                searchPath = Path.Combine(searchPath, dir);
+                pattern = Path.GetFileName(pattern);
+            }
+
+            if (!Directory.Exists(searchPath))
+            {
+                return Enumerable.Empty<string>();
+            }
+
+            return await Task.FromResult(Directory.EnumerateDirectories(searchPath, pattern, topDirectoryOnly ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories)
                 .Select(x => Path.GetRelativePath(BasePath, x)));
         }
         finally
@@ -189,6 +225,25 @@ public class FileSourceBase : IFileSource2
             }
 
             await File.WriteAllBytesAsync(Path.Combine(BasePath, path), content, cancellationToken);
+        }
+        finally
+        {
+            _autoResetEvent.Set();
+        }
+    }
+
+    public async Task<long> GetFileSizeAsync(string path, CancellationToken cancellationToken = default)
+    {
+        if (!await FileExistsAsync(path, cancellationToken))
+        {
+            throw new Exception($"File not exist: {path}");
+        }
+
+        _autoResetEvent.WaitOne();
+        try
+        {
+            path = Path.Combine(BasePath, path);
+            return new FileInfo(path).Length;
         }
         finally
         {

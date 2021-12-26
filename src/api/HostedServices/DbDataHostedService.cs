@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Api.Repository;
+using Laobian.Api.Service;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -9,18 +10,18 @@ namespace Laobian.Api.HostedServices;
 
 public class DbDataHostedService : BackgroundService
 {
-    private readonly IFileRepository _fileRepository;
+    private readonly IGitFileService _gitFileService;
     private readonly ILogger<DbDataHostedService> _logger;
 
-    public DbDataHostedService(IFileRepository fileRepository, ILogger<DbDataHostedService> logger)
+    public DbDataHostedService(IGitFileService gitFileService, ILogger<DbDataHostedService> logger)
     {
         _logger = logger;
-        _fileRepository = fileRepository;
+        _gitFileService = gitFileService;
     }
 
     public override async Task StartAsync(CancellationToken cancellationToken)
     {
-        await _fileRepository.PrepareAsync(cancellationToken);
+        await _gitFileService.PullAsync(cancellationToken);
         await base.StartAsync(cancellationToken);
     }
 
@@ -32,7 +33,7 @@ public class DbDataHostedService : BackgroundService
             {
                 try
                 {
-                    await _fileRepository.SaveAsync(":alarm_clock: sever schedule");
+                    await _gitFileService.PushAsync(":alarm_clock: sever schedule");
                 }
                 catch (Exception ex)
                 {
@@ -48,7 +49,7 @@ public class DbDataHostedService : BackgroundService
     {
         try
         {
-            await _fileRepository.SaveAsync(":small_red_triangle_down: server stopping");
+            await _gitFileService.PushAsync(":small_red_triangle_down: server stopping");
         }
         catch (Exception ex)
         {

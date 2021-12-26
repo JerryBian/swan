@@ -2,6 +2,6 @@
 
 namespace Laobian.Api.Repository;
 
-public interface IRawFileRepository : IFileSource2
+public interface IRawFileRepository : IFileRepository
 {
 }

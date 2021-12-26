@@ -24,7 +24,7 @@ public class ReadFileService : IReadFileService
     public async Task<List<ReadItem>> GetReadItemsAsync(CancellationToken cancellationToken = default)
     {
         var result = new List<ReadItem>();
-        var readFiles = await _readFileRepository.SearchAsync("*.json", cancellationToken: cancellationToken);
+        var readFiles = await _readFileRepository.SearchFilesAsync("*.json", cancellationToken: cancellationToken);
         foreach (var readFile in readFiles)
         {
             var readJson = await _readFileRepository.ReadAsync(readFile, cancellationToken);
@@ -40,7 +40,7 @@ public class ReadFileService : IReadFileService
     public async Task<List<ReadItem>> GetReadItemsAsync(int year, CancellationToken cancellationToken = default)
     {
         var readFile =
-            (await _readFileRepository.SearchAsync($"{year:D4}.json",
+            (await _readFileRepository.SearchFilesAsync($"{year:D4}.json",
                 cancellationToken: cancellationToken)).FirstOrDefault();
         if (!string.IsNullOrEmpty(readFile))
         {
