@@ -43,6 +43,7 @@ public abstract class SharedStartup
     {
         var httpRequestToken = Configuration.GetValue<string>(Constants.EnvHttpRequestToken);
         httpClient.Timeout = TimeSpan.FromMinutes(10);
+        httpClient.DefaultRequestVersion = new Version(2, 0);
         httpClient.DefaultRequestHeaders.Add(Constants.ApiRequestHeaderToken, httpRequestToken);
     }
 
