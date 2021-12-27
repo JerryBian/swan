@@ -1,7 +1,6 @@
 using System;
 using System.Text.Encodings.Web;
 using Laobian.Admin.HostedService;
-using Laobian.Admin.HttpClients;
 using Laobian.Share;
 using Laobian.Share.Converter;
 using Laobian.Share.Logger.Remote;
@@ -32,13 +31,6 @@ public class Startup : SharedStartup
         base.ConfigureServices(services);
         services.Configure<AdminOptions>(o => { o.FetchFromEnv(Configuration); });
 
-
-        services.AddHttpClient<ApiSiteHttpClient>(SetHttpClient).SetHandlerLifetime(TimeSpan.FromDays(1))
-            .AddPolicyHandler(GetHttpClientRetryPolicy());
-
-        services.AddHttpClient<BlogSiteHttpClient>(SetHttpClient).SetHandlerLifetime(TimeSpan.FromDays(1))
-            .AddPolicyHandler(GetHttpClientRetryPolicy());
-
         services.AddLogging(config =>
         {
             config.SetMinimumLevel(LogLevel.Trace);
@@ -52,7 +44,6 @@ public class Startup : SharedStartup
         {
             var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
             config.Filters.Add(new AuthorizeFilter(policy));
-            //config.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
         }).AddJsonOptions(config =>
         {
             config.JsonSerializerOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;

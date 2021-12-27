@@ -10,6 +10,9 @@ namespace Laobian.Share.Grpc.Service;
 public interface IBlogGrpcService
 {
     [OperationContract]
+    Task<MiscGrpcResponse> ReloadBlogCacheAsync(BlogGrpcRequest request, CallContext context = default);
+
+    [OperationContract]
     Task<BlogGrpcResponse> GetPostsAsync(BlogGrpcRequest request, CallContext context = default);
 
     [OperationContract]

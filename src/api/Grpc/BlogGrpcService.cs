@@ -137,6 +137,23 @@ public class BlogGrpcService : IBlogGrpcService
         return response;
     }
 
+    public async Task<MiscGrpcResponse> ReloadBlogCacheAsync(BlogGrpcRequest request, CallContext context = default)
+    {
+        var response = new MiscGrpcResponse();
+        try
+        {
+            await _blogSiteHttpClient.ReloadBlogDataAsync();
+        }
+        catch (Exception ex)
+        {
+            response.IsOk = false;
+            response.Message = ex.Message;
+            _logger.LogError(ex, $"{nameof(ReloadBlogCacheAsync)} failed.");
+        }
+
+        return response;
+    }
+
     public async Task<BlogGrpcResponse> GetPostsAsync(BlogGrpcRequest request, CallContext context = default)
     {
         var response = new BlogGrpcResponse();

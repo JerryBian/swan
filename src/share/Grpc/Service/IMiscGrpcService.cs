@@ -14,9 +14,6 @@ namespace Laobian.Share.Grpc.Service
     public interface IMiscGrpcService
     {
         [OperationContract]
-        Task<MiscGrpcResponse> ReloadBlogCacheAsync(MiscGrpcRequest request, CallContext context = default);
-
-        [OperationContract]
         Task<MiscGrpcResponse> ShutdownSiteAsync(MiscGrpcRequest request, CallContext context = default);
 
         [OperationContract]
@@ -24,5 +21,8 @@ namespace Laobian.Share.Grpc.Service
 
         [OperationContract]
         Task<MiscGrpcResponse> GetDbStatAsync(MiscGrpcRequest request, CallContext context = default);
+
+        [OperationContract]
+        Task<MiscGrpcResponse> PersistentGitFileAsync(MiscGrpcRequest request, CallContext context = default);
     }
 }

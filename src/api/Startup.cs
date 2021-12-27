@@ -57,6 +57,8 @@ public class Startup : SharedStartup
 
         services.AddHttpClient<BlogSiteHttpClient>(SetHttpClient).SetHandlerLifetime(TimeSpan.FromDays(1))
             .AddPolicyHandler(GetHttpClientRetryPolicy());
+        services.AddHttpClient<JarvisSiteHttpClient>(SetHttpClient).SetHandlerLifetime(TimeSpan.FromDays(1))
+            .AddPolicyHandler(GetHttpClientRetryPolicy());
 
         services.AddLogging(config =>
         {

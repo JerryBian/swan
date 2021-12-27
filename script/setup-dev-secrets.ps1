@@ -56,6 +56,7 @@ dotnet user-secrets set "HTTP_REQUEST_TOKEN" "$HTTP_REQUEST_TOKEN" --project $AP
 dotnet user-secrets set "ADMIN_REMOTE_ENDPOINT" "$ADMIN_REMOTE_ENDPOINT" --project $API_PROJECT
 dotnet user-secrets set "JARVIS_REMOTE_ENDPOINT" "$JARVIS_REMOTE_ENDPOINT" --project $API_PROJECT
 dotnet user-secrets set "SKIP_GIT_OPERATIONS" "$SKIP_GIT_OPERATIONS" --project $API_PROJECT
+dotnet user-secrets set "JARVIS_LOCAL_ENDPOINT" "$JARVIS_LOCAL_ENDPOINT" --project $API_PROJECT
 
 ##################
 ##              ##
@@ -97,4 +98,3 @@ dotnet user-secrets set "DATA_PROTECTION_KEY_PATH" "$DATA_PROTECTION_KEY_PATH" -
 dotnet user-secrets set "HTTP_REQUEST_TOKEN" "$HTTP_REQUEST_TOKEN" --project $JARVIS_PROJECT
 dotnet user-secrets set "ADMIN_REMOTE_ENDPOINT" "$ADMIN_REMOTE_ENDPOINT" --project $JARVIS_PROJECT
 dotnet user-secrets set "JARVIS_REMOTE_ENDPOINT" "$JARVIS_REMOTE_ENDPOINT" --project $JARVIS_PROJECT
-dotnet user-secrets set "JARVIS_LOCAL_ENDPOINT" "$JARVIS_LOCAL_ENDPOINT" --project $JARVIS_PROJECT

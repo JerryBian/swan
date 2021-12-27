@@ -21,6 +21,7 @@ public class GitFileRepository : IFileRepository
 
     public GitFileRepository(IOptions<ApiOptions> options)
     {
+        _autoResetEvent = new AutoResetEvent(true);
         BasePath = Path.Combine(options.Value.AssetLocation, Constants.AssetDbFolder);
     }
 

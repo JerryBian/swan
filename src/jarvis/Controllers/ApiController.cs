@@ -1,4 +1,5 @@
 ﻿using Laobian.Share;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
@@ -8,6 +9,7 @@ namespace Laobian.Jarvis.Controllers
 {
     [Route("api")]
     [ApiController]
+    [AllowAnonymous]
     public class ApiController : ControllerBase
     {
         private readonly ILogger<ApiController> _logger;

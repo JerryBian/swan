@@ -5,10 +5,13 @@ using Laobian.Jarvis.HttpClients;
 using Laobian.Jarvis.Middleware;
 using Laobian.Share;
 using Laobian.Share.Converter;
+using Laobian.Share.Filters;
 using Laobian.Share.Logger.Remote;
 using Laobian.Share.Site;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -45,7 +48,11 @@ public class Startup : SharedStartup
             config.AddRemote(c => { c.LoggerName = "jarvis"; });
         });
 
-        services.AddControllersWithViews()
+        var httpRequestToken = Configuration.GetValue<string>(Constants.EnvHttpRequestToken);
+        services.AddControllersWithViews(config =>
+            {
+                config.Filters.Add(new VerifyTokenActionFilter(httpRequestToken, new[] { "/api" }));
+            })
             .AddJsonOptions(config =>
             {
                 config.JsonSerializerOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;

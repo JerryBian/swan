@@ -13,5 +13,8 @@ namespace Laobian.Share.Grpc.Request
     {
         [DataMember(Order = 1)]
         public LaobianSite Site { get; set; }
+
+        [DataMember(Order = 2)]
+        public string Message { get; set; }
     }
 }

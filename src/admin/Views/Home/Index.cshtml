@@ -1,3 +1,111 @@
-﻿<div class="text-center">
-    <h1 class="display-4">Welcome!</h1>
+﻿
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl" id="file_stat"></div>
+        <div class="col-xl" id="api_stat"></div>
+        <div class="col-xl" id="blog_stat"></div>
+        <div class="col-xl" id="admin_stat"></div>
+        <div class="col-xl" id="jarvis_stat"></div>
+    </div>
 </div>
+
+@section Scripts{
+    <script>
+        let fileStat = document.querySelector("#file_stat");
+        let apiStat = document.querySelector("#api_stat");
+        let blogStat = document.querySelector("#blog_stat");
+        let adminStat = document.querySelector("#admin_stat");
+        let jarvisStat = document.querySelector("#jarvis_stat");
+
+        function getCardHtml(title, items) {
+            let html = `<div class="card h-100 text-dark bg-light"><div class="card-header">${title}</div><ul class="list-group list-group-flush">`;
+            items.forEach(function(item) {
+                html += `<li class="list-group-item text-dark bg-light">${item}</li>`;
+            });
+            html += "</ul></div>";
+            return html;
+        }
+
+        window.setInterval(function() {
+                load();
+            },
+            1000 * 60);
+
+        function load() {
+            submitRequest("/git-file-stat",
+                {
+                    contentType: "plain/text",
+                    okAction: function(x) {
+                        let items = [];
+                        x.forEach(function(item) {
+                            items.push(`<strong>${item.fn}</strong>: ${item.fs}`);
+                        });
+
+                        fileStat.innerHTML = getCardHtml("Git File Stats", items);
+                    }
+                });
+
+            submitRequest("/site-stat?site=api",
+                {
+                    contentType: "plain/text",
+                    okAction: function(x) {
+                        let items = [];
+                        items.push(`<strong>启动时间</strong>: ${x.startTime}`);
+                        items.push(`<strong>总线程数</strong>: ${x.threads}`);
+                        items.push(`<strong>CPU总时间</strong>: ${x.totalProcessorTime}`);
+                        items.push(`<strong>物理内存</strong>: ${x.allocatedPhysicalMemory}`);
+                        items.push(`<strong>最大内存</strong>: ${x.maximumAllocatedPhysicalMemory}`);
+
+                        apiStat.innerHTML = getCardHtml("API site Stats", items);
+                    }
+                });
+
+            submitRequest("/site-stat?site=blog",
+                {
+                    contentType: "plain/text",
+                    okAction: function(x) {
+                        let items = [];
+                        items.push(`<strong>启动时间</strong>: ${x.startTime}`);
+                        items.push(`<strong>总线程数</strong>: ${x.threads}`);
+                        items.push(`<strong>CPU总时间</strong>: ${x.totalProcessorTime}`);
+                        items.push(`<strong>物理内存</strong>: ${x.allocatedPhysicalMemory}`);
+                        items.push(`<strong>最大内存</strong>: ${x.maximumAllocatedPhysicalMemory}`);
+
+                        blogStat.innerHTML = getCardHtml("BLOG site Stats", items);
+                    }
+                });
+
+            submitRequest("/site-stat?site=admin",
+                {
+                    contentType: "plain/text",
+                    okAction: function(x) {
+                        let items = [];
+                        items.push(`<strong>启动时间</strong>: ${x.startTime}`);
+                        items.push(`<strong>总线程数</strong>: ${x.threads}`);
+                        items.push(`<strong>CPU总时间</strong>: ${x.totalProcessorTime}`);
+                        items.push(`<strong>物理内存</strong>: ${x.allocatedPhysicalMemory}`);
+                        items.push(`<strong>最大内存</strong>: ${x.maximumAllocatedPhysicalMemory}`);
+
+                        adminStat.innerHTML = getCardHtml("ADMIN site Stats", items);
+                    }
+                });
+
+            submitRequest("/site-stat?site=jarvis",
+                {
+                    contentType: "plain/text",
+                    okAction: function(x) {
+                        let items = [];
+                        items.push(`<strong>启动时间</strong>: ${x.startTime}`);
+                        items.push(`<strong>总线程数</strong>: ${x.threads}`);
+                        items.push(`<strong>CPU总时间</strong>: ${x.totalProcessorTime}`);
+                        items.push(`<strong>物理内存</strong>: ${x.allocatedPhysicalMemory}`);
+                        items.push(`<strong>最大内存</strong>: ${x.maximumAllocatedPhysicalMemory}`);
+
+                        jarvisStat.innerHTML = getCardHtml("JARVIS site Stats", items);
+                    }
+                });
+        }
+
+        load();
+    </script>
+}

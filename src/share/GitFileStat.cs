@@ -17,7 +17,7 @@ namespace Laobian.Share
 
         [JsonPropertyName("fs")]
         [DataMember(Order = 2)]
-        public long FolderSize { get; set; }
+        public string FolderSize { get; set; }
 
         [JsonPropertyName("sf")]
         [DataMember(Order = 3)]

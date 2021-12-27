@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics;
+using ByteSizeLib;
+using Laobian.Share.Extension;
 
 namespace Laobian.Share
 {
@@ -9,13 +11,11 @@ namespace Laobian.Share
             using var process = Process.GetCurrentProcess();
             var stat = new SiteStat
             {
-                AllocatedPhysicalMemory = process.WorkingSet64,
-                AllocatedVirtualMemory = process.VirtualMemorySize64,
-                MaximumAllocatedPhysicalMemory = process.PeakWorkingSet64,
-                MaximumAllocatedVirtualMemory = process.PeakVirtualMemorySize64,
+                AllocatedPhysicalMemory = ByteSize.FromBytes(process.WorkingSet64).ToString("#.# MB"),
+                MaximumAllocatedPhysicalMemory = ByteSize.FromBytes(process.PeakWorkingSet64).ToString("#.# MB"),
                 StartTime = process.StartTime,
                 Threads = process.Threads.Count,
-                TotalProcessorTime = process.TotalProcessorTime
+                TotalProcessorTime = process.TotalProcessorTime.ToHuman()
             };
 
             return stat;

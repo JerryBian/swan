@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ByteSizeLib;
 using Laobian.Api.Command;
 using Laobian.Api.Repository;
 using Laobian.Api.Source;
@@ -101,95 +102,36 @@ namespace Laobian.Api.Service
             _logger.LogInformation($"cmd: {command}{Environment.NewLine}Output: {output}");
         }
 
+        private async Task<GitFileStat> GetGitFileStateAsync(string folder, CancellationToken cancellationToken = default)
+        {
+            var dbStat = new GitFileStat { FolderName = $"/{folder}" };
+            long folderSize = 0L;
+            foreach (var file in await _fileRepository.SearchFilesAsync("*", folder, cancellationToken: cancellationToken))
+            {
+                dbStat.FileCount++;
+                folderSize += await _fileRepository.GetFileSizeAsync(file, cancellationToken);
+            }
+
+            dbStat.FolderSize = ByteSize.FromBytes(folderSize).ToString("#.# MB");
+            dbStat.SubFolderCount =
+                (await _fileRepository.SearchDirectoriesAsync("*", folder, topDirectoryOnly: true,
+                    cancellationToken: cancellationToken)).Count();
+            return dbStat;
+        }
+
         public async Task<List<GitFileStat>> GetGitFileStatsAsync(CancellationToken cancellationToken = default)
         {
             var stats = new List<GitFileStat>();
             var assetDbFolder = _fileRepository.BasePath;
             if (Directory.Exists(assetDbFolder))
             {
-                var dbStat = new GitFileStat{FolderName = "/"};
-                foreach (var file in await _fileRepository.SearchFilesAsync("*", cancellationToken: cancellationToken))
-                {
-                    dbStat.FileCount++;
-                    dbStat.FolderSize += await _fileRepository.GetFileSizeAsync(file, cancellationToken);
-                }
-
-                dbStat.SubFolderCount =
-                    (await _fileRepository.SearchDirectoriesAsync("*", topDirectoryOnly: true,
-                        cancellationToken: cancellationToken)).Count();
-                stats.Add(dbStat);
-
-                var blogStat = new GitFileStat {FolderName = $"/{Constants.AssetDbBlogFolder}"};
-                foreach (var file in await _fileRepository.SearchFilesAsync("*", Constants.AssetDbBlogFolder, cancellationToken: cancellationToken))
-                {
-                    blogStat.FileCount++;
-                    blogStat.FolderSize += await _fileRepository.GetFileSizeAsync(file, cancellationToken);
-                }
-
-                blogStat.SubFolderCount =
-                    (await _fileRepository.SearchDirectoriesAsync("*", Constants.AssetDbBlogFolder, topDirectoryOnly: true,
-                        cancellationToken: cancellationToken)).Count();
-                stats.Add(blogStat);
-
-                var diaryStat = new GitFileStat { FolderName = $"/{Constants.AssetDbDiaryFolder}" };
-                foreach (var file in await _fileRepository.SearchFilesAsync("*", Constants.AssetDbDiaryFolder, cancellationToken: cancellationToken))
-                {
-                    diaryStat.FileCount++;
-                    diaryStat.FolderSize += await _fileRepository.GetFileSizeAsync(file, cancellationToken);
-                }
-
-                diaryStat.SubFolderCount =
-                    (await _fileRepository.SearchDirectoriesAsync("*", Constants.AssetDbDiaryFolder, topDirectoryOnly: true,
-                        cancellationToken: cancellationToken)).Count();
-                stats.Add(diaryStat);
-
-                var fileStat = new GitFileStat { FolderName = $"/{Constants.AssetDbFileFolder}" };
-                foreach (var file in await _fileRepository.SearchFilesAsync("*", Constants.AssetDbFileFolder, cancellationToken: cancellationToken))
-                {
-                    fileStat.FileCount++;
-                    fileStat.FolderSize += await _fileRepository.GetFileSizeAsync(file, cancellationToken);
-                }
-
-                fileStat.SubFolderCount =
-                    (await _fileRepository.SearchDirectoriesAsync("*", Constants.AssetDbFileFolder, topDirectoryOnly: true,
-                        cancellationToken: cancellationToken)).Count();
-                stats.Add(fileStat);
-
-                var logStat = new GitFileStat { FolderName = $"/{Constants.AssetDbLogFolder}" };
-                foreach (var file in await _fileRepository.SearchFilesAsync("*", Constants.AssetDbLogFolder, cancellationToken: cancellationToken))
-                {
-                    logStat.FileCount++;
-                    logStat.FolderSize += await _fileRepository.GetFileSizeAsync(file, cancellationToken);
-                }
-
-                logStat.SubFolderCount =
-                    (await _fileRepository.SearchDirectoriesAsync("*", Constants.AssetDbLogFolder, topDirectoryOnly: true,
-                        cancellationToken: cancellationToken)).Count();
-                stats.Add(logStat);
-
-                var noteStat = new GitFileStat { FolderName = $"/{Constants.AssetDbNoteFolder}" };
-                foreach (var file in await _fileRepository.SearchFilesAsync("*", Constants.AssetDbNoteFolder, cancellationToken: cancellationToken))
-                {
-                    noteStat.FileCount++;
-                    noteStat.FolderSize += await _fileRepository.GetFileSizeAsync(file, cancellationToken);
-                }
-
-                noteStat.SubFolderCount =
-                    (await _fileRepository.SearchDirectoriesAsync("*", Constants.AssetDbNoteFolder, topDirectoryOnly: true,
-                        cancellationToken: cancellationToken)).Count();
-                stats.Add(noteStat);
-
-                var readStat = new GitFileStat { FolderName = $"/{Constants.AssetDbReadFolder}" };
-                foreach (var file in await _fileRepository.SearchFilesAsync("*", Constants.AssetDbReadFolder, cancellationToken: cancellationToken))
-                {
-                    readStat.FileCount++;
-                    readStat.FolderSize += await _fileRepository.GetFileSizeAsync(file, cancellationToken);
-                }
-
-                readStat.SubFolderCount =
-                    (await _fileRepository.SearchDirectoriesAsync("*", Constants.AssetDbReadFolder, topDirectoryOnly: true,
-                        cancellationToken: cancellationToken)).Count();
-                stats.Add(readStat);
+                stats.Add(await GetGitFileStateAsync("", cancellationToken));
+                stats.Add(await GetGitFileStateAsync(Constants.AssetDbBlogFolder, cancellationToken));
+                stats.Add(await GetGitFileStateAsync(Constants.AssetDbDiaryFolder, cancellationToken));
+                stats.Add(await GetGitFileStateAsync(Constants.AssetDbFileFolder, cancellationToken));
+                stats.Add(await GetGitFileStateAsync(Constants.AssetDbLogFolder, cancellationToken));
+                stats.Add(await GetGitFileStateAsync(Constants.AssetDbNoteFolder, cancellationToken));
+                stats.Add(await GetGitFileStateAsync(Constants.AssetDbReadFolder, cancellationToken));
             }
 
             return stats;

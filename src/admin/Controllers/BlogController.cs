@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Laobian.Admin.HttpClients;
 using Laobian.Admin.Models;
 using Laobian.Share;
 using Laobian.Share.Extension;
@@ -22,18 +21,16 @@ public class BlogController : Controller
 {
     private readonly BlogGrpcRequest _blogGrpcRequest;
     private readonly IBlogGrpcService _blogGrpcService;
-    private readonly BlogSiteHttpClient _blogSiteHttpClient;
     private readonly ILogger<BlogController> _logger;
     private readonly AdminOptions _options;
 
-    public BlogController(BlogSiteHttpClient blogSiteHttpClient,
+    public BlogController(
         IOptions<AdminOptions> options, ILogger<BlogController> logger)
     {
         _logger = logger;
         _options = options.Value;
         _blogGrpcRequest = new BlogGrpcRequest();
         _blogGrpcService = GrpcClientHelper.CreateClient<IBlogGrpcService>(options.Value.ApiLocalEndpoint);
-        _blogSiteHttpClient = blogSiteHttpClient;
     }
 
     public IActionResult Index()
@@ -48,7 +45,7 @@ public class BlogController : Controller
         var response = new ApiResponse<object>();
         try
         {
-            await _blogSiteHttpClient.ReloadBlogDataAsync();
+            await _blogGrpcService.ReloadBlogCacheAsync(_blogGrpcRequest);
         }
         catch (Exception ex)
         {

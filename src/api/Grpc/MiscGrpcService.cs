@@ -2,6 +2,8 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Laobian.Api.HttpClients;
+using Laobian.Api.Repository;
+using Laobian.Api.Service;
 using Laobian.Share;
 using Laobian.Share.Grpc.Request;
 using Laobian.Share.Grpc.Response;
@@ -15,35 +17,19 @@ namespace Laobian.Api.Grpc
 {
     public class MiscGrpcService : IMiscGrpcService
     {
-        
         private readonly BlogSiteHttpClient _blogHttpClient;
         private readonly JarvisSiteHttpClient _jarvisHttpClient;
         private readonly ILogger<MiscGrpcService> _logger;
         private readonly IHostApplicationLifetime _appLifetime;
+        private readonly IGitFileService _gitFileService;
 
-        public MiscGrpcService(ILogger<MiscGrpcService> logger, IHostApplicationLifetime appLifetime, BlogSiteHttpClient blogHttpClient, JarvisSiteHttpClient jarvisHttpClient)
+        public MiscGrpcService(ILogger<MiscGrpcService> logger, IHostApplicationLifetime appLifetime, BlogSiteHttpClient blogHttpClient, JarvisSiteHttpClient jarvisHttpClient, IGitFileService gitFileService)
         {
             _logger = logger;
             _appLifetime = appLifetime;
             _blogHttpClient = blogHttpClient;
             _jarvisHttpClient = jarvisHttpClient;
-        }
-
-        public async Task<MiscGrpcResponse> ReloadBlogCacheAsync(MiscGrpcRequest request, CallContext context = default)
-        {
-            var response = new MiscGrpcResponse();
-            try
-            {
-                await _blogHttpClient.ReloadBlogDataAsync();
-            }
-            catch (Exception ex)
-            {
-                response.IsOk = false;
-                response.Message = ex.Message;
-                _logger.LogError(ex, $"{nameof(ReloadBlogCacheAsync)} failed.");
-            }
-
-            return response;
+            _gitFileService = gitFileService;
         }
 
         public async Task<MiscGrpcResponse> ShutdownSiteAsync(MiscGrpcRequest request, CallContext context = default)
@@ -115,13 +101,30 @@ namespace Laobian.Api.Grpc
             var response = new MiscGrpcResponse();
             try
             {
-
+                response.DbStats = await _gitFileService.GetGitFileStatsAsync();
             }
             catch (Exception ex)
             {
                 response.IsOk = false;
                 response.Message = ex.Message;
                 _logger.LogError(ex, $"{nameof(GetDbStatAsync)} failed.");
+            }
+
+            return response;
+        }
+
+        public async Task<MiscGrpcResponse> PersistentGitFileAsync(MiscGrpcRequest request, CallContext context = default)
+        {
+            var response = new MiscGrpcResponse();
+            try
+            {
+                await _gitFileService.PushAsync(request.Message);
+            }
+            catch (Exception ex)
+            {
+                response.IsOk = false;
+                response.Message = ex.Message;
+                _logger.LogError(ex, $"{nameof(PersistentGitFileAsync)} failed.");
             }
 
             return response;

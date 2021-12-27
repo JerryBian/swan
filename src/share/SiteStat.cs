@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
+using Markdig.Helpers;
 
 namespace Laobian.Share
 {
@@ -17,22 +18,14 @@ namespace Laobian.Share
 
         [DataMember(Order = 3)]
         [JsonPropertyName("totalProcessorTime")]
-        public TimeSpan TotalProcessorTime { get; set; }
+        public string TotalProcessorTime { get; set; }
 
         [DataMember(Order = 4)]
         [JsonPropertyName("allocatedPhysicalMemory")]
-        public long AllocatedPhysicalMemory { get; set; }
+        public string AllocatedPhysicalMemory { get; set; }
 
         [DataMember(Order = 5)]
-        [JsonPropertyName("allocatedVirtualMemory")]
-        public long AllocatedVirtualMemory { get; set; }
-
-        [DataMember(Order = 6)]
         [JsonPropertyName("maximumAllocatedPhysicalMemory")]
-        public long MaximumAllocatedPhysicalMemory { get; set; }
-
-        [DataMember(Order = 7)]
-        [JsonPropertyName("maximumAllocatedVirtualMemory")]
-        public long MaximumAllocatedVirtualMemory { get; set; }
+        public string MaximumAllocatedPhysicalMemory { get; set; }
     }
 }
