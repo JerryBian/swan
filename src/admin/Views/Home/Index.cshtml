@@ -17,12 +17,12 @@
         let adminStat = document.querySelector("#admin_stat");
         let jarvisStat = document.querySelector("#jarvis_stat");
 
-        function getCardHtml(title, items) {
-            let html = `<div class="card h-100 text-dark bg-light"><div class="card-header">${title}</div><ul class="list-group list-group-flush">`;
+        function getCardHtml(title, border, items) {
+            let html = `<div class="card h-100 text-dark bg-light mb-3 ${border}"><div class="card-header">${title}</div><ul class="card-body list-group list-group-flush">`;
             items.forEach(function(item) {
                 html += `<li class="list-group-item text-dark bg-light">${item}</li>`;
             });
-            html += "</ul></div>";
+            html += `</ul><div class="card-footer"><small class="text-muted"><i class="fas fa-sync"></i> ${new Date().toLocaleString()}</small></div></div>`;
             return html;
         }
 
@@ -41,7 +41,7 @@
                             items.push(`<strong>${item.fn}</strong>: ${item.fs}`);
                         });
 
-                        fileStat.innerHTML = getCardHtml("Git File Stats", items);
+                        fileStat.innerHTML = getCardHtml(`<i class="fas fa-folder"></i> Git Files`, "border-info", items);
                     }
                 });
 
@@ -56,7 +56,7 @@
                         items.push(`<strong>物理内存</strong>: ${x.allocatedPhysicalMemory}`);
                         items.push(`<strong>最大内存</strong>: ${x.maximumAllocatedPhysicalMemory}`);
 
-                        apiStat.innerHTML = getCardHtml("API site Stats", items);
+                        apiStat.innerHTML = getCardHtml(`<i class="fas fa-circle text-success small"></i> API<a class="float-end text-danger" href="javascript:;" onclick=""><i class="fas fa-power-off"></i></a>`, "border-success", items);
                     }
                 });
 
@@ -71,7 +71,7 @@
                         items.push(`<strong>物理内存</strong>: ${x.allocatedPhysicalMemory}`);
                         items.push(`<strong>最大内存</strong>: ${x.maximumAllocatedPhysicalMemory}`);
 
-                        blogStat.innerHTML = getCardHtml("BLOG site Stats", items);
+                        blogStat.innerHTML = getCardHtml(`<i class="fas fa-circle text-success small"></i> BLOG`, "border-success", items);
                     }
                 });
 
@@ -86,7 +86,7 @@
                         items.push(`<strong>物理内存</strong>: ${x.allocatedPhysicalMemory}`);
                         items.push(`<strong>最大内存</strong>: ${x.maximumAllocatedPhysicalMemory}`);
 
-                        adminStat.innerHTML = getCardHtml("ADMIN site Stats", items);
+                        adminStat.innerHTML = getCardHtml(`<i class="fas fa-circle text-success small"></i> ADMIN`, "border-success", items);
                     }
                 });
 
@@ -101,7 +101,7 @@
                         items.push(`<strong>物理内存</strong>: ${x.allocatedPhysicalMemory}`);
                         items.push(`<strong>最大内存</strong>: ${x.maximumAllocatedPhysicalMemory}`);
 
-                        jarvisStat.innerHTML = getCardHtml("JARVIS site Stats", items);
+                        jarvisStat.innerHTML = getCardHtml(`<i class="fas fa-circle text-success small"></i> JARVIS`, "border-success", items);
                     }
                 });
         }
