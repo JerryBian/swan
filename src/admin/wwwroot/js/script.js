@@ -179,8 +179,7 @@ function persistent(user) {
         icon: "info",
         showCancelButton: true,
         cancelButtonText: "取消",
-        confirmButtonText: "确定",
-        buttonsStyling: false
+        confirmButtonText: "确定"
     }).then((result) => {
         if (result.isConfirmed) {
             submitRequest("/persistent",

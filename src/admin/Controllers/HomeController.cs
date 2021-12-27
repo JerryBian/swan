@@ -9,6 +9,7 @@ using Laobian.Share.Grpc.Request;
 using Laobian.Share.Grpc.Service;
 using Laobian.Share.Site;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -18,10 +19,12 @@ public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
     private readonly IMiscGrpcService _miscGrpcService;
+    private readonly IHostApplicationLifetime _appLifetime;
 
-    public HomeController(ILogger<HomeController> logger, IOptions<AdminOptions> options)
+    public HomeController(ILogger<HomeController> logger, IOptions<AdminOptions> options, IHostApplicationLifetime appLifetime)
     {
         _logger = logger;
+        _appLifetime = appLifetime;
         _miscGrpcService = GrpcClientHelper.CreateClient<IMiscGrpcService>(options.Value.ApiLocalEndpoint);
     }
 
@@ -115,6 +118,30 @@ public class HomeController : Controller
             _logger.LogError(ex, $"Get site {site} stat failed.");
         }
 
+        return apiResponse;
+    }
+
+    [HttpPost("shutdown")]
+    public async Task<ApiResponse<object>> ShutdownAsync()
+    {
+        var apiResponse = new ApiResponse<object>();
+        try
+        {
+            var request = new MiscGrpcRequest{Site = LaobianSite.Blog};
+            await _miscGrpcService.ShutdownSiteAsync(request);
+
+            request.Site = LaobianSite.Jarvis;
+            await _miscGrpcService.ShutdownSiteAsync(request);
+
+            request.Site = LaobianSite.Api;
+            await _miscGrpcService.ShutdownSiteAsync(request);
+
+            _appLifetime.StopApplication();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Shutdown site failed.");
+        }
         return apiResponse;
     }
 }

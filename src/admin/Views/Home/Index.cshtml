@@ -1,11 +1,14 @@
 ﻿
+<div class="text-center small text-muted mb-3">
+    <div>Refreshed every 1 minute &middot; Request to <a href="javascript:;" onclick="shutdown()" class="text-danger">Shutdown</a> all sites</div>
+</div>
 <div class="container-fluid">
     <div class="row">
-        <div class="col-xl" id="file_stat"></div>
-        <div class="col-xl" id="api_stat"></div>
-        <div class="col-xl" id="blog_stat"></div>
-        <div class="col-xl" id="admin_stat"></div>
-        <div class="col-xl" id="jarvis_stat"></div>
+        <div class="col-xl mb-3" id="file_stat"></div>
+        <div class="col-xl mb-3" id="api_stat"></div>
+        <div class="col-xl mb-3" id="blog_stat"></div>
+        <div class="col-xl mb-3" id="admin_stat"></div>
+        <div class="col-xl mb-3" id="jarvis_stat"></div>
     </div>
 </div>
 
@@ -17,93 +20,122 @@
         let adminStat = document.querySelector("#admin_stat");
         let jarvisStat = document.querySelector("#jarvis_stat");
 
-        function getCardHtml(title, border, items) {
-            let html = `<div class="card h-100 text-dark bg-light mb-3 ${border}"><div class="card-header">${title}</div><ul class="card-body list-group list-group-flush">`;
+        function getCardHtml(title, border, items, loadFn) {
+            let html = `<div class="card h-100 text-dark bg-light ${border}"><div class="card-header text-center">${title}</div><ul class="card-body list-group list-group-flush">`;
             items.forEach(function(item) {
                 html += `<li class="list-group-item text-dark bg-light">${item}</li>`;
             });
-            html += `</ul><div class="card-footer"><small class="text-muted"><i class="fas fa-sync"></i> ${new Date().toLocaleString()}</small></div></div>`;
+            html += `</ul><div class="card-footer text-center"><small class="text-muted"><a href="javascript:;" onclick="${loadFn}()"><i class="fas fa-sync"></i></a> ${new Date().toLocaleString()}</small></div></div>`;
             return html;
         }
 
-        window.setInterval(function() {
+        function shutdown() {
+            window.clearInterval(loadInterval);
+            window.Swal.fire({
+                title: "确认",
+                text: "确定要关闭所有站点吗？",
+                icon: "info",
+                showCancelButton: true,
+                cancelButtonText: "取消",
+                confirmButtonText: "确定"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    submitRequest("/shutdown",
+                        {
+                            contentType: "text/plain",
+                            postAction: function () {
+                                window.Swal.fire({
+                                    title: "通知",
+                                    text: "所有站点已经关闭，该页面停止工作！",
+                                    icon: "success",
+                                    backdrop: false
+                                });
+                            }
+                        });
+                };
+            });
+        }
+
+        let loadInterval = window.setInterval(function() {
                 load();
             },
             1000 * 60);
 
-        function load() {
+        function getItems(x) {
+            const items = [];
+            items.push(`<strong>启动时间</strong>:<br/> ${x.startTime}`);
+            items.push(`<strong>总线程数</strong>:<br/> ${x.threads}`);
+            items.push(`<strong>CPU总时间</strong>:<br/> ${x.totalProcessorTime}`);
+            items.push(`<strong>物理内存</strong>:<br/> ${x.allocatedPhysicalMemory}`);
+            items.push(`<strong>最大内存</strong>:<br/> ${x.maximumAllocatedPhysicalMemory}`);
+            return items;
+        }
+
+        function loadGitFileStat() {
             submitRequest("/git-file-stat",
                 {
                     contentType: "plain/text",
                     okAction: function(x) {
                         let items = [];
                         x.forEach(function(item) {
-                            items.push(`<strong>${item.fn}</strong>: ${item.fs}`);
+                            items.push(`<strong>${item.fn}</strong>:</br> ${item.fs}`);
                         });
 
-                        fileStat.innerHTML = getCardHtml(`<i class="fas fa-folder"></i> Git Files`, "border-info", items);
+                        fileStat.innerHTML = getCardHtml(`<i class="fas fa-folder"></i> Git Files`, "border-info", items, "loadGitFileStat");
                     }
                 });
+        }
 
+        function loadApiStat() {
             submitRequest("/site-stat?site=api",
                 {
                     contentType: "plain/text",
                     okAction: function(x) {
-                        let items = [];
-                        items.push(`<strong>启动时间</strong>: ${x.startTime}`);
-                        items.push(`<strong>总线程数</strong>: ${x.threads}`);
-                        items.push(`<strong>CPU总时间</strong>: ${x.totalProcessorTime}`);
-                        items.push(`<strong>物理内存</strong>: ${x.allocatedPhysicalMemory}`);
-                        items.push(`<strong>最大内存</strong>: ${x.maximumAllocatedPhysicalMemory}`);
-
-                        apiStat.innerHTML = getCardHtml(`<i class="fas fa-circle text-success small"></i> API<a class="float-end text-danger" href="javascript:;" onclick=""><i class="fas fa-power-off"></i></a>`, "border-success", items);
+                        const items = getItems(x);
+                        apiStat.innerHTML = getCardHtml(`<i class="fas fa-circle text-success small"></i> API`, "border-success", items, "loadApiStat");
                     }
                 });
+        }
 
+        function loadBlogStat() {
             submitRequest("/site-stat?site=blog",
                 {
                     contentType: "plain/text",
                     okAction: function(x) {
-                        let items = [];
-                        items.push(`<strong>启动时间</strong>: ${x.startTime}`);
-                        items.push(`<strong>总线程数</strong>: ${x.threads}`);
-                        items.push(`<strong>CPU总时间</strong>: ${x.totalProcessorTime}`);
-                        items.push(`<strong>物理内存</strong>: ${x.allocatedPhysicalMemory}`);
-                        items.push(`<strong>最大内存</strong>: ${x.maximumAllocatedPhysicalMemory}`);
-
-                        blogStat.innerHTML = getCardHtml(`<i class="fas fa-circle text-success small"></i> BLOG`, "border-success", items);
+                        const items = getItems(x);
+                        blogStat.innerHTML = getCardHtml(`<i class="fas fa-circle text-success small"></i> BLOG`, "border-success", items, "loadBlogStat");
                     }
                 });
+        }
 
+        function loadAdminStat() {
             submitRequest("/site-stat?site=admin",
                 {
                     contentType: "plain/text",
                     okAction: function(x) {
-                        let items = [];
-                        items.push(`<strong>启动时间</strong>: ${x.startTime}`);
-                        items.push(`<strong>总线程数</strong>: ${x.threads}`);
-                        items.push(`<strong>CPU总时间</strong>: ${x.totalProcessorTime}`);
-                        items.push(`<strong>物理内存</strong>: ${x.allocatedPhysicalMemory}`);
-                        items.push(`<strong>最大内存</strong>: ${x.maximumAllocatedPhysicalMemory}`);
-
-                        adminStat.innerHTML = getCardHtml(`<i class="fas fa-circle text-success small"></i> ADMIN`, "border-success", items);
+                        const items = getItems(x);
+                        adminStat.innerHTML = getCardHtml(`<i class="fas fa-circle text-success small"></i> ADMIN`, "border-success", items, "loadAdminStat");
                     }
                 });
+        }
 
+        function loadJarvisSite() {
             submitRequest("/site-stat?site=jarvis",
                 {
                     contentType: "plain/text",
                     okAction: function(x) {
-                        let items = [];
-                        items.push(`<strong>启动时间</strong>: ${x.startTime}`);
-                        items.push(`<strong>总线程数</strong>: ${x.threads}`);
-                        items.push(`<strong>CPU总时间</strong>: ${x.totalProcessorTime}`);
-                        items.push(`<strong>物理内存</strong>: ${x.allocatedPhysicalMemory}`);
-                        items.push(`<strong>最大内存</strong>: ${x.maximumAllocatedPhysicalMemory}`);
-
-                        jarvisStat.innerHTML = getCardHtml(`<i class="fas fa-circle text-success small"></i> JARVIS`, "border-success", items);
+                        const items = getItems(x);
+                        jarvisStat.innerHTML = getCardHtml(`<i class="fas fa-circle text-success small"></i> JARVIS`, "border-success", items, "loadJarvisSite");
                     }
                 });
+        }
+
+        function load() {
+            loadGitFileStat();
+            loadAdminStat();
+            loadApiStat();
+            loadBlogStat();
+            loadJarvisSite();
         }
 
         load();
