@@ -6,11 +6,11 @@
 }
 
 @foreach (var tag in Model)
-    {
-        <div class="d-grid">
-            <a class="btn btn-primary" href="/note/tag/@tag.Raw.Link">
-                @tag.Raw.DisplayName
-                <span class="badge bg-secondary">@tag.Notes.Count</span>
-            </a>
-        </div>
-    }
+{
+    <div class="d-grid">
+        <a class="btn btn-primary" href="/note/tag/@tag.Raw.Link">
+            @tag.Raw.DisplayName
+            <span class="badge bg-secondary">@tag.Notes.Count</span>
+        </a>
+    </div>
+}

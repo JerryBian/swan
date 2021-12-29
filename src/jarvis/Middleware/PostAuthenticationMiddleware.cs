@@ -17,7 +17,8 @@ public class PostAuthenticationMiddleware
 
     public async Task Invoke(HttpContext httpContext, IOptions<JarvisOptions> option)
     {
-        if (!httpContext.Request.Path.StartsWithSegments("/api", StringComparison.InvariantCultureIgnoreCase) && httpContext.User.Identity?.IsAuthenticated != true)
+        if (!httpContext.Request.Path.StartsWithSegments("/api", StringComparison.InvariantCultureIgnoreCase) &&
+            httpContext.User.Identity?.IsAuthenticated != true)
         {
             httpContext.Response.Redirect(
                 $"{option.Value.AdminRemoteEndpoint}/login?returnUrl={httpContext.Request.GetDisplayUrl()}");

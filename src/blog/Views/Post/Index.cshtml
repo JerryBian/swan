@@ -5,6 +5,7 @@
     ViewData["Image"] = Model.Current.ThumbnailImageUrl;
     ViewData["DatePublished"] = Model.Current.Raw.PublishTime;
     ViewData["DateModified"] = Model.Current.Raw.LastUpdateTime;
+    ViewData["Description"] = StringUtil.Truncate(Model.Current.ExcerptPlainText, 149);
 }
 
 <div>
@@ -55,7 +56,7 @@
             }
             <li>
                 文章的留言，请发送电子邮件至
-                <a href="mailto:@_config.Value.AdminEmail?subject=RE:@Model.Current.Raw.Title&body=Good job！" class="text-decoration-none">
+                <a href="mailto:@_config.Value.AdminEmail?subject=RE:@Model.Current.Raw.Title" class="text-decoration-none">
                     @_config.Value.AdminEmail
                 </a>
             </li>
@@ -122,7 +123,7 @@
     @if (User.Identity?.IsAuthenticated == true)
     {
         <div class="d-grid mb-4">
-            <a class="btn btn-danger" href="@_config.Value.AdminRemoteEndpoint/blog/post/update/@Model.Current.Raw.Link" target="_blank"><i class="fas fa-edit"></i> 编辑文章</a>
+            <a class="btn btn-info" href="@_config.Value.AdminRemoteEndpoint/blog/post/@Model.Current.Raw.Link/update" target="_blank"><i class="fas fa-edit"></i> 编辑文章</a>
         </div>
     }
 

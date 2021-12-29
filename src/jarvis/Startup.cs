@@ -8,10 +8,8 @@ using Laobian.Share.Converter;
 using Laobian.Share.Filters;
 using Laobian.Share.Logger.Remote;
 using Laobian.Share.Site;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -51,7 +49,7 @@ public class Startup : SharedStartup
         var httpRequestToken = Configuration.GetValue<string>(Constants.EnvHttpRequestToken);
         services.AddControllersWithViews(config =>
             {
-                config.Filters.Add(new VerifyTokenActionFilter(httpRequestToken, new[] { "/api" }));
+                config.Filters.Add(new VerifyTokenActionFilter(httpRequestToken, new[] {"/api"}));
             })
             .AddJsonOptions(config =>
             {

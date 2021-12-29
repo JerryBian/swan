@@ -1,6 +1,7 @@
 ﻿@model List<ReadItemViewModel>
 @{
     ViewData["Title"] = "我的阅读";
+    ViewData["Description"] = "一些我所读过的书。";
 }
 
 <div>
@@ -79,7 +80,8 @@
                     @if (!string.IsNullOrEmpty(book.Raw.BlogPostLink))
                     {
                         <div class="my-3 alert bg-light small font-monospace">
-                            <i class="text-primary fas fa-link"></i>
+                            博客链接：
+                            <i class="text-primary fas fa-link small"></i>
                             <a href="@book.Raw.BlogPostLink">@book.BlogPostTitle</a>
                         </div>
                     }

@@ -40,7 +40,7 @@ public class Constants
 
     public const string BlogTitle = "老卞的博客";
 
-    public const string BlogDescription = "这里是我写字的地方，想到什么就写什么。";
+    public const string BlogDescription = "一些积累，几分沉淀。想到什么，就写什么。";
 
     #endregion
 }

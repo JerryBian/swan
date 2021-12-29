@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Laobian.Jarvis.HttpClients;
 using Laobian.Share;
 using Laobian.Share.Grpc;
 using Laobian.Share.Grpc.Request;
@@ -16,19 +15,18 @@ namespace Laobian.Jarvis.Controllers;
 [Route("note")]
 public class NoteController : Controller
 {
+    private readonly ILogger<NoteController> _logger;
     private readonly INoteGrpcService _noteGrpcService;
     private readonly JarvisOptions _options;
     private readonly NoteGrpcRequest _request;
-    private readonly ILogger<NoteController> _logger;
 
     public NoteController(ILogger<NoteController> logger, IOptions<JarvisOptions> option)
     {
         _logger = logger;
         _options = option.Value;
         _request = new NoteGrpcRequest();
-            _noteGrpcService = GrpcClientHelper.CreateClient<INoteGrpcService>(option.Value.ApiLocalEndpoint);
+        _noteGrpcService = GrpcClientHelper.CreateClient<INoteGrpcService>(option.Value.ApiLocalEndpoint);
     }
-
 
 
     [HttpGet]
@@ -41,7 +39,7 @@ public class NoteController : Controller
             if (totalCountResponse.IsOk)
             {
                 var viewModel = new PagedViewModel<NoteRuntime>(page, totalCountResponse.Count, itemsPerPage)
-                    { Url = Request.Path };
+                    {Url = Request.Path};
                 _request.Count = itemsPerPage;
                 _request.ExtractRuntime = true;
                 _request.Offset = (viewModel.CurrentPage - 1) * itemsPerPage;
@@ -57,7 +55,6 @@ public class NoteController : Controller
 
                 return View(viewModel);
             }
-            
         }
         catch (Exception ex)
         {

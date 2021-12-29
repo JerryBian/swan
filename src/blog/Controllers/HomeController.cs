@@ -69,7 +69,11 @@ public class HomeController : Controller
                 return model;
             });
 
-
+        if (viewModel.CurrentPage > 1)
+        {
+            ViewData["RobotsEnabled"] = false;
+            ViewData["Title"] = $"首页：第{viewModel.CurrentPage}页";
+        }
         return View(viewModel);
     }
 

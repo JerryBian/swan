@@ -10,7 +10,9 @@ namespace Laobian.Share.Site.Jarvis;
 [DataContract]
 public class NoteRuntime
 {
-    public NoteRuntime(){}
+    public NoteRuntime()
+    {
+    }
 
     public NoteRuntime(Note note)
     {
@@ -25,8 +27,7 @@ public class NoteRuntime
 
     [DataMember(Order = 4)] public List<NoteOutline> Outlines { get; set; } = new();
 
-    [DataMember(Order = 5)]
-    public int WordsCount { get; set; }
+    [DataMember(Order = 5)] public int WordsCount { get; set; }
 
     private void SetOutlines(HtmlDocument htmlDoc)
     {

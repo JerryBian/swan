@@ -119,7 +119,8 @@ public class BlogFileService : IBlogFileService
         if (postLinkChanged)
         {
             var existingData =
-                (await _blogFileRepository.SearchFilesAsync($"{blogPost.Link}.json", cancellationToken: cancellationToken))
+                (await _blogFileRepository.SearchFilesAsync($"{blogPost.Link}.json",
+                    cancellationToken: cancellationToken))
                 .FirstOrDefault();
             if (!string.IsNullOrEmpty(existingData))
             {

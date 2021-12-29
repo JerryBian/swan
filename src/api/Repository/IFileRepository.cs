@@ -12,10 +12,12 @@ public interface IFileRepository
 
     Task WriteAsync(string path, string content, CancellationToken cancellationToken = default);
 
-    Task<IEnumerable<string>> SearchFilesAsync(string pattern, string relativePath = null, bool topDirectoryOnly = false,
+    Task<IEnumerable<string>> SearchFilesAsync(string pattern, string relativePath = null,
+        bool topDirectoryOnly = false,
         CancellationToken cancellationToken = default);
 
-    Task<IEnumerable<string>> SearchDirectoriesAsync(string pattern, string relativePath = null, bool topDirectoryOnly = false,
+    Task<IEnumerable<string>> SearchDirectoriesAsync(string pattern, string relativePath = null,
+        bool topDirectoryOnly = false,
         CancellationToken cancellationToken = default);
 
     Task<string> ReadAsync(string path, CancellationToken cancellationToken = default);

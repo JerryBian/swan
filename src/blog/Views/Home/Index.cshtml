@@ -11,7 +11,7 @@
             <div class="list-group-item p-0 mb-4 pb-3">
                 <div class="text-muted small">@Html.Raw(post.MetadataHtml)</div>
                 <h2 class="mb-3">
-                    <a href="@post.Current.Raw.GetFullPath(_option.Value.BlogRemoteEndpoint)" class="text-decoration-none">
+                    <a href="@post.Current.Raw.GetFullPath(_option.Value.BlogRemoteEndpoint)" class="text-decoration-none" title="阅读全文：@post.Current.Raw.Title">
                         @post.Current.Raw.Title
 
                     </a>

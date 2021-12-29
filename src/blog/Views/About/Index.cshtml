@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "关于";
     ViewData["Image"] = $"{_config.Value.BlogRemoteEndpoint}/information.png";
+    ViewData["Description"] = "关于作者以及这个博客的一些信息。";
 }
 
 <div class="article-content">
@@ -34,7 +35,7 @@
         @foreach (var post in Model.TopPosts)
         {
             <li>
-                <a href="@post.Raw.GetFullPath(_config.Value.BlogRemoteEndpoint)">@post.Raw.Title</a> <i>(@post.GetAccessCount().ToHuman())</i>
+                <a href="@post.Raw.GetFullPath(_config.Value.BlogRemoteEndpoint)">@post.Raw.Title</a> <i class="small">(@post.GetAccessCount().ToHuman())</i>
             </li>
         }
     </ol>
@@ -54,7 +55,7 @@
             @if (Model.TopTags[tag] > 0)
             {
                 <li>
-                    <a href="/tag#@tag.Link">@tag.DisplayName</a> <i>(@Model.TopTags[tag])</i>
+                    <a href="/tag#@tag.Link">@tag.DisplayName</a> <i class="small">(@Model.TopTags[tag])</i>
                 </li>
             }
         }

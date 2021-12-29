@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Laobian.Api.Repository;
 using Laobian.Api.Service;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;

@@ -70,7 +70,8 @@ public class GitFileRepository : IFileRepository
         }
     }
 
-    public virtual async Task<IEnumerable<string>> SearchFilesAsync(string pattern, string relativePath = null, bool topDirectoryOnly = false,
+    public virtual async Task<IEnumerable<string>> SearchFilesAsync(string pattern, string relativePath = null,
+        bool topDirectoryOnly = false,
         CancellationToken cancellationToken = default)
     {
         _autoResetEvent.WaitOne();
@@ -90,7 +91,9 @@ public class GitFileRepository : IFileRepository
                 return Enumerable.Empty<string>();
             }
 
-            return await Task.FromResult(Directory.EnumerateFiles(searchPath, pattern, topDirectoryOnly ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories)
+            return await Task.FromResult(Directory
+                .EnumerateFiles(searchPath, pattern,
+                    topDirectoryOnly ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories)
                 .Select(x => Path.GetRelativePath(BasePath, x)));
         }
         finally
@@ -99,7 +102,8 @@ public class GitFileRepository : IFileRepository
         }
     }
 
-    public async Task<IEnumerable<string>> SearchDirectoriesAsync(string pattern, string relativePath = null, bool topDirectoryOnly = false,
+    public async Task<IEnumerable<string>> SearchDirectoriesAsync(string pattern, string relativePath = null,
+        bool topDirectoryOnly = false,
         CancellationToken cancellationToken = default)
     {
         _autoResetEvent.WaitOne();
@@ -119,7 +123,9 @@ public class GitFileRepository : IFileRepository
                 return Enumerable.Empty<string>();
             }
 
-            return await Task.FromResult(Directory.EnumerateDirectories(searchPath, pattern, topDirectoryOnly ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories)
+            return await Task.FromResult(Directory
+                .EnumerateDirectories(searchPath, pattern,
+                    topDirectoryOnly ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories)
                 .Select(x => Path.GetRelativePath(BasePath, x)));
         }
         finally

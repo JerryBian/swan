@@ -1,5 +1,4 @@
-﻿
-<div class="text-center small text-muted mb-3">
+﻿<div class="text-center small text-muted mb-3">
     <div>Refreshed every 1 minute &middot; Request to <a href="javascript:;" onclick="shutdown()" class="text-danger">Shutdown</a> all sites</div>
 </div>
 <div class="container-fluid">
@@ -43,7 +42,7 @@
                     submitRequest("/shutdown",
                         {
                             contentType: "text/plain",
-                            postAction: function () {
+                            postAction: function() {
                                 window.Swal.fire({
                                     title: "通知",
                                     text: "所有站点已经关闭，该页面停止工作！",

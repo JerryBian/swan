@@ -17,11 +17,12 @@ namespace Laobian.Admin.Controllers;
 
 public class HomeController : Controller
 {
+    private readonly IHostApplicationLifetime _appLifetime;
     private readonly ILogger<HomeController> _logger;
     private readonly IMiscGrpcService _miscGrpcService;
-    private readonly IHostApplicationLifetime _appLifetime;
 
-    public HomeController(ILogger<HomeController> logger, IOptions<AdminOptions> options, IHostApplicationLifetime appLifetime)
+    public HomeController(ILogger<HomeController> logger, IOptions<AdminOptions> options,
+        IHostApplicationLifetime appLifetime)
     {
         _logger = logger;
         _appLifetime = appLifetime;
@@ -49,9 +50,9 @@ public class HomeController : Controller
         {
             using var reader = new StreamReader(Request.Body, Encoding.UTF8);
             var message = await reader.ReadToEndAsync();
-            await _miscGrpcService.PersistentGitFileAsync(new MiscGrpcRequest { Message = message });
+            await _miscGrpcService.PersistentGitFileAsync(new MiscGrpcRequest {Message = message});
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             _logger.LogError(ex, "Persistent DB failed.");
         }
@@ -98,7 +99,7 @@ public class HomeController : Controller
                 }
                 else
                 {
-                    var response = await _miscGrpcService.GetSiteStatAsync(new MiscGrpcRequest { Site = s });
+                    var response = await _miscGrpcService.GetSiteStatAsync(new MiscGrpcRequest {Site = s});
                     if (response.IsOk)
                     {
                         apiResponse.Content = response.SiteStat;
@@ -127,7 +128,7 @@ public class HomeController : Controller
         var apiResponse = new ApiResponse<object>();
         try
         {
-            var request = new MiscGrpcRequest{Site = LaobianSite.Blog};
+            var request = new MiscGrpcRequest {Site = LaobianSite.Blog};
             await _miscGrpcService.ShutdownSiteAsync(request);
 
             request.Site = LaobianSite.Jarvis;
@@ -142,6 +143,7 @@ public class HomeController : Controller
         {
             _logger.LogError(ex, "Shutdown site failed.");
         }
+
         return apiResponse;
     }
 }

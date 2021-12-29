@@ -37,7 +37,8 @@ public class DiaryFileService : IDiaryFileService
         var diaries = new List<Diary>();
         var searchPattern = year.HasValue && month.HasValue ? $"{year.Value:D4}-{month.Value:D2}" : string.Empty;
         var diaryFiles =
-            await _diaryFileRepository.SearchFilesAsync($"{searchPattern}*.json", searchPath, cancellationToken: cancellationToken);
+            await _diaryFileRepository.SearchFilesAsync($"{searchPattern}*.json", searchPath,
+                cancellationToken: cancellationToken);
         foreach (var diaryFile in count.HasValue
                      ? diaryFiles.OrderByDescending(x => x).Skip(offset).Take(count.Value)
                      : diaryFiles.OrderByDescending(x => x).Skip(offset))
@@ -61,7 +62,8 @@ public class DiaryFileService : IDiaryFileService
 
         var searchPattern = year.HasValue && month.HasValue ? $"{year.Value:D4}-{month.Value:D2}" : string.Empty;
         var diaryFiles =
-            await _diaryFileRepository.SearchFilesAsync($"{searchPattern}*.json", searchPath, cancellationToken: cancellationToken);
+            await _diaryFileRepository.SearchFilesAsync($"{searchPattern}*.json", searchPath,
+                cancellationToken: cancellationToken);
         foreach (var diaryFile in diaryFiles)
         {
             if (!DateTime.TryParseExact(Path.GetFileNameWithoutExtension(diaryFile), "yyyy-MM-dd",

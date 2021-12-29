@@ -57,6 +57,7 @@ public class TagController : Controller
 
         ViewData["Title"] = "标签";
         ViewData["Image"] = $"{_blogOptions.BlogRemoteEndpoint}/archive.png";
+        ViewData["Description"] = "所有标签的存档。";
         return View(viewModel);
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Laobian.Api.Service;
 using Laobian.Share.Grpc.Request;
@@ -10,7 +9,6 @@ using Laobian.Share.Grpc.Service;
 using Laobian.Share.Site.Jarvis;
 using Laobian.Share.Util;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using ProtoBuf.Grpc;
 
 namespace Laobian.Api.Grpc;
@@ -66,17 +64,6 @@ public class NoteGrpcService : INoteGrpcService
         }
 
         return response;
-    }
-
-    private NoteRuntime GetNoteRuntime(Note note, bool extractRuntime, List<NoteTag> tags)
-    {
-        var runtime = new NoteRuntime(note);
-        if (extractRuntime)
-        {
-            runtime.ExtractRuntimeData(tags);
-        }
-
-        return runtime;
     }
 
     public async Task<NoteGrpcResponse> GetNotesAsync(NoteGrpcRequest request, CallContext context = default)
@@ -202,17 +189,6 @@ public class NoteGrpcService : INoteGrpcService
         }
 
         return response;
-    }
-
-    private NoteTagRuntime GetNoteTagRuntime(NoteTag tag, bool extractRuntime, List<Note> notes)
-    {
-        var runtime = new NoteTagRuntime(tag);
-        if (extractRuntime)
-        {
-            runtime.ExtractRuntime(notes);
-        }
-
-        return runtime;
     }
 
     public async Task<NoteGrpcResponse> GetStatNotesPerTagAsync(NoteGrpcRequest request, CallContext context = default)
@@ -366,5 +342,27 @@ public class NoteGrpcService : INoteGrpcService
         }
 
         return response;
+    }
+
+    private NoteRuntime GetNoteRuntime(Note note, bool extractRuntime, List<NoteTag> tags)
+    {
+        var runtime = new NoteRuntime(note);
+        if (extractRuntime)
+        {
+            runtime.ExtractRuntimeData(tags);
+        }
+
+        return runtime;
+    }
+
+    private NoteTagRuntime GetNoteTagRuntime(NoteTag tag, bool extractRuntime, List<Note> notes)
+    {
+        var runtime = new NoteTagRuntime(tag);
+        if (extractRuntime)
+        {
+            runtime.ExtractRuntime(notes);
+        }
+
+        return runtime;
     }
 }

@@ -7,7 +7,6 @@ using Laobian.Share;
 using Laobian.Share.Grpc;
 using Laobian.Share.Grpc.Request;
 using Laobian.Share.Grpc.Service;
-using Laobian.Share.Site.Blog;
 using Laobian.Share.Site.Jarvis;
 using Laobian.Share.Util;
 using Microsoft.AspNetCore.Mvc;
@@ -19,9 +18,9 @@ namespace Laobian.Admin.Controllers;
 [Route("note")]
 public class NoteController : Controller
 {
+    private readonly ILogger<NoteController> _logger;
     private readonly INoteGrpcService _noteGrpcService;
     private readonly AdminOptions _options;
-    private readonly ILogger<NoteController> _logger;
     private readonly NoteGrpcRequest _request;
 
     public NoteController(IOptions<AdminOptions> option, ILogger<NoteController> logger)
@@ -203,7 +202,7 @@ public class NoteController : Controller
         var noteResponse = await _noteGrpcService.GetNoteAsync(_request);
         if (noteResponse.IsOk)
         {
-            var model = new NotePostUpdateViewModel() { Post = noteResponse.NoteRuntime.Raw };
+            var model = new NotePostUpdateViewModel {Post = noteResponse.NoteRuntime.Raw};
             noteResponse = await _noteGrpcService.GetNoteTagsAsync(_request);
             if (noteResponse.IsOk)
             {

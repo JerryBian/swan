@@ -47,7 +47,8 @@ public class NoteFileService : INoteFileService
     public async Task<Note> GetNoteAsync(string id, CancellationToken cancellationToken = default)
     {
         var noteFile =
-            (await _noteFileRepository.SearchFilesAsync($"{id.ToLowerInvariant()}.json", Constants.AssetDbNotePostFolder,
+            (await _noteFileRepository.SearchFilesAsync($"{id.ToLowerInvariant()}.json",
+                Constants.AssetDbNotePostFolder,
                 cancellationToken: cancellationToken)).FirstOrDefault();
         if (!string.IsNullOrEmpty(noteFile))
         {
@@ -81,7 +82,8 @@ public class NoteFileService : INoteFileService
         }
 
         note.CreateTime = note.LastUpdateTime = DateTime.Now;
-        await _noteFileRepository.WriteAsync(Path.Combine(Constants.AssetDbNotePostFolder, note.CreateTime.Year.ToString("D4"), $"{note.Id}.json"),
+        await _noteFileRepository.WriteAsync(
+            Path.Combine(Constants.AssetDbNotePostFolder, note.CreateTime.Year.ToString("D4"), $"{note.Id}.json"),
             JsonUtil.Serialize(note, true), cancellationToken);
     }
 
@@ -94,7 +96,7 @@ public class NoteFileService : INoteFileService
 
         if (string.IsNullOrEmpty(note.Id))
         {
-            throw new Exception($"Note id does not exist.");
+            throw new Exception("Note id does not exist.");
         }
 
         var existingNote = await GetNoteAsync(note.Id, cancellationToken);
@@ -106,7 +108,8 @@ public class NoteFileService : INoteFileService
 
         note.CreateTime = existingNote.CreateTime;
         note.LastUpdateTime = DateTime.Now;
-        await _noteFileRepository.WriteAsync(Path.Combine(Constants.AssetDbNotePostFolder, note.CreateTime.Year.ToString("D4"), $"{note.Id}.json"),
+        await _noteFileRepository.WriteAsync(
+            Path.Combine(Constants.AssetDbNotePostFolder, note.CreateTime.Year.ToString("D4"), $"{note.Id}.json"),
             JsonUtil.Serialize(note, true), cancellationToken);
     }
 
@@ -120,7 +123,8 @@ public class NoteFileService : INoteFileService
         var note = await GetNoteAsync(id, cancellationToken);
         if (note != null)
         {
-            await _noteFileRepository.DeleteAsync(Path.Combine(Constants.AssetDbNotePostFolder, note.CreateTime.Year.ToString("D4"), $"{note.Id}.json"),
+            await _noteFileRepository.DeleteAsync(
+                Path.Combine(Constants.AssetDbNotePostFolder, note.CreateTime.Year.ToString("D4"), $"{note.Id}.json"),
                 cancellationToken);
         }
     }
@@ -142,7 +146,7 @@ public class NoteFileService : INoteFileService
 
     public async Task<NoteTag> GetNoteTagByIdAsync(string id, CancellationToken cancellationToken = default)
     {
-        var tags =  await GetNoteTagsAsync(cancellationToken);
+        var tags = await GetNoteTagsAsync(cancellationToken);
         return tags.FirstOrDefault(x => StringUtil.EqualsIgnoreCase(id, x.Id));
     }
 
@@ -201,18 +205,20 @@ public class NoteFileService : INoteFileService
         }
 
         var tags = await GetNoteTagsAsync(cancellationToken);
-        var existingTag = tags.FirstOrDefault(x => StringUtil.EqualsIgnoreCase(x.Link, tag.Link) && !StringUtil.EqualsIgnoreCase(x.Id, tag.Id));
+        var existingTag = tags.FirstOrDefault(x =>
+            StringUtil.EqualsIgnoreCase(x.Link, tag.Link) && !StringUtil.EqualsIgnoreCase(x.Id, tag.Id));
         if (existingTag != null)
         {
             throw new Exception($"Tag with link({tag.Link}) already exists.");
         }
 
-        existingTag = tags.FirstOrDefault(x => StringUtil.EqualsIgnoreCase(x.DisplayName, tag.DisplayName) && !StringUtil.EqualsIgnoreCase(x.Id, tag.Id));
+        existingTag = tags.FirstOrDefault(x =>
+            StringUtil.EqualsIgnoreCase(x.DisplayName, tag.DisplayName) && !StringUtil.EqualsIgnoreCase(x.Id, tag.Id));
         if (existingTag != null)
         {
             throw new Exception($"Tag with display name({tag.DisplayName}) already exists.");
         }
-        
+
         existingTag = tags.FirstOrDefault(x => StringUtil.EqualsIgnoreCase(x.Id, tag.Id));
         if (existingTag == null)
         {
@@ -244,7 +250,9 @@ public class NoteFileService : INoteFileService
             {
                 taggedNote.Tags.Remove(taggedNote.Tags.First(x => StringUtil.EqualsIgnoreCase(x, id)));
                 taggedNote.LastUpdateTime = DateTime.Now;
-                await _noteFileRepository.WriteAsync(Path.Combine(Constants.AssetDbNotePostFolder, taggedNote.CreateTime.Year.ToString("D4"), $"{taggedNote.Id}.json"),
+                await _noteFileRepository.WriteAsync(
+                    Path.Combine(Constants.AssetDbNotePostFolder, taggedNote.CreateTime.Year.ToString("D4"),
+                        $"{taggedNote.Id}.json"),
                     JsonUtil.Serialize(taggedNote, true), cancellationToken);
             }
 
