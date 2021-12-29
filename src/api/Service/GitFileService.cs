@@ -129,7 +129,7 @@ public class GitFileService : IGitFileService
             folderSize += await _fileRepository.GetFileSizeAsync(file, cancellationToken);
         }
 
-        dbStat.FolderSize = ByteSize.FromBytes(folderSize).ToString("#.# MB");
+        dbStat.FolderSize = ByteSize.FromBytes(folderSize).ToString();
         dbStat.SubFolderCount =
             (await _fileRepository.SearchDirectoriesAsync("*", folder, true,
                 cancellationToken)).Count();

@@ -11,8 +11,8 @@ public class SiteStatHelper
         using var process = Process.GetCurrentProcess();
         var stat = new SiteStat
         {
-            AllocatedPhysicalMemory = ByteSize.FromBytes(process.WorkingSet64).ToString("#.# MB"),
-            MaximumAllocatedPhysicalMemory = ByteSize.FromBytes(process.PeakWorkingSet64).ToString("#.# MB"),
+            AllocatedPhysicalMemory = ByteSize.FromBytes(process.WorkingSet64).ToString(),
+            MaximumAllocatedPhysicalMemory = ByteSize.FromBytes(process.PeakWorkingSet64).ToString(),
             StartTime = process.StartTime,
             Threads = process.Threads.Count,
             TotalProcessorTime = process.TotalProcessorTime.ToHuman()
