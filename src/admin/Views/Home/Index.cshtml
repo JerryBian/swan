@@ -1,14 +1,14 @@
-﻿<div class="text-center small text-muted mb-3">
-    <div>Refreshed every 1 minute &middot; Request to <a href="javascript:;" onclick="shutdown()" class="text-danger">Shutdown</a> all sites</div>
-</div>
-<div class="container-fluid">
+﻿<div class="container-fluid">
     <div class="row">
-        <div class="col-xl mb-3" id="file_stat"></div>
-        <div class="col-xl mb-3" id="api_stat"></div>
-        <div class="col-xl mb-3" id="blog_stat"></div>
-        <div class="col-xl mb-3" id="admin_stat"></div>
-        <div class="col-xl mb-3" id="jarvis_stat"></div>
+        <div class="col-xl mb-3" id="file_stat">loading...</div>
+        <div class="col-xl mb-3" id="api_stat">loading...</div>
+        <div class="col-xl mb-3" id="blog_stat">loading...</div>
+        <div class="col-xl mb-3" id="admin_stat">loading...</div>
+        <div class="col-xl mb-3" id="jarvis_stat">loading...</div>
     </div>
+</div>
+<div class="text-center small text-muted mb-3">
+    <div>Refreshed every 1 minute &middot; Request to <a href="javascript:;" onclick="shutdown()" class="text-danger">Shutdown</a> all sites</div>
 </div>
 
 @section Scripts{
@@ -77,7 +77,7 @@
                     okAction: function(x) {
                         let items = [];
                         x.forEach(function(item) {
-                            items.push(`<strong>${item.fn}</strong>:</br> ${item.fs}`);
+                            items.push(`<strong>${item.fn}</strong>:</br> <span title="${item.sf} 个子文件夹，计 ${item.fc} 个文件">${item.fs}</span>`);
                         });
 
                         fileStat.innerHTML = getCardHtml(`<i class="fas fa-folder"></i> Git Files`, "border-info", items, "loadGitFileStat");

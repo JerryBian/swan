@@ -44,18 +44,28 @@ public class HomeController : Controller
 
     [HttpPost]
     [Route("persistent")]
-    public async Task PersistentAsync()
+    public async Task<ApiResponse<object>> PersistentAsync()
     {
+        var apiResponse = new ApiResponse<object>();
         try
         {
             using var reader = new StreamReader(Request.Body, Encoding.UTF8);
             var message = await reader.ReadToEndAsync();
-            await _miscGrpcService.PersistentGitFileAsync(new MiscGrpcRequest {Message = message});
+            var response = await _miscGrpcService.PersistentGitFileAsync(new MiscGrpcRequest {Message = message});
+            if (!response.IsOk)
+            {
+                apiResponse.IsOk = false;
+                apiResponse.Message = response.Message;
+            }
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Persistent DB failed.");
+            apiResponse.IsOk = false;
+            apiResponse.Message = ex.Message;
         }
+
+        return apiResponse;
     }
 
     [HttpPost("git-file-stat")]
