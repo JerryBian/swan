@@ -1,5 +1,6 @@
 ﻿@{
     Layout = "_BlogLayout";
+    ViewData["Title"] = "博客管理首页";
 }
 
 <div class="mb-3 bg-light p-1">
@@ -16,19 +17,19 @@
 {
     <script>
         activeNavItem("#nav_blog_index");
-        submitRequest("/blog/posts/access?days=14",
+        submitRequest("/blog/post/access?days=14",
             {
                 okAction: function(chart) {
                     createChart(document.querySelector("#postsAccessChart"), chart);
                 }
             });
-        submitRequest("/blog/posts/stats/words-count",
+        submitRequest("/blog/post/stat/words-count",
             {
                 okAction: function(chart) {
                     createChart(document.querySelector("#postsWordsCountStats"), chart);
                 }
             });
-        submitRequest("/blog/posts/stats/count",
+        submitRequest("/blog/post/stat/count",
             {
                 okAction: function(chart) {
                     createChart(document.querySelector("#postsCountStats"), chart);

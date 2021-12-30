@@ -82,7 +82,7 @@
             function(event) {
                 event.preventDefault();
                 event.stopPropagation();
-                submitRequest("/blog/posts", { form: form, body: new URLSearchParams(new FormData(form)), contentType: "application/x-www-form-urlencoded" });
+                submitRequest("/blog/post", { form: form, body: new URLSearchParams(new FormData(form)), contentType: "application/x-www-form-urlencoded" });
             });
     </script>
 }

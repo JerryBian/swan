@@ -10939,7 +10939,7 @@ list-group-item {
 }
 
 .card-body {
-  padding: 0;
+  padding: 0.5rem;
 }
 
 a {

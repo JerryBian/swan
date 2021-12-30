@@ -6,7 +6,9 @@
 
 <div class="row">
     <div class="col-lg-5 mb-3">
-        <canvas id="read_stats"></canvas>
+        <div class="bg-light p-1">
+            <canvas id="read_stats"></canvas>
+        </div>
     </div>
     <div class="col-lg-7">
         <div class="table-responsive">
@@ -14,7 +16,6 @@
                 <caption>阅读总数: @Model.Count() <a href="/read/add" class="btn btn-info float-end"><i class="fas fa-plus"></i> 添加新的阅读</a></caption>
                 <thead class="table-light">
                 <tr>
-
                     <th scope="col" class="text-start">书名</th>
                     <th scope="col">开始时间</th>
                     <th scope="col">状态</th>
@@ -25,9 +26,9 @@
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <th class="text-start">@item.Raw.BookName @Html.Raw(!item.Raw.IsPublished ? "<i class='fas fa-eye-slash text-danger'></i>" : "")</th>
+                        <th class="text-start">@item.Raw.BookName @Html.Raw(!item.Raw.IsPublished ? "<i class='fas fa-eye-slash text-danger' title='未发布'></i>" : "")</th>
                         <th>@item.Raw.StartTime.ToChinaDate()</th>
-                        <th>@Html.Raw(item.Raw.IsCompleted ? "<i class='fas fa-check text-success'></i>" : "<i class='fas fa-book-reader text-info'></i>")</th>
+                        <th>@Html.Raw(item.Raw.IsCompleted ? "<i class='fas fa-check text-success' title='阅读完成'></i>" : "<i class='fas fa-book-reader text-info' title='正在阅读'></i>")</th>
                         <th>
                             <a class="btn btn-info me-2" href="/read/@item.Raw.Id/update"><i class="fas fa-edit"></i> 编辑</a>
                             <a class="btn btn-danger" href="javascript:;" onclick="deleteBookItem('@item.Raw.Id')"><i class="fas fa-trash-alt"></i> 删除</a>

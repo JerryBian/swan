@@ -86,7 +86,7 @@ public class LogController : Controller
             {
                 logResponse.Logs = logResponse.Logs ?? new List<LaobianLog>();
                 var groupedLogs = logResponse.Logs.GroupBy(x => x.TimeStamp.Date).OrderBy(x => x.Key);
-                var chartResponse = new ChartResponse {Title = "# Logs are warning and error", Type = "line"};
+                var chartResponse = new ChartResponse {Title = "# Warning/Error logs", Type = "bar"};
                 foreach (var item in groupedLogs)
                 {
                     chartResponse.Labels.Add(item.Key.ToRelativeDaysHuman());

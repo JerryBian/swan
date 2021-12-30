@@ -105,7 +105,7 @@
             function(event) {
                 event.preventDefault();
                 event.stopPropagation();
-                submitRequest("/blog/posts/@Model.Post.Link", { form: form, body: new URLSearchParams(new FormData(form)), contentType: "application/x-www-form-urlencoded", method: "PUT" });
+                submitRequest("/blog/post/@Model.Post.Link", { form: form, body: new URLSearchParams(new FormData(form)), contentType: "application/x-www-form-urlencoded", method: "PUT" });
             });
     </script>
 }

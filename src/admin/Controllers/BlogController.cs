@@ -57,7 +57,7 @@ public class BlogController : Controller
         return response;
     }
 
-    [HttpPost("posts/stats/words-count")]
+    [HttpPost("post/stat/words-count")]
     public async Task<ApiResponse<ChartResponse>> GetPostsWordsCountStats()
     {
         var response = new ApiResponse<ChartResponse>();
@@ -72,7 +72,7 @@ public class BlogController : Controller
                 var chartResponse = new ChartResponse
                 {
                     Title = "当年文章的总字数",
-                    Type = "line"
+                    Type = "bar"
                 };
                 foreach (var item in items)
                 {
@@ -98,7 +98,7 @@ public class BlogController : Controller
         return response;
     }
 
-    [HttpPost("posts/stats/count")]
+    [HttpPost("post/stat/count")]
     public async Task<ApiResponse<ChartResponse>> GetPostsCountStats()
     {
         var response = new ApiResponse<ChartResponse>();
@@ -113,7 +113,7 @@ public class BlogController : Controller
                 var chartResponse = new ChartResponse
                 {
                     Title = "当年发表文章数",
-                    Type = "line"
+                    Type = "bar"
                 };
                 foreach (var item in items)
                 {
@@ -156,7 +156,7 @@ public class BlogController : Controller
                     Type = "line"
                 };
 
-                for (var i = 0; i < 15; i++)
+                for (var i = 14; i >=0; i--)
                 {
                     var date = DateTime.Now.Date.AddDays(-i);
                     blogResponse.PostRuntime.Accesses ??= new List<BlogAccess>();
@@ -183,7 +183,7 @@ public class BlogController : Controller
         return response;
     }
 
-    [HttpPost("posts/access")]
+    [HttpPost("post/access")]
     public async Task<ApiResponse<ChartResponse>> GetPostsAccess([FromQuery] int days)
     {
         var response = new ApiResponse<ChartResponse>();
@@ -222,7 +222,7 @@ public class BlogController : Controller
         return response;
     }
 
-    [Route("posts")]
+    [Route("post")]
     public async Task<IActionResult> GetPostsAsync()
     {
         _blogGrpcRequest.ExtractRuntime = true;
@@ -237,7 +237,7 @@ public class BlogController : Controller
         return NotFound(blogResponse.Message);
     }
 
-    [HttpGet("posts/add")]
+    [HttpGet("post/add")]
     public async Task<IActionResult> AddPost()
     {
         var blogResponse = await _blogGrpcService.GetTagsAsync();
@@ -249,7 +249,7 @@ public class BlogController : Controller
         return NotFound(blogResponse.Message);
     }
 
-    [HttpPost("posts")]
+    [HttpPost("post")]
     public async Task<ApiResponse<object>> AddPost([FromForm] BlogPost post)
     {
         var response = new ApiResponse<object>();
@@ -280,7 +280,7 @@ public class BlogController : Controller
         return response;
     }
 
-    [HttpGet("posts/{postLink}/update")]
+    [HttpGet("post/{postLink}/update")]
     public async Task<IActionResult> UpdatePost([FromRoute] string postLink)
     {
         _blogGrpcRequest.Link = postLink;
@@ -301,7 +301,7 @@ public class BlogController : Controller
         return NotFound(blogResponse.Message);
     }
 
-    [HttpPut("posts/{postLink}")]
+    [HttpPut("post/{postLink}")]
     public async Task<ApiResponse<object>> UpdatePost([FromForm] BlogPost post, [FromRoute] string postLink)
     {
         var response = new ApiResponse<object>();
@@ -333,7 +333,7 @@ public class BlogController : Controller
         return response;
     }
 
-    [Route("tags")]
+    [Route("tag")]
     public async Task<IActionResult> GetTagsAsync()
     {
         var blogResponse = await _blogGrpcService.GetTagsAsync();
@@ -347,7 +347,7 @@ public class BlogController : Controller
     }
 
     [HttpDelete]
-    [Route("tags/{id}")]
+    [Route("tag/{id}")]
     public async Task<ApiResponse<object>> DeleteTagAsync([FromRoute] string id)
     {
         var response = new ApiResponse<object>();
@@ -366,14 +366,14 @@ public class BlogController : Controller
         return response;
     }
 
-    [HttpGet("tags/add")]
+    [HttpGet("tag/add")]
     public IActionResult AddTag()
     {
         return View("AddTag");
     }
 
     [HttpPost]
-    [Route("tags")]
+    [Route("tag")]
     public async Task<ApiResponse<object>> AddTagAsync([FromBody] BlogTag tag)
     {
         var response = new ApiResponse<object>();
@@ -383,7 +383,7 @@ public class BlogController : Controller
             var blogResponse = await _blogGrpcService.AddTagAsync(_blogGrpcRequest);
             if (blogResponse.IsOk)
             {
-                response.RedirectTo = "/blog/tags";
+                response.RedirectTo = "/blog/tag";
             }
             else
             {
@@ -400,7 +400,7 @@ public class BlogController : Controller
         return response;
     }
 
-    [HttpGet("tags/{id}/update")]
+    [HttpGet("tag/{id}/update")]
     public async Task<IActionResult> UpdateTagAsync([FromRoute] string id)
     {
         _blogGrpcRequest.TagId = id;
@@ -414,7 +414,7 @@ public class BlogController : Controller
     }
 
     [HttpPut]
-    [Route("tags/{id}")]
+    [Route("tag/{id}")]
     public async Task<ApiResponse<object>> UpdateTagAsync([FromForm] BlogTag tag, [FromRoute] string id)
     {
         var response = new ApiResponse<object>();
@@ -424,7 +424,7 @@ public class BlogController : Controller
             var blogResponse = await _blogGrpcService.UpdateTagAsync(_blogGrpcRequest);
             if (blogResponse.IsOk)
             {
-                response.RedirectTo = "/blog/tags";
+                response.RedirectTo = "/blog/tag";
             }
             else
             {

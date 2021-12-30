@@ -105,7 +105,7 @@ public class BlogFileService : IBlogFileService
         }
 
         blogPost.Link = blogPost.Link.ToLowerInvariant();
-        var existingPost = await GetBlogPostAsync(blogPost.Link, cancellationToken);
+        var existingPost = await GetBlogPostAsync(originalPostLink, cancellationToken);
         if (existingPost == null)
         {
             throw new Exception($"Post with link \"{blogPost.Link}\" not exists.");
