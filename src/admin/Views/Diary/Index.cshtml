@@ -1,18 +1,22 @@
-﻿<div class="container">
-    <div class="row">
+﻿@{
+    ViewData["Title"] = "日记首页";
+}
+
+<div class="container">
+    <div class="row mb-3">
         <div class="col-xl-6">
-            <canvas id="diary_chart_count_per_year"></canvas>
+            <canvas id="diary_chart_count_per_year">loading...</canvas>
         </div>
         <div class="col-xl-6">
-            <canvas id="diary_chart_words_per_year"></canvas>
+            <canvas id="diary_chart_words_per_year">loading...</canvas>
         </div>
     </div>
-    <div class="row">
+    <div class="row mb-3">
         <div class="col-xl-6">
-            <canvas id="diary_chart_count_per_month"></canvas>
+            <canvas id="diary_chart_count_per_month">loading...</canvas>
         </div>
         <div class="col-xl-6">
-            <canvas id="diary_chart_words_per_month"></canvas>
+            <canvas id="diary_chart_words_per_month">loading...</canvas>
         </div>
     </div>
 </div>

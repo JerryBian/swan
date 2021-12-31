@@ -3,43 +3,46 @@
     ViewData["Title"] = "编辑笔记";
     Layout = "_NoteLayout";
 }
-<h3>编辑日记</h3>
-<form class="needs-validation" novalidate>
-    <div class="mb-3">
-        <label for="title" class="form-label">标题</label>
-        <input type="text" class="form-control" id="title" name="title" placeholder="笔记标题" autocomplete="off" value="@Model.Post.Title" autofocus required>
-        <div class="invalid-feedback">
-            必填
-        </div>
-    </div>
-    <div class="mb-3">
-        <label for="mdContent" class="form-label">正文</label>
-        <textarea class="form-control" id="mdContent" name="mdContent" rows="3" placeholder="笔记正文" autocomplete="off" required>@Model.Post.MdContent</textarea>
-        <div class="invalid-feedback">
-            必填
-        </div>
-    </div>
-    @if (Model.Tags.Any())
-    {
+
+<fieldset>
+    <legend>编辑笔记</legend>
+    <form class="needs-validation" novalidate>
         <div class="mb-3">
-            <label class="form-label">Tags</label>
-            <div id="tagsDiv">
-                @foreach (var tag in Model.Tags)
-                {
-                    var id = Guid.NewGuid().ToString("N");
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="@id" value="@tag.Id" name="tags" checked="@Model.Post.Tags.Contains(tag.Id)">
-                        <label class="form-check-label" for="@id">@tag.DisplayName</label>
-                    </div>
-                }
+            <label for="title" class="form-label">标题</label>
+            <input type="text" class="form-control" id="title" name="title" placeholder="笔记标题" autocomplete="off" value="@Model.Post.Title" autofocus required>
+            <div class="invalid-feedback">
+                必填
             </div>
         </div>
-    }
-    <div class="d-grid">
-        <button type="submit" class="btn btn-primary btn-lg">提交</button>
-    </div>
-    <input type="hidden" name="id" value="@Model.Post.Id"/>
-</form>
+        <div class="mb-3">
+            <label for="mdContent" class="form-label">正文</label>
+            <textarea class="form-control" id="mdContent" name="mdContent" rows="3" placeholder="笔记正文" autocomplete="off" required>@Model.Post.MdContent</textarea>
+            <div class="invalid-feedback">
+                必填
+            </div>
+        </div>
+        @if (Model.Tags.Any())
+        {
+            <div class="mb-3">
+                <label class="form-label">Tags</label>
+                <div id="tagsDiv">
+                    @foreach (var tag in Model.Tags)
+                    {
+                        var id = Guid.NewGuid().ToString("N");
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="@id" value="@tag.Id" name="tags" checked="@Model.Post.Tags.Contains(tag.Id)">
+                            <label class="form-check-label" for="@id">@tag.DisplayName</label>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+        <div class="d-grid">
+            <button type="submit" class="btn btn-primary btn-lg">提交</button>
+        </div>
+        <input type="hidden" name="id" value="@Model.Post.Id"/>
+    </form>
+</fieldset>
 
 @section Scripts {
     <script>

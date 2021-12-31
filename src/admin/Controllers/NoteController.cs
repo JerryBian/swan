@@ -128,7 +128,7 @@ public class NoteController : Controller
                 var chartResponse = new ChartResponse
                 {
                     Title = "当前标签的笔记数",
-                    Type = "line"
+                    Type = "bar"
                 };
                 foreach (var item in noteResponse.Data)
                 {
