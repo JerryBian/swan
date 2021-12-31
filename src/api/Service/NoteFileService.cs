@@ -41,7 +41,7 @@ public class NoteFileService : INoteFileService
             notes.Add(JsonUtil.Deserialize<Note>(diaryJson));
         }
 
-        return notes;
+        return notes.OrderByDescending(x => x.CreateTime).ToList();
     }
 
     public async Task<Note> GetNoteAsync(string id, CancellationToken cancellationToken = default)

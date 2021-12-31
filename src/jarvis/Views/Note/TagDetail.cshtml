@@ -3,12 +3,15 @@
 
 @{
     Layout = "_NoteLayout";
-    ViewData["Title"] = "所有笔记";
+    ViewData["Title"] = $"笔记标签：{Model.Raw.DisplayName}";
 }
 
-@foreach (var note in Model.Notes)
-{
-    <p>
-        <a href="@note.GetFullPath(_options.Value)">@note.Title</a>
-    </p>
-}
+<h4>笔记标签：@Model.Raw.DisplayName</h4>
+<ul>
+    @foreach (var note in Model.Notes)
+    {
+        <li>
+            <a href="@note.GetFullPath(_options.Value)">@note.Title</a>
+        </li>
+    }
+</ul>

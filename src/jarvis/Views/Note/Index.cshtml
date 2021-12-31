@@ -2,16 +2,23 @@
 @inject IOptions<JarvisOptions> _options
 @{
     Layout = "_NoteLayout";
-    ViewData["Title"] = "所有笔记";
 }
 
 @foreach (var item in Model.Items)
 {
     <div class="card mb-3">
+        <div class="card-header">
+            <i class="fas fa-file-alt"></i> @item.Raw.Title
+        </div>
         <div class="card-body">
-            <h5 class="card-title">@item.Raw.Title</h5>
-            <div class="card-text">@Html.Raw(item.HtmlContent)</div>
-            <a href="@item.Raw.GetFullPath(_options.Value)" class="btn btn-primary">阅读全文</a>
+            <div class="card-text">
+                @Html.Raw(item.HtmlExcerpt)
+                @if (item.Tags.Any())
+                {
+                    <p>@Html.Raw(item.GetTagHtml())</p>
+                }
+                <p><a href="@item.Raw.GetFullPath(_options.Value)" class="btn btn-outline-dark">阅读全文</a></p>
+            </div>
         </div>
     </div>
 }

@@ -29,17 +29,21 @@
 
 @section Aside{
     <div class="d-grid mb-3">
-        <a class="btn btn-secondary" href="@_option.Value.AdminRemoteEndpoint/note/post/@Model.Raw.Id/update"><i class="fas fa-edit"></i> 编辑笔记</a>
+        <a class="btn btn-outline-success" href="@_option.Value.AdminRemoteEndpoint/note/post/@Model.Raw.Id/update"><i class="fas fa-edit"></i> 编辑笔记</a>
     </div>
-
-    <div class="list-group">
-        <div class="list-group-item">创建于：@Model.Raw.CreateTime.ToDateAndTime()</div>
-        <div class="list-group-item">修改于：@Model.Raw.LastUpdateTime.ToDateAndTime()</div>
-    </div>
-
+    
+    @if (Model.Tags.Any())
+    {
+        <div class="card mb-3">
+            <div class="card-body">
+                <i class="fas fa-tags"></i> 标签： @Html.Raw(Model.GetTagHtml())
+            </div>
+        </div>
+    }
+    
     @if (Model.Outlines.Any())
     {
-        <div class="list-group" id="aside_note">
+        <div class="list-group mb-3" id="aside_note">
             @foreach (var item in Model.Outlines)
             {
                 <a class="list-group-item list-group-item-action" href="#@item.Link">@item.Title</a>
@@ -47,6 +51,11 @@
 
         </div>
     }
+
+    <div class="list-group">
+        <div class="list-group-item"><i class="fas fa-calendar-plus"></i> 创建于：@Model.Raw.CreateTime.ToDateAndTime()</div>
+        <div class="list-group-item"><i class="fas fa-calendar-check"></i> 修改于：@Model.Raw.LastUpdateTime.ToDateAndTime()</div>
+    </div>
 }
 
 @section Script{
@@ -61,7 +70,11 @@
                 anchors.add('.article-content h3, .article-content h4');
 
                 hljs.highlightAll();
-                setScrollspy("#aside_note");
+                @if (Model.Outlines.Any())
+                {
+                    <text>setScrollspy("#aside_note");</text>
+                }
+                
                 try {
                     let modalEl = document.querySelector("#imgModal");
                     if (modalEl) {

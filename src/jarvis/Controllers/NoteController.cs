@@ -53,6 +53,11 @@ public class NoteController : Controller
                     }
                 }
 
+                ViewData["Title"] = "所有笔记";
+                if (viewModel.CurrentPage > 1)
+                {
+                    ViewData["Title"] = ViewData["Title"].ToString() + $"：第{viewModel.CurrentPage}页";
+                }
                 return View(viewModel);
             }
         }

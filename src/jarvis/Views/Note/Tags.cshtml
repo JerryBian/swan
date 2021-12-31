@@ -2,15 +2,19 @@
 
 @{
     Layout = "_NoteLayout";
-    ViewData["Title"] = "所有笔记";
+    ViewData["Title"] = "所有笔记标签";
 }
 
-@foreach (var tag in Model)
-{
-    <div class="d-grid">
-        <a class="btn btn-primary" href="/note/tag/@tag.Raw.Link">
-            @tag.Raw.DisplayName
-            <span class="badge bg-secondary">@tag.Notes.Count</span>
-        </a>
+<div class="container">
+    <div class="row row-cols-2">
+        @foreach (var tag in Model)
+        {
+            <div class="col d-grid mb-3">
+                <a class="btn btn-outline-primary" href="/note/tag/@tag.Raw.Link">
+                    @tag.Raw.DisplayName
+                    <span class="badge bg-secondary">@tag.Notes.Count</span>
+                </a>
+            </div>
+        }
     </div>
-}
+</div>

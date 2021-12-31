@@ -29,6 +29,9 @@ public class NoteRuntime
 
     [DataMember(Order = 5)] public int WordsCount { get; set; }
 
+    [DataMember(Order = 6)]
+    public string HtmlExcerpt { get; set; }
+
     private void SetOutlines(HtmlDocument htmlDoc)
     {
         var i = 0;
@@ -76,9 +79,9 @@ public class NoteRuntime
 
         // assign tags
         Tags.Clear();
-        foreach (var tagLink in Raw.Tags)
+        foreach (var tagId in Raw.Tags)
         {
-            var tag = tags.FirstOrDefault(x => StringUtil.EqualsIgnoreCase(tagLink, x.Link));
+            var tag = tags.FirstOrDefault(x => StringUtil.EqualsIgnoreCase(tagId, x.Id));
             if (tag != null)
             {
                 Tags.Add(tag);
@@ -86,6 +89,20 @@ public class NoteRuntime
         }
 
         WordsCount = Raw.MdContent.Length;
+        var paraNodes =
+            htmlDoc.DocumentNode
+                .Descendants()
+                .Where(_ =>
+                    StringUtil.EqualsIgnoreCase(_.Name, "p") &&
+                    _.Descendants().FirstOrDefault(c => StringUtil.EqualsIgnoreCase(c.Name, "img")) == null)
+                .Take(2)
+                .ToList();
+        HtmlExcerpt = paraNodes.Count switch
+        {
+            1 => $"<p>{paraNodes[0].InnerText}</p>",
+            2 => $"<p>{paraNodes[0].InnerText}</p><p>{paraNodes[1].InnerText}</p>",
+            _ => HtmlExcerpt
+        };
     }
 
     private void SetImageNodes(HtmlDocument htmlDoc)
@@ -97,20 +114,19 @@ public class NoteRuntime
             {
                 imageNode.AddClass("img-thumbnail mx-auto d-block");
                 imageNode.Attributes.Add("loading", "lazy");
-
-                //var src = imageNode.Attributes["src"].Value;
-                //if (string.IsNullOrEmpty(src))
-                //{
-                //    continue;
-                //}
-
-                //if (Uri.TryCreate(src, UriKind.Absolute, out var uriResult) &&
-                //    (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps))
-                //{
-                //    // this is Network resources, keep it as it is
-                //    SetPostThumbnail(imageNode);
-                //}
             }
         }
+    }
+
+    public string GetTagHtml()
+    {
+        if (Tags == null)
+        {
+            return null;
+        }
+
+        return string.Join(" ",
+            Tags.Select(x =>
+                $"<a href=\"/note/tag/{x.Link}\"><span class=\"badge bg-primary\">{x.DisplayName}</span></a>"));
     }
 }

@@ -92,7 +92,11 @@
                 anchors.add('.article-content h3, .article-content h4');
 
                 hljs.highlightAll();
-                setScrollspy("#aside_post");
+                @if (Model.Current.Outlines.Any())
+                {
+                    <text>setScrollspy("#aside_post");</text>
+                }
+                
                 try {
                     let modalEl = document.querySelector("#imgModal");
                     if (modalEl) {

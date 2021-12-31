@@ -91,6 +91,12 @@ public class DiaryController : Controller
 
             if (viewModel != null)
             {
+                ViewData["Title"] = $"{year:D4}年日记";
+                if (viewModel.CurrentPage > 1)
+                {
+                    ViewData["Title"] = ViewData["Title"].ToString() + $"：第{viewModel.CurrentPage}页";
+                }
+
                 return View("Index", viewModel);
             }
         }
@@ -112,6 +118,12 @@ public class DiaryController : Controller
 
             if (viewModel != null)
             {
+                ViewData["Title"] = $"{year:D4}年{month:D2}月日记";
+                if (viewModel.CurrentPage > 1)
+                {
+                    ViewData["Title"] = ViewData["Title"].ToString() + $"：第{viewModel.CurrentPage}页";
+                }
+
                 return View("Index", viewModel);
             }
         }
