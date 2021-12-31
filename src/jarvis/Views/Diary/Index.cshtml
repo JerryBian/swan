@@ -2,16 +2,19 @@
 @inject IOptions<JarvisOptions> _options
 @{
     Layout = "_DiaryLayout";
-    ViewData["Title"] = "所有日记";
 }
 
 @foreach (var item in Model.Items)
 {
     <div class="card mb-3">
+        <div class="card-header">
+            <i class="fas fa-calendar-alt"></i> @item.Raw.Date.ToChinaDate()
+        </div>
         <div class="card-body">
-            <h5 class="card-title">@item.Raw.Date.ToChinaDate()</h5>
-            <div class="card-text">@Html.Raw(item.HtmlContent)</div>
-            <a href="@item.Raw.GetFullPath(_options.Value)" class="btn btn-primary">阅读全文</a>
+            <div class="card-text">
+                @Html.Raw(item.HtmlExcerpt)
+                <p><a href="@item.Raw.GetFullPath(_options.Value)" class="btn btn-dark">阅读全文</a></p>
+            </div>
         </div>
     </div>
 }

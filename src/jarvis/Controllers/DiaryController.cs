@@ -37,6 +37,12 @@ public class DiaryController : Controller
 
             if (viewModel != null)
             {
+                ViewData["Title"] = "所有日记";
+                if (viewModel.CurrentPage > 1)
+                {
+                    ViewData["Title"] = ViewData["Title"].ToString() + $"：第{viewModel.CurrentPage}页";
+                }
+
                 return View(viewModel);
             }
         }
