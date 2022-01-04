@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Laobian.Share.Site.Jarvis;
+using Laobian.Share.Model.Jarvis;
 
 namespace Laobian.Admin.Models;
 

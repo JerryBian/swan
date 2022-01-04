@@ -2,7 +2,7 @@
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 
-namespace Laobian.Share;
+namespace Laobian.Share.Misc;
 
 [DataContract]
 public class SiteStat

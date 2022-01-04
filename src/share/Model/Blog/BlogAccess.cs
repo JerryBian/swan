@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using Laobian.Share.Converter;
 
-namespace Laobian.Share.Site.Blog;
+namespace Laobian.Share.Model.Blog;
 
 [DataContract]
 public class BlogAccess

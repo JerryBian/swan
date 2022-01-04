@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
-using Laobian.Share.Site.Blog;
+using Laobian.Share.Model.Blog;
 
 namespace Laobian.Share.Grpc.Response;
 

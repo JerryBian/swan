@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Laobian.Admin.Models;
-using Laobian.Share;
 using Laobian.Share.Grpc;
 using Laobian.Share.Grpc.Request;
 using Laobian.Share.Grpc.Service;
-using Laobian.Share.Site.Jarvis;
+using Laobian.Share.Model.Jarvis;
 using Laobian.Share.Util;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -177,7 +176,7 @@ public class NoteController : Controller
             var noteResponse = await _noteGrpcService.AddNoteAsync(_request);
             if (noteResponse.IsOk)
             {
-                response.RedirectTo = noteResponse.Note.GetFullPath(_options);
+                response.RedirectTo = noteResponse.Note.GetFullPath(_options.JarvisRemoteEndpoint);
             }
             else
             {
@@ -224,7 +223,7 @@ public class NoteController : Controller
             var noteResponse = await _noteGrpcService.UpdateNoteAsync(_request);
             if (noteResponse.IsOk)
             {
-                response.RedirectTo = noteResponse.Note.GetFullPath(_options);
+                response.RedirectTo = noteResponse.Note.GetFullPath(_options.JarvisRemoteEndpoint);
             }
             else
             {

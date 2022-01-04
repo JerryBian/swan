@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Laobian.Share.Site.Jarvis;
+using Laobian.Share.Model.Jarvis;
 
 namespace Laobian.Api.Service;
 

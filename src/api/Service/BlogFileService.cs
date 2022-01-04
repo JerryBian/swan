@@ -4,9 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Laobian.Api.Source;
+using Laobian.Api.Repository;
 using Laobian.Share;
-using Laobian.Share.Site.Blog;
+using Laobian.Share.Model.Blog;
 using Laobian.Share.Util;
 using Microsoft.Extensions.Logging;
 

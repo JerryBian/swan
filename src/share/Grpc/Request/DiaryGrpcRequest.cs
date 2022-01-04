@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Runtime.Serialization;
-using Laobian.Share.Site.Jarvis;
+using Laobian.Share.Model.Jarvis;
 
 namespace Laobian.Share.Grpc.Request;
 

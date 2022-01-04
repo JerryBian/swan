@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Api.Service;
 using Laobian.Share.Logger;
-using Laobian.Share.Site;
+using Laobian.Share.Model;
 using Microsoft.Extensions.Hosting;
 
 namespace Laobian.Api.HostedServices;

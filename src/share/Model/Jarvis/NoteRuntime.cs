@@ -5,7 +5,7 @@ using HtmlAgilityPack;
 using Laobian.Share.Util;
 using Markdig;
 
-namespace Laobian.Share.Site.Jarvis;
+namespace Laobian.Share.Model.Jarvis;
 
 [DataContract]
 public class NoteRuntime
@@ -27,10 +27,7 @@ public class NoteRuntime
 
     [DataMember(Order = 4)] public List<NoteOutline> Outlines { get; set; } = new();
 
-    [DataMember(Order = 5)] public int WordsCount { get; set; }
-
-    [DataMember(Order = 6)]
-    public string HtmlExcerpt { get; set; }
+    [DataMember(Order = 5)] public string HtmlExcerpt { get; set; }
 
     private void SetOutlines(HtmlDocument htmlDoc)
     {
@@ -88,7 +85,6 @@ public class NoteRuntime
             }
         }
 
-        WordsCount = Raw.MdContent.Length;
         var paraNodes =
             htmlDoc.DocumentNode
                 .Descendants()

@@ -3,9 +3,8 @@ using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using Laobian.Share.Converter;
 using Laobian.Share.Extension;
-using Laobian.Share.Option;
 
-namespace Laobian.Share.Site.Jarvis;
+namespace Laobian.Share.Model.Jarvis;
 
 [DataContract]
 public class Diary
@@ -31,9 +30,9 @@ public class Diary
     [JsonPropertyName("markdownContent")]
     public string MarkdownContent { get; set; }
 
-    public string GetFullPath(SharedOptions option)
+    public string GetFullPath(string baseAddress)
     {
-        return $"{option.JarvisRemoteEndpoint}/diary/{Date.Year:D4}/{Date.Month:D2}/{Date.Day:D2}.html";
+        return $"{baseAddress ?? string.Empty}/diary/{Date.Year:D4}/{Date.Month:D2}/{Date.Day:D2}.html";
     }
 
     public string GetDateString()

@@ -6,7 +6,7 @@ using Laobian.Api.Service;
 using Laobian.Share.Grpc.Request;
 using Laobian.Share.Grpc.Response;
 using Laobian.Share.Grpc.Service;
-using Laobian.Share.Site.Blog;
+using Laobian.Share.Model.Blog;
 using Laobian.Share.Util;
 using Microsoft.Extensions.Logging;
 using ProtoBuf.Grpc;
@@ -228,7 +228,7 @@ public class BlogGrpcService : IBlogGrpcService
         var response = new BlogGrpcResponse();
         try
         {
-            await _blogFileService.UpdateBlogPostAsync(request.Post, request.ReplacedPostLink);
+            await _blogFileService.UpdateBlogPostAsync(request.Post, request.OriginalPostLink);
             await _blogSiteHttpClient.ReloadBlogDataAsync();
             response.Post = request.Post;
         }

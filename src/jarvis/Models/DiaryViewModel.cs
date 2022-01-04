@@ -1,4 +1,4 @@
-﻿using Laobian.Share.Site.Jarvis;
+﻿using Laobian.Share.Model.Jarvis;
 
 namespace Laobian.Jarvis.Models;
 

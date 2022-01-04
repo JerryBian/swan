@@ -20,9 +20,6 @@ public class HtmlHeadBuilder
         var sb = new StringBuilder();
         sb.AppendLine("<meta charset=\"utf-8\">");
         sb.AppendLine("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
-        sb.AppendLine(_buildOption.RobotsEnabled
-            ? "<meta name=\"robots\" content=\"index,follow\"/>"
-            : "<meta name=\"robots\" content=\"noindex,nofollow,noarchive\"/><meta name=\"googlebot\" content=\"noindex,nofollow,noarchive\"/>");
         sb.AppendLine($"<meta name=\"msapplication-TileColor\" content=\"{_buildOption.ApplicationTitleColor}\">");
         sb.AppendLine($"<meta name=\"theme-color\" content=\"{_buildOption.ThemeColor}\">");
         sb.AppendLine($"<meta name=\"copyright\"content=\"{_option.AdminChineseName}\">");
@@ -31,9 +28,7 @@ public class HtmlHeadBuilder
 
         if (!string.IsNullOrEmpty(_buildOption.Description))
         {
-            var desc = _buildOption.Description.Length < 150
-                ? _buildOption.Description
-                : _buildOption.Description.Substring(0, 150);
+            var desc = StringUtil.Truncate(_buildOption.Description, 149);
             sb.AppendLine($"<meta name=\"description\" content=\"{desc}\"/>");
         }
 
@@ -60,19 +55,27 @@ public class HtmlHeadBuilder
                 Type = "Person",
                 Url = _option.HomePageEndpoint
             };
-            var googleStructuredData = new GoogleStructuredData();
-            googleStructuredData.Context = "https://schema.org";
-            googleStructuredData.Type = "NewsArticle";
-            googleStructuredData.Headline = title;
-            googleStructuredData.DatePublished = _buildOption.DatePublished;
-            googleStructuredData.DateModified = _buildOption.DateModified;
+            var googleStructuredData = new GoogleStructuredData
+            {
+                Context = "https://schema.org",
+                Type = "NewsArticle",
+                Headline = title,
+                DatePublished = _buildOption.DatePublished,
+                DateModified = _buildOption.DateModified
+            };
             googleStructuredData.Authors.Add(googleStructuredAuthor);
             googleStructuredData.Images.Add(!string.IsNullOrEmpty(_buildOption.Image)
                 ? _buildOption.Image
                 : _buildOption.BaseImage);
 
+            sb.AppendLine("<meta name=\"robots\" content=\"index,follow,archive\"/>");
             sb.AppendLine(
                 $"<script type=\"application/ld+json\">{JsonUtil.Serialize(googleStructuredData)}</script>");
+        }
+        else
+        {
+            sb.AppendLine("<meta name=\"robots\" content=\"noindex,nofollow,noarchive\"/>");
+            sb.AppendLine("<meta name=\"googlebot\" content=\"noindex,nofollow,noarchive\"/>");
         }
 
         return sb.ToString();

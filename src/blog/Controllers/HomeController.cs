@@ -10,7 +10,8 @@ using Laobian.Blog.Models;
 using Laobian.Blog.Service;
 using Laobian.Share;
 using Laobian.Share.Extension;
-using Laobian.Share.Site.Blog;
+using Laobian.Share.Misc;
+using Laobian.Share.Model.Blog;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -74,6 +75,7 @@ public class HomeController : Controller
             ViewData["RobotsEnabled"] = false;
             ViewData["Title"] = $"首页：第{viewModel.CurrentPage}页";
         }
+
         return View(viewModel);
     }
 

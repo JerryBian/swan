@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Laobian.Share.Site.Blog;
+using Laobian.Share.Model.Blog;
 
 namespace Laobian.Api.Service;
 

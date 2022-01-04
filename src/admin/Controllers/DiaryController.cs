@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Laobian.Share;
+using Laobian.Admin.Models;
 using Laobian.Share.Extension;
 using Laobian.Share.Grpc;
 using Laobian.Share.Grpc.Request;
 using Laobian.Share.Grpc.Service;
-using Laobian.Share.Site.Jarvis;
+using Laobian.Share.Model.Jarvis;
 using Laobian.Share.Util;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -135,7 +135,7 @@ public class DiaryController : Controller
                 diaryResponse.DiaryRuntimeList ??= new List<DiaryRuntime>();
                 foreach (var item in diaryResponse.DiaryRuntimeList.GroupBy(x => x.Raw.Date.Month).OrderBy(x => x.Key))
                 {
-                    chart.Data.Add(item.Sum(x => x.WordsCount));
+                    chart.Data.Add(item.Sum(x => x.Raw.MarkdownContent.Length));
                     chart.Labels.Add($"{item.Key}月");
                 }
 
@@ -176,7 +176,7 @@ public class DiaryController : Controller
                 diaryResponse.DiaryRuntimeList ??= new List<DiaryRuntime>();
                 foreach (var item in diaryResponse.DiaryRuntimeList.GroupBy(x => x.Raw.Date.Year).OrderBy(x => x.Key))
                 {
-                    chart.Data.Add(item.Sum(x => x.WordsCount));
+                    chart.Data.Add(item.Sum(x => x.Raw.MarkdownContent.Length));
                     chart.Labels.Add($"{item.Key}年");
                 }
 
@@ -227,7 +227,7 @@ public class DiaryController : Controller
             var diaryResponse = await _diaryGrpcService.AddDiaryAsync(request);
             if (diaryResponse.IsOk)
             {
-                response.RedirectTo = diaryResponse.Diary.GetFullPath(_options);
+                response.RedirectTo = diaryResponse.Diary.GetFullPath(_options.JarvisRemoteEndpoint);
             }
             else
             {
@@ -282,7 +282,7 @@ public class DiaryController : Controller
             var diaryResponse = await _diaryGrpcService.UpdateDiaryAsync(request);
             if (diaryResponse.IsOk)
             {
-                response.RedirectTo = diaryResponse.Diary.GetFullPath(_options);
+                response.RedirectTo = diaryResponse.Diary.GetFullPath(_options.JarvisRemoteEndpoint);
             }
             else
             {

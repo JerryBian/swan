@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 
-namespace Laobian.Share.Site.Blog;
+namespace Laobian.Share.Model.Blog;
 
 [DataContract]
 public class BlogPost

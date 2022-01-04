@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Laobian.Share.Extension;
 using Laobian.Share.Logger;
-using Laobian.Share.Site.Jarvis;
+using Laobian.Share.Model.Jarvis;
 using Laobian.Share.Util;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

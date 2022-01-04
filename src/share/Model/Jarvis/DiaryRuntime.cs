@@ -4,7 +4,7 @@ using HtmlAgilityPack;
 using Laobian.Share.Util;
 using Markdig;
 
-namespace Laobian.Share.Site.Jarvis;
+namespace Laobian.Share.Model.Jarvis;
 
 [DataContract]
 public class DiaryRuntime
@@ -26,17 +26,13 @@ public class DiaryRuntime
 
     [DataMember(Order = 4)] public DiaryRuntime Next { get; set; }
 
-    [DataMember(Order = 5)] public int WordsCount { get; set; }
-
-    [DataMember(Order = 6)]
-    public string HtmlExcerpt { get; set; }
+    [DataMember(Order = 5)] public string HtmlExcerpt { get; set; }
 
     public void ExtractRuntimeData()
     {
         if (!string.IsNullOrEmpty(Raw.MarkdownContent))
         {
             HtmlContent = Markdown.ToHtml(Raw.MarkdownContent);
-            WordsCount = Raw.MarkdownContent.Length;
             var htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(HtmlContent);
             var paraNodes =

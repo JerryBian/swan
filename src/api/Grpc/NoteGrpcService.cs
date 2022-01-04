@@ -6,7 +6,7 @@ using Laobian.Api.Service;
 using Laobian.Share.Grpc.Request;
 using Laobian.Share.Grpc.Response;
 using Laobian.Share.Grpc.Service;
-using Laobian.Share.Site.Jarvis;
+using Laobian.Share.Model.Jarvis;
 using Laobian.Share.Util;
 using Microsoft.Extensions.Logging;
 using ProtoBuf.Grpc;

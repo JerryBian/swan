@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace Laobian.Share.Site;
+namespace Laobian.Share.Model;
 
 [DataContract]
 public enum LaobianSite

@@ -1,4 +1,4 @@
-﻿@model PagedViewModel<DiaryRuntime>
+﻿@model PagedViewModel<Laobian.Share.Model.Jarvis.DiaryRuntime>
 @inject IOptions<JarvisOptions> _options
 @{
     Layout = "_DiaryLayout";
@@ -13,7 +13,9 @@
         <div class="card-body">
             <div class="card-text">
                 @Html.Raw(item.HtmlExcerpt)
-                <p><a href="@item.Raw.GetFullPath(_options.Value)" class="btn btn-outline-dark">阅读全文</a></p>
+                <p>
+                    <a href="@item.Raw.GetFullPath(_options.Value.JarvisRemoteEndpoint)" class="btn btn-outline-dark">阅读全文</a>
+                </p>
             </div>
         </div>
     </div>

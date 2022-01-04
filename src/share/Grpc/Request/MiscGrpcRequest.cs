@@ -1,5 +1,5 @@
 ﻿using System.Runtime.Serialization;
-using Laobian.Share.Site;
+using Laobian.Share.Model;
 
 namespace Laobian.Share.Grpc.Request;
 

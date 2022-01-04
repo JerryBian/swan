@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Laobian.Share.Extension;
-using Laobian.Share.Site.Blog;
+using Laobian.Share.Model.Blog;
 
 namespace Laobian.Blog.Models;
 

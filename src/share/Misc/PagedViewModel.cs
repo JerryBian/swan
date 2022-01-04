@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Laobian.Share;
+namespace Laobian.Share.Misc;
 
 public class PagedViewModel<T>
 {

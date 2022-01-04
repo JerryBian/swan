@@ -9,6 +9,7 @@ using Laobian.Api.Command;
 using Laobian.Api.Repository;
 using Laobian.Share;
 using Laobian.Share.Extension;
+using Laobian.Share.Misc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 

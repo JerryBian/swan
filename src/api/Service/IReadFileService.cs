@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Laobian.Share.Site.Read;
+using Laobian.Share.Model.Read;
 
 namespace Laobian.Api.Service;
 

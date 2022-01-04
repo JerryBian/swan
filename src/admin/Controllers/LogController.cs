@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Laobian.Share;
+using Laobian.Admin.Models;
 using Laobian.Share.Extension;
 using Laobian.Share.Grpc;
 using Laobian.Share.Grpc.Request;

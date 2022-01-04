@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
-using Laobian.Share.Site.Read;
+using Laobian.Share.Model.Read;
 
 namespace Laobian.Share.Grpc.Response;
 

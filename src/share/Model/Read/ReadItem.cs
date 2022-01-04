@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using Laobian.Share.Converter;
 
-namespace Laobian.Share.Site.Read;
+namespace Laobian.Share.Model.Read;
 
 [DataContract]
 public class ReadItem

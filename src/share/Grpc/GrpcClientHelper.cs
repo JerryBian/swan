@@ -15,7 +15,7 @@ public static class GrpcClientHelper
 
     public static T CreateClient<T>(string address) where T : class
     {
-        var channel = Channels.GetOrAdd(address, s =>
+        var channel = Channels.GetOrAdd(address, _ =>
         {
             var c = GrpcChannel.ForAddress(address, new GrpcChannelOptions
             {

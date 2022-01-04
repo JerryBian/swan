@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Laobian.Share;
+namespace Laobian.Admin.Models;
 
 public class ApiResponse<T>
 {

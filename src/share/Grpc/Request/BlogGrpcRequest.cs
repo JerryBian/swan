@@ -1,5 +1,5 @@
 ﻿using System.Runtime.Serialization;
-using Laobian.Share.Site.Blog;
+using Laobian.Share.Model.Blog;
 
 namespace Laobian.Share.Grpc.Request;
 
@@ -12,7 +12,7 @@ public class BlogGrpcRequest
 
     [DataMember(Order = 3)] public BlogPost Post { get; set; }
 
-    [DataMember(Order = 4)] public string ReplacedPostLink { get; set; }
+    [DataMember(Order = 4)] public string OriginalPostLink { get; set; }
 
     [DataMember(Order = 5)] public string TagId { get; set; }
 

@@ -1,4 +1,4 @@
-﻿@model NoteTagRuntime
+﻿@model Laobian.Share.Model.Jarvis.NoteTagRuntime
 @inject IOptions<JarvisOptions> _options
 
 @{
@@ -11,7 +11,7 @@
     @foreach (var note in Model.Notes)
     {
         <li>
-            <a href="@note.GetFullPath(_options.Value)">@note.Title</a>
+            <a href="@note.GetFullPath(_options.Value.JarvisRemoteEndpoint)">@note.Title</a>
         </li>
     }
 </ul>

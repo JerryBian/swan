@@ -4,9 +4,9 @@ using System.Net.Http;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using Laobian.Share.Logger;
+using Laobian.Share.Model;
 using Laobian.Share.Notify;
 using Laobian.Share.Option;
-using Laobian.Share.Site;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
@@ -16,7 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Polly;
 
-namespace Laobian.Share;
+namespace Laobian.Share.Misc;
 
 public abstract class SharedStartup
 {

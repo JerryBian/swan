@@ -1,4 +1,4 @@
-﻿using Laobian.Share;
+﻿using Laobian.Share.Misc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;

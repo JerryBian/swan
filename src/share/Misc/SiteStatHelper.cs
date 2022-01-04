@@ -2,7 +2,7 @@
 using ByteSizeLib;
 using Laobian.Share.Extension;
 
-namespace Laobian.Share;
+namespace Laobian.Share.Misc;
 
 public class SiteStatHelper
 {

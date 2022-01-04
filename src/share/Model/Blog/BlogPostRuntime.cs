@@ -6,7 +6,7 @@ using HtmlAgilityPack;
 using Laobian.Share.Util;
 using Markdig;
 
-namespace Laobian.Share.Site.Blog;
+namespace Laobian.Share.Model.Blog;
 
 [DataContract]
 public class BlogPostRuntime
@@ -38,8 +38,6 @@ public class BlogPostRuntime
 
     [DataMember(Order = 9)] public List<BlogPostOutline> Outlines { get; set; } = new();
 
-    [DataMember(Order = 10)] public int WordsCount { get; set; }
-
     private void SetPostThumbnail(HtmlNode imageNode)
     {
         if (string.IsNullOrEmpty(ThumbnailHtml) && !string.IsNullOrEmpty(imageNode.GetAttributeValue("src", null)))
@@ -55,8 +53,6 @@ public class BlogPostRuntime
         {
             Raw.MdContent = "Post content is empty.";
         }
-
-        WordsCount = Raw.MdContent.Length;
 
         var html = Markdown.ToHtml(Raw.MdContent);
         var htmlDoc = new HtmlDocument();

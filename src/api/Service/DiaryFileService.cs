@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Api.Repository;
 using Laobian.Share.Extension;
-using Laobian.Share.Site.Jarvis;
+using Laobian.Share.Model.Jarvis;
 using Laobian.Share.Util;
 using Microsoft.Extensions.Logging;
 

@@ -1,7 +1,7 @@
 ﻿using System.Runtime.Serialization;
 using Markdig;
 
-namespace Laobian.Share.Site.Read;
+namespace Laobian.Share.Model.Read;
 
 [DataContract]
 public class ReadItemRuntime

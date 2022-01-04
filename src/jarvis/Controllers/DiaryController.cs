@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Laobian.Share;
 using Laobian.Share.Extension;
 using Laobian.Share.Grpc;
 using Laobian.Share.Grpc.Request;
 using Laobian.Share.Grpc.Service;
-using Laobian.Share.Site.Jarvis;
+using Laobian.Share.Misc;
+using Laobian.Share.Model.Jarvis;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -40,7 +40,7 @@ public class DiaryController : Controller
                 ViewData["Title"] = "所有日记";
                 if (viewModel.CurrentPage > 1)
                 {
-                    ViewData["Title"] = ViewData["Title"].ToString() + $"：第{viewModel.CurrentPage}页";
+                    ViewData["Title"] = ViewData["Title"] + $"：第{viewModel.CurrentPage}页";
                 }
 
                 return View(viewModel);
@@ -94,7 +94,7 @@ public class DiaryController : Controller
                 ViewData["Title"] = $"{year:D4}年日记";
                 if (viewModel.CurrentPage > 1)
                 {
-                    ViewData["Title"] = ViewData["Title"].ToString() + $"：第{viewModel.CurrentPage}页";
+                    ViewData["Title"] = ViewData["Title"] + $"：第{viewModel.CurrentPage}页";
                 }
 
                 return View("Index", viewModel);
@@ -121,7 +121,7 @@ public class DiaryController : Controller
                 ViewData["Title"] = $"{year:D4}年{month:D2}月日记";
                 if (viewModel.CurrentPage > 1)
                 {
-                    ViewData["Title"] = ViewData["Title"].ToString() + $"：第{viewModel.CurrentPage}页";
+                    ViewData["Title"] = ViewData["Title"] + $"：第{viewModel.CurrentPage}页";
                 }
 
                 return View("Index", viewModel);

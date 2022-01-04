@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
-using Laobian.Share.Option;
 
-namespace Laobian.Share.Site.Jarvis;
+namespace Laobian.Share.Model.Jarvis;
 
 [DataContract]
 public class Note
@@ -39,10 +38,10 @@ public class Note
     [JsonPropertyName("mdContent")]
     public string MdContent { get; set; }
 
-    public string GetFullPath(SharedOptions options)
+    public string GetFullPath(string baseAddress)
     {
         var path =
-            $"{options.JarvisRemoteEndpoint}/note/{Id}.html";
+            $"{baseAddress ?? string.Empty}/note/{Id}.html";
         return path;
     }
 }

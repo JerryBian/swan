@@ -1,6 +1,4 @@
-﻿using Laobian.Api.Repository;
-
-namespace Laobian.Api.Source;
+﻿namespace Laobian.Api.Repository;
 
 public interface IBlogFileRepository : IFileRepository
 {

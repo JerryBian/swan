@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Laobian.Share;
 using Laobian.Share.Grpc;
 using Laobian.Share.Grpc.Request;
 using Laobian.Share.Grpc.Service;
-using Laobian.Share.Site.Jarvis;
+using Laobian.Share.Misc;
+using Laobian.Share.Model.Jarvis;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -56,8 +56,9 @@ public class NoteController : Controller
                 ViewData["Title"] = "所有笔记";
                 if (viewModel.CurrentPage > 1)
                 {
-                    ViewData["Title"] = ViewData["Title"].ToString() + $"：第{viewModel.CurrentPage}页";
+                    ViewData["Title"] = ViewData["Title"] + $"：第{viewModel.CurrentPage}页";
                 }
+
                 return View(viewModel);
             }
         }

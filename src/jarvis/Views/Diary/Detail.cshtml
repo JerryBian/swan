@@ -1,4 +1,4 @@
-﻿@model DiaryRuntime
+﻿@model Laobian.Share.Model.Jarvis.DiaryRuntime
 @inject IOptions<JarvisOptions> _option
 @{
     Layout = "_DiaryLayout";
@@ -16,15 +16,15 @@
     <div class="d-grid mb-3">
         <a class="btn btn-outline-success" href="@_option.Value.AdminRemoteEndpoint/diary/update?date=@Model.Raw.Date.ToDate()"><i class="fas fa-edit"></i> 编辑日记</a>
     </div>
-    
+
     <div class="list-group mb-3">
         @if (Model.Prev != null)
         {
-            <a href="@Model.Prev.Raw.GetFullPath(_option.Value)" class="list-group-item list-group-item-primary list-group-item-action"><i class="fas fa-caret-left"></i> 前一篇：@Model.Prev.Raw.Date.ToChinaDate()</a>
+            <a href="@Model.Prev.Raw.GetFullPath(_option.Value.JarvisRemoteEndpoint)" class="list-group-item list-group-item-primary list-group-item-action"><i class="fas fa-caret-left"></i> 前一篇：@Model.Prev.Raw.Date.ToChinaDate()</a>
         }
         @if (Model.Next != null)
         {
-            <a href="@Model.Next.Raw.GetFullPath(_option.Value)" class="list-group-item list-group-item-primary list-group-item-action"><i class="fas fa-caret-right"></i> 后一篇：@Model.Next.Raw.Date.ToChinaDate()</a>
+            <a href="@Model.Next.Raw.GetFullPath(_option.Value.JarvisRemoteEndpoint)" class="list-group-item list-group-item-primary list-group-item-action"><i class="fas fa-caret-right"></i> 后一篇：@Model.Next.Raw.Date.ToChinaDate()</a>
         }
         <a href="/diary/@Model.Raw.Date.Year.ToString("D4")" class="list-group-item list-group-item-primary list-group-item-action"><i class="fas fa-angle-double-right"></i> 更多 <span class="text-decoration-underline">@Model.Raw.Date.Year.ToString("D4") 年</span> 日记</a>
         <a href="/diary/@Model.Raw.Date.Year.ToString("D4")/@Model.Raw.Date.Month.ToString("D2")" class="list-group-item list-group-item-primary list-group-item-action"><i class="fas fa-angle-double-right"></i> 更多 <span class="text-decoration-underline">@Model.Raw.Date.Year.ToString("D4") 年 @Model.Raw.Date.Month.ToString("D2")月</span> 日记</a>

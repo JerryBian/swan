@@ -1,4 +1,4 @@
-﻿@model PagedViewModel<NoteRuntime>
+﻿@model PagedViewModel<Laobian.Share.Model.Jarvis.NoteRuntime>
 @inject IOptions<JarvisOptions> _options
 @{
     Layout = "_NoteLayout";
@@ -17,7 +17,9 @@
                 {
                     <p>@Html.Raw(item.GetTagHtml())</p>
                 }
-                <p><a href="@item.Raw.GetFullPath(_options.Value)" class="btn btn-outline-dark">阅读全文</a></p>
+                <p>
+                    <a href="@item.Raw.GetFullPath(_options.Value.JarvisRemoteEndpoint)" class="btn btn-outline-dark">阅读全文</a>
+                </p>
             </div>
         </div>
     </div>

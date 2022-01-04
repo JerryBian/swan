@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Laobian.Api.Repository;
-using Laobian.Share.Site.Read;
+using Laobian.Share.Model.Read;
 using Laobian.Share.Util;
 using Microsoft.Extensions.Logging;
 

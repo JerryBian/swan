@@ -2,33 +2,33 @@
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 
-namespace Laobian.Share.Site.Jarvis;
+namespace Laobian.Share.Model.Blog;
 
 [DataContract]
-public class NoteTag
+public class BlogTag
 {
     [DataMember(Order = 1)]
-    [JsonPropertyOrder(1)]
     [JsonPropertyName("id")]
+    [JsonPropertyOrder(1)]
     public string Id { get; set; }
 
     [DataMember(Order = 2)]
-    [JsonPropertyOrder(2)]
-    [JsonPropertyName("link")]
-    public string Link { get; set; }
-
-    [DataMember(Order = 3)]
-    [JsonPropertyOrder(3)]
     [JsonPropertyName("displayName")]
+    [JsonPropertyOrder(2)]
     public string DisplayName { get; set; }
 
+    [DataMember(Order = 3)]
+    [JsonPropertyName("link")]
+    [JsonPropertyOrder(3)]
+    public string Link { get; set; }
+
     [DataMember(Order = 4)]
+    [JsonPropertyName("description")]
     [JsonPropertyOrder(4)]
-    [JsonPropertyName("lastUpdatedAt")]
-    public DateTime LastUpdatedAt { get; set; }
+    public string Description { get; set; }
 
     [DataMember(Order = 5)]
+    [JsonPropertyName("lastUpdatedAt")]
     [JsonPropertyOrder(5)]
-    [JsonPropertyName("description")]
-    public string Description { get; set; }
+    public DateTime LastUpdatedAt { get; set; }
 }

@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Laobian.Admin.Models;
-using Laobian.Share;
 using Laobian.Share.Extension;
 using Laobian.Share.Grpc;
 using Laobian.Share.Grpc.Request;
 using Laobian.Share.Grpc.Service;
-using Laobian.Share.Site.Blog;
+using Laobian.Share.Model.Blog;
 using Laobian.Share.Util;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -76,7 +75,7 @@ public class BlogController : Controller
                 };
                 foreach (var item in items)
                 {
-                    chartResponse.Data.Add(item.Sum(x => x.WordsCount));
+                    chartResponse.Data.Add(item.Sum(x => x.Raw.MdContent.Length));
                     chartResponse.Labels.Add(item.Key.ToString());
                 }
 
@@ -156,7 +155,7 @@ public class BlogController : Controller
                     Type = "line"
                 };
 
-                for (var i = 14; i >=0; i--)
+                for (var i = 14; i >= 0; i--)
                 {
                     var date = DateTime.Now.Date.AddDays(-i);
                     blogResponse.PostRuntime.Accesses ??= new List<BlogAccess>();
@@ -311,7 +310,7 @@ public class BlogController : Controller
             post.IsPublished = Request.Form["isPublished"] == "on";
             post.IsTopping = Request.Form["isTopping"] == "on";
             _blogGrpcRequest.Post = post;
-            _blogGrpcRequest.ReplacedPostLink = postLink;
+            _blogGrpcRequest.OriginalPostLink = postLink;
             var blogResponse = await _blogGrpcService.UpdatePostAsync(_blogGrpcRequest);
             if (blogResponse.IsOk)
             {

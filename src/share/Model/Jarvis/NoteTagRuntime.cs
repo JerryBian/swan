@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 
-namespace Laobian.Share.Site.Jarvis;
+namespace Laobian.Share.Model.Jarvis;
 
 [DataContract]
 public class NoteTagRuntime

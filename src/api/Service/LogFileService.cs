@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Laobian.Api.Repository;
 using Laobian.Share.Extension;
 using Laobian.Share.Logger;
-using Laobian.Share.Site;
+using Laobian.Share.Model;
 using Laobian.Share.Util;
 
 namespace Laobian.Api.Service;
