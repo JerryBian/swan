@@ -58,12 +58,12 @@ public class PageTagHelper : TagHelper
         return item == 1 ? Url : $"{Url}?{QueryName}={item}";
     }
 
-    private string GetActiveItem(object item)
+    private static string GetActiveItem(object item)
     {
         return $"<li class='page-item active'><span class='page-link'>{item}</span></li>";
     }
 
-    private string GetLinkItem(object item, string url)
+    private static string GetLinkItem(object item, string url)
     {
         return $"<li class='page-item'><a class='page-link' href='{url}'>{item}</a></li>";
     }

@@ -32,7 +32,7 @@ public abstract class SharedStartup
 
     public LaobianSite Site { get; set; }
 
-    protected IAsyncPolicy<HttpResponseMessage> GetHttpClientRetryPolicy()
+    protected static IAsyncPolicy<HttpResponseMessage> GetHttpClientRetryPolicy()
     {
         return Policy<HttpResponseMessage>.Handle<HttpRequestException>()
             .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2,

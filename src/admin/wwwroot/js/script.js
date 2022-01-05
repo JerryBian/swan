@@ -2,24 +2,6 @@
     document.querySelector(id).classList.add("active");
 }
 
-function toggleContainers(c1, c2) {
-    if (c1.classList.contains("visible")) {
-        c1.classList.remove("visible");
-        c1.classList.add("invisible");
-    } else if (c1.classList.contains("invisible")) {
-        c1.classList.remove("invisible");
-        c1.classList.add("visible");
-    }
-
-    if (c2.classList.contains("visible")) {
-        c2.classList.remove("visible");
-        c2.classList.add("invisible");
-    } else if (c2.classList.contains("invisible")) {
-        c2.classList.remove("invisible");
-        c2.classList.add("visible");
-    }
-}
-
 function makeid(length) {
     var result = '';
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';

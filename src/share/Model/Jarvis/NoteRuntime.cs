@@ -101,7 +101,7 @@ public class NoteRuntime
         };
     }
 
-    private void SetImageNodes(HtmlDocument htmlDoc)
+    private static void SetImageNodes(HtmlDocument htmlDoc)
     {
         var imageNodes = htmlDoc.DocumentNode.Descendants("img").ToList();
         foreach (var imageNode in imageNodes)

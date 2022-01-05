@@ -8,7 +8,7 @@
         {
             ApplicationTitleColor = "#da532c",
             Description = ViewData["Description"]?.ToString(),
-            RobotsEnabled = bool.TryParse(ViewData["RobotsEnabled"]?.ToString(), out var result) ? result : _env.IsProduction(),
+            RobotsEnabled = bool.TryParse(ViewData["RobotsEnabled"]?.ToString(), out var result) ? result : _env.IsProduction() && Context.User.Identity?.IsAuthenticated != true,
             SafariPinnedTabColor = "#5bbad5",
             ThemeColor = "#ffffff",
             Title = ViewData["Title"]?.ToString(),
@@ -115,16 +115,20 @@
         asp-fallback-test="window.fallbackTest"
         asp-append-version="true"></script>
 @await RenderSectionAsync("Script", false)
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-97849167-1"></script>
-<script>
-    window.dataLayer = window.dataLayer || [];
+@if (Context.User.Identity?.IsAuthenticated == true)
+{
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-97849167-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
 
-    function gtag() { dataLayer.push(arguments); }
+        function gtag() { dataLayer.push(arguments); }
 
-    gtag('js', new Date());
+        gtag('js', new Date());
 
-    gtag('config', 'UA-97849167-1');
-</script>
+        gtag('config', 'UA-97849167-1');
+    </script>
+}
+
 <!--@DateTime.Now.ToDateAndTime()-->
 </body>
 </html>

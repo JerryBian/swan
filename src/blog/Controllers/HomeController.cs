@@ -13,7 +13,6 @@ using Laobian.Share.Extension;
 using Laobian.Share.Misc;
 using Laobian.Share.Model.Blog;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Laobian.Blog.Controllers;
@@ -23,15 +22,12 @@ public class HomeController : Controller
     private readonly BlogOptions _blogOptions;
     private readonly IBlogService _blogService;
     private readonly ICacheClient _cacheClient;
-    private readonly ILogger<HomeController> _logger;
 
     public HomeController(
         IBlogService blogService,
         IOptions<BlogOptions> config,
-        ILogger<HomeController> logger,
         ICacheClient cacheClient)
     {
-        _logger = logger;
         _cacheClient = cacheClient;
         _blogService = blogService;
         _blogOptions = config.Value;
@@ -131,10 +127,11 @@ public class HomeController : Controller
         {
             var feed = new SyndicationFeed(Constants.BlogTitle, Constants.BlogDescription,
                 new Uri($"{_blogOptions.BlogRemoteEndpoint}/rss"),
-                Constants.ApplicationName, DateTimeOffset.UtcNow);
-            feed.Copyright =
-                new TextSyndicationContent(
-                    $"&#x26;amp;#169; {DateTime.Now.Year} {_blogOptions.AdminChineseName}");
+                Constants.ApplicationName, DateTimeOffset.UtcNow)
+            {
+                Copyright = new TextSyndicationContent(
+                    $"&#x26;amp;#169; {DateTime.Now.Year} {_blogOptions.AdminChineseName}")
+            };
             feed.Authors.Add(new SyndicationPerson(_blogOptions.AdminEmail,
                 _blogOptions.AdminChineseName,
                 _blogOptions.BlogRemoteEndpoint));
@@ -159,17 +156,15 @@ public class HomeController : Controller
                 Indent = true
             };
 
-            using (var ms = new MemoryStream())
+            using var ms = new MemoryStream();
+            using (var xmlWriter = XmlWriter.Create(ms, settings))
             {
-                using (var xmlWriter = XmlWriter.Create(ms, settings))
-                {
-                    var rssFormatter = new Rss20FeedFormatter(feed, false);
-                    rssFormatter.WriteTo(xmlWriter);
-                    xmlWriter.Flush();
-                }
-
-                return Encoding.UTF8.GetString(ms.ToArray());
+                var rssFormatter = new Rss20FeedFormatter(feed, false);
+                rssFormatter.WriteTo(xmlWriter);
+                xmlWriter.Flush();
             }
+
+            return Encoding.UTF8.GetString(ms.ToArray());
         });
 
         return Content(rss, "application/rss+xml", Encoding.UTF8);

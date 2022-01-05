@@ -65,7 +65,7 @@ public class Startup : SharedStartup
             config.SetMinimumLevel(LogLevel.Debug);
             config.AddDebug();
             config.AddConsole();
-            config.AddGitFile(c => { c.LoggerName = "api"; });
+            config.AddGitFile(c => { c.LoggerName = LaobianSite.Api.ToString(); });
         });
 
         var httpRequestToken = Configuration.GetValue<string>(Constants.EnvHttpRequestToken);

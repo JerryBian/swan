@@ -37,9 +37,6 @@ public class SharedOptions
 
     [OptionEnvName("SEND_GRID_API_KEY")] public string SendGridApiKey { get; set; }
 
-    [OptionEnvName(Constants.EnvHttpRequestToken)]
-    public string HttpRequestToken { get; set; }
-
     public string AppVersion
     {
         get

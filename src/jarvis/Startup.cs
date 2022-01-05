@@ -1,7 +1,5 @@
-using System;
 using System.Text.Encodings.Web;
 using Laobian.Jarvis.HostedServices;
-using Laobian.Jarvis.HttpClients;
 using Laobian.Jarvis.Middleware;
 using Laobian.Share;
 using Laobian.Share.Converter;
@@ -33,10 +31,6 @@ public class Startup : SharedStartup
         base.ConfigureServices(services);
         services.Configure<JarvisOptions>(o => { o.FetchFromEnv(Configuration); });
 
-        services.AddHttpClient<ApiSiteHttpClient>(SetHttpClient)
-            .SetHandlerLifetime(TimeSpan.FromDays(1))
-            .AddPolicyHandler(GetHttpClientRetryPolicy());
-
         services.AddHostedService<RemoteLogHostedService>();
 
         services.AddLogging(config =>
@@ -44,7 +38,7 @@ public class Startup : SharedStartup
             config.SetMinimumLevel(LogLevel.Debug);
             config.AddDebug();
             config.AddConsole();
-            config.AddRemote(c => { c.LoggerName = "jarvis"; });
+            config.AddRemote(c => { c.LoggerName = LaobianSite.Jarvis.ToString(); });
         });
 
         var httpRequestToken = Configuration.GetValue<string>(Constants.EnvHttpRequestToken);
@@ -67,8 +61,13 @@ public class Startup : SharedStartup
         Configure(app, appLifetime, config);
 
         app.UseStatusCodePages();
-        var fileContentTypeProvider = new FileExtensionContentTypeProvider();
-        fileContentTypeProvider.Mappings[".webmanifest"] = "application/manifest+json";
+        var fileContentTypeProvider = new FileExtensionContentTypeProvider
+        {
+            Mappings =
+            {
+                [".webmanifest"] = "application/manifest+json"
+            }
+        };
         app.UseStaticFiles(new StaticFileOptions {ContentTypeProvider = fileContentTypeProvider});
 
         app.UseRouting();

@@ -48,7 +48,7 @@ public class Startup : SharedStartup
             config.SetMinimumLevel(LogLevel.Debug);
             config.AddDebug();
             config.AddConsole();
-            config.AddRemote(c => { c.LoggerName = "blog"; });
+            config.AddRemote(c => { c.LoggerName = LaobianSite.Blog.ToString(); });
         });
 
         var httpRequestToken = Configuration.GetValue<string>(Constants.EnvHttpRequestToken);
@@ -77,13 +77,18 @@ public class Startup : SharedStartup
 
         app.UseStatusCodePages();
 
-        var fileContentTypeProvider = new FileExtensionContentTypeProvider();
-        fileContentTypeProvider.Mappings[".webmanifest"] = "application/manifest+json";
+        var fileContentTypeProvider = new FileExtensionContentTypeProvider
+        {
+            Mappings =
+            {
+                [".webmanifest"] = "application/manifest+json"
+            }
+        };
         app.UseStaticFiles(new StaticFileOptions {ContentTypeProvider = fileContentTypeProvider});
 
         if (env.IsDevelopment())
         {
-            var dir = Path.Combine(config.AssetLocation, Constants.AssetDbFileFolder);
+            var dir = Path.Combine(config.AssetLocation, Constants.AssetDbFolder, Constants.AssetDbFileFolder);
             Directory.CreateDirectory(dir);
             app.UseStaticFiles(new StaticFileOptions
             {

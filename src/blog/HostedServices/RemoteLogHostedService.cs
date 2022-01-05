@@ -17,7 +17,6 @@ public class RemoteLogHostedService : BackgroundService
 {
     private readonly ILogGrpcService _logGrpcService;
     private readonly ILaobianLogQueue _logQueue;
-    private readonly IOptions<BlogOptions> _options;
 
     public RemoteLogHostedService(ILaobianLogQueue logQueue, IOptions<BlogOptions> options)
     {
