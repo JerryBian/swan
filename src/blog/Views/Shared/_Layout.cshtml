@@ -115,7 +115,7 @@
         asp-fallback-test="window.fallbackTest"
         asp-append-version="true"></script>
 @await RenderSectionAsync("Script", false)
-@if (Context.User.Identity?.IsAuthenticated == true)
+@if (Context.User.Identity?.IsAuthenticated != true)
 {
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-97849167-1"></script>
     <script>
