@@ -92,7 +92,7 @@ public class HomeController : Controller
                 foreach (var tag in _blogService.GetAllTags())
                 {
                     var count = posts.Count(x =>
-                        x.Raw.Tag.Contains(tag.Link, StringComparer.InvariantCultureIgnoreCase));
+                        x.Raw.Tag.Contains(tag.Id, StringComparer.InvariantCultureIgnoreCase));
                     topTags.Add(tag, count);
                 }
 
@@ -100,7 +100,7 @@ public class HomeController : Controller
                 var model = new AboutViewModel
                 {
                     LatestPostRuntime = posts.FirstOrDefault(),
-                    PostTotalAccessCount = posts.Sum(p => p.GetAccessCount()).ToHuman(),
+                    PostTotalAccessCount = posts.Sum(p => p.GetAccessCount()).ToThousandHuman(),
                     PostTotalCount = posts.Count.ToString(),
                     TopPosts = posts.OrderByDescending(p => p.GetAccessCount()).Take(postsPerPage),
                     SystemAppVersion = _blogOptions.AppVersion,
