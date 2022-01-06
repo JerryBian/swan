@@ -1,12 +1,17 @@
 ![master](https://github.com/JerryBian/laobian.me/workflows/master/badge.svg)
 
-Source of personal websites, see https://laobian.me
+Source code of building my peronal blog website: https://blog.laobian.me
+
+
+### Docker image
+
+The prebuilt docker image can be found either on [Docker Hub](https://hub.docker.com/r/cnbian/laobian-blog) or [GitHub Package](https://github.com/JerryBian/laobian.me/pkgs/container/laobian-blog). To quickly startup the applications, pass variables to [docker-compose.yml](./docker-compose.yml).
 
 ### Build from source
 
-#### Install tools:
+#### Required tools:
 - [Microsoft Visual Studio](https://visualstudio.microsoft.com/)
-- [.NET 5](https://dotnet.microsoft.com/)
+- [.NET 6](https://dotnet.microsoft.com/)
 - [Powershell](https://github.com/PowerShell/PowerShell)
 - [Node.js](https://nodejs.org/en/)
 
@@ -15,8 +20,6 @@ Source of personal websites, see https://laobian.me
 1. Run `npm install`
 2. Run `script/setup-dev-secrets.ps1`
 
-The default asset is located at `sample` folder.
-
 ### License
 
-Powered by .NET Core, license under [MIT](./LICENSE).
+Powered by .NET technology, licensed under [MIT](./LICENSE).
