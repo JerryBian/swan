@@ -4805,7 +4805,7 @@ textarea.form-control-lg {
   z-index: 1;
   color: #444;
   text-decoration: none;
-  background-color: #2e283e;
+  background-color: white;
 }
 .list-group-item-action:active {
   color: #444;
@@ -4816,21 +4816,21 @@ textarea.form-control-lg {
   position: relative;
   display: block;
   padding: 0.5rem 1rem;
-  color: #17141f;
+  color: #212529;
   text-decoration: none;
-  background-color: #17141f;
-  border: 1px solid transparent;
+  background-color: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.125);
 }
 .list-group-item.disabled, .list-group-item:disabled {
-  color: #5c507c;
+  color: white;
   pointer-events: none;
-  background-color: #17141f;
+  background-color: #fff;
 }
 .list-group-item.active {
   z-index: 2;
   color: #fff;
-  background-color: #17141f;
-  border-color: #17141f;
+  background-color: #fff;
+  border-color: #fff;
 }
 .list-group-item + .list-group-item {
   border-top-width: 0;
@@ -10924,10 +10924,10 @@ textarea.form-control-lg {
   font-weight: 700;
 }
 .list-group-item.active:hover {
-  background-color: #2e283e;
+  background-color: white;
 }
 .list-group-item.disabled:hover {
-  color: #5c507c;
+  color: white;
 }
 
 .editor-preview img {
@@ -10936,6 +10936,10 @@ textarea.form-control-lg {
 
 list-group-item {
   color: black;
+}
+
+.card-body {
+  padding: 0.5rem;
 }
 
 a {

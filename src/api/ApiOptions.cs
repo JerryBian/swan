@@ -19,4 +19,6 @@ public class ApiOptions : SharedOptions
 
     [OptionEnvName("GITHUB_DB_REPO_BRANCH_NAME")]
     public string GitHubDbRepoBranchName { get; set; }
+
+    [OptionEnvName("SKIP_GIT_OPERATIONS")] public string SkipGitOperations { get; set; }
 }

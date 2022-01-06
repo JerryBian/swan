@@ -81,7 +81,7 @@
                     {
                         var id = Guid.NewGuid().ToString("N");
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" id="@id" value="@tag.Id" name="tag" checked="@Model.Post.Tag.Contains(tag.Link)">
+                            <input class="form-check-input" type="checkbox" id="@id" value="@tag.Id" name="tag" checked="@Model.Post.Tag.Contains(tag.Id)">
                             <label class="form-check-label" for="@id">@tag.DisplayName</label>
                         </div>
                     }
@@ -105,7 +105,7 @@
             function(event) {
                 event.preventDefault();
                 event.stopPropagation();
-                submitRequest("/blog/posts/@Model.Post.Link", { form: form, body: new URLSearchParams(new FormData(form)), contentType: "application/x-www-form-urlencoded", method: "PUT" });
+                submitRequest("/blog/post/@Model.Post.Link", { form: form, body: new URLSearchParams(new FormData(form)), contentType: "application/x-www-form-urlencoded", method: "PUT" });
             });
     </script>
 }

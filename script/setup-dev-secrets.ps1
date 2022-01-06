@@ -5,6 +5,7 @@ $API_LOCAL_ENDPOINT = "http://localhost:5011"
 $FILE_REMOTE_ENDPOINT = "http://localhost:5013"
 $ADMIN_REMOTE_ENDPOINT = "http://localhost:5012"
 $JARVIS_REMOTE_ENDPOINT = "http://localhost:5014"
+$JARVIS_LOCAL_ENDPOINT = "http://localhost:5014"
 $ADMIN_USER_NAME = "test"
 $ADMIN_EMAIL = "JerryBian@outlook.com"
 $ASSET_LOCATION = "../../sample"
@@ -12,6 +13,7 @@ $ADMIN_CHINESE_NAME = "周杰伦"
 $ADMIN_ENGLISH_NAME = "Jerry Bian"
 $DATA_PROTECTION_KEY_PATH = "../../sample/data_protection"
 $HTTP_REQUEST_TOKEN = "token_dev"
+$SKIP_GIT_OPERATIONS = "True"
 
 ##################
 ##              ##
@@ -53,9 +55,8 @@ dotnet user-secrets set "DATA_PROTECTION_KEY_PATH" "$DATA_PROTECTION_KEY_PATH" -
 dotnet user-secrets set "HTTP_REQUEST_TOKEN" "$HTTP_REQUEST_TOKEN" --project $API_PROJECT
 dotnet user-secrets set "ADMIN_REMOTE_ENDPOINT" "$ADMIN_REMOTE_ENDPOINT" --project $API_PROJECT
 dotnet user-secrets set "JARVIS_REMOTE_ENDPOINT" "$JARVIS_REMOTE_ENDPOINT" --project $API_PROJECT
-
-$SOURCE = "Local"
-dotnet user-secrets set "SOURCE" "$SOURCE" --project $API_PROJECT
+dotnet user-secrets set "SKIP_GIT_OPERATIONS" "$SKIP_GIT_OPERATIONS" --project $API_PROJECT
+dotnet user-secrets set "JARVIS_LOCAL_ENDPOINT" "$JARVIS_LOCAL_ENDPOINT" --project $API_PROJECT
 
 ##################
 ##              ##

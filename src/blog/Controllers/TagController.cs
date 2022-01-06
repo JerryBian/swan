@@ -37,7 +37,7 @@ public class TagController : Controller
 
                 foreach (var blogTag in _blogService.GetAllTags())
                 {
-                    var tagPosts = posts.Where(x => x.Raw.Tag.Contains(blogTag.Link)).ToList();
+                    var tagPosts = posts.Where(x => x.Raw.Tag.Contains(blogTag.Id)).ToList();
                     if (tagPosts.Any())
                     {
                         var archiveViewModel = new PostArchiveViewModel
@@ -57,6 +57,7 @@ public class TagController : Controller
 
         ViewData["Title"] = "标签";
         ViewData["Image"] = $"{_blogOptions.BlogRemoteEndpoint}/archive.png";
+        ViewData["Description"] = "所有标签的存档。";
         return View(viewModel);
     }
 }

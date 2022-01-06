@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Laobian.Blog.Service;
+using Laobian.Share.Misc;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -36,5 +37,11 @@ public class ApiController : ControllerBase
         _logger.LogInformation("Request to shutdown blog site.");
         _appLifetime.StopApplication();
         return Ok();
+    }
+
+    [HttpPost("stat")]
+    public SiteStat GetSiteStat()
+    {
+        return SiteStatHelper.Get();
     }
 }

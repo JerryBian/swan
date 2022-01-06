@@ -1,8 +1,5 @@
-﻿using System.Diagnostics;
-using System.Net;
-using System.Text;
+﻿using System.Net;
 using System.Threading.Tasks;
-using ByteSizeLib;
 using Laobian.Share.Extension;
 using Laobian.Share.Util;
 using Microsoft.Extensions.Logging;
@@ -66,14 +63,8 @@ public class SendGridEmailNotify : IEmailNotify
 
     private string GetHtmlContent(NotifyMessage message)
     {
-        using var process = Process.GetCurrentProcess();
-        var info = new StringBuilder();
-        info.AppendLine(message.Content);
-        info.AppendLine($"<p>Timestamp: {message.Timestamp.ToChinaDateAndTime()}</p>");
-        info.AppendLine($"<p>Memory: {ByteSize.FromBytes(process.PrivateMemorySize64).ToString("#.## MB")}</p>");
-        info.AppendLine($"<p>CPU time: {process.TotalProcessorTime.ToHuman()}</p>");
-
-        var footer = $"<div style='margin-top:1rem;font-size:smaller;color:grey;line-height: 0.9;'>{info}</div>";
-        return footer;
+        var footer =
+            $"<div style='margin-top:1rem;font-size:smaller;color:grey;line-height: 0.9;'>{message.Timestamp.ToChinaDateAndTime()}</div>";
+        return $"<p>{message.Content}</p>{footer}";
     }
 }

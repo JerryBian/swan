@@ -1,33 +1,35 @@
-﻿@model BlogTag
+﻿@model Laobian.Share.Model.Blog.BlogTag
 @{
     Layout = "_BlogLayout";
     ViewData["Title"] = "编辑标签";
 }
-<h3>编辑标签</h3>
-<form class="needs-validation" action="/blog/tag/update" method="post" novalidate>
-    <div class="mb-3">
-        <label for="displayName" class="form-label">显示名称</label>
-        <input type="text" class="form-control" id="displayName" name="displayName" placeholder="标签显示名称" autocomplete="off" value="@Model.DisplayName" autofocus required>
-        <div class="invalid-feedback">
-            必填
+<fieldset>
+    <legend>编辑标签</legend>
+    <form class="needs-validation" novalidate>
+        <div class="mb-3">
+            <label for="displayName" class="form-label">显示名称</label>
+            <input type="text" class="form-control" id="displayName" name="displayName" placeholder="标签显示名称" autocomplete="off" value="@Model.DisplayName" autofocus required>
+            <div class="invalid-feedback">
+                必填
+            </div>
         </div>
-    </div>
-    <div class="mb-3">
-        <label for="link" class="form-label">标签链接</label>
-        <input type="text" class="form-control" id="link" name="link" placeholder="标签链接" value="@Model.Link" autocomplete="off" required>
-        <div class="invalid-feedback">
-            必填
+        <div class="mb-3">
+            <label for="link" class="form-label">标签链接</label>
+            <input type="text" class="form-control" id="link" name="link" placeholder="标签链接" value="@Model.Link" autocomplete="off" required>
+            <div class="invalid-feedback">
+                必填
+            </div>
         </div>
-    </div>
-    <div class="mb-3">
-        <label for="description" class="form-label">标签描述</label>
-        <textarea class="form-control" id="description" name="description" rows="3" placeholder="标签描述" autocomplete="off">@Model.Description</textarea>
-    </div>
-    <div class="d-grid">
-        <button type="submit" class="btn btn-primary btn-lg">提交</button>
-    </div>
-    <input type="hidden" name="id" value="@Model.Id"/>
-</form>
+        <div class="mb-3">
+            <label for="description" class="form-label">标签描述</label>
+            <textarea class="form-control" id="description" name="description" rows="3" placeholder="标签描述" autocomplete="off">@Model.Description</textarea>
+        </div>
+        <div class="d-grid">
+            <button type="submit" class="btn btn-primary btn-lg">提交</button>
+        </div>
+        <input type="hidden" name="id" value="@Model.Id"/>
+    </form>
+</fieldset>
 
 @section Scripts {
     <script>
@@ -37,7 +39,7 @@
             function(event) {
                 event.preventDefault();
                 event.stopPropagation();
-                submitRequest("/blog/tags/@Model.Id", { form: form, body: new URLSearchParams(new FormData(form)), contentType: "application/x-www-form-urlencoded", method: "PUT" });
+                submitRequest("/blog/tag/@Model.Id", { form: form, body: new URLSearchParams(new FormData(form)), contentType: "application/x-www-form-urlencoded", method: "PUT" });
             });
     </script>
 }

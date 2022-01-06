@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using Laobian.Api.Repository;
+using Laobian.Api.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -12,13 +12,13 @@ namespace Laobian.Api.Controllers;
 [ApiController]
 public class HomeController : ControllerBase
 {
-    private readonly IFileRepository _fileRepository;
+    private readonly IGitFileService _gitFileService;
     private readonly ILogger<HomeController> _logger;
 
-    public HomeController(IFileRepository fileRepository, ILogger<HomeController> logger)
+    public HomeController(IGitFileService gitFileService, ILogger<HomeController> logger)
     {
         _logger = logger;
-        _fileRepository = fileRepository;
+        _gitFileService = gitFileService;
     }
 
     [Route("/error")]
@@ -37,7 +37,7 @@ public class HomeController : ControllerBase
         {
             using var sr = new StreamReader(Request.Body, Encoding.UTF8);
             var message = await sr.ReadToEndAsync();
-            await _fileRepository.SaveAsync(message);
+            await _gitFileService.PushAsync(message);
             return Ok();
         }
         catch (Exception ex)

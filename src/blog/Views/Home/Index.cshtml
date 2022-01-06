@@ -1,4 +1,4 @@
-﻿@model PagedPostViewModel
+﻿@model PagedViewModel<PostViewModel>
 @inject IOptions<BlogOptions> _option
 @{
     ViewData["Description"] = Constants.BlogDescription;
@@ -6,12 +6,12 @@
 
 <section>
     <div class="list-group list-group-flush">
-        @foreach (var post in Model.Posts)
+        @foreach (var post in Model.Items)
         {
             <div class="list-group-item p-0 mb-4 pb-3">
                 <div class="text-muted small">@Html.Raw(post.MetadataHtml)</div>
                 <h2 class="mb-3">
-                    <a href="@post.Current.Raw.GetFullPath(_option.Value.BlogRemoteEndpoint)" class="text-decoration-none">
+                    <a href="@post.Current.Raw.GetFullPath(_option.Value.BlogRemoteEndpoint)" class="text-decoration-none" title="阅读全文：@post.Current.Raw.Title">
                         @post.Current.Raw.Title
 
                     </a>
@@ -44,6 +44,3 @@
 </section>
 
 <page total-pages="@Model.TotalPages" current-page="@Model.CurrentPage" url="@Model.Url"></page>
-
-@section Aside {
-}

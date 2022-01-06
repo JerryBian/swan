@@ -22,6 +22,9 @@ public class SharedOptions
     [OptionEnvName("JARVIS_REMOTE_ENDPOINT")]
     public string JarvisRemoteEndpoint { get; set; }
 
+    [OptionEnvName("JARVIS_LOCAL_ENDPOINT")]
+    public string JarvisLocalEndpoint { get; set; }
+
     [OptionEnvName("ADMIN_USER_NAME")] public string AdminUserName { get; set; }
 
     [OptionEnvName("ADMIN_EMAIL")] public string AdminEmail { get; set; }
@@ -33,9 +36,6 @@ public class SharedOptions
     [OptionEnvName("ASSET_LOCATION")] public string AssetLocation { get; set; }
 
     [OptionEnvName("SEND_GRID_API_KEY")] public string SendGridApiKey { get; set; }
-
-    [OptionEnvName(Constants.EnvHttpRequestToken)]
-    public string HttpRequestToken { get; set; }
 
     public string AppVersion
     {

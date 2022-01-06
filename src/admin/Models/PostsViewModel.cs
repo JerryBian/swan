@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Laobian.Share.Site.Blog;
+using Laobian.Share.Model.Blog;
 
 namespace Laobian.Admin.Models;
 

@@ -1,0 +1,36 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-2 mb-3">
+            <nav class="navbar navbar-light bg-light">
+                <div class="container-fluid">
+                    <ul class="navbar-nav">
+                        <li class="navbar-text">笔记管理</li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/note" id="nav_note_index"><i class="fas fa-angle-right"></i> 首页</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="javascript:;" id="nav_note_post"><i class="fas fa-angle-right"></i> 文章</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/note/tag" id="nav_note_tag"><i class="fas fa-angle-right"></i> 标签</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+        <div class="col-lg-10">@RenderBody()</div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        activeNavItem("#nav_note");
+    </script>
+
+    @await RenderSectionAsync("Scripts", false)
+}

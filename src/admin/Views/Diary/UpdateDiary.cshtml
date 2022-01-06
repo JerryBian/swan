@@ -1,25 +1,34 @@
-﻿@model DiaryRuntime
+﻿@model Laobian.Share.Model.Jarvis.Diary
 @{
     ViewData["Title"] = "编辑日记";
 }
-<h3>编辑日记</h3>
-<form class="needs-validation" action="/diary/update" method="post" novalidate>
-    <div class="mb-3">
-        <label for="date" class="form-label">日记时间</label>
-        <input type="date" class="form-control" id="date" name="date" autocomplete="off" readonly value="@Model.Raw.GetDateString()">
-    </div>
-    <div class="mb-3">
-        <label for="markdownContent" class="form-label">日记内容</label>
-        <textarea class="form-control" id="markdownContent" name="markdownContent" rows="3" placeholder="日记内容" autocomplete="off">@Model.Raw.MarkdownContent</textarea>
-    </div>
-    <div class="d-grid">
-        <button type="submit" class="btn btn-primary btn-lg">提交</button>
-    </div>
 
-</form>
+<fieldset>
+    <legend>编辑日记</legend>
+    <form class="needs-validation" novalidate>
+        <div class="mb-3">
+            <label for="date" class="form-label">日记时间</label>
+            <input type="date" class="form-control" id="date" name="date" autocomplete="off" readonly value="@Model.GetDateString()">
+        </div>
+        <div class="mb-3">
+            <label for="markdownContent" class="form-label">日记内容</label>
+            <textarea class="form-control" id="markdownContent" name="markdownContent" rows="3" placeholder="日记内容" autocomplete="off">@Model.MarkdownContent</textarea>
+        </div>
+        <div class="d-grid">
+            <button type="submit" class="btn btn-primary btn-lg">提交</button>
+        </div>
+    </form>
+</fieldset>
 
 @section Scripts {
     <script>
-        const markdownContent = prepareEditor(document.querySelector("#markdownContent"), "diary_update_@Model.Raw.GetDateString()");
+        const markdownContent = prepareEditor(document.querySelector("#markdownContent"), "diary_update_@Model.GetDateString()");
+        const form = document.querySelector("form");
+        form.addEventListener('submit',
+            function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                submitRequest("/diary/update", { form: form, body: new URLSearchParams(new FormData(form)), contentType: "application/x-www-form-urlencoded", method: "PUT" });
+            });
     </script>
 }

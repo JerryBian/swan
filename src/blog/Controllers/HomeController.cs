@@ -10,9 +10,9 @@ using Laobian.Blog.Models;
 using Laobian.Blog.Service;
 using Laobian.Share;
 using Laobian.Share.Extension;
-using Laobian.Share.Site.Blog;
+using Laobian.Share.Misc;
+using Laobian.Share.Model.Blog;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Laobian.Blog.Controllers;
@@ -22,15 +22,12 @@ public class HomeController : Controller
     private readonly BlogOptions _blogOptions;
     private readonly IBlogService _blogService;
     private readonly ICacheClient _cacheClient;
-    private readonly ILogger<HomeController> _logger;
 
     public HomeController(
         IBlogService blogService,
         IOptions<BlogOptions> config,
-        ILogger<HomeController> logger,
         ICacheClient cacheClient)
     {
-        _logger = logger;
         _cacheClient = cacheClient;
         _blogService = blogService;
         _blogOptions = config.Value;
@@ -56,19 +53,24 @@ public class HomeController : Controller
                 posts.InsertRange(0, toppedPosts);
 
                 var postsPerPage = Convert.ToInt32(_blogOptions.PostsPerPage);
-                var model = new PagedPostViewModel(page, posts.Count, postsPerPage) {Url = Request.Path};
+                var model = new PagedViewModel<PostViewModel>(page, posts.Count, postsPerPage) {Url = Request.Path};
 
                 foreach (var blogPost in posts.Chunk(postsPerPage).ElementAtOrDefault(model.CurrentPage - 1) ??
                                          Enumerable.Empty<BlogPostRuntime>())
                 {
                     var postViewModel = new PostViewModel {Current = blogPost};
                     postViewModel.SetAdditionalInfo();
-                    model.Posts.Add(postViewModel);
+                    model.Items.Add(postViewModel);
                 }
 
                 return model;
             });
 
+        if (viewModel.CurrentPage > 1)
+        {
+            ViewData["RobotsEnabled"] = false;
+            ViewData["Title"] = $"首页：第{viewModel.CurrentPage}页";
+        }
 
         return View(viewModel);
     }
@@ -90,7 +92,7 @@ public class HomeController : Controller
                 foreach (var tag in _blogService.GetAllTags())
                 {
                     var count = posts.Count(x =>
-                        x.Raw.Tag.Contains(tag.Link, StringComparer.InvariantCultureIgnoreCase));
+                        x.Raw.Tag.Contains(tag.Id, StringComparer.InvariantCultureIgnoreCase));
                     topTags.Add(tag, count);
                 }
 
@@ -98,7 +100,7 @@ public class HomeController : Controller
                 var model = new AboutViewModel
                 {
                     LatestPostRuntime = posts.FirstOrDefault(),
-                    PostTotalAccessCount = posts.Sum(p => p.GetAccessCount()).ToHuman(),
+                    PostTotalAccessCount = posts.Sum(p => p.GetAccessCount()).ToThousandHuman(),
                     PostTotalCount = posts.Count.ToString(),
                     TopPosts = posts.OrderByDescending(p => p.GetAccessCount()).Take(postsPerPage),
                     SystemAppVersion = _blogOptions.AppVersion,
@@ -125,10 +127,11 @@ public class HomeController : Controller
         {
             var feed = new SyndicationFeed(Constants.BlogTitle, Constants.BlogDescription,
                 new Uri($"{_blogOptions.BlogRemoteEndpoint}/rss"),
-                Constants.ApplicationName, DateTimeOffset.UtcNow);
-            feed.Copyright =
-                new TextSyndicationContent(
-                    $"&#x26;amp;#169; {DateTime.Now.Year} {_blogOptions.AdminChineseName}");
+                Constants.ApplicationName, DateTimeOffset.UtcNow)
+            {
+                Copyright = new TextSyndicationContent(
+                    $"&#x26;amp;#169; {DateTime.Now.Year} {_blogOptions.AdminChineseName}")
+            };
             feed.Authors.Add(new SyndicationPerson(_blogOptions.AdminEmail,
                 _blogOptions.AdminChineseName,
                 _blogOptions.BlogRemoteEndpoint));
@@ -153,17 +156,15 @@ public class HomeController : Controller
                 Indent = true
             };
 
-            using (var ms = new MemoryStream())
+            using var ms = new MemoryStream();
+            using (var xmlWriter = XmlWriter.Create(ms, settings))
             {
-                using (var xmlWriter = XmlWriter.Create(ms, settings))
-                {
-                    var rssFormatter = new Rss20FeedFormatter(feed, false);
-                    rssFormatter.WriteTo(xmlWriter);
-                    xmlWriter.Flush();
-                }
-
-                return Encoding.UTF8.GetString(ms.ToArray());
+                var rssFormatter = new Rss20FeedFormatter(feed, false);
+                rssFormatter.WriteTo(xmlWriter);
+                xmlWriter.Flush();
             }
+
+            return Encoding.UTF8.GetString(ms.ToArray());
         });
 
         return Content(rss, "application/rss+xml", Encoding.UTF8);

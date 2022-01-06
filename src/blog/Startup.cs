@@ -2,14 +2,14 @@ using System;
 using System.IO;
 using System.Text.Encodings.Web;
 using Laobian.Blog.Cache;
-using Laobian.Blog.HostedService;
-using Laobian.Blog.HttpClients;
+using Laobian.Blog.HostedServices;
 using Laobian.Blog.Service;
 using Laobian.Share;
 using Laobian.Share.Converter;
 using Laobian.Share.Filters;
 using Laobian.Share.Logger.Remote;
-using Laobian.Share.Site;
+using Laobian.Share.Misc;
+using Laobian.Share.Model;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -39,11 +39,6 @@ public class Startup : SharedStartup
         services.AddSingleton<ICacheClient, CacheClient>();
         services.AddSingleton<IBlogService, BlogService>();
 
-
-        services.AddHttpClient<ApiSiteHttpClient>(SetHttpClient)
-            .SetHandlerLifetime(TimeSpan.FromDays(1))
-            .AddPolicyHandler(GetHttpClientRetryPolicy());
-
         services.AddHostedService<RemoteLogHostedService>();
         services.AddHostedService<BlogHostedService>();
         services.AddHostedService<PostAccessHostedService>();
@@ -53,7 +48,7 @@ public class Startup : SharedStartup
             config.SetMinimumLevel(LogLevel.Debug);
             config.AddDebug();
             config.AddConsole();
-            config.AddRemote(c => { c.LoggerName = "blog"; });
+            config.AddRemote(c => { c.LoggerName = LaobianSite.Blog.ToString(); });
         });
 
         var httpRequestToken = Configuration.GetValue<string>(Constants.EnvHttpRequestToken);
@@ -82,13 +77,18 @@ public class Startup : SharedStartup
 
         app.UseStatusCodePages();
 
-        var fileContentTypeProvider = new FileExtensionContentTypeProvider();
-        fileContentTypeProvider.Mappings[".webmanifest"] = "application/manifest+json";
+        var fileContentTypeProvider = new FileExtensionContentTypeProvider
+        {
+            Mappings =
+            {
+                [".webmanifest"] = "application/manifest+json"
+            }
+        };
         app.UseStaticFiles(new StaticFileOptions {ContentTypeProvider = fileContentTypeProvider});
 
         if (env.IsDevelopment())
         {
-            var dir = Path.Combine(config.AssetLocation, Constants.AssetDbFileFolder);
+            var dir = Path.Combine(config.AssetLocation, Constants.AssetDbFolder, Constants.AssetDbFileFolder);
             Directory.CreateDirectory(dir);
             app.UseStaticFiles(new StaticFileOptions
             {

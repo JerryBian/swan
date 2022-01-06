@@ -1,18 +1,33 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using Laobian.Admin.HttpClients;
+using Laobian.Admin.Models;
+using Laobian.Share.Grpc;
+using Laobian.Share.Grpc.Request;
+using Laobian.Share.Grpc.Service;
+using Laobian.Share.Misc;
+using Laobian.Share.Model;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Laobian.Admin.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ApiSiteHttpClient _apiSiteHttpClient;
+    private readonly IHostApplicationLifetime _appLifetime;
+    private readonly ILogger<HomeController> _logger;
+    private readonly IMiscGrpcService _miscGrpcService;
 
-    public HomeController(ApiSiteHttpClient apiSiteHttpClient)
+    public HomeController(ILogger<HomeController> logger, IOptions<AdminOptions> options,
+        IHostApplicationLifetime appLifetime)
     {
-        _apiSiteHttpClient = apiSiteHttpClient;
+        _logger = logger;
+        _appLifetime = appLifetime;
+        _miscGrpcService = GrpcClientHelper.CreateClient<IMiscGrpcService>(options.Value.ApiLocalEndpoint);
     }
 
     public IActionResult Index()
@@ -30,10 +45,116 @@ public class HomeController : Controller
 
     [HttpPost]
     [Route("persistent")]
-    public async Task<bool> PersistentAsync()
+    public async Task<ApiResponse<object>> PersistentAsync()
     {
-        using var reader = new StreamReader(Request.Body, Encoding.UTF8);
-        var message = await reader.ReadToEndAsync();
-        return await _apiSiteHttpClient.PersistentAsync(message);
+        var apiResponse = new ApiResponse<object>();
+        try
+        {
+            using var reader = new StreamReader(Request.Body, Encoding.UTF8);
+            var message = await reader.ReadToEndAsync();
+            var response = await _miscGrpcService.PersistentGitFileAsync(new MiscGrpcRequest {Message = message});
+            if (!response.IsOk)
+            {
+                apiResponse.IsOk = false;
+                apiResponse.Message = response.Message;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Persistent DB failed.");
+            apiResponse.IsOk = false;
+            apiResponse.Message = ex.Message;
+        }
+
+        return apiResponse;
+    }
+
+    [HttpPost("git-file-stat")]
+    public async Task<ApiResponse<List<GitFileStat>>> GetGitFileStatsAsync()
+    {
+        var apiResponse = new ApiResponse<List<GitFileStat>>();
+        try
+        {
+            var response = await _miscGrpcService.GetDbStatAsync(new MiscGrpcRequest());
+            if (response.IsOk)
+            {
+                apiResponse.Content = response.DbStats ?? new List<GitFileStat>();
+            }
+            else
+            {
+                apiResponse.IsOk = false;
+                apiResponse.Message = response.Message;
+            }
+        }
+        catch (Exception ex)
+        {
+            apiResponse.IsOk = false;
+            apiResponse.Message = ex.Message;
+            _logger.LogError(ex, "Get Git File stats failed.");
+        }
+
+        return apiResponse;
+    }
+
+    [HttpPost("site-stat")]
+    public async Task<ApiResponse<SiteStat>> GetSiteStatAsync([FromQuery] string site)
+    {
+        var apiResponse = new ApiResponse<SiteStat>();
+        try
+        {
+            if (Enum.TryParse<LaobianSite>(site, true, out var s))
+            {
+                if (s == LaobianSite.Admin)
+                {
+                    apiResponse.Content = SiteStatHelper.Get();
+                }
+                else
+                {
+                    var response = await _miscGrpcService.GetSiteStatAsync(new MiscGrpcRequest {Site = s});
+                    if (response.IsOk)
+                    {
+                        apiResponse.Content = response.SiteStat;
+                    }
+                    else
+                    {
+                        apiResponse.IsOk = false;
+                        apiResponse.Message = response.Message;
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            apiResponse.IsOk = false;
+            apiResponse.Message = ex.Message;
+            _logger.LogError(ex, $"Get site {site} stat failed.");
+        }
+
+        return apiResponse;
+    }
+
+    [HttpPost("shutdown")]
+    public async Task<ApiResponse<object>> ShutdownAsync()
+    {
+        var apiResponse = new ApiResponse<object>();
+        try
+        {
+            var request = new MiscGrpcRequest {Site = LaobianSite.Blog};
+            await _miscGrpcService.ShutdownSiteAsync(request);
+
+            request.Site = LaobianSite.Jarvis;
+            await _miscGrpcService.ShutdownSiteAsync(request);
+
+            request.Site = LaobianSite.Api;
+            await _miscGrpcService.ShutdownSiteAsync(request);
+
+            _appLifetime.StopApplication();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Shutdown site failed.");
+        }
+
+        return apiResponse;
     }
 }

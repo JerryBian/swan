@@ -1,21 +1,24 @@
 using System;
 using System.Text.Encodings.Web;
 using Laobian.Api.Command;
+using Laobian.Api.Grpc;
 using Laobian.Api.HostedServices;
 using Laobian.Api.HttpClients;
 using Laobian.Api.Logger;
 using Laobian.Api.Repository;
-using Laobian.Api.Source;
+using Laobian.Api.Service;
 using Laobian.Share;
 using Laobian.Share.Converter;
 using Laobian.Share.Filters;
-using Laobian.Share.Site;
+using Laobian.Share.Misc;
+using Laobian.Share.Model;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using ProtoBuf.Grpc.Server;
 
 namespace Laobian.Api;
 
@@ -31,22 +34,30 @@ public class Startup : SharedStartup
     {
         base.ConfigureServices(services);
         services.Configure<ApiOptions>(o => { o.FetchFromEnv(Configuration); });
+        services.AddCodeFirstGrpc(o => { o.MaxReceiveMessageSize = 20 * 1024 * 1024; });
 
         services.AddSingleton<ICommandClient, ProcessCommandClient>();
-        services.AddSingleton<IFileRepository, FileRepository>();
-        if (CurrentEnv.IsDevelopment())
-        {
-            services.AddSingleton<IFileSource, LocalFileSource>();
-        }
-        else
-        {
-            services.AddSingleton<IFileSource, GitFileSource>();
-        }
+        services.AddSingleton<IFileRepository, GitFileRepository>();
+        services.AddSingleton<IGitFileService, GitFileService>();
+        services.AddSingleton<IBlogFileRepository, BlogFileRepository>();
+        services.AddSingleton<IBlogFileService, BlogFileService>();
+        services.AddSingleton<IReadFileRepository, ReadFileRepository>();
+        services.AddSingleton<IReadFileService, ReadFileService>();
+        services.AddSingleton<ILogFileRepository, LogFileRepository>();
+        services.AddSingleton<ILogFileService, LogFileService>();
+        services.AddSingleton<IRawFileRepository, RawFileRepository>();
+        services.AddSingleton<IRawFileService, RawFileService>();
+        services.AddSingleton<IDiaryFileRepository, DiaryFileRepository>();
+        services.AddSingleton<IDiaryFileService, DiaryFileService>();
+        services.AddSingleton<INoteFileRepository, NoteFileRepository>();
+        services.AddSingleton<INoteFileService, NoteFileService>();
 
         services.AddHostedService<GitFileLogHostedService>();
         services.AddHostedService<DbDataHostedService>();
 
         services.AddHttpClient<BlogSiteHttpClient>(SetHttpClient).SetHandlerLifetime(TimeSpan.FromDays(1))
+            .AddPolicyHandler(GetHttpClientRetryPolicy());
+        services.AddHttpClient<JarvisSiteHttpClient>(SetHttpClient).SetHandlerLifetime(TimeSpan.FromDays(1))
             .AddPolicyHandler(GetHttpClientRetryPolicy());
 
         services.AddLogging(config =>
@@ -54,7 +65,7 @@ public class Startup : SharedStartup
             config.SetMinimumLevel(LogLevel.Debug);
             config.AddDebug();
             config.AddConsole();
-            config.AddGitFile(c => { c.LoggerName = "api"; });
+            config.AddGitFile(c => { c.LoggerName = LaobianSite.Api.ToString(); });
         });
 
         var httpRequestToken = Configuration.GetValue<string>(Constants.EnvHttpRequestToken);
@@ -76,6 +87,16 @@ public class Startup : SharedStartup
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
-        app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+            endpoints.MapGrpcService<LogGrpcService>();
+            endpoints.MapGrpcService<BlogGrpcService>();
+            endpoints.MapGrpcService<ReadGrpcService>();
+            endpoints.MapGrpcService<FileGrpcService>();
+            endpoints.MapGrpcService<DiaryGrpcService>();
+            endpoints.MapGrpcService<NoteGrpcService>();
+            endpoints.MapGrpcService<MiscGrpcService>();
+        });
     }
 }

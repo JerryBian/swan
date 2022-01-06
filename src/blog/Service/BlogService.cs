@@ -4,31 +4,36 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Laobian.Blog.HttpClients;
-using Laobian.Share.Site.Blog;
-using Laobian.Share.Site.Read;
+using Laobian.Share.Grpc;
+using Laobian.Share.Grpc.Request;
+using Laobian.Share.Grpc.Service;
+using Laobian.Share.Model.Blog;
+using Laobian.Share.Model.Read;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Laobian.Blog.Service;
 
 public class BlogService : IBlogService
 {
-    private readonly List<ReadItem> _allBookItems;
     private readonly List<BlogPostRuntime> _allPosts;
+    private readonly List<ReadItemRuntime> _allReadItems;
     private readonly List<BlogTag> _allTags;
-    private readonly ApiSiteHttpClient _httpClient;
+    private readonly IBlogGrpcService _blogGrpcService;
     private readonly ILogger<BlogService> _logger;
     private readonly ConcurrentQueue<string> _postAccessQueue;
+    private readonly IReadGrpcService _readGrpcService;
     private readonly ManualResetEventSlim _reloadLock;
     private DateTime _lastReloadTime;
 
-    public BlogService(ApiSiteHttpClient httpClient, ILogger<BlogService> logger)
+    public BlogService(IOptions<BlogOptions> options, ILogger<BlogService> logger)
     {
         _logger = logger;
         BootTime = DateTime.Now;
-        _httpClient = httpClient;
+        _blogGrpcService = GrpcClientHelper.CreateClient<IBlogGrpcService>(options.Value.ApiLocalEndpoint);
+        _readGrpcService = GrpcClientHelper.CreateClient<IReadGrpcService>(options.Value.ApiLocalEndpoint);
         _allTags = new List<BlogTag>();
-        _allBookItems = new List<ReadItem>();
+        _allReadItems = new List<ReadItemRuntime>();
         _allPosts = new List<BlogPostRuntime>();
         _postAccessQueue = new ConcurrentQueue<string>();
         _reloadLock = new ManualResetEventSlim(true);
@@ -48,10 +53,10 @@ public class BlogService : IBlogService
         return _allTags;
     }
 
-    public List<ReadItem> GetBookItems()
+    public List<ReadItemRuntime> GetReadItems()
     {
         _reloadLock.Wait();
-        return _allBookItems;
+        return _allReadItems;
     }
 
     public async Task ReloadAsync()
@@ -59,9 +64,32 @@ public class BlogService : IBlogService
         _reloadLock.Reset();
         try
         {
-            var posts = await _httpClient.GetPostsAsync();
-            var tags = await _httpClient.GetTagsAsync();
-            var bookItems = await _httpClient.GetBookItemsAsync();
+            var blogRequest = new BlogGrpcRequest {ExtractRuntime = true};
+            var postsResponse = await _blogGrpcService.GetPostsAsync(blogRequest);
+            if (!postsResponse.IsOk)
+            {
+                _logger.LogError($"Getting all posts failed: {postsResponse.Message}");
+                return;
+            }
+
+            var tagsResponse = await _blogGrpcService.GetTagsAsync();
+            if (!tagsResponse.IsOk)
+            {
+                _logger.LogError($"Getting all tags failed: {tagsResponse.Message}");
+                return;
+            }
+
+            var readRequest = new ReadGrpcRequest {ExtractRuntime = true};
+            var readResponse = await _readGrpcService.GetReadItemsAsync(readRequest);
+            if (!readResponse.IsOk)
+            {
+                _logger.LogError($"Getting all read items failed: {tagsResponse.Message}");
+                return;
+            }
+
+            var posts = postsResponse.Posts ?? new List<BlogPostRuntime>();
+            var tags = tagsResponse.Tags ?? new List<BlogTag>();
+            var readItems = readResponse.ReadItems ?? new List<ReadItemRuntime>();
 
             _allPosts.Clear();
             _allPosts.AddRange(posts.OrderByDescending(x => x.Raw.PublishTime));
@@ -69,8 +97,8 @@ public class BlogService : IBlogService
             _allTags.Clear();
             _allTags.AddRange(tags.OrderByDescending(x => x.LastUpdatedAt));
 
-            _allBookItems.Clear();
-            _allBookItems.AddRange(bookItems.OrderByDescending(x => x.StartTime));
+            _allReadItems.Clear();
+            _allReadItems.AddRange(readItems.OrderByDescending(x => x.Raw.StartTime));
             _lastReloadTime = DateTime.Now;
         }
         catch (Exception ex)

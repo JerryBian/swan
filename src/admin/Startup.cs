@@ -1,11 +1,9 @@
-using System;
 using System.Text.Encodings.Web;
 using Laobian.Admin.HostedService;
-using Laobian.Admin.HttpClients;
-using Laobian.Share;
 using Laobian.Share.Converter;
 using Laobian.Share.Logger.Remote;
-using Laobian.Share.Site;
+using Laobian.Share.Misc;
+using Laobian.Share.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -32,18 +30,12 @@ public class Startup : SharedStartup
         base.ConfigureServices(services);
         services.Configure<AdminOptions>(o => { o.FetchFromEnv(Configuration); });
 
-        services.AddHttpClient<ApiSiteHttpClient>(SetHttpClient).SetHandlerLifetime(TimeSpan.FromDays(1))
-            .AddPolicyHandler(GetHttpClientRetryPolicy());
-
-        services.AddHttpClient<BlogSiteHttpClient>(SetHttpClient).SetHandlerLifetime(TimeSpan.FromDays(1))
-            .AddPolicyHandler(GetHttpClientRetryPolicy());
-
         services.AddLogging(config =>
         {
             config.SetMinimumLevel(LogLevel.Trace);
             config.AddDebug();
             config.AddConsole();
-            config.AddRemote(c => { c.LoggerName = "admin"; });
+            config.AddRemote(c => { c.LoggerName = LaobianSite.Admin.ToString(); });
         });
 
         services.AddHostedService<RemoteLogHostedService>();
@@ -51,7 +43,6 @@ public class Startup : SharedStartup
         {
             var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
             config.Filters.Add(new AuthorizeFilter(policy));
-            //config.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
         }).AddJsonOptions(config =>
         {
             config.JsonSerializerOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
@@ -67,8 +58,13 @@ public class Startup : SharedStartup
         Configure(app, appLifetime, config);
 
         app.UseStatusCodePages();
-        var fileContentTypeProvider = new FileExtensionContentTypeProvider();
-        fileContentTypeProvider.Mappings[".webmanifest"] = "application/manifest+json";
+        var fileContentTypeProvider = new FileExtensionContentTypeProvider
+        {
+            Mappings =
+            {
+                [".webmanifest"] = "application/manifest+json"
+            }
+        };
         app.UseStaticFiles(new StaticFileOptions {ContentTypeProvider = fileContentTypeProvider});
 
         app.UseRouting();

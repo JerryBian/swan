@@ -1,22 +1,25 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Laobian.Api.Repository;
+using Laobian.Api.Service;
 using Laobian.Share.Logger;
-using Laobian.Share.Site;
+using Laobian.Share.Model;
 using Microsoft.Extensions.Hosting;
 
 namespace Laobian.Api.HostedServices;
 
 public class GitFileLogHostedService : BackgroundService
 {
-    private readonly IFileRepository _fileRepository;
+    private readonly ILogFileService _fileRepository;
     private readonly ILaobianLogQueue _logQueue;
+    private bool _readyToRun;
 
-    public GitFileLogHostedService(ILaobianLogQueue logQueue, IFileRepository fileRepository)
+    public GitFileLogHostedService(ILaobianLogQueue logQueue, ILogFileService fileRepository,
+        IHostApplicationLifetime applicationLifetime)
     {
         _logQueue = logQueue;
         _fileRepository = fileRepository;
+        applicationLifetime.ApplicationStarted.Register(() => _readyToRun = true);
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -30,7 +33,8 @@ public class GitFileLogHostedService : BackgroundService
 
     private async Task ProcessLogsAsync(CancellationToken stoppingToken)
     {
-        while (_logQueue.TryDequeue(out var log))
+        // The Git repository has to be cloned successfully before writing logs
+        while (_readyToRun && _logQueue.TryDequeue(out var log))
         {
             try
             {

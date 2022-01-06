@@ -2,25 +2,28 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Laobian.Admin.HttpClients;
-using Laobian.Share;
+using Laobian.Admin.Models;
 using Laobian.Share.Extension;
+using Laobian.Share.Grpc;
+using Laobian.Share.Grpc.Request;
+using Laobian.Share.Grpc.Service;
 using Laobian.Share.Logger;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Laobian.Admin.Controllers;
 
 [Route("log")]
 public class LogController : Controller
 {
-    private readonly ApiSiteHttpClient _apiSiteHttpClient;
     private readonly ILogger<LogController> _logger;
+    private readonly ILogGrpcService _logGrpcService;
 
-    public LogController(ApiSiteHttpClient apiSiteHttpClient, ILogger<LogController> logger)
+    public LogController(IOptions<AdminOptions> options, ILogger<LogController> logger)
     {
         _logger = logger;
-        _apiSiteHttpClient = apiSiteHttpClient;
+        _logGrpcService = GrpcClientHelper.CreateClient<ILogGrpcService>(options.Value.ApiLocalEndpoint);
     }
 
     public IActionResult Index()
@@ -36,9 +39,24 @@ public class LogController : Controller
         var response = new ApiResponse<List<LaobianLog>>();
         try
         {
-            var logs = await _apiSiteHttpClient.GetLogsAsync(site, days, minLevel);
-            logs = logs.OrderByDescending(x => x.TimeStamp).ToList();
-            response.Content = logs;
+            var request = new LogGrpcRequest
+            {
+                Days = days,
+                Logger = site,
+                MinLevel = minLevel
+            };
+            var logResponse = await _logGrpcService.GetLogsAsync(request);
+            if (logResponse.IsOk)
+            {
+                logResponse.Logs = logResponse.Logs ?? new List<LaobianLog>();
+                var logs = logResponse.Logs.OrderByDescending(x => x.TimeStamp).ToList();
+                response.Content = logs;
+            }
+            else
+            {
+                response.IsOk = false;
+                response.Message = logResponse.Message;
+            }
         }
         catch (Exception ex)
         {
@@ -57,16 +75,31 @@ public class LogController : Controller
         var response = new ApiResponse<ChartResponse>();
         try
         {
-            var logs = await _apiSiteHttpClient.GetLogsAsync("all", 14, 3);
-            var groupedLogs = logs.GroupBy(x => x.TimeStamp.Date).OrderBy(x => x.Key);
-            var chartResponse = new ChartResponse {Title = "# Logs are warning and error", Type = "line"};
-            foreach (var item in groupedLogs)
+            var request = new LogGrpcRequest
             {
-                chartResponse.Labels.Add(item.Key.ToRelativeDaysHuman());
-                chartResponse.Data.Add(item.Count());
-            }
+                Days = 14,
+                Logger = "all",
+                MinLevel = 3
+            };
+            var logResponse = await _logGrpcService.GetLogsAsync(request);
+            if (logResponse.IsOk)
+            {
+                logResponse.Logs = logResponse.Logs ?? new List<LaobianLog>();
+                var groupedLogs = logResponse.Logs.GroupBy(x => x.TimeStamp.Date).OrderBy(x => x.Key);
+                var chartResponse = new ChartResponse {Title = "# Warning/Error logs", Type = "bar"};
+                foreach (var item in groupedLogs)
+                {
+                    chartResponse.Labels.Add(item.Key.ToRelativeDaysHuman());
+                    chartResponse.Data.Add(item.Count());
+                }
 
-            response.Content = chartResponse;
+                response.Content = chartResponse;
+            }
+            else
+            {
+                response.IsOk = false;
+                response.Message = logResponse.Message;
+            }
         }
         catch (Exception ex)
         {

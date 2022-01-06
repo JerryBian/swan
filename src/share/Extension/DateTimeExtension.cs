@@ -41,11 +41,6 @@ public static class DateTimeExtension
         return time.ToString("yyyy年MM月dd日");
     }
 
-    public static string ToChinaYearMonth(this DateTime time)
-    {
-        return time.ToString("yyyy年MM月");
-    }
-
     public static string ToDate(this DateTime time)
     {
         return time.ToString("yyyy-MM-dd");

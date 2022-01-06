@@ -24,7 +24,7 @@ public static class TimeSpanExtension
 
         if (string.IsNullOrEmpty(result))
         {
-            result = interval.ToString();
+            result = $"{interval.TotalSeconds}秒";
         }
 
         return result;

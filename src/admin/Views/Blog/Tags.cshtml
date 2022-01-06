@@ -1,4 +1,4 @@
-﻿@model IEnumerable<BlogTag>
+﻿@model IEnumerable<Laobian.Share.Model.Blog.BlogTag>
 @inject IOptions<AdminOptions> _config
 @{
     Layout = "_BlogLayout";
@@ -7,7 +7,7 @@
 
 <div class="table-responsive">
     <table class="table caption-top align-middle table-bordered">
-        <caption>标签总数: @Model.Count().ToThousandHuman() <a href="/blog/tags/add" class="btn btn-info float-end"><i class="fas fa-plus"></i> 添加新的标签</a></caption>
+        <caption>标签总数: @Model.Count().ToThousandHuman() <a href="/blog/tag/add" class="btn btn-info float-end"><i class="fas fa-plus"></i> 添加新的标签</a></caption>
         <thead class="table-light">
         <tr>
             <th scope="col">显示名称</th>
@@ -22,7 +22,7 @@
                 <th>@tag.DisplayName</th>
                 <th>@tag.Link</th>
                 <th class="text-center">
-                    <a class="btn btn-info me-2" href="/blog/tags/@tag.Id/update"><i class="fas fa-edit"></i> 编辑</a>
+                    <a class="btn btn-info me-2" href="/blog/tag/@tag.Id/update"><i class="fas fa-edit"></i> 编辑</a>
                     <a class="btn btn-danger" href="javascript:;" onclick="deleteTag('@tag.Id')"><i class="fas fa-trash-alt"></i> 删除</a>
                 </th>
             </tr>
@@ -36,7 +36,7 @@
         activeNavItem("#nav_blog_tags");
 
         function deleteTag(id) {
-            submitRequest(`/blog/tags/${id}`,
+            submitRequest(`/blog/tag/${id}`,
                 {
                     method: "DELETE",
                     contentType: "text/plain",

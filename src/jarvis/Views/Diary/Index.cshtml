@@ -1,12 +1,24 @@
-﻿@model List<DateTime>
+﻿@model PagedViewModel<Laobian.Share.Model.Jarvis.DiaryRuntime>
+@inject IOptions<JarvisOptions> _options
 @{
     Layout = "_DiaryLayout";
-    ViewData["Title"] = "所有日记";
 }
 
-<ul>
-    @foreach (var item in Model.GroupBy(x => x.Year).OrderByDescending(x => x.Key))
-    {
-        <li><a href="/diary/@item.Key.ToString("D4")">@item.Key 年</a> （@item.Count()）</li>
-    }
-</ul>
+@foreach (var item in Model.Items)
+{
+    <div class="card mb-3">
+        <div class="card-header">
+            <i class="fas fa-calendar-alt"></i> @item.Raw.Date.ToChinaDate()
+        </div>
+        <div class="card-body">
+            <div class="card-text">
+                @Html.Raw(item.HtmlExcerpt)
+                <p>
+                    <a href="@item.Raw.GetFullPath(_options.Value.JarvisRemoteEndpoint)" class="btn btn-outline-dark">阅读全文</a>
+                </p>
+            </div>
+        </div>
+    </div>
+}
+
+<page total-pages="@Model.TotalPages" current-page="@Model.CurrentPage" url="@Model.Url"></page>

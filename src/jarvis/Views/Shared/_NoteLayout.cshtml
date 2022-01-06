@@ -12,7 +12,10 @@
         </main>
         <aside class="col-lg-3 fs-sm position-sticky" style="top: 10px;">
             <div class="d-grid mb-3">
-                <a class="btn btn-info" href="@_option.Value.AdminRemoteEndpoint/note/add" target="_blank"><i class="fas fa-plus"></i> 发表笔记</a>
+                <a class="btn btn-outline-dark" href="/note/tag" target="_blank"><i class="fas fa-tags"></i> 所有标签</a>
+            </div>
+            <div class="d-grid mb-3">
+                <a class="btn btn-outline-info" href="@_option.Value.AdminRemoteEndpoint/note/post/add" target="_blank"><i class="fas fa-plus"></i> 发表笔记</a>
             </div>
             @await RenderSectionAsync("Aside", false)
         </aside>

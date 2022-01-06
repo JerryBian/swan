@@ -53,6 +53,7 @@ public class ArchiveController : Controller
 
         ViewData["Title"] = "存档";
         ViewData["Image"] = $"{_blogOptions.BlogRemoteEndpoint}/archive.png";
+        ViewData["Description"] = "所有文章的存档。";
         return View("Index", viewModel);
     }
 }

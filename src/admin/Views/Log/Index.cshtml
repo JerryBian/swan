@@ -5,74 +5,76 @@
 
 <div class="row">
     <div class="col-lg-5 mb-3">
-        <div>
+        <div class="bg-light p-1">
             <canvas id="logStats"></canvas>
         </div>
     </div>
-    <div class="col-lg-7"><div class="alert alert-light" role="alert">
-    <div class="mb-2">
-        <span class="me-3 text-primary">Site: </span>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="site" id="site_all" value="all" checked>
-            <label class="form-check-label" for="site_all">All</label>
+    <div class="col-lg-7">
+        <div class="alert alert-light border" role="alert">
+            <div class="mb-2">
+                <span class="me-3 text-primary">Site: </span>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="site" id="site_all" value="all" checked>
+                    <label class="form-check-label" for="site_all">All</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="site" id="site_blog" value="blog">
+                    <label class="form-check-label" for="site_blog">Blog</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="site" id="site_api" value="api">
+                    <label class="form-check-label" for="site_api">Api</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="site" id="site_admin" value="admin">
+                    <label class="form-check-label" for="site_admin">Admin</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="site" id="site_jarvis" value="jarvis">
+                    <label class="form-check-label" for="site_jarvis">Jarvis</label>
+                </div>
+            </div>
+            <div class="mb-2">
+                <span class="me-3 text-primary">Min Level: </span>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="minLevel" id="site_info" value="2" checked>
+                    <label class="form-check-label" for="site_info">Information</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="minLevel" id="site_warn" value="3">
+                    <label class="form-check-label" for="site_warn">Warning</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="minLevel" id="site_error" value="4">
+                    <label class="form-check-label" for="site_error">Error</label>
+                </div>
+            </div>
+            <div class="mb-2">
+                <span class="me-3 text-primary">Date Range: </span>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="dateRange" id="date_one_day" value="1" checked>
+                    <label class="form-check-label" for="date_one_day">One Day</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="dateRange" id="date_one_week" value="7">
+                    <label class="form-check-label" for="date_one_week">One Week</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="dateRange" id="date_one_month" value="30">
+                    <label class="form-check-label" for="date_one_month">One Month</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="dateRange" id="date_one_year" value="365">
+                    <label class="form-check-label" for="date_one_year">One Year</label>
+                </div>
+            </div>
+            <div class="d-grid">
+                <button class="btn btn-success btn-lg px-5" onclick="loadLogs()" id="reloadBtn">加载</button>
+            </div>
         </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="site" id="site_blog" value="blog">
-            <label class="form-check-label" for="site_blog">Blog</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="site" id="site_api" value="api">
-            <label class="form-check-label" for="site_api">Api</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="site" id="site_admin" value="admin">
-            <label class="form-check-label" for="site_admin">Admin</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="site" id="site_jarvis" value="jarvis">
-            <label class="form-check-label" for="site_jarvis">Jarvis</label>
-        </div>
+        <p class="text-muted small" id="log_summary"></p>
+        <div class="list-group text-break" id="log_panel"></div>
     </div>
-    <div class="mb-2">
-        <span class="me-3 text-primary">Min Level: </span>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="minLevel" id="site_info" value="2" checked>
-            <label class="form-check-label" for="site_info">Information</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="minLevel" id="site_warn" value="3">
-            <label class="form-check-label" for="site_warn">Warning</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="minLevel" id="site_error" value="4">
-            <label class="form-check-label" for="site_error">Error</label>
-        </div>
-    </div>
-    <div class="mb-2">
-        <span class="me-3 text-primary">Date Range: </span>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="dateRange" id="date_one_day" value="1" checked>
-            <label class="form-check-label" for="date_one_day">One Day</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="dateRange" id="date_one_week" value="7">
-            <label class="form-check-label" for="date_one_week">One Week</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="dateRange" id="date_one_month" value="30">
-            <label class="form-check-label" for="date_one_month">One Month</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="dateRange" id="date_one_year" value="365">
-            <label class="form-check-label" for="date_one_year">One Year</label>
-        </div>
-    </div>
-    <div class="d-grid">
-        <button class="btn btn-success btn-lg px-5" onclick="loadLogs()" id="reloadBtn">加载</button>
-    </div>
-</div>
-<p class="text-muted small" id="log_summary"></p>
-<div class="list-group text-break" id="log_panel"></div></div>
 </div>
 
 @section Scripts{

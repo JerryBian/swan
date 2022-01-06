@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Laobian.Share.Site.Blog;
-using Laobian.Share.Site.Read;
+using Laobian.Share.Model.Blog;
+using Laobian.Share.Model.Read;
 
 namespace Laobian.Blog.Service;
 
@@ -14,7 +14,7 @@ public interface IBlogService
 
     List<BlogTag> GetAllTags();
 
-    List<ReadItem> GetBookItems();
+    List<ReadItemRuntime> GetReadItems();
 
     Task ReloadAsync();
 
