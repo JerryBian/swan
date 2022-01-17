@@ -71,6 +71,7 @@ public class NoteRuntime
 
         // all images nodes
         SetImageNodes(htmlDoc);
+        SetTableNodes(htmlDoc);
         HtmlContent = htmlDoc.DocumentNode.OuterHtml;
 
         // assign tags
@@ -98,6 +99,15 @@ public class NoteRuntime
             2 => $"<p>{paraNodes[0].InnerText}</p><p>{paraNodes[1].InnerText}</p>",
             _ => HtmlExcerpt
         };
+    }
+
+    private static void SetTableNodes(HtmlDocument htmlDoc)
+    {
+        var tableNodes = htmlDoc.DocumentNode.Descendants("table").ToList();
+        foreach (var tableNode in tableNodes)
+        {
+            tableNode.AddClass("table table-striped table-bordered table-responsive");
+        }
     }
 
     private static void SetImageNodes(HtmlDocument htmlDoc)

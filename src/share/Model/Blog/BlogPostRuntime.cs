@@ -46,6 +46,15 @@ public class BlogPostRuntime
         }
     }
 
+    private static void SetTableNodes(HtmlDocument htmlDoc)
+    {
+        var tableNodes = htmlDoc.DocumentNode.Descendants("table").ToList();
+        foreach (var tableNode in tableNodes)
+        {
+            tableNode.AddClass("table table-striped table-bordered table-responsive");
+        }
+    }
+
     public void ExtractRuntimeData(List<BlogAccess> access, List<BlogTag> tags)
     {
         if (string.IsNullOrEmpty(Raw.MdContent))
@@ -62,6 +71,7 @@ public class BlogPostRuntime
 
         // all images nodes
         SetImageNodes(htmlDoc);
+        SetTableNodes(htmlDoc);
         HtmlContent = htmlDoc.DocumentNode.OuterHtml;
 
         // assign Excerpt
