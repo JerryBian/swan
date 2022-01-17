@@ -2,7 +2,6 @@
 using System.Runtime.Serialization;
 using HtmlAgilityPack;
 using Laobian.Share.Util;
-using Markdig;
 
 namespace Laobian.Share.Model.Jarvis;
 
@@ -32,7 +31,7 @@ public class DiaryRuntime
     {
         if (!string.IsNullOrEmpty(Raw.MarkdownContent))
         {
-            HtmlContent = Markdown.ToHtml(Raw.MarkdownContent);
+            HtmlContent = MarkdownUtil.ToHtml(Raw.MarkdownContent);
             var htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(HtmlContent);
             var paraNodes =

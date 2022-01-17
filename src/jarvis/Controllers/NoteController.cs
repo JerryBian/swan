@@ -34,7 +34,7 @@ public class NoteController : Controller
     {
         try
         {
-            const int itemsPerPage = 1;
+            const int itemsPerPage = 8;
             var totalCountResponse = await _noteGrpcService.GetNotesCountAsync(_request);
             if (totalCountResponse.IsOk)
             {

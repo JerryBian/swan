@@ -4,7 +4,6 @@ using System.Linq;
 using System.Runtime.Serialization;
 using HtmlAgilityPack;
 using Laobian.Share.Util;
-using Markdig;
 
 namespace Laobian.Share.Model.Blog;
 
@@ -54,7 +53,7 @@ public class BlogPostRuntime
             Raw.MdContent = "Post content is empty.";
         }
 
-        var html = Markdown.ToHtml(Raw.MdContent);
+        var html = MarkdownUtil.ToHtml(Raw.MdContent);
         var htmlDoc = new HtmlDocument();
         htmlDoc.LoadHtml(html);
 
@@ -123,7 +122,7 @@ public class BlogPostRuntime
     {
         if (!string.IsNullOrEmpty(Raw.Excerpt))
         {
-            ExcerptHtml = Markdown.ToHtml(Raw.Excerpt);
+            ExcerptHtml = MarkdownUtil.ToHtml(Raw.Excerpt);
         }
         else
         {

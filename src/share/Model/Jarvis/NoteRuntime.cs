@@ -3,7 +3,6 @@ using System.Linq;
 using System.Runtime.Serialization;
 using HtmlAgilityPack;
 using Laobian.Share.Util;
-using Markdig;
 
 namespace Laobian.Share.Model.Jarvis;
 
@@ -63,7 +62,7 @@ public class NoteRuntime
 
     public void ExtractRuntimeData(List<NoteTag> tags)
     {
-        var html = Markdown.ToHtml(Raw.MdContent);
+        var html = MarkdownUtil.ToHtml(Raw.MdContent);
         var htmlDoc = new HtmlDocument();
         htmlDoc.LoadHtml(html);
 
