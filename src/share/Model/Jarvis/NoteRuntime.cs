@@ -3,7 +3,6 @@ using System.Linq;
 using System.Runtime.Serialization;
 using HtmlAgilityPack;
 using Laobian.Share.Util;
-using Markdig;
 
 namespace Laobian.Share.Model.Jarvis;
 
@@ -63,7 +62,7 @@ public class NoteRuntime
 
     public void ExtractRuntimeData(List<NoteTag> tags)
     {
-        var html = Markdown.ToHtml(Raw.MdContent);
+        var html = MarkdownUtil.ToHtml(Raw.MdContent);
         var htmlDoc = new HtmlDocument();
         htmlDoc.LoadHtml(html);
 
@@ -72,6 +71,7 @@ public class NoteRuntime
 
         // all images nodes
         SetImageNodes(htmlDoc);
+        SetTableNodes(htmlDoc);
         HtmlContent = htmlDoc.DocumentNode.OuterHtml;
 
         // assign tags
@@ -99,6 +99,15 @@ public class NoteRuntime
             2 => $"<p>{paraNodes[0].InnerText}</p><p>{paraNodes[1].InnerText}</p>",
             _ => HtmlExcerpt
         };
+    }
+
+    private static void SetTableNodes(HtmlDocument htmlDoc)
+    {
+        var tableNodes = htmlDoc.DocumentNode.Descendants("table").ToList();
+        foreach (var tableNode in tableNodes)
+        {
+            tableNode.AddClass("table table-striped table-bordered table-responsive");
+        }
     }
 
     private static void SetImageNodes(HtmlDocument htmlDoc)

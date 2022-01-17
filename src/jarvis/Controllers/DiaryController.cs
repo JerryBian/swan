@@ -57,7 +57,7 @@ public class DiaryController : Controller
     private async Task<PagedViewModel<DiaryRuntime>> GetViewModel(int page, int? year, int? month)
     {
         PagedViewModel<DiaryRuntime> viewModel = null;
-        const int itemsPerPage = 2;
+        const int itemsPerPage = 8;
         var request = new DiaryGrpcRequest {Year = year, Month = month};
         var response = await _diaryGrpcService.GetDiaryDatesAsync(request);
         if (response.IsOk)

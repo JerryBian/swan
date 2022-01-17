@@ -4,7 +4,6 @@ using System.Linq;
 using System.Runtime.Serialization;
 using HtmlAgilityPack;
 using Laobian.Share.Util;
-using Markdig;
 
 namespace Laobian.Share.Model.Blog;
 
@@ -47,6 +46,15 @@ public class BlogPostRuntime
         }
     }
 
+    private static void SetTableNodes(HtmlDocument htmlDoc)
+    {
+        var tableNodes = htmlDoc.DocumentNode.Descendants("table").ToList();
+        foreach (var tableNode in tableNodes)
+        {
+            tableNode.AddClass("table table-striped table-bordered table-responsive");
+        }
+    }
+
     public void ExtractRuntimeData(List<BlogAccess> access, List<BlogTag> tags)
     {
         if (string.IsNullOrEmpty(Raw.MdContent))
@@ -54,7 +62,7 @@ public class BlogPostRuntime
             Raw.MdContent = "Post content is empty.";
         }
 
-        var html = Markdown.ToHtml(Raw.MdContent);
+        var html = MarkdownUtil.ToHtml(Raw.MdContent);
         var htmlDoc = new HtmlDocument();
         htmlDoc.LoadHtml(html);
 
@@ -63,6 +71,7 @@ public class BlogPostRuntime
 
         // all images nodes
         SetImageNodes(htmlDoc);
+        SetTableNodes(htmlDoc);
         HtmlContent = htmlDoc.DocumentNode.OuterHtml;
 
         // assign Excerpt
@@ -123,7 +132,7 @@ public class BlogPostRuntime
     {
         if (!string.IsNullOrEmpty(Raw.Excerpt))
         {
-            ExcerptHtml = Markdown.ToHtml(Raw.Excerpt);
+            ExcerptHtml = MarkdownUtil.ToHtml(Raw.Excerpt);
         }
         else
         {

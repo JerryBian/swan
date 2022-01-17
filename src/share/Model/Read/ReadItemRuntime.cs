@@ -1,5 +1,5 @@
 ﻿using System.Runtime.Serialization;
-using Markdig;
+using Laobian.Share.Util;
 
 namespace Laobian.Share.Model.Read;
 
@@ -25,7 +25,7 @@ public class ReadItemRuntime
     {
         if (!string.IsNullOrEmpty(Raw.ShortComment))
         {
-            ShortCommentHtml = Markdown.ToHtml(Raw.ShortComment);
+            ShortCommentHtml = MarkdownUtil.ToHtml(Raw.ShortComment);
         }
     }
 }
