@@ -1,9 +1,4 @@
-﻿@font-face{
-    font-family: 'Noto Sans SC';
-    src: url('/font/Noto_Sans_SC/NotoSansSC-Regular.otf') format('truetype');
-}
-
-$font-family-sans-serif: 'Noto Sans SC', system-ui, 'Heiti SC', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+﻿$font-family-sans-serif: system-ui, 'Heiti SC', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 $font-family-code: ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono;
 $list-group-color: #212529;
 $list-group-bg: #fff;

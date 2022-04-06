@@ -5,7 +5,7 @@ $LibRootLoc = Join-Path $PSScriptRoot .. lib
 npx sass $(Join-Path $WWWRootLoc scss style.scss) $(Join-Path $WWWRootLoc dist style.css)
 
 uglifycss --ugly-comments --output $(Join-Path $WWWRootLoc dist style.min.css) `
-    $(Join-Path $LibRootLoc highlight atom-one-light.min.css) `
+    $(Join-Path $LibRootLoc highlight atom-one-light.css) `
     $(Join-Path $NodeModulesLoc easymde dist easymde.min.css) `
     $(Join-Path $NodeModulesLoc sweetalert2 dist sweetalert2.css) `
     $(Join-Path $WWWRootLoc dist style.css)
