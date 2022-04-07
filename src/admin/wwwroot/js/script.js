@@ -23,27 +23,14 @@ function getRandomColor() {
 }
 
 Chart.defaults.font.size = 12;
-Chart.defaults.font.family = "Noto Sans SC";
 function createChart(canvas, res) {
     if (!res.labels || !res.data || !res.type) {
-        window.Swal.fire({
-            title: "错误",
-            text: "初始化 chart 失败！",
-            icon: "error",
-            backdrop: false
-        });
-
+        showErrorMessageModal("初始化 chart 失败！");
         return null;
     }
 
     if (res.labels.length !== res.data.length) {
-        window.Swal.fire({
-            title: "错误",
-            text: `chart(${res.title}) 的 X Y 轴数量不一致`,
-            icon: "error",
-            backdrop: false
-        });
-
+        showErrorMessageModal(`chart(${res.title}) 的 X Y 轴数量不一致`);
         return null;
     }
 
@@ -121,12 +108,7 @@ function submitRequest(url, option) {
             body: body
         }).then(response => response.json()).then(result => {
             if (!result.ok) {
-                window.Swal.fire({
-                    title: "错误",
-                    text: result.message,
-                    icon: "error",
-                    backdrop: false
-                });
+                showErrorMessageModal(result.message);
                 formPostAction();
             } else {
                 if (result.redirectTo) {
@@ -143,42 +125,23 @@ function submitRequest(url, option) {
                 option.postAction();
             }
         }).catch(error => {
-            window.Swal.fire({
-                title: "错误",
-                text: error,
-                icon: "error",
-                backdrop: false
-            });
-
+        showErrorMessageModal(error);
             formPostAction();
     });
 }
 
 function persistent(user) {
-    window.Swal.fire({
-        title: "确认",
-        text: "确定要持久化数据库吗？",
-        icon: "info",
-        showCancelButton: true,
-        cancelButtonText: "取消",
-        confirmButtonText: "确定"
-    }).then((result) => {
-        if (result.isConfirmed) {
+    showConfirmMessageModal("确定要持久化数据库吗？",
+        function () {
             submitRequest("/persistent",
                 {
                     contentType: "text/plain",
                     body: `:meat_on_bone: forced by ${user}`,
                     postAction: function () {
-                        window.Swal.fire({
-                            title: "通知",
-                            text: "数据库持久化成功。",
-                            icon: "success",
-                            backdrop: false
-                        });
+                        showInfoMessageModal("数据库持久化成功。");
                     }
                 });
-        };
-    });
+        });
 }
 
 function prepareEditor(textArea, u) {
@@ -207,12 +170,7 @@ function prepareEditor(textArea, u) {
             sbOnUploaded: "成功上传 #image_name#"
         },
         errorCallback: function (err) {
-            window.Swal.fire({
-                title: "图片上传错误",
-                text: err,
-                icon: "error",
-                backdrop: false
-            });
+            showErrorMessageModal(err);
         },
         renderingConfig: {
             codeSyntaxHighlighting: true,
@@ -221,4 +179,62 @@ function prepareEditor(textArea, u) {
         spellChecker: false
     });
     return editor;
+}
+
+function showMessageModal(title, bodyHtml, footerHtml) {
+    let messageModalEl = document.querySelector("#messageModal");
+    if (!messageModalEl) {
+        return;
+    }
+
+    let messageModal = bootstrap.Modal.getOrCreateInstance(messageModalEl);
+    messageModal.show();
+
+    let messageModalTitle = document.querySelector("#messageModalTitle");
+    if (messageModalTitle) {
+        messageModalTitle.innerHTML = title;
+    }
+
+    let messageModalBody = document.querySelector("#messageModalBody");
+    if (messageModalBody) {
+        messageModalBody.innerHTML = bodyHtml;
+    }
+
+    let messageModalFooter = document.querySelector("#messageModalFooter");
+    if (messageModalFooter) {
+        footerHtml = footerHtml ??
+            "<button type=\"button\" class=\"btn btn-info\" data-bs-dismiss=\"modal\">Ok</button>";
+        messageModalFooter.innerHTML = footerHtml;
+    }
+}
+
+function showInfoMessageModal(message) {
+    showMessageModal(`<i class="fa-solid fa-circle-info text-info"></i> Info`, `<p>${message}</p>`);
+}
+
+function showErrorMessageModal(message) {
+    showMessageModal(`<i class="fa-solid fa-circle-exclamation text-danger"></i> Error`, `<p>${message}</p>`);
+}
+
+function showConfirmMessageModal(message, yesHandler) {
+    if (!yesHandler) {
+        return;
+    }
+
+    let yesId = makeId(8);
+    let yesButton = `<button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="${yesId}"><span class="px-2">Yes</span></button>`;
+    let noButton = "<button type=\"button\" class=\"btn btn-dark\" data-bs-dismiss=\"modal\"><span class=\"px-2\">No</span></button>";
+    showMessageModal(`<i class="fa-solid fa-circle-question text-warning"></i> Question`, `<p>${message}</p>`, yesButton + noButton);
+    document.querySelector(`#${yesId}`).addEventListener("click", function () { yesHandler(); });
+}
+
+function makeId(length) {
+    var result = "";
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() *
+            charactersLength));
+    }
+    return result;
 }

@@ -19,6 +19,7 @@ The prebuilt docker image can be found either on [Docker Hub](https://hub.docker
 
 1. Run `npm install`
 2. Run `script/setup-dev-secrets.ps1`
+3. Run `npm run build`
 
 ### License
 
