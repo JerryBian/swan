@@ -225,13 +225,14 @@ public class GitFileRepository : IFileRepository
         try
         {
             EnsureBasePath();
-            var dir = Path.GetDirectoryName(path);
+            var fullPath = Path.Combine(BasePath, path);
+            var dir = Path.GetDirectoryName(fullPath);
             if (!string.IsNullOrEmpty(dir))
             {
                 Directory.CreateDirectory(dir);
             }
 
-            await File.WriteAllBytesAsync(Path.Combine(BasePath, path), content, cancellationToken);
+            await File.WriteAllBytesAsync(fullPath, content, cancellationToken);
         }
         finally
         {
