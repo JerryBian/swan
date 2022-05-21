@@ -20,9 +20,9 @@ public class PostController : Controller
     }
 
     [HttpGet]
-    [Route("/{link}.html")]
+    [Route("/{year}/{month}/{link}.html")]
     [ResponseCache(CacheProfileName = Constants.CacheProfileName)]
-    public IActionResult Post([FromRoute] string link)
+    public IActionResult Post([FromRoute] int year, [FromRoute] int month, [FromRoute] string link)
     {
         var authenticated = User.Identity?.IsAuthenticated ?? false;
         var viewModel = _cacheClient.GetOrCreate(
@@ -51,7 +51,8 @@ public class PostController : Controller
                 return model;
             });
 
-        if (viewModel == null)
+        if (viewModel == null || viewModel.Current.Raw.PublishTime.Year != year ||
+            viewModel.Current.Raw.PublishTime.Month != month)
         {
             return NotFound();
         }

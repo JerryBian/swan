@@ -84,6 +84,12 @@ public class BlogFileService : IBlogFileService
 
         blogPost.CreateTime = DateTime.Now;
         blogPost.LastUpdateTime = DateTime.Now;
+
+        if (blogPost.PublishTime == default)
+        {
+            blogPost.PublishTime = blogPost.CreateTime;
+        }
+
         await _blogFileRepository.WriteAsync(
             Path.Combine(Constants.AssetDbBlogPostFolder, blogPost.CreateTime.Year.ToString("D4"),
                 $"{blogPost.Link}.json"),

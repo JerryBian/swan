@@ -35,16 +35,17 @@
         activeNavItem("#nav_blog");
 
         function reloadBlogCache() {
-            showConfirmMessageModal("要清除博客的缓存吗？", function() {
-                submitRequest("/blog/cache/reload",
-                    {
-                        contentType: "text/plain",
-                        body: "Request by @(Context.User.Identity?.Name) - Force Reload Blog Data button",
-                        postAction: function() {
-                            showInfoMessageModal("博客缓存清除成功。");
-                        }
-                    });
-            });
+            showConfirmMessageModal("要清除博客的缓存吗？",
+                function() {
+                    submitRequest("/blog/cache/reload",
+                        {
+                            contentType: "text/plain",
+                            body: "Request by @(Context.User.Identity?.Name) - Force Reload Blog Data button",
+                            postAction: function() {
+                                showInfoMessageModal("博客缓存清除成功。");
+                            }
+                        });
+                });
         }
     </script>
 

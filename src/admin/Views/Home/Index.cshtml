@@ -30,15 +30,16 @@
 
         function shutdown() {
             window.clearInterval(loadInterval);
-            showConfirmMessageModal("确定要关闭所有站点吗？", function() {
-                submitRequest("/shutdown",
-                    {
-                        contentType: "text/plain",
-                        postAction: function() {
-                            showInfoMessageModal("所有站点已经关闭，该页面停止工作！");
-                        }
-                    });
-            });
+            showConfirmMessageModal("确定要关闭所有站点吗？",
+                function() {
+                    submitRequest("/shutdown",
+                        {
+                            contentType: "text/plain",
+                            postAction: function() {
+                                showInfoMessageModal("所有站点已经关闭，该页面停止工作！");
+                            }
+                        });
+                });
         }
 
         let loadInterval = window.setInterval(function() {

@@ -28,7 +28,7 @@ public class TagController : Controller
     {
         var authenticated = User.Identity?.IsAuthenticated ?? false;
         var viewModel = _cacheClient.GetOrCreate(
-            CacheKeyBuilder.Build(nameof(HomeController), nameof(Index), authenticated),
+            CacheKeyBuilder.Build(nameof(TagController), nameof(Index), authenticated),
             () =>
             {
                 var posts = _blogService.GetAllPosts().Where(x => x.Raw.IsPostPublished() || authenticated)
@@ -52,7 +52,7 @@ public class TagController : Controller
                     }
                 }
 
-                return model;
+                return model.OrderByDescending(x => x.Posts.First().Raw.PublishTime);
             });
 
         ViewData["Title"] = "标签";

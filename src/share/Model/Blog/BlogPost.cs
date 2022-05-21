@@ -72,7 +72,7 @@ public class BlogPost
     {
         baseAddress = string.IsNullOrEmpty(baseAddress) ? string.Empty : baseAddress;
         var path =
-            $"{baseAddress}/{Link}.html";
+            $"{baseAddress}/{PublishTime.Year:D4}/{PublishTime.Month:D2}/{Link}.html";
         return path;
     }
 }

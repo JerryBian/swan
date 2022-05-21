@@ -47,7 +47,7 @@ public class SharedOptions
                 return "1.0";
             }
 
-            return $"{ver.Major}.{ver.Minor}";
+            return ver.ToString(2);
         }
     }
 
