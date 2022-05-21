@@ -1,13 +1,16 @@
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 
+ARG ver=1.0
+
 COPY ./src/blog ./blog
 COPY ./src/share ./share
-COPY ./Directory.Build.props ./
+
 RUN dotnet publish \
     -c Release \
     -o /publish \
     -v normal \
+    /property:Version=${ver} \
     ./blog/Laobian.Blog.csproj
 COPY ./script/wait-for-it.sh /publish
 COPY ./script/start-after-api.sh /publish

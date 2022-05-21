@@ -1,13 +1,15 @@
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 
+ARG ver=1.0
+
 COPY ./src/jarvis ./jarvis
 COPY ./src/share ./share
-COPY ./Directory.Build.props ./
 RUN dotnet publish \
     -c Release \
     -o /publish \
     -v normal \
+    /property:Version=${ver} \
     ./jarvis/Laobian.Jarvis.csproj
 
 COPY ./script/wait-for-it.sh /publish

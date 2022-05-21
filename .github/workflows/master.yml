@@ -16,10 +16,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get install -y libxml2-utils
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
 
@@ -41,7 +37,7 @@ jobs:
 
       - name: Setup environment variables
         run: |
-          APP_VERSION=`xmllint --xpath "/Project/PropertyGroup/Version/text()" Directory.Build.props`
+          APP_VERSION=`cat VERSION`
           echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
 
       - name: Build and push API images
@@ -51,6 +47,8 @@ jobs:
           context: .
           file: ./Dockerfile.api
           push: true
+          build-args: |
+            ver=${{ env.APP_VERSION }}
           tags: |
             cnbian/laobian-api:${{ env.APP_VERSION }}
             cnbian/laobian-api:latest
@@ -68,10 +66,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get install -y libxml2-utils
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
 
@@ -93,7 +87,7 @@ jobs:
           
       - name: Setup environment variables
         run: |
-          APP_VERSION=`xmllint --xpath "/Project/PropertyGroup/Version/text()" Directory.Build.props`
+          APP_VERSION=`cat VERSION`
           echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
 
       - name: Build and push ADMIN images
@@ -103,6 +97,8 @@ jobs:
           context: .
           file: ./Dockerfile.admin
           push: true
+          build-args: |
+            ver=${{ env.APP_VERSION }}
           tags: |
             cnbian/laobian-admin:${{ env.APP_VERSION }}
             cnbian/laobian-admin:latest
@@ -120,10 +116,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get install -y libxml2-utils
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
 
@@ -145,7 +137,7 @@ jobs:
           
       - name: Setup environment variables
         run: |
-          APP_VERSION=`xmllint --xpath "/Project/PropertyGroup/Version/text()" Directory.Build.props`
+          APP_VERSION=`cat VERSION`
           echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
 
       - name: Build and push JARVIS images
@@ -155,6 +147,8 @@ jobs:
           context: .
           file: ./Dockerfile.jarvis
           push: true
+          build-args: |
+            ver=${{ env.APP_VERSION }}
           tags: |
             cnbian/laobian-jarvis:${{ env.APP_VERSION }}
             cnbian/laobian-jarvis:latest
@@ -172,10 +166,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get install -y libxml2-utils
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
 
@@ -197,7 +187,7 @@ jobs:
           
       - name: Setup environment variables
         run: |
-          APP_VERSION=`xmllint --xpath "/Project/PropertyGroup/Version/text()" Directory.Build.props`
+          APP_VERSION=`cat VERSION`
           echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
 
       - name: Build and push BLOG images
@@ -207,6 +197,8 @@ jobs:
           context: .
           file: ./Dockerfile.blog
           push: true
+          build-args: |
+            ver=${{ env.APP_VERSION }}
           tags: |
             cnbian/laobian-blog:${{ env.APP_VERSION }}
             cnbian/laobian-blog:latest
