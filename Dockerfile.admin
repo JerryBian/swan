@@ -5,7 +5,7 @@ ARG ver=1.0
 
 COPY ./src/admin ./admin
 COPY ./src/share ./share
-COPY ./Directory.Build.props ./
+
 RUN dotnet publish \
     -c Release \
     -o /publish \
