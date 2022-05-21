@@ -221,13 +221,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get install -y libxml2-utils
-
       - name: Setup environment variables
         run: |
-          APP_VERSION=`xmllint --xpath "/Project/PropertyGroup/Version/text()" Directory.Build.props`
+          APP_VERSION=`cat VERSION`
           echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
 
       - name: deploy server
