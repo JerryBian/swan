@@ -10,28 +10,22 @@ namespace Laobian.Web.Areas.Blog.Controllers
     public class HomeController : Controller
     {
         private readonly IBlogService _blogService;
-        private readonly ICacheManager _cacheManager;
 
-        public HomeController(IBlogService blogService, ICacheManager cacheManager)
+        public HomeController(IBlogService blogService)
         {
             _blogService = blogService;
-            _cacheManager = cacheManager;
         }
 
         public async Task<IActionResult> Index()
         {
             bool isAuthenticated = HttpContext.User?.Identity?.IsAuthenticated == true;
-            List<BlogPostView> model = await _cacheManager.GetOrCreateAsync($"{Constants.AreaBlog}_{nameof(HomeController)}_{nameof(Index)}_{isAuthenticated}", async () =>
+            List<BlogPostView> items = await _blogService.GetAllPostsAsync();
+            if (!isAuthenticated)
             {
-                List<BlogPostView> items = await _blogService.GetAllPostsAsync();
-                if (!isAuthenticated)
-                {
-                    items = items.Where(x => x.Raw.IsPublic).ToList();
-                }
+                items = items.Where(x => x.Raw.IsPublic).ToList();
+            }
 
-                return items.OrderByDescending(x => x.Raw.PublishTime).ToList();
-            });
-
+            var model = items.OrderByDescending(x => x.Raw.PublishTime).ToList();
             return View(model);
         }
     }

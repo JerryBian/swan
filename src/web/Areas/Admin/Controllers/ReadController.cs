@@ -2,6 +2,7 @@
 using Laobian.Lib.Helper;
 using Laobian.Lib.Model;
 using Laobian.Lib.Service;
+using Laobian.Web.Areas.Admin.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Laobian.Web.Areas.Admin.Controllers
@@ -10,11 +11,13 @@ namespace Laobian.Web.Areas.Admin.Controllers
     public class ReadController : Controller
     {
         private readonly IReadService _readService;
+        private readonly IBlogService _blogService;
         private readonly ILogger<ReadController> _logger;
 
-        public ReadController(IReadService readService, ILogger<ReadController> logger)
+        public ReadController(IReadService readService, IBlogService blogService, ILogger<ReadController> logger)
         {
             _readService = readService;
+            _blogService = blogService;
             _logger = logger;
         }
 
@@ -24,9 +27,10 @@ namespace Laobian.Web.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public IActionResult Add()
+        public async Task<IActionResult> Add()
         {
-            return View();
+            var posts = await _blogService.GetAllPostsAsync();
+            return View(posts.OrderByDescending(x => x.Raw.CreateTime));
         }
 
         [HttpPost]
@@ -53,7 +57,15 @@ namespace Laobian.Web.Areas.Admin.Controllers
         public async Task<IActionResult> Edit([FromRoute] string id)
         {
             ReadItemView item = await _readService.GetAsync(id);
-            return item == null ? NotFound() : View(item.Raw);
+            if(item == null)
+            {
+                return NotFound();
+            }
+
+            var model = new ReadItemViewModel();
+            model.Posts = await _blogService.GetAllPostsAsync();
+            model.Item = item.Raw;
+            return View(model);
         }
 
         [HttpPut]

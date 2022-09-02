@@ -1,4 +1,5 @@
-﻿@{
+﻿@model IEnumerable<BlogPostView>
+@{
     Layout = "_AdminLayout";
     ViewData["Title"] = "添加新的阅读";
 }
@@ -42,8 +43,14 @@
                 </div>
             </div>
             <div class="mb-3">
-                <label for="postCommentLink" class="form-label">博客链接</label>
-                <input type="text" class="form-control" id="postCommentLink" name="postCommentLink" placeholder="博客链接" autocomplete="off">
+                <label for="postCommentId" class="form-label">文章链接</label>
+                <select class="form-select" name="postCommentId">
+                    <option selected>选择博客文章</option>
+                    @foreach(var p in Model)
+                    {
+                        <option value="@p.Raw.Id">@p.Raw.Title</option>
+                    }
+                </select>
             </div>
             <div class="mb-3">
                 <label for="comment" class="form-label">短评</label>

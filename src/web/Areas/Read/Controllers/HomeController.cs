@@ -9,29 +9,22 @@ namespace Laobian.Web.Areas.Read.Controllers
     public class HomeController : Controller
     {
         private readonly IReadService _readService;
-        private readonly ICacheManager _cacheManager;
 
-        public HomeController(IReadService readService, ICacheManager cacheManager)
+        public HomeController(IReadService readService)
         {
             _readService = readService;
-            _cacheManager = cacheManager;
         }
 
         public async Task<IActionResult> Index()
         {
             bool isAuthenticated = HttpContext.User?.Identity?.IsAuthenticated == true;
-            List<Lib.Model.ReadItemView> model = await _cacheManager.GetOrCreateAsync($"{Constants.AreaRead}_{nameof(HomeController)}_{nameof(Index)}_{isAuthenticated}", async () =>
+            var items = await _readService.GetAllAsync();
+            if (!isAuthenticated)
             {
-                List<Lib.Model.ReadItemView> items = await _readService.GetAllAsync();
-                if (!isAuthenticated)
-                {
-                    items = items.Where(x => x.Raw.IsPublic).ToList();
-                }
+                items = items.Where(x => x.Raw.IsPublic).ToList();
+            }
 
-                return items;
-            });
-
-            return View(model);
+            return View(items);
         }
     }
 }

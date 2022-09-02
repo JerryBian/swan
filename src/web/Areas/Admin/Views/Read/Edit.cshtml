@@ -1,4 +1,4 @@
-﻿@model ReadItem
+﻿@model ReadItemViewModel
 @{
     Layout = "_AdminLayout";
 }
@@ -7,53 +7,66 @@
 <form novalidate>
     <div class="mb-3">
         <label for="bookName" class="form-label">书籍名称</label>
-        <input type="text" class="form-control" id="bookName" name="bookName" placeholder="书籍名称" value="@Model.BookName" autocomplete="off" autofocus required>
+        <input type="text" class="form-control" id="bookName" name="bookName" placeholder="书籍名称" value="@Model.Item.BookName" autocomplete="off" autofocus required>
         <div class="invalid-feedback">
             必填
         </div>
     </div>
     <div class="mb-3">
         <label for="author" class="form-label">作者</label>
-        <input type="text" class="form-control" id="author" name="author" placeholder="作者" value="@Model.Author" autocomplete="off">
+        <input type="text" class="form-control" id="author" name="author" placeholder="作者" value="@Model.Item.Author" autocomplete="off">
     </div>
     <div class="mb-3">
         <label for="authorCountry" class="form-label">作者国籍</label>
-        <input type="text" class="form-control" id="authorCountry" name="authorCountry" placeholder="作者国籍" value="@Model.AuthorCountry" autocomplete="off">
+        <input type="text" class="form-control" id="authorCountry" name="authorCountry" placeholder="作者国籍" value="@Model.Item.AuthorCountry" autocomplete="off">
     </div>
     <div class="mb-3">
         <label for="translator" class="form-label">译者</label>
-        <input type="text" class="form-control" id="translator" name="translator" placeholder="译者" value="@Model.Translator" autocomplete="off">
+        <input type="text" class="form-control" id="translator" name="translator" placeholder="译者" value="@Model.Item.Translator" autocomplete="off">
     </div>
     <div class="mb-3">
         <label for="publisherName" class="form-label">出版社</label>
-        <input type="text" class="form-control" id="publisherName" name="publisherName" placeholder="出版社" value="@Model.PublisherName" autocomplete="off">
+        <input type="text" class="form-control" id="publisherName" name="publisherName" placeholder="出版社" value="@Model.Item.PublisherName" autocomplete="off">
     </div>
     <div class="mb-3">
         <label for="publishDate" class="form-label">出版时间</label>
-        <input type="date" class="form-control" id="publishDate" name="publishDate" value="@Model.PublishDate.ToDate()" autocomplete="off">
+        <input type="date" class="form-control" id="publishDate" name="publishDate" value="@Model.Item.PublishDate.ToDate()" autocomplete="off">
     </div>
     <div class="mb-3">
         <label for="createTime" class="form-label">创建时间</label>
-        <input type="date" class="form-control" id="createTime" name="createTime" value="@Model.CreateTime.ToDate()" autocomplete="off" readonly>
+        <input type="date" class="form-control" id="createTime" name="createTime" value="@Model.Item.CreateTime.ToDate()" autocomplete="off" readonly>
         <div class="invalid-feedback">
             必填
         </div>
     </div>
     <div class="mb-3">
-        <label for="postCommentLink" class="form-label">博客链接</label>
-        <input type="text" class="form-control" id="postCommentLink" name="postCommentLink" placeholder="博客链接" value="@Model.PostCommentId" autocomplete="off">
+        <label for="postCommentId" class="form-label">文章链接</label>
+        <select class="form-select" name="postCommentId">
+            <option selected>选择博客文章</option>
+            @foreach (var p in Model.Posts)
+            {
+                if (p.Raw.Id == Model.Item.PostCommentId)
+                {
+                    <option value="@p.Raw.Id" selected>@p.Raw.Title</option>
+                }
+                else
+                {
+                    <option value="@p.Raw.Id">@p.Raw.Title</option>
+                }
+            }
+        </select>
     </div>
     <div class="mb-3">
         <label for="comment" class="form-label">短评</label>
-        <textarea class="form-control" id="comment" name="comment" rows="3" placeholder="短评" autocomplete="off">@Model.Comment</textarea>
+        <textarea class="form-control" id="comment" name="comment" rows="3" placeholder="短评" autocomplete="off">@Model.Item.Comment</textarea>
     </div>
     <div class="mb-3">
         <label for="grade" class="form-label">评分</label>
-        <input type="number" class="form-control" id="grade" name="grade" value="1" min="0" max="2" step="1" autocomplete="off" aria-describedby="gradeHelp" value="@Model.Grade">
+        <input type="number" class="form-control" id="grade" name="grade" value="1" min="0" max="2" step="1" autocomplete="off" aria-describedby="gradeHelp" value="@Model.Item.Grade">
         <div id="gradeHelp" class="form-text">0：差评；1：一般般；2：好评</div>
     </div>
     <div class="form-check form-switch mb-3">
-        @if (Model.IsPublic)
+        @if (Model.Item.IsPublic)
         {
             <input class="form-check-input" type="checkbox" id="isPublic" name="isPublic" checked>
         }
@@ -67,16 +80,16 @@
         <button type="submit" class="btn btn-primary btn-lg">提交</button>
     </div>
 
-    <input type="hidden" name="id" value="@Model.Id" />
+    <input type="hidden" name="id" value="@Model.Item.Id" />
 </form>
 
 @section Script {
     <script>
         activeNavItem("#nav_read");
-        //const shortCommentEditor = prepareEditor(document.querySelector("#shortComment"), "read_update_short_comment_@Model.Id");
+        //const shortCommentEditor = prepareEditor(document.querySelector("#shortComment"), "read_update_short_comment_@Model.Item.Id");
         const form = document.querySelector("form");
         form.addEventListener('submit',
-            function(event) {
+            function (event) {
                 event.preventDefault();
                 event.stopPropagation();
                 submitRequest("/@Constants.AreaAdmin/read/edit", { form: form, method: "PUT", body: new URLSearchParams(new FormData(form)), contentType: "application/x-www-form-urlencoded" });
