@@ -147,7 +147,7 @@ namespace Laobian.Lib.Repository
 
         private string GetPostDir()
         {
-            string path = Path.Combine(_option.AssetLocation, "blog", "post");
+            string path = Path.Combine(_option.AssetLocation, "asset", "blog", "post");
             _ = Directory.CreateDirectory(path);
             return path;
         }

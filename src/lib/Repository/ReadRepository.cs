@@ -139,7 +139,7 @@ namespace Laobian.Lib.Repository
 
         private string GetBaseDir()
         {
-            string path = Path.Combine(_option.AssetLocation, "read");
+            string path = Path.Combine(_option.AssetLocation, "asset", "read");
             _ = Directory.CreateDirectory(path);
             return path;
         }
