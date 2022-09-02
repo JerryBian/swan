@@ -887,6 +887,4 @@ $RECYCLE.BIN/
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,csharp,dotnetcore,aspnetcore,visualstudio,visualstudiocode,powershell,batch,node
 
-sample/db/
-sample/log/
-sample/data_protection/
+dev

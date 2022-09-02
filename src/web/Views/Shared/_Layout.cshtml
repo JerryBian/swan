@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@Constants.Title</title>
+
+    <link href="~/style.min.css" rel="stylesheet" asp-append-version="true" />
+</head>
+<body class="w-100 min-vh-100">
+    <div class="d-flex flex-column min-vh-100" id="wrapper">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container">
+                <a class="navbar-brand" href="#">@Constants.Title</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/blog" id="nav_blog"><i class="bi bi-type-bold"></i> 博客</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/read" id="nav_read"><i class="bi bi-book"></i> 阅读</a>
+                        </li>
+                        @if (Context.Request.HttpContext.User?.Identity?.IsAuthenticated == true)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-person"></i>
+                                    @Context.Request.HttpContext.User.Identity.Name
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="/admin/blog/add"><i class="bi bi-plus-circle"></i> 发表新的文章</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="/admin/read/add"><i class="bi bi-plus-circle"></i> 发表新的阅读</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="/logout"><i class="bi bi-box-arrow-left"></i> 登出账号</a></li>
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <main class="py-3 container">
+            @RenderBody()
+        </main>
+
+        <footer class="mt-auto small py-2 text-center">
+            &copy; @DateTime.Now.Year &middot;
+            <a href="" class="text-reset"><i class="bi bi-github"></i></a> &middot;
+            <a href="mailto:@Constants.Email" class="text-reset"><i class="bi bi-envelope"></i></a>
+        </footer>
+    </div>
+
+
+    <div class="modal fade" tabindex="-1" id="messageModal" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="messageModalTitle">Modal title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="messageModalBody">
+                </div>
+                <div class="modal-footer" id="messageModalFooter">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/script.min.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Script", false)
+</body>
+</html>

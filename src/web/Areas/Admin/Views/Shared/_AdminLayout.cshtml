@@ -1,0 +1,11 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+<div>
+    @RenderBody()
+</div>
+
+@section Script{
+    @await RenderSectionAsync("Script", false)
+}

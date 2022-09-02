@@ -1,0 +1,18 @@
+﻿{
+  "profiles": {
+    "Web": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "http://0.0.0.0:5053",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_HOSTINGSTARTUPASSEMBLIES": "Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation",
+        "ENV_ADMIN_USER_NAME": "test",
+        "ENV_ADMIN_PASSWORD": "test",
+        "ENV_ASSET_LOCATION": "C:\\Temp2\\asset",
+        "SKIP_GIT_OPERATIONS": "true"
+      }
+    }
+  }
+}
