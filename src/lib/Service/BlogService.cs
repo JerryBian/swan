@@ -51,16 +51,18 @@ namespace Laobian.Lib.Service
             return items.FirstOrDefault(x => x.Raw.PublishTime.Year == year && x.Raw.PublishTime.Month == month && string.Equals(x.Raw.Link, link, StringComparison.InvariantCultureIgnoreCase));
         }
 
-        public async Task AddPostAsync(BlogPost item, CancellationToken cancellationToken = default)
+        public async Task<BlogPostView> AddPostAsync(BlogPost item, CancellationToken cancellationToken = default)
         {
             await _blogRepository.AddPostAsync(item, cancellationToken);
             ClearCache();
+            return await GetPostAsync(item.Id, cancellationToken);
         }
 
-        public async Task UpdateAsync(BlogPost item, CancellationToken cancellationToken = default)
+        public async Task<BlogPostView> UpdateAsync(BlogPost item, CancellationToken cancellationToken = default)
         {
             await _blogRepository.UpdatePostAsync(item, cancellationToken);
             ClearCache();
+            return await GetPostAsync(item.Id, cancellationToken);
         }
 
         public async Task<bool> AddPostAccessAsync(string id, int count, CancellationToken cancellationToken = default)

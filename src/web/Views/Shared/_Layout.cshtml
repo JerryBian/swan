@@ -10,7 +10,7 @@
 <body class="w-100 d-flex flex-column min-vh-100">
     <nav class="navbar navbar-expand-lg wrapper my-3">
         <div class="container">
-            <a class="navbar-brand" href="#">@Constants.Title</a>
+            <a class="navbar-brand" href="/">@Constants.Title</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -25,12 +25,12 @@
                     @if (Context.Request.HttpContext.User?.Identity?.IsAuthenticated == true)
                     {
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle" id="nav_admin" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-person"></i>
                                 @Context.Request.HttpContext.User.Identity.Name
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="/admin/blog/add"><i class="bi bi-plus-circle"></i> 发表新的文章</a></li>
+                                <li><a class="dropdown-item" href="/admin/blog/post/add"><i class="bi bi-plus-circle"></i> 发表新的文章</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="/admin/read/add"><i class="bi bi-plus-circle"></i> 发表新的阅读</a></li>
                                 <li><hr class="dropdown-divider"></li>

@@ -74,7 +74,7 @@ namespace Laobian.Lib.Service
                     result.Add(view);
                 }
 
-                return result;
+                return result.OrderBy(x => x.Raw.CreateTime).ToList();
             });
         }
 

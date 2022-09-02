@@ -7,8 +7,9 @@
 function submitRequest(url, option) {
     if (option.form) {
         if (option.form.classList.contains("needs-validation")) {
-            if (option.form.checkValidity()) {
+            if (!option.form.checkValidity()) {
                 option.form.classList.add("was-validated");
+                return;
             }
         }
 

@@ -5,6 +5,7 @@ using Laobian.Lib.Option;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
 using System.Threading;
 
 namespace Laobian.Lib.Repository
@@ -116,9 +117,20 @@ namespace Laobian.Lib.Repository
                 item.Id = StringHelper.Random();
             }
 
+            if(string.IsNullOrEmpty(item.Link))
+            {
+                item.Link = StringHelper.Random();
+            }
+
             item.LastUpdateTime = DateTime.Now;
 
             string path = Path.Combine(baseDir, $"{item.Id}{FileExt}");
+            if(File.Exists(path))
+            {
+                var p = JsonHelper.Deserialize<BlogPost>(File.ReadAllText(path));
+                item.AccessCount = Math.Max(p.AccessCount, p.AccessCount);
+            }
+
             await WriteAsync(path, JsonHelper.Serialize(item, true), cancellationToken);
         }
 
