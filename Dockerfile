@@ -15,6 +15,7 @@ RUN dotnet publish \
 FROM mcr.microsoft.com/dotnet/aspnet:6.0
 WORKDIR /app
 COPY --from=build /publish ./
+RUN apt update -y && apt install git -y --no-install-recommends && rm -rf /var/lib/apt/lists/*
 
 ENV TZ=Asia/Shanghai
 
