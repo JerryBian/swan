@@ -42,6 +42,13 @@
         <div class="collapse small" id="@item.Raw.Id">
             <div class="mb-2 ps-3">@item.Metadata</div>
 
+            @if(!string.IsNullOrEmpty(item.Raw.PostCommentId))
+            {
+                <blockquote>
+                    博客链接：<a href="@item.PostCommentUrl" class="text-success"><i class="bi bi-link-45deg"></i> @item.PostCommentTitle</a>
+                </blockquote>
+            }
+
             @if (!string.IsNullOrEmpty(item.CommentHtml))
             {
                 <blockquote class="my-1">

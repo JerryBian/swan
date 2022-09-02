@@ -13,6 +13,8 @@
 
         public string PostCommentTitle { get; set; }
 
+        public string PostCommentUrl { get; set; }
+
         public string Metadata { get; set; }
     }
 }

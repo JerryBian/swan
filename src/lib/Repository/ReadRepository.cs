@@ -120,7 +120,7 @@ namespace Laobian.Lib.Repository
                 oldItem.Comment = item.Comment;
                 oldItem.Grade = item.Grade;
                 oldItem.LastUpdateTime = DateTime.Now;
-                oldItem.PostCommentLink = item.PostCommentLink;
+                oldItem.PostCommentId = item.PostCommentId;
                 oldItem.PublishDate = item.PublishDate;
                 oldItem.PublisherName = item.PublisherName;
                 oldItem.Translator = item.Translator;

@@ -11,12 +11,14 @@ namespace Laobian.Lib.Service
         private const string CacheKey = "AllReadItem";
 
         private readonly ICacheManager _cacheManager;
+        private readonly IBlogService _blogService;
         private readonly IReadRepository _readRepository;
 
-        public ReadService(ICacheManager cacheManager, IReadRepository readRepository)
+        public ReadService(ICacheManager cacheManager, IReadRepository readRepository, IBlogService blogService)
         {
             _cacheManager = cacheManager;
             _readRepository = readRepository;
+            _blogService = blogService;
         }
 
         public async Task<List<ReadItemView>> GetAllAsync(CancellationToken cancellationToken = default)
@@ -58,6 +60,17 @@ namespace Laobian.Lib.Service
 
                     view.Metadata = string.Join(" / ", metadata);
                     view.CommentHtml = MarkdownHelper.ToHtml(item.Comment);
+
+                    if(!string.IsNullOrEmpty(item.PostCommentId))
+                    {
+                        var post = await _blogService.GetPostAsync(item.PostCommentId);
+                        if(post != null)
+                        {
+                            view.PostCommentTitle = post.Raw.Title;
+                            view.PostCommentUrl = post.FullLink;
+                        }
+                    }
+
                     result.Add(view);
                 }
 

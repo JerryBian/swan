@@ -18238,10 +18238,10 @@ textarea.form-control-lg {
   }
 }
 #wrapper {
-  max-width: 720px;
+  max-width: 750px;
   margin: 0 auto;
   background-color: white;
-  padding: 0 2%;
+  padding: 0 3%;
 }
 
 .active {

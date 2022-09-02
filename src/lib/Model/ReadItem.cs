@@ -34,8 +34,8 @@ namespace Laobian.Lib.Model
         [JsonPropertyName("comment")]
         public string Comment { get; set; }
 
-        [JsonPropertyName("postCommentLink")]
-        public string PostCommentLink { get; set; }
+        [JsonPropertyName("postCommentId")]
+        public string PostCommentId { get; set; }
 
         [JsonPropertyName("lastUpdateTime")]
         public DateTime LastUpdateTime { get; set; }

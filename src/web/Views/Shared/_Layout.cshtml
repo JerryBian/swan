@@ -8,7 +8,7 @@
     <link href="~/style.min.css" rel="stylesheet" asp-append-version="true" />
 </head>
 <body class="w-100 min-vh-100">
-    <div class="d-flex flex-column min-vh-100" id="wrapper">
+    <div class="d-flex flex-column min-vh-100 shadow-sm my-3 rounded" id="wrapper">
         <nav class="navbar navbar-expand-lg">
             <div class="container">
                 <a class="navbar-brand" href="#">@Constants.Title</a>
@@ -39,22 +39,17 @@
                                 </ul>
                             </li>
                         }
-                        else
-                        {
-                            
-                        }
                     </ul>
                 </div>
             </div>
         </nav>
 
-        <main class="py-3 container">
+        <main class="py-4 container">
             @RenderBody()
         </main>
 
         <footer class="mt-auto small py-2 text-center">
             &copy; @DateTime.Now.Year &middot;
-            <a href="" class="text-reset"><i class="bi bi-github"></i></a> &middot;
             <a href="mailto:@Constants.Email" class="text-reset"><i class="bi bi-envelope"></i></a>
         </footer>
     </div>
