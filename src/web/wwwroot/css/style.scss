@@ -13,11 +13,11 @@ $color-1: #4a69bd;
 @import "../../../../node_modules/bootstrap-icons/font/bootstrap-icons";
 @import "../../../../node_modules/bootstrap/scss/bootstrap";
 
-#wrapper {
+.wrapper {
     max-width: 750px;
     margin: 0 auto;
-    background-color: white;
-    padding: 0 3%;
+    padding: 0 2%;
+    width: 100%;
 }
 
 .active {
