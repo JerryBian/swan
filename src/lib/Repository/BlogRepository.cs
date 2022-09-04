@@ -10,7 +10,7 @@ using System.Threading;
 
 namespace Laobian.Lib.Repository
 {
-    public class BlogRepository : GitFileRepository, IBlogRepository
+    public class BlogRepository : BaseRepository, IBlogRepository
     {
         private const string FileExt = ".json";
 

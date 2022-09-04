@@ -3,11 +3,11 @@ using System.Text;
 
 namespace Laobian.Lib.Repository
 {
-    public abstract class GitFileRepository
+    public abstract class BaseRepository
     {
         private readonly SemaphoreSlim _semaphoreSlim;
 
-        public GitFileRepository()
+        public BaseRepository()
         {
             _semaphoreSlim = new SemaphoreSlim(1, 1);
         }
@@ -26,6 +26,27 @@ namespace Laobian.Lib.Repository
                 _ = Directory.CreateDirectory(dir);
 
                 await File.WriteAllTextAsync(path, content, new UTF8Encoding(false), cancellationToken).OkForCancel();
+            }
+            finally
+            {
+                _ = _semaphoreSlim.Release();
+            }
+        }
+
+        public virtual async Task WriteAsync(string path, byte[] content, CancellationToken cancellationToken = default)
+        {
+            await _semaphoreSlim.WaitAsync(cancellationToken).OkForCancel();
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
+            try
+            {
+                string dir = Path.GetDirectoryName(path);
+                _ = Directory.CreateDirectory(dir);
+
+                await File.WriteAllBytesAsync(path, content, cancellationToken).OkForCancel();
             }
             finally
             {
@@ -53,20 +74,32 @@ namespace Laobian.Lib.Repository
             }
         }
 
-        public virtual async Task AddFileAsync(string path, byte[] content, CancellationToken cancellationToken = default)
+        public virtual async Task<IDictionary<string, List<string>>> ReadItemsAsync(string dirPath, string searchPattern = "*", CancellationToken cancellationToken = default)
         {
+            var dict = new Dictionary<string, List<string>>();
             await _semaphoreSlim.WaitAsync(cancellationToken).OkForCancel();
             if (cancellationToken.IsCancellationRequested)
             {
-                return;
+                return dict;
             }
 
             try
             {
-                string dir = Path.GetDirectoryName(path);
-                _ = Directory.CreateDirectory(dir);
+                if(!Directory.Exists(dirPath))
+                {
+                    return dict;
+                }
 
-                await File.WriteAllBytesAsync(path, content, cancellationToken).OkForCancel();
+                foreach(var d in Directory.EnumerateDirectories(dirPath, "*", SearchOption.TopDirectoryOnly))
+                {
+                    dict[d] = new List<string>();
+                    foreach(var f in Directory.EnumerateFiles(d, searchPattern, SearchOption.AllDirectories))
+                    {
+                        dict[d].Add(f);
+                    }
+                }
+
+                return dict;
             }
             finally
             {

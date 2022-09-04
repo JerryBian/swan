@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace Laobian.Lib.Repository
 {
-    public class ReadRepository : GitFileRepository, IReadRepository
+    public class ReadRepository : BaseRepository, IReadRepository
     {
         private const string FileExt = ".json";
 

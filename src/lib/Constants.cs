@@ -13,5 +13,15 @@
         public const string Email = "JerryBian@outlook.com";
 
         public const string FullName = "Jerry Bian";
+
+        public const string FolderAsset = "asset";
+
+        public const string FolderBlog = "blog";
+
+        public const string FolderRead = "read";
+
+        public const string FolderFile = "file";
+
+        public const string RouterFile = "file";
     }
 }

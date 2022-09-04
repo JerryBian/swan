@@ -11,6 +11,9 @@ using Laobian.Lib.Store;
 using Laobian.Lib.Worker;
 using Laobian.Web.HostedServices;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Options;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
@@ -31,6 +34,22 @@ using System.Text.Unicode;
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.WebHost.ConfigureAppConfiguration((hostContext, config) => { _ = config.AddEnvironmentVariables("ENV_"); });
 
+builder.Host.ConfigureLogging(l =>
+{
+    l.ClearProviders();
+    if(builder.Environment.IsProduction())
+    {
+        l.SetMinimumLevel(LogLevel.Information);
+    }
+    else
+    {
+        l.SetMinimumLevel(LogLevel.Trace);
+        l.AddDebug();
+    }
+
+    l.AddConsole();
+});
+
 // Add services to the container.
 builder.Services.Configure<LaobianOption>(o => { o.FetchFromEnv(builder.Configuration); });
 
@@ -42,6 +61,8 @@ builder.Services.AddSingleton<IBlogService, BlogService>();
 builder.Services.AddSingleton<ICacheManager, MemoryCacheManager>();
 builder.Services.AddSingleton<ICommandClient, CommandClient>();
 builder.Services.AddSingleton<IBlogPostAccessWorker, BlogPostAccessWorker>();
+builder.Services.AddSingleton<IFileRepository, FileRepository>();
+builder.Services.AddSingleton<IFileService, FileService>();
 
 builder.Services.AddMemoryCache();
 builder.Services.AddHostedService<GitFileHostedService>();
@@ -71,7 +92,24 @@ if (!app.Environment.IsDevelopment())
 {
     _ = app.UseExceptionHandler("/Error");
 }
-app.UseStaticFiles();
+app.UseStatusCodePages();
+
+var fileContentTypeProvider = new FileExtensionContentTypeProvider
+{
+    Mappings =
+            {
+                [".webmanifest"] = "application/manifest+json"
+            }
+};
+app.UseStaticFiles(new StaticFileOptions { ContentTypeProvider = fileContentTypeProvider });
+var option = app.Services.GetService<IOptions<LaobianOption>>().Value;
+var dir = Path.Combine(option.AssetLocation, Constants.FolderAsset, Constants.FolderFile);
+Directory.CreateDirectory(dir);
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.GetFullPath(dir)),
+    RequestPath = $"/{Constants.RouterFile}"
+});
 
 app.UseRouting();
 app.UseAuthentication();
