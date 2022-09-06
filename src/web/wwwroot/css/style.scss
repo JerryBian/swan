@@ -13,10 +13,16 @@ $color-1: #4a69bd;
 @import "../../../../node_modules/bootstrap-icons/font/bootstrap-icons";
 @import "../../../../node_modules/bootstrap/scss/bootstrap";
 
+#main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 2%;
+    width: 100%;
+}
+
 .wrapper {
     max-width: 750px;
     margin: 0 auto;
-    padding: 0 2%;
     width: 100%;
 }
 

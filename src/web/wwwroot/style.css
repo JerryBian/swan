@@ -18237,10 +18237,16 @@ textarea.form-control-lg {
     display: none !important;
   }
 }
+#main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 2%;
+  width: 100%;
+}
+
 .wrapper {
   max-width: 750px;
   margin: 0 auto;
-  padding: 0 2%;
   width: 100%;
 }
 

@@ -25,7 +25,7 @@
     <link href="~/style.min.css" rel="stylesheet" asp-append-version="true" />
 </head>
 <body class="w-100 d-flex flex-column min-vh-100">
-    <nav class="navbar navbar-expand-lg wrapper my-3">
+    <nav class="navbar navbar-expand-lg wrapper my-1">
         <div class="container">
             <a class="navbar-brand" href="/">@_option.Value.Title</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,8 +62,8 @@
         </div>
     </nav>
 
-    <main class="py-4 container shadow-sm my-3 rounded wrapper bg-white">
-        @RenderBody()
+    <main class="py-5 container shadow-sm my-2 rounded-1 bg-white" id="main">
+        <div class="wrapper">@RenderBody()</div>
     </main>
 
     <footer class="mt-auto small py-2 text-center wrapper">
