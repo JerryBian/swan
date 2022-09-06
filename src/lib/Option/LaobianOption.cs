@@ -41,7 +41,7 @@ namespace Laobian.Lib.Option
         [EnvOption("ADMIN_EMAIL", Default = "test@test.com")]
         public string AdminEmail { get; set; }
 
-        [EnvOption("Title", Default = "Blog Title")]
+        [EnvOption("TITLE", Default = "Blog Title")]
         public string Title { get; set; }
 
         [EnvOption("DESCRIPTION", Default = "Blog Description")]
