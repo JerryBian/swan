@@ -38,7 +38,7 @@ namespace Laobian.Web.HostedServices
                     string command = $"git clone -b {_option.GitHubBranchName} --single-branch {repoUrl} {dir}";
                     command += $" && cd {dir}";
                     command += " && git config --local user.name \"LAOBIAN.ME\"";
-                    command += $" && git config --local user.email \"{Constants.Email}\"";
+                    command += $" && git config --local user.email \"{_option.GitHubUserEmail}\"";
                     if (retryTimes > 1)
                     {
                         _logger.LogInformation($"Retry: {retryTimes}... starting to pull DB repo.");

@@ -2,6 +2,7 @@
 using Laobian.Lib.Cache;
 using Laobian.Lib.Service;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 
 namespace Laobian.Web.Areas.Read.Controllers
 {
@@ -24,6 +25,9 @@ namespace Laobian.Web.Areas.Read.Controllers
                 items = items.Where(x => x.Raw.IsPublic).ToList();
             }
 
+            ViewData["Title"] = $"阅读";
+            ViewData["DatePublished"] = items.Min(x => x.Raw.CreateTime);
+            ViewData["DateModified"] = items.Max(x => x.Raw.LastUpdateTime);
             return View(items);
         }
     }

@@ -14,5 +14,10 @@
         public string FullLink { get; set; }
 
         public string Metadata { get; set; }
+
+        public bool IsPublished()
+        {
+            return Raw.IsPublic && Raw.PublishTime >= DateTime.Now;
+        }
     }
 }

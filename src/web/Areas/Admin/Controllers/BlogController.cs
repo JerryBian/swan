@@ -2,11 +2,13 @@
 using Laobian.Lib.Helper;
 using Laobian.Lib.Model;
 using Laobian.Lib.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Laobian.Web.Areas.Admin.Controllers
 {
     [Area(Constants.AreaAdmin)]
+    [Authorize]
     public class BlogController : Controller
     {
         private readonly IBlogService _blogService;
@@ -26,6 +28,7 @@ namespace Laobian.Web.Areas.Admin.Controllers
         [HttpGet("/admin/blog/post/add")]
         public IActionResult Add()
         {
+            ViewData["Title"] = "添加新的文章";
             return View();
         }
 
@@ -64,6 +67,7 @@ namespace Laobian.Web.Areas.Admin.Controllers
         public async Task<IActionResult> Edit([FromRoute]string id)
         {
             var post = await _blogService.GetPostAsync(id);
+            ViewData["Title"] = $"编辑文章 - {post.Raw.Title}";
             return View(post.Raw);
         }
 

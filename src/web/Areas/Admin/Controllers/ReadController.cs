@@ -3,11 +3,13 @@ using Laobian.Lib.Helper;
 using Laobian.Lib.Model;
 using Laobian.Lib.Service;
 using Laobian.Web.Areas.Admin.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Laobian.Web.Areas.Admin.Controllers
 {
     [Area(Constants.AreaAdmin)]
+    [Authorize]
     public class ReadController : Controller
     {
         private readonly IReadService _readService;
@@ -23,6 +25,7 @@ namespace Laobian.Web.Areas.Admin.Controllers
 
         public IActionResult Index()
         {
+            ViewData["Title"] = "添加新的文章";
             return View();
         }
 
@@ -30,6 +33,7 @@ namespace Laobian.Web.Areas.Admin.Controllers
         public async Task<IActionResult> Add()
         {
             var posts = await _blogService.GetAllPostsAsync();
+            ViewData["Title"] = "添加新的阅读";
             return View(posts.OrderByDescending(x => x.Raw.CreateTime));
         }
 
@@ -65,6 +69,7 @@ namespace Laobian.Web.Areas.Admin.Controllers
             var model = new ReadItemViewModel();
             model.Posts = await _blogService.GetAllPostsAsync();
             model.Item = item.Raw;
+            ViewData["Title"] = $"编辑阅读 - {item.Raw.BookName}";
             return View(model);
         }
 

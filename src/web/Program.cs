@@ -11,6 +11,7 @@ using Laobian.Lib.Store;
 using Laobian.Lib.Worker;
 using Laobian.Web.HostedServices;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
@@ -67,7 +68,15 @@ builder.Services.AddSingleton<IFileService, FileService>();
 builder.Services.AddMemoryCache();
 builder.Services.AddHostedService<GitFileHostedService>();
 builder.Services.AddHostedService<BlogPostHostedService>();
-builder.Services.AddControllersWithViews().AddJsonOptions(config =>
+builder.Services.AddControllersWithViews(option =>
+{
+    option.CacheProfiles.Add(Constants.CacheProfileName, new CacheProfile
+    {
+        Duration = (int)TimeSpan.FromMinutes(1).TotalSeconds,
+        Location = ResponseCacheLocation.Any,
+        VaryByHeader = "User-Agent"
+    });
+}).AddJsonOptions(config =>
 {
     config.JsonSerializerOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
     var converter = new IsoDateTimeConverter();
@@ -114,10 +123,11 @@ app.UseStaticFiles(new StaticFileOptions
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+
 app.MapAreaControllerRoute(Constants.AreaAdmin, Constants.AreaAdmin, "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 app.MapAreaControllerRoute(Constants.AreaRead, Constants.AreaRead, "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 app.MapAreaControllerRoute(Constants.AreaBlog, Constants.AreaBlog, "{area:exists}/{controller=Home}/{action=Index}/{id?}");
-
-app.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

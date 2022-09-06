@@ -2,6 +2,7 @@
 using Laobian.Lib.Helper;
 using Laobian.Lib.Model;
 using Laobian.Lib.Option;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.Threading;
@@ -9,6 +10,7 @@ using System.Threading;
 namespace Laobian.Web.Areas.Admin.Controllers
 {
     [Area(Constants.AreaAdmin)]
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly LaobianOption _option;
@@ -20,6 +22,7 @@ namespace Laobian.Web.Areas.Admin.Controllers
 
         public IActionResult Index()
         {
+            ViewData["Title"] = "添加新的文章";
             return View();
         }
         

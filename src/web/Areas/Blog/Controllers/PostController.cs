@@ -27,6 +27,9 @@ namespace Laobian.Web.Areas.Blog.Controllers
             }
 
             _blogPostAccessWorker.Add(post.Raw.Id);
+            ViewData["Title"] = $"{post.Raw.Title} - 博客";
+            ViewData["DatePublished"] = post.Raw.PublishTime;
+            ViewData["DateModified"] = post.Raw.LastUpdateTime;
             return View(post);
         }
     }

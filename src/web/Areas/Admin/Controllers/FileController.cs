@@ -1,10 +1,12 @@
 ﻿using Laobian.Lib.Helper;
 using Laobian.Lib.Model;
 using Laobian.Lib.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Laobian.Web.Areas.Admin.Controllers
 {
+    [Authorize]
     public class FileController : Controller
     {
         private readonly IFileService _fileService;
@@ -18,6 +20,7 @@ namespace Laobian.Web.Areas.Admin.Controllers
 
         public IActionResult Index()
         {
+            ViewData["Title"] = "添加新的文章";
             return View();
         }
 
