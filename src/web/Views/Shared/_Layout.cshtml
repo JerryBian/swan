@@ -13,7 +13,7 @@
                 ThemeColor = "#ffffff",
                 Title = ViewData["Title"]?.ToString(),
                 BaseTitle = _option.Value.Title,
-                //BaseImage = $"{_option.Value.BlogRemoteEndpoint}/wind.png",
+                BaseImage = $"{_option.Value.BaseUrl}/android-chrome-512x512.png",
                 Image = ViewData["Image"]?.ToString(),
                 DatePublished = ViewData["DatePublished"] == null ? DateTime.Now : Convert.ToDateTime(ViewData["DatePublished"]),
                 DateModified = ViewData["DateModified"] == null ? DateTime.Now : Convert.ToDateTime(ViewData["DateModified"])
@@ -27,12 +27,15 @@
 <body class="w-100 d-flex flex-column min-vh-100">
     <nav class="navbar navbar-expand-lg wrapper my-1">
         <div class="container">
-            <a class="navbar-brand" href="/">@_option.Value.Title</a>
+            <a class="navbar-brand" href="@ViewData["BrandLink"]">@ViewData["BrandName"]</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/" id="nav_home"><i class="bi bi-house"></i> 首页</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/blog" id="nav_blog"><i class="bi bi-type-bold"></i> 博客</a>
                     </li>
@@ -88,5 +91,18 @@
 
     <script src="~/script.min.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Script", false)
+
+    @if(_env.IsProduction())
+    {
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZB78XKVE3V"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() { dataLayer.push(arguments); }
+            gtag('js', new Date());
+
+            gtag('config', 'G-ZB78XKVE3V');
+        </script>
+    }
 </body>
 </html>

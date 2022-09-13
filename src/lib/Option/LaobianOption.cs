@@ -63,7 +63,7 @@ namespace Laobian.Lib.Option
                         object val = Convert.ChangeType(value, propertyInfo.PropertyType);
                         propertyInfo.SetValue(this, val);
                     }
-                    else if(!string.IsNullOrEmpty(attr.Default))
+                    else if (!string.IsNullOrEmpty(attr.Default))
                     {
                         object val = Convert.ChangeType(attr.Default, propertyInfo.PropertyType);
                         propertyInfo.SetValue(this, val);

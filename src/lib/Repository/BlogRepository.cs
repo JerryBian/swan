@@ -5,8 +5,6 @@ using Laobian.Lib.Option;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Runtime.CompilerServices;
-using System.Text.Json;
-using System.Threading;
 
 namespace Laobian.Lib.Repository
 {
@@ -37,14 +35,14 @@ namespace Laobian.Lib.Repository
             {
                 string baseDir = GetPostDir();
                 string path = Path.Combine(baseDir, $"{id}{FileExt}");
-                if(!File.Exists(path))
+                if (!File.Exists(path))
                 {
                     _logger.LogWarning($"Add access count failed, path {path} not found.");
                     return false;
                 }
 
-                var content = await File.ReadAllTextAsync(path);
-                var post = JsonHelper.Deserialize<BlogPost>(content);
+                string content = await File.ReadAllTextAsync(path);
+                BlogPost post = JsonHelper.Deserialize<BlogPost>(content);
                 post.AccessCount += count;
                 await WriteAsync(path, JsonHelper.Serialize(post, true));
                 return true;
@@ -68,7 +66,7 @@ namespace Laobian.Lib.Repository
                 string baseDir = GetPostDir();
                 foreach (string item in await ReadAllAsync(baseDir, $"*{FileExt}", cancellationToken))
                 {
-                    var post = JsonHelper.Deserialize<BlogPost>(await File.ReadAllTextAsync(item, cancellationToken));
+                    BlogPost post = JsonHelper.Deserialize<BlogPost>(await File.ReadAllTextAsync(item, cancellationToken));
                     yield return post;
                 }
             }
@@ -117,7 +115,7 @@ namespace Laobian.Lib.Repository
                 item.Id = StringHelper.Random();
             }
 
-            if(string.IsNullOrEmpty(item.Link))
+            if (string.IsNullOrEmpty(item.Link))
             {
                 item.Link = StringHelper.Random();
             }
@@ -125,9 +123,9 @@ namespace Laobian.Lib.Repository
             item.LastUpdateTime = DateTime.Now;
 
             string path = Path.Combine(baseDir, $"{item.Id}{FileExt}");
-            if(File.Exists(path))
+            if (File.Exists(path))
             {
-                var p = JsonHelper.Deserialize<BlogPost>(File.ReadAllText(path));
+                BlogPost p = JsonHelper.Deserialize<BlogPost>(File.ReadAllText(path));
                 item.AccessCount = Math.Max(item.AccessCount, p.AccessCount);
             }
 

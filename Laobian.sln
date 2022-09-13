@@ -3,16 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laobian.Admin", "src\admin\Laobian.Admin.csproj", "{77609B9D-3BF4-49B8-A16B-8D29A1738AE1}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laobian.Blog", "src\blog\Laobian.Blog.csproj", "{BA4BAC78-D109-4BF0-B0E9-E385030120A4}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laobian.Api", "src\api\Laobian.Api.csproj", "{26162D17-4779-4EAB-92F0-4B8B577F3BC0}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laobian.Share", "src\share\Laobian.Share.csproj", "{7EEFB79A-E61C-47E6-9675-EDE28007B8B1}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laobian.Jarvis", "src\jarvis\Laobian.Jarvis.csproj", "{42572785-CE5B-40D8-8AA4-37EAD878391A}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lib", "src\lib\Lib.csproj", "{CBB26894-4E52-4C64-945B-F4F23B96FAA7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web", "src\web\Web.csproj", "{D70A4897-157C-4372-8C80-B4E919B2F6B2}"
@@ -23,26 +13,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{77609B9D-3BF4-49B8-A16B-8D29A1738AE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{77609B9D-3BF4-49B8-A16B-8D29A1738AE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{77609B9D-3BF4-49B8-A16B-8D29A1738AE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{77609B9D-3BF4-49B8-A16B-8D29A1738AE1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BA4BAC78-D109-4BF0-B0E9-E385030120A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BA4BAC78-D109-4BF0-B0E9-E385030120A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BA4BAC78-D109-4BF0-B0E9-E385030120A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BA4BAC78-D109-4BF0-B0E9-E385030120A4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{26162D17-4779-4EAB-92F0-4B8B577F3BC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{26162D17-4779-4EAB-92F0-4B8B577F3BC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{26162D17-4779-4EAB-92F0-4B8B577F3BC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{26162D17-4779-4EAB-92F0-4B8B577F3BC0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7EEFB79A-E61C-47E6-9675-EDE28007B8B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7EEFB79A-E61C-47E6-9675-EDE28007B8B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7EEFB79A-E61C-47E6-9675-EDE28007B8B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7EEFB79A-E61C-47E6-9675-EDE28007B8B1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{42572785-CE5B-40D8-8AA4-37EAD878391A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{42572785-CE5B-40D8-8AA4-37EAD878391A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{42572785-CE5B-40D8-8AA4-37EAD878391A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{42572785-CE5B-40D8-8AA4-37EAD878391A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CBB26894-4E52-4C64-945B-F4F23B96FAA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CBB26894-4E52-4C64-945B-F4F23B96FAA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CBB26894-4E52-4C64-945B-F4F23B96FAA7}.Release|Any CPU.ActiveCfg = Release|Any CPU

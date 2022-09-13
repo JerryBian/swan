@@ -2,12 +2,9 @@ using Laobian.Lib;
 using Laobian.Lib.Cache;
 using Laobian.Lib.Command;
 using Laobian.Lib.Converter;
-using Laobian.Lib.Helper;
-using Laobian.Lib.Model;
 using Laobian.Lib.Option;
 using Laobian.Lib.Repository;
 using Laobian.Lib.Service;
-using Laobian.Lib.Store;
 using Laobian.Lib.Worker;
 using Laobian.Web.HostedServices;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -16,39 +13,25 @@ using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using System.Text.Encodings.Web;
-using System.Text.Json;
 using System.Text.Unicode;
-
-// testing
-//var f1 = "C:\\temp2\\data\\asset\\blog\\post";
-//var f2 = "C:\\temp2\\data\\asset\\blog\\post1";
-//Directory.CreateDirectory(f2);
-//foreach (var f in Directory.EnumerateFiles(f1, "*", SearchOption.AllDirectories))
-//{
-//    var c = File.ReadAllText(f);
-//    var p = JsonHelper.Deserialize<BlogPost>(c);
-//    p.Id = StringHelper.Random();
-//    var path = Path.Combine(f2, $"{p.Id}.json");
-//    File.WriteAllText(path, JsonHelper.Serialize(p, true));
-//}
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.WebHost.ConfigureAppConfiguration((hostContext, config) => { _ = config.AddEnvironmentVariables("ENV_"); });
 
 builder.Host.ConfigureLogging(l =>
 {
-    l.ClearProviders();
-    if(builder.Environment.IsProduction())
+    _ = l.ClearProviders();
+    if (builder.Environment.IsProduction())
     {
-        l.SetMinimumLevel(LogLevel.Information);
+        _ = l.SetMinimumLevel(LogLevel.Information);
     }
     else
     {
-        l.SetMinimumLevel(LogLevel.Trace);
-        l.AddDebug();
+        _ = l.SetMinimumLevel(LogLevel.Trace);
+        _ = l.AddDebug();
     }
 
-    l.AddConsole();
+    _ = l.AddConsole();
 });
 
 // Add services to the container.
@@ -79,19 +62,18 @@ builder.Services.AddControllersWithViews(option =>
 }).AddJsonOptions(config =>
 {
     config.JsonSerializerOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
-    var converter = new IsoDateTimeConverter();
+    IsoDateTimeConverter converter = new();
     config.JsonSerializerOptions.Converters.Add(converter);
 });
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
             {
-                options.Cookie.Name = $".LAOBIAN.AUTH.{builder.Environment.EnvironmentName}";
+                options.Cookie.Name = $".SITE.AUTH.{builder.Environment.EnvironmentName}";
                 options.ExpireTimeSpan = TimeSpan.FromDays(7);
                 options.Cookie.HttpOnly = true;
                 options.ReturnUrlParameter = "returnUrl";
                 options.LoginPath = new PathString("/login");
                 options.LogoutPath = new PathString("/logout");
-                options.Cookie.Domain = builder.Environment.IsDevelopment() ? "localhost" : ".laobian.me";
             });
 
 WebApplication app = builder.Build();
@@ -103,7 +85,7 @@ if (!app.Environment.IsDevelopment())
 }
 app.UseStatusCodePages();
 
-var fileContentTypeProvider = new FileExtensionContentTypeProvider
+FileExtensionContentTypeProvider fileContentTypeProvider = new()
 {
     Mappings =
             {
@@ -111,8 +93,8 @@ var fileContentTypeProvider = new FileExtensionContentTypeProvider
             }
 };
 app.UseStaticFiles(new StaticFileOptions { ContentTypeProvider = fileContentTypeProvider });
-var option = app.Services.GetService<IOptions<LaobianOption>>().Value;
-var dir = Path.Combine(option.AssetLocation, Constants.FolderAsset, Constants.FolderFile);
+LaobianOption option = app.Services.GetService<IOptions<LaobianOption>>().Value;
+string dir = Path.Combine(option.AssetLocation, Constants.FolderAsset, Constants.FolderFile);
 Directory.CreateDirectory(dir);
 app.UseStaticFiles(new StaticFileOptions
 {

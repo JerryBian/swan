@@ -26,17 +26,17 @@ namespace Laobian.Web.Areas.Admin.Controllers
 
         [HttpPost("/admin/file/upload")]
         [RequestSizeLimit(20 * 1024 * 1024)]
-        public async Task<IActionResult> Upload([FromForm(Name = "file")]IFormFile file)
+        public async Task<IActionResult> Upload([FromForm(Name = "file")] IFormFile file)
         {
             ApiResponse<string> res = new();
             try
             {
-                var fileName = StringHelper.Random();
-                var ext = Path.GetExtension(file.FileName);
-                await using var ms = new MemoryStream();
+                string fileName = StringHelper.Random();
+                string ext = Path.GetExtension(file.FileName);
+                await using MemoryStream ms = new();
                 await file.CopyToAsync(ms);
-                ms.Seek(0, SeekOrigin.Begin);
-                var url = await _fileService.AddAsync(fileName + ext, ms.ToArray());
+                _ = ms.Seek(0, SeekOrigin.Begin);
+                string url = await _fileService.AddAsync(fileName + ext, ms.ToArray());
                 res.Content = url;
             }
             catch (Exception ex)

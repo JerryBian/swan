@@ -1,1 +1,19 @@
-﻿
+﻿@inject IOptions<LaobianOption> _option
+@{
+    Layout = "_Layout";
+    ViewData["BrandName"] = $"{_option.Value.Title}";
+    ViewData["BrandLink"] = "/";
+}
+<div class="text-center my-5">
+    <h1 class="mb-3">@_option.Value.Title</h1>
+    <p>
+        <a href="/blog" class="text-reset">博客</a> &middot;
+        <a href="/read" class="text-reset">阅读</a>
+    </p>
+</div>
+
+@section Script{
+    <script>
+        activeNavItem("#nav_home");
+    </script>
+}

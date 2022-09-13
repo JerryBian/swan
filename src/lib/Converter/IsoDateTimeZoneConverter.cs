@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Laobian.Lib.Converter;
@@ -8,7 +7,7 @@ public class IsoDateTimeZoneConverter : JsonConverter<DateTime>
 {
     public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        var str = reader.GetString();
+        string str = reader.GetString();
         return DateTime.Parse(str ?? string.Empty);
     }
 

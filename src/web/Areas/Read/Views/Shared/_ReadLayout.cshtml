@@ -1,5 +1,8 @@
-﻿@{
+﻿@inject IOptions<LaobianOption> _option
+@{
     Layout = "_Layout";
+    ViewData["BrandName"] = $"{_option.Value.Title}的阅读";
+    ViewData["BrandLink"] = "/read";
 }
 
 <div>

@@ -1,5 +1,4 @@
-﻿using Laobian.Lib;
-using Laobian.Lib.Command;
+﻿using Laobian.Lib.Command;
 using Laobian.Lib.Extension;
 using Laobian.Lib.Option;
 using Microsoft.Extensions.Options;
