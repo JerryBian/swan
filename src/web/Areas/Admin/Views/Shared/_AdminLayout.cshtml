@@ -2,6 +2,7 @@
 @{
     Layout = "_Layout";
     ViewData["BrandName"] = $"{_option.Value.Title}的管理界面";
+    ViewData["BrandLink"] = "/admin";
 }
 <div>
     @RenderBody()
