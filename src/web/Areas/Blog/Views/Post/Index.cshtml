@@ -1,6 +1,8 @@
 ﻿@model BlogPostView
 @{
     Layout = "_BlogLayout";
+    ViewData["DatePublished"] = Model.Raw.PublishTime;
+    ViewData["DateModified"] = Model.Raw.LastUpdateTime;
 }
 
 @{

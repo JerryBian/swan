@@ -1,6 +1,8 @@
 ﻿@model List<ReadItemView>
 @{
     Layout = "_ReadLayout";
+    ViewData["DatePublished"] = Model.Min(x => x.Raw.CreateTime);
+    ViewData["DateModified"] = Model.Max(x => x.Raw.LastUpdateTime);
 }
 
 <div class="alert alert-secondary">

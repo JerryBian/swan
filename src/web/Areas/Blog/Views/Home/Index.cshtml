@@ -1,6 +1,8 @@
 ﻿@model List<BlogPostView>
 @{
     Layout = "_BlogLayout";
+    ViewData["DatePublished"] = Model.Min(x => x.Raw.PublishTime);
+    ViewData["DateModified"] = Model.Max(x => x.Raw.PublishTime);
 }
 <div class="alert alert-secondary">
     以下是我的博客文章列表，所有文章均为个人言论，除非特殊声明，均与我的雇主或者其他任何团体无关。未经授权，不可转载演绎。
