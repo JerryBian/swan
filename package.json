@@ -1,17 +1,13 @@
 {
   "name": "laobian.me",
-  "version": "6.0.0",
+  "version": "7.0.0",
   "description": "![master](https://github.com/JerryBian/blog.laobian.me/workflows/master/badge.svg)",
   "main": "index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build_admin": "pwsh ./script/build_admin.ps1",
-    "build_blog": "pwsh ./script/build_blog.ps1",
-    "build_jarvis": "pwsh ./script/build_jarvis.ps1",
-    "build": "pwsh ./script/build_all.ps1"
+    "build": "pwsh ./script/build-css-js.ps1"
   },
   "repository": {
     "type": "git",
@@ -24,14 +20,14 @@
   },
   "homepage": "https://github.com/JerryBian/laobian.me#readme",
   "devDependencies": {
-    "@fortawesome/fontawesome-free": "^6.1.1",
+    "@highlightjs/cdn-assets": "^11.6.0",
+    "bootstrap": "^5.2.0",
+    "bootstrap-icons": "^1.9.1",
+    "sass": "^1.54.3",
+    "bootswatch": "^5.2.0",
     "anchor-js": "^4.3.1",
-    "bootstrap": "^5.1.3",
-    "bootswatch": "^5.1.3",
-    "chart.js": "^3.7.1",
-    "easymde": "^2.16.1",
-    "sass": "^1.50.0",
-    "uglify-js": "^3.15.3",
-    "uglifycss": "0.0.29"
+    "uglify-js": "^3.16.3",
+    "uglifycss": "^0.0.29",
+    "@stackoverflow/stacks-editor": "^0.7.0"
   }
 }

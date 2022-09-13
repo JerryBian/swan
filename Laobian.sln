@@ -11,7 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laobian.Api", "src\api\Laob
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laobian.Share", "src\share\Laobian.Share.csproj", "{7EEFB79A-E61C-47E6-9675-EDE28007B8B1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laobian.Jarvis", "src\jarvis\Laobian.Jarvis.csproj", "{42572785-CE5B-40D8-8AA4-37EAD878391A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laobian.Jarvis", "src\jarvis\Laobian.Jarvis.csproj", "{42572785-CE5B-40D8-8AA4-37EAD878391A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lib", "src\lib\Lib.csproj", "{CBB26894-4E52-4C64-945B-F4F23B96FAA7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web", "src\web\Web.csproj", "{D70A4897-157C-4372-8C80-B4E919B2F6B2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +43,14 @@ Global
 		{42572785-CE5B-40D8-8AA4-37EAD878391A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{42572785-CE5B-40D8-8AA4-37EAD878391A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{42572785-CE5B-40D8-8AA4-37EAD878391A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBB26894-4E52-4C64-945B-F4F23B96FAA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBB26894-4E52-4C64-945B-F4F23B96FAA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBB26894-4E52-4C64-945B-F4F23B96FAA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBB26894-4E52-4C64-945B-F4F23B96FAA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D70A4897-157C-4372-8C80-B4E919B2F6B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D70A4897-157C-4372-8C80-B4E919B2F6B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D70A4897-157C-4372-8C80-B4E919B2F6B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D70A4897-157C-4372-8C80-B4E919B2F6B2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

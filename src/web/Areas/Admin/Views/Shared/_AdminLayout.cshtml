@@ -1,0 +1,35 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+<div>
+    @RenderBody()
+</div>
+
+@section Script{
+    <script>
+        activeNavItem("#nav_admin");
+        document.querySelector("#admin_upload").addEventListener("click", function(){
+            var input = document.createElement('input');
+            input.type = 'file';
+            input.setAttribute("name", "file");
+
+            input.onchange = e => {
+                var file = e.target.files[0];
+                let formData = new FormData();
+                formData.append("file", file)
+                submitRequest("/@Constants.AreaAdmin/file/upload", { 
+                    method: "POST", 
+                    body: formData, 
+                    contentType: "",
+                    okAction: function(url) {
+                        showInfoMessageModal(`<img class="img-fluid" src="${url}"><p class="text-center">${url}</p>`);
+                    }
+                });
+            }
+
+            input.click();
+        });
+    </script>
+    @await RenderSectionAsync("Script", false)
+}

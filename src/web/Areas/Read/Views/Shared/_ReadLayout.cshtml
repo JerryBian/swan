@@ -1,0 +1,14 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+<div>
+    @RenderBody()
+</div>
+
+@section Script{
+    <script>
+        activeNavItem("#nav_read");
+    </script>
+    @await RenderSectionAsync("Script", false)
+}
