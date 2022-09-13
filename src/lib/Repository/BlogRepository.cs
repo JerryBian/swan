@@ -128,7 +128,7 @@ namespace Laobian.Lib.Repository
             if(File.Exists(path))
             {
                 var p = JsonHelper.Deserialize<BlogPost>(File.ReadAllText(path));
-                item.AccessCount = Math.Max(p.AccessCount, p.AccessCount);
+                item.AccessCount = Math.Max(item.AccessCount, p.AccessCount);
             }
 
             await WriteAsync(path, JsonHelper.Serialize(item, true), cancellationToken);

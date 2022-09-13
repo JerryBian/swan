@@ -75,4 +75,4 @@ jobs:
           password: ${{ secrets.VPS_SSH_PASSWORD }}
           port: ${{ secrets.VPS_SSH_PORT }}
           script: |
-            sh /ga/deploy-laobian-me-stage.sh ${{ env.APP_VERSION }}
+            sh /ga/script/deploy-laobian-me-stage.sh ${{ env.APP_VERSION }}

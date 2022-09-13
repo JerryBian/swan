@@ -45,7 +45,7 @@
             <div class="mb-3">
                 <label for="postCommentId" class="form-label">文章链接</label>
                 <select class="form-select" name="postCommentId">
-                    <option selected>选择博客文章</option>
+                    <option selected value="">-- 选择博客文章 --</option>
                     @foreach(var p in Model)
                     {
                         <option value="@p.Raw.Id">@p.Raw.Title</option>

@@ -20,10 +20,10 @@ using System.Text.Json;
 using System.Text.Unicode;
 
 // testing
-//var f1 = "C:\\temp2\\asset\\blog\\post";
-//var f2 = "C:\\temp2\\asset\\blog\\post1";
+//var f1 = "C:\\temp2\\data\\asset\\blog\\post";
+//var f2 = "C:\\temp2\\data\\asset\\blog\\post1";
 //Directory.CreateDirectory(f2);
-//foreach(var f in Directory.EnumerateFiles(f1, "*", SearchOption.AllDirectories))
+//foreach (var f in Directory.EnumerateFiles(f1, "*", SearchOption.AllDirectories))
 //{
 //    var c = File.ReadAllText(f);
 //    var p = JsonHelper.Deserialize<BlogPost>(c);

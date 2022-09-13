@@ -38,9 +38,17 @@
         <div class="collapse" id="moreItems">
             @foreach (var item in hiddenItems)
             {
-                var c = item.Raw.IsPublic ? "" : "text-dark";
-                <div class="@c mb-2">
-                    <div class="small text-muted">@item.Raw.CreateTime.ToCnDate()</div>
+                var c = item.Raw.IsPublic ? "" : "text-secondary";
+                <div class="@c mb-3">
+                    <div class="small text-muted d-flex">
+                        <span class="flex-grow-1">@Html.Raw(item.Metadata)</span>
+                        <span>
+                            @if (Context.Request.HttpContext.User?.Identity?.IsAuthenticated == true)
+                            {
+                                <a href="/admin/blog/post/edit/@item.Raw.Id"><i class="bi bi-pencil-square text-success"></i></a>
+                            }
+                        </span>
+                    </div>
                     <a href="@item.FullLink" class="fs-5 text-reset text-decoration-none">
                         @item.Raw.Title
                     </a>
