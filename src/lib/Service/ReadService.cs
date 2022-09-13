@@ -61,10 +61,10 @@ namespace Laobian.Lib.Service
                     view.Metadata = string.Join(" / ", metadata);
                     view.CommentHtml = MarkdownHelper.ToHtml(item.Comment);
 
-                    if(!string.IsNullOrEmpty(item.PostCommentId))
+                    if (!string.IsNullOrEmpty(item.PostCommentId))
                     {
-                        var post = await _blogService.GetPostAsync(item.PostCommentId);
-                        if(post != null)
+                        BlogPostView post = await _blogService.GetPostAsync(item.PostCommentId);
+                        if (post != null)
                         {
                             view.PostCommentTitle = post.Raw.Title;
                             view.PostCommentUrl = post.FullLink;

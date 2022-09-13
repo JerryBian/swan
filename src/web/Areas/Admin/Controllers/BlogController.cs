@@ -41,8 +41,8 @@ namespace Laobian.Web.Areas.Admin.Controllers
                 item.IsPublic = Request.Form["isPublic"] == "on";
                 item.IsTopping = Request.Form["isTopping"] == "on";
                 item.ContainsMath = Request.Form["containsMath"] == "on";
-                var result = await _blogService.AddPostAsync(item);
-                if(result == null)
+                BlogPostView result = await _blogService.AddPostAsync(item);
+                if (result == null)
                 {
                     res.IsOk = false;
                     res.Message = "Failed to add new post.";
@@ -51,7 +51,7 @@ namespace Laobian.Web.Areas.Admin.Controllers
                 {
                     res.RedirectTo = result.FullLink;
                 }
-                
+
             }
             catch (Exception ex)
             {
@@ -64,9 +64,9 @@ namespace Laobian.Web.Areas.Admin.Controllers
         }
 
         [HttpGet("/admin/blog/post/edit/{id}")]
-        public async Task<IActionResult> Edit([FromRoute]string id)
+        public async Task<IActionResult> Edit([FromRoute] string id)
         {
-            var post = await _blogService.GetPostAsync(id);
+            BlogPostView post = await _blogService.GetPostAsync(id);
             ViewData["Title"] = $"编辑文章 - {post.Raw.Title}";
             return View(post.Raw);
         }
@@ -80,7 +80,7 @@ namespace Laobian.Web.Areas.Admin.Controllers
                 item.IsPublic = Request.Form["isPublic"] == "on";
                 item.IsTopping = Request.Form["isTopping"] == "on";
                 item.ContainsMath = Request.Form["containsMath"] == "on";
-                var result = await _blogService.UpdateAsync(item);
+                BlogPostView result = await _blogService.UpdateAsync(item);
                 if (result == null)
                 {
                     res.IsOk = false;

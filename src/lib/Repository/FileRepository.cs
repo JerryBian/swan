@@ -14,19 +14,19 @@ namespace Laobian.Lib.Repository
 
         public async Task AddAsync(string subFolder, string fileName, byte[] content)
         {
-            var dir = GetBaseDir(subFolder);
-            var path = Path.Combine(dir, fileName);
+            string dir = GetBaseDir(subFolder);
+            string path = Path.Combine(dir, fileName);
             await File.WriteAllBytesAsync(path, content);
         }
 
         private string GetBaseDir(string subFolder)
         {
-            var dir = Path.Combine(_option.AssetLocation, Constants.FolderAsset, Constants.FolderFile);
-            if(!string.IsNullOrEmpty(subFolder))
+            string dir = Path.Combine(_option.AssetLocation, Constants.FolderAsset, Constants.FolderFile);
+            if (!string.IsNullOrEmpty(subFolder))
             {
                 dir = Path.Combine(dir, subFolder);
             }
-            Directory.CreateDirectory(dir);
+            _ = Directory.CreateDirectory(dir);
             return dir;
         }
     }

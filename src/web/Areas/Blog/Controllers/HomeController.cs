@@ -1,6 +1,4 @@
 ﻿using Laobian.Lib;
-using Laobian.Lib.Cache;
-using Laobian.Lib.Extension;
 using Laobian.Lib.Model;
 using Laobian.Lib.Option;
 using Laobian.Lib.Service;
@@ -33,7 +31,7 @@ namespace Laobian.Web.Areas.Blog.Controllers
                 items = items.Where(x => x.Raw.IsPublic).ToList();
             }
 
-            var model = items.OrderByDescending(x => x.Raw.PublishTime).ToList();
+            List<BlogPostView> model = items.OrderByDescending(x => x.Raw.PublishTime).ToList();
             ViewData["Title"] = "博客";
             return View(model);
         }
@@ -43,7 +41,7 @@ namespace Laobian.Web.Areas.Blog.Controllers
         [ResponseCache(CacheProfileName = Constants.CacheProfileName)]
         public async Task<IActionResult> Rss()
         {
-            var feed = new SyndicationFeed(_option.Title, _option.Description,
+            SyndicationFeed feed = new(_option.Title, _option.Description,
                     new Uri($"{_option.BaseUrl}/blog/rss"),
                     _option.AppName, DateTimeOffset.UtcNow)
             {
@@ -55,9 +53,9 @@ namespace Laobian.Web.Areas.Blog.Controllers
                 _option.BaseUrl));
             feed.BaseUri = new Uri(_option.BaseUrl);
             feed.Language = "zh-cn";
-            var items = new List<SyndicationItem>();
-            var posts = await _blogService.GetAllPostsAsync();
-            foreach (var post in posts.Where(x => x.IsPublished()))
+            List<SyndicationItem> items = new();
+            List<BlogPostView> posts = await _blogService.GetAllPostsAsync();
+            foreach (BlogPostView post in posts.Where(x => x.IsPublished()))
             {
                 items.Add(new SyndicationItem(post.Raw.Title, post.HtmlContent,
                     new Uri($"{_option.BaseUrl}{post.FullLink}"),
@@ -66,7 +64,7 @@ namespace Laobian.Web.Areas.Blog.Controllers
             }
 
             feed.Items = items;
-            var settings = new XmlWriterSettings
+            XmlWriterSettings settings = new()
             {
                 Encoding = Encoding.UTF8,
                 NewLineHandling = NewLineHandling.Entitize,
@@ -75,15 +73,15 @@ namespace Laobian.Web.Areas.Blog.Controllers
                 Indent = true
             };
 
-            using var ms = new MemoryStream();
-            using (var xmlWriter = XmlWriter.Create(ms, settings))
+            using MemoryStream ms = new();
+            using (XmlWriter xmlWriter = XmlWriter.Create(ms, settings))
             {
-                var rssFormatter = new Rss20FeedFormatter(feed, false);
+                Rss20FeedFormatter rssFormatter = new(feed, false);
                 rssFormatter.WriteTo(xmlWriter);
                 xmlWriter.Flush();
             }
 
-            var rss = Encoding.UTF8.GetString(ms.ToArray());
+            string rss = Encoding.UTF8.GetString(ms.ToArray());
             return Content(rss, "application/rss+xml", Encoding.UTF8);
         }
     }

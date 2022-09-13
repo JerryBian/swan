@@ -2,12 +2,9 @@ using Laobian.Lib;
 using Laobian.Lib.Cache;
 using Laobian.Lib.Command;
 using Laobian.Lib.Converter;
-using Laobian.Lib.Helper;
-using Laobian.Lib.Model;
 using Laobian.Lib.Option;
 using Laobian.Lib.Repository;
 using Laobian.Lib.Service;
-using Laobian.Lib.Store;
 using Laobian.Lib.Worker;
 using Laobian.Web.HostedServices;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -16,7 +13,6 @@ using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using System.Text.Encodings.Web;
-using System.Text.Json;
 using System.Text.Unicode;
 
 // testing
@@ -38,7 +34,7 @@ builder.WebHost.ConfigureAppConfiguration((hostContext, config) => { _ = config.
 builder.Host.ConfigureLogging(l =>
 {
     l.ClearProviders();
-    if(builder.Environment.IsProduction())
+    if (builder.Environment.IsProduction())
     {
         l.SetMinimumLevel(LogLevel.Information);
     }

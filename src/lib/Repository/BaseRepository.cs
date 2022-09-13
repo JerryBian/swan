@@ -76,7 +76,7 @@ namespace Laobian.Lib.Repository
 
         public virtual async Task<IDictionary<string, List<string>>> ReadItemsAsync(string dirPath, string searchPattern = "*", CancellationToken cancellationToken = default)
         {
-            var dict = new Dictionary<string, List<string>>();
+            Dictionary<string, List<string>> dict = new();
             await _semaphoreSlim.WaitAsync(cancellationToken).OkForCancel();
             if (cancellationToken.IsCancellationRequested)
             {
@@ -85,15 +85,15 @@ namespace Laobian.Lib.Repository
 
             try
             {
-                if(!Directory.Exists(dirPath))
+                if (!Directory.Exists(dirPath))
                 {
                     return dict;
                 }
 
-                foreach(var d in Directory.EnumerateDirectories(dirPath, "*", SearchOption.TopDirectoryOnly))
+                foreach (string d in Directory.EnumerateDirectories(dirPath, "*", SearchOption.TopDirectoryOnly))
                 {
                     dict[d] = new List<string>();
-                    foreach(var f in Directory.EnumerateFiles(d, searchPattern, SearchOption.AllDirectories))
+                    foreach (string f in Directory.EnumerateFiles(d, searchPattern, SearchOption.AllDirectories))
                     {
                         dict[d].Add(f);
                     }

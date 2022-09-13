@@ -1,15 +1,9 @@
 ﻿using Laobian.Lib.Extension;
 using Laobian.Lib.Service;
-using Laobian.Lib.Worker;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Laobian.Lib.Store
+namespace Laobian.Lib.Worker
 {
     public class BlogPostAccessWorker : IBlogPostAccessWorker
     {
@@ -28,9 +22,9 @@ namespace Laobian.Lib.Store
 
         public async void Add(string id)
         {
-            if(_cts.IsCancellationRequested)
+            if (_cts.IsCancellationRequested)
             {
-                await _blogService.AddPostAccessAsync(id, 1);
+                _ = await _blogService.AddPostAccessAsync(id, 1);
                 return;
             }
 
@@ -39,10 +33,10 @@ namespace Laobian.Lib.Store
 
         public async Task ProcessAsync()
         {
-            while(!_cts.IsCancellationRequested)
+            while (!_cts.IsCancellationRequested)
             {
                 await ProcessInternalAsync();
-                await Task.Delay(TimeSpan.FromSeconds(1)).OkForCancel();
+                await Task.Delay(TimeSpan.FromHours(12)).OkForCancel();
             }
         }
 
@@ -56,8 +50,8 @@ namespace Laobian.Lib.Store
         {
             try
             {
-                var dict = new Dictionary<string, int>();
-                while (_posts.TryDequeue(out var id))
+                Dictionary<string, int> dict = new();
+                while (_posts.TryDequeue(out string id))
                 {
                     if (!dict.ContainsKey(id))
                     {
@@ -67,12 +61,12 @@ namespace Laobian.Lib.Store
                     dict[id]++;
                 }
 
-                foreach (var item in dict)
+                foreach (KeyValuePair<string, int> item in dict)
                 {
-                    await _blogService.AddPostAccessAsync(item.Key, item.Value);
+                    _ = await _blogService.AddPostAccessAsync(item.Key, item.Value);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Blog post access worker processing failed.");
             }

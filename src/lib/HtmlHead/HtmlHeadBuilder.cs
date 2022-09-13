@@ -1,6 +1,6 @@
-﻿using System.Text;
-using Laobian.Lib.Helper;
+﻿using Laobian.Lib.Helper;
 using Laobian.Lib.Option;
+using System.Text;
 
 namespace Laobian.Lib.HtmlHead;
 
@@ -17,45 +17,45 @@ public class HtmlHeadBuilder
 
     public string Build()
     {
-        var sb = new StringBuilder();
-        sb.AppendLine("<meta charset=\"utf-8\">");
-        sb.AppendLine("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
-        sb.AppendLine($"<meta name=\"msapplication-TileColor\" content=\"{_buildOption.ApplicationTitleColor}\">");
-        sb.AppendLine($"<meta name=\"theme-color\" content=\"{_buildOption.ThemeColor}\">");
-        sb.AppendLine($"<meta name=\"copyright\"content=\"{_option.AdminUserFullName}\">");
-        sb.AppendLine("<meta name=\"language\" content=\"zh\">");
-        sb.AppendLine($"<meta name=\"author\" content=\"{_option.AdminUserFullName}, {_option.AdminEmail}\">");
+        StringBuilder sb = new();
+        _ = sb.AppendLine("<meta charset=\"utf-8\">");
+        _ = sb.AppendLine("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
+        _ = sb.AppendLine($"<meta name=\"msapplication-TileColor\" content=\"{_buildOption.ApplicationTitleColor}\">");
+        _ = sb.AppendLine($"<meta name=\"theme-color\" content=\"{_buildOption.ThemeColor}\">");
+        _ = sb.AppendLine($"<meta name=\"copyright\"content=\"{_option.AdminUserFullName}\">");
+        _ = sb.AppendLine("<meta name=\"language\" content=\"zh\">");
+        _ = sb.AppendLine($"<meta name=\"author\" content=\"{_option.AdminUserFullName}, {_option.AdminEmail}\">");
 
         if (!string.IsNullOrEmpty(_buildOption.Description))
         {
-            var desc = StringHelper.Truncate(_buildOption.Description, 149);
-            sb.AppendLine($"<meta name=\"description\" content=\"{desc}\"/>");
+            string desc = StringHelper.Truncate(_buildOption.Description, 149);
+            _ = sb.AppendLine($"<meta name=\"description\" content=\"{desc}\"/>");
         }
 
-        sb.AppendLine("<link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"/apple-touch-icon.png\">");
-        sb.AppendLine("<link rel=\"icon\" type=\"image/png\" sizes=\"32x32\" href=\"/favicon-32x32.png\">");
-        sb.AppendLine("<link rel=\"icon\" type=\"image/png\" sizes=\"16x16\" href=\"/favicon-16x16.png\">");
-        sb.AppendLine("<link rel=\"manifest\" href=\"/site.webmanifest\">");
-        sb.AppendLine(
+        _ = sb.AppendLine("<link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"/apple-touch-icon.png\">");
+        _ = sb.AppendLine("<link rel=\"icon\" type=\"image/png\" sizes=\"32x32\" href=\"/favicon-32x32.png\">");
+        _ = sb.AppendLine("<link rel=\"icon\" type=\"image/png\" sizes=\"16x16\" href=\"/favicon-16x16.png\">");
+        _ = sb.AppendLine("<link rel=\"manifest\" href=\"/site.webmanifest\">");
+        _ = sb.AppendLine(
             $"<link rel=\"mask-icon\" href=\"/safari-pinned-tab.svg\" color=\"{_buildOption.SafariPinnedTabColor}\">");
 
-        var title = _buildOption.BaseTitle;
+        string title = _buildOption.BaseTitle;
         if (!string.IsNullOrEmpty(_buildOption.Title))
         {
             title = $"{_buildOption.Title} &middot; " + title;
         }
 
-        sb.AppendLine($"<title>{title}</title>");
+        _ = sb.AppendLine($"<title>{title}</title>");
 
         if (_buildOption.RobotsEnabled)
         {
-            var googleStructuredAuthor = new GoogleStructuredAuthor
+            GoogleStructuredAuthor googleStructuredAuthor = new()
             {
                 Name = _option.AdminUserFullName,
                 Type = "Person",
                 Url = _option.BaseUrl
             };
-            var googleStructuredData = new GoogleStructuredData
+            GoogleStructuredData googleStructuredData = new()
             {
                 Context = "https://schema.org",
                 Type = "NewsArticle",
@@ -68,14 +68,14 @@ public class HtmlHeadBuilder
                 ? _buildOption.Image
                 : _buildOption.BaseImage);
 
-            sb.AppendLine("<meta name=\"robots\" content=\"index,follow,archive\"/>");
-            sb.AppendLine(
+            _ = sb.AppendLine("<meta name=\"robots\" content=\"index,follow,archive\"/>");
+            _ = sb.AppendLine(
                 $"<script type=\"application/ld+json\">{JsonHelper.Serialize(googleStructuredData)}</script>");
         }
         else
         {
-            sb.AppendLine("<meta name=\"robots\" content=\"noindex,nofollow,noarchive\"/>");
-            sb.AppendLine("<meta name=\"googlebot\" content=\"noindex,nofollow,noarchive\"/>");
+            _ = sb.AppendLine("<meta name=\"robots\" content=\"noindex,nofollow,noarchive\"/>");
+            _ = sb.AppendLine("<meta name=\"googlebot\" content=\"noindex,nofollow,noarchive\"/>");
         }
 
         return sb.ToString();

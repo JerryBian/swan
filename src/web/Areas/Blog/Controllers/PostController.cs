@@ -18,10 +18,10 @@ namespace Laobian.Web.Areas.Blog.Controllers
         }
 
         [HttpGet("/blog/{year}/{month}/{link}.html")]
-        public async Task<IActionResult> Index([FromRoute]int year, [FromRoute]int month, [FromRoute]string link)
+        public async Task<IActionResult> Index([FromRoute] int year, [FromRoute] int month, [FromRoute] string link)
         {
-            var post = await _blogService.GetPostAsync(year, month, link);
-            if(post == null)
+            Lib.Model.BlogPostView post = await _blogService.GetPostAsync(year, month, link);
+            if (post == null)
             {
                 return NotFound();
             }

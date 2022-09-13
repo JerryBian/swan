@@ -1,5 +1,4 @@
 ﻿using Laobian.Lib;
-using Laobian.Lib.Cache;
 using Laobian.Lib.Extension;
 using Laobian.Lib.Option;
 using Laobian.Lib.Service;
@@ -22,7 +21,7 @@ namespace Laobian.Web.Controllers
 
         public IActionResult Index()
         {
-            
+
             return View();
         }
 
@@ -31,23 +30,23 @@ namespace Laobian.Web.Controllers
         [ResponseCache(CacheProfileName = Constants.CacheProfileName)]
         public async Task<IActionResult> Sitemap()
         {
-            var sb = new StringBuilder();
-            sb.AppendLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-            sb.AppendLine("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">");
-            sb.AppendLine(
+            StringBuilder sb = new();
+            _ = sb.AppendLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+            _ = sb.AppendLine("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">");
+            _ = sb.AppendLine(
                 $"<url><loc>{_option.BaseUrl}</loc><lastmod>{DateTime.Now.ToDate()}</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>");
-            sb.AppendLine(
+            _ = sb.AppendLine(
                 $"<url><loc>{_option.BaseUrl}/read</loc><lastmod>{DateTime.Now.ToDate()}</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>");
 
-            var posts = await _blogService.GetAllPostsAsync();
-            foreach (var post in posts.Where(x => x.IsPublished()))
+            List<Lib.Model.BlogPostView> posts = await _blogService.GetAllPostsAsync();
+            foreach (Lib.Model.BlogPostView post in posts.Where(x => x.IsPublished()))
             {
-                sb.AppendLine(
+                _ = sb.AppendLine(
                     $"<url><loc>{_option.BaseUrl}{post.FullLink}</loc><lastmod>{post.Raw.LastUpdateTime.ToDate()}</lastmod><changefreq>daily</changefreq><priority>0.6</priority></url>");
             }
 
-            sb.AppendLine("</urlset>");
-            var sitemap = sb.ToString();
+            _ = sb.AppendLine("</urlset>");
+            string sitemap = sb.ToString();
             return Content(sitemap, "text/xml", Encoding.UTF8);
         }
     }

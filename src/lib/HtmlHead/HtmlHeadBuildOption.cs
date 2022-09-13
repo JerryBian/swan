@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Laobian.Lib.HtmlHead;
+﻿namespace Laobian.Lib.HtmlHead;
 
 public class HtmlHeadBuildOption
 {
