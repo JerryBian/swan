@@ -25,7 +25,7 @@ namespace Laobian.Web.Areas.Admin.Controllers
         }
 
         [HttpPost("/admin/file/upload")]
-        [RequestSizeLimit(20 * 1024 * 1024)]
+        [RequestSizeLimit(100 * 1024 * 1024)]
         public async Task<IActionResult> Upload([FromForm(Name = "file")] IFormFile file)
         {
             ApiResponse<string> res = new();

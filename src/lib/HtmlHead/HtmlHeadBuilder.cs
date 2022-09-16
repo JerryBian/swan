@@ -32,12 +32,12 @@ public class HtmlHeadBuilder
             _ = sb.AppendLine($"<meta name=\"description\" content=\"{desc}\"/>");
         }
 
-        _ = sb.AppendLine("<link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"/apple-touch-icon.png\">");
-        _ = sb.AppendLine("<link rel=\"icon\" type=\"image/png\" sizes=\"32x32\" href=\"/favicon-32x32.png\">");
-        _ = sb.AppendLine("<link rel=\"icon\" type=\"image/png\" sizes=\"16x16\" href=\"/favicon-16x16.png\">");
-        _ = sb.AppendLine("<link rel=\"manifest\" href=\"/site.webmanifest\">");
+        _ = sb.AppendLine("<link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"/file/icon/apple-touch-icon.png\">");
+        _ = sb.AppendLine("<link rel=\"icon\" type=\"image/png\" sizes=\"32x32\" href=\"/file/icon/favicon-32x32.png\">");
+        _ = sb.AppendLine("<link rel=\"icon\" type=\"image/png\" sizes=\"16x16\" href=\"/file/icon/favicon-16x16.png\">");
+        _ = sb.AppendLine("<link rel=\"manifest\" href=\"/file/icon/site.webmanifest\">");
         _ = sb.AppendLine(
-            $"<link rel=\"mask-icon\" href=\"/safari-pinned-tab.svg\" color=\"{_buildOption.SafariPinnedTabColor}\">");
+            $"<link rel=\"mask-icon\" href=\"/file/icon/safari-pinned-tab.svg\" color=\"{_buildOption.SafariPinnedTabColor}\">");
 
         string title = _buildOption.BaseTitle;
         if (!string.IsNullOrEmpty(_buildOption.Title))

@@ -21,10 +21,9 @@
   "homepage": "https://github.com/JerryBian/laobian.me#readme",
   "devDependencies": {
     "@highlightjs/cdn-assets": "^11.6.0",
-    "bootstrap": "^5.2.0",
+    "bootstrap": "^5.2.1",
     "bootstrap-icons": "^1.9.1",
     "sass": "^1.54.3",
-    "bootswatch": "^5.2.0",
     "anchor-js": "^4.3.1",
     "uglify-js": "^3.16.3",
     "uglifycss": "^0.0.29",

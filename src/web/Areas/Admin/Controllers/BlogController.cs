@@ -28,7 +28,7 @@ namespace Laobian.Web.Areas.Admin.Controllers
         [HttpGet("/admin/blog/post/add")]
         public IActionResult Add()
         {
-            ViewData["Title"] = "添加新的文章";
+            ViewData["Title"] = "添加新的文章 - Admin";
             return View();
         }
 
@@ -67,7 +67,7 @@ namespace Laobian.Web.Areas.Admin.Controllers
         public async Task<IActionResult> Edit([FromRoute] string id)
         {
             BlogPostView post = await _blogService.GetPostAsync(id);
-            ViewData["Title"] = $"编辑文章 - {post.Raw.Title}";
+            ViewData["Title"] = $"编辑文章: {post.Raw.Title} - Admin";
             return View(post.Raw);
         }
 

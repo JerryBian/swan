@@ -5,6 +5,10 @@
 }
 
 function submitRequest(url, option) {
+    if (!option) {
+        option = {}
+    }
+
     if (option.form) {
         if (option.form.classList.contains("needs-validation")) {
             if (!option.form.checkValidity()) {
@@ -24,7 +28,6 @@ function submitRequest(url, option) {
     }
 
     const method = option.method ?? "POST";
-    const contentType = option.contentType ?? "application/json";
     const body = option.body ?? "";
     const formPostAction = function () {
         if (option.form) {
@@ -40,7 +43,7 @@ function submitRequest(url, option) {
     };
 
     var headers;
-    if (option.contentType.length > 0) {
+    if (option.contentType && option.contentType.length > 0) {
         headers = {
             "Content-Type": contentType
         }
