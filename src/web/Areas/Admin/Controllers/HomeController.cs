@@ -34,6 +34,7 @@ namespace Laobian.Web.Areas.Admin.Controllers
             ApiResponse<string> res = new();
             try
             {
+                _logger.LogInformation($"Request to stop app, IP={Request.HttpContext.Connection.RemoteIpAddress}");
                 _hostApplicationLifetime.StopApplication();
                 res.Content = "Request app stop successfully.";
             }
