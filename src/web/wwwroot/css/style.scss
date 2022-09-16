@@ -55,6 +55,13 @@ a {
     text-underline-offset: 0.18em;
 }
 
+.form-control{
+    background-color: transparent;
+    &:focus {
+        background-color: transparent;
+    }
+}
+
 
 .post {
     font-weight: 400;

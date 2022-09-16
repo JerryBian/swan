@@ -1,5 +1,95 @@
-﻿@{
+﻿@model IndexViewModel
+@{
     Layout = "_AdminLayout";
 }
 
-<h2>Hello World!</h2>
+<div class="row align-items-start">
+    <div class="col-md-6 mb-4">
+        <div class="card border-success">
+            <div class="card-header  text-center fw-bold">博客</div>
+            <div class="card-body">
+                <a href="/admin/blog/post/add" class="card-link text-success text-decoration-none"><i class="bi bi-plus-circle"></i> 发表新的文章</a>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    文章总数
+                    <span class="badge bg-info rounded-pill">@Model.BlogPostTotal</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    公开文章总数
+                    <span class="badge bg-success rounded-pill">@Model.BlogPostPublic</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    未公开文章总数
+                    <span class="badge bg-secondary rounded-pill">@Model.BlogPostPrivate</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    文章访问总数
+                    <span class="badge bg-secondary rounded-pill">@Model.BlogPostVisitTotal</span>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card border-success">
+            <div class="card-header text-center fw-bold">阅读</div>
+            <div class="card-body">
+                <a href="/admin/read/add" class="card-link text-success text-decoration-none"><i class="bi bi-plus-circle"></i> 发表新的阅读</a>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    阅读总数
+                    <span class="badge bg-info rounded-pill">@Model.ReadItemTotal</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    公开阅读总数
+                    <span class="badge bg-success rounded-pill">@Model.ReadItemPublic</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    未公开阅读总数
+                    <span class="badge bg-secondary rounded-pill">@Model.ReadItemPrivate</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card border-secondary">
+            <div class="card-header  text-center fw-bold">其他</div>
+            <div class="card-body">
+                <div class="mb-2"><a class="card-link text-success text-decoration-none" href="javascript:;" id="admin_upload"><i class="bi bi-upload"></i> 上传文件</a></div>
+                <div><a href="javascript:;" class="card-link text-danger text-decoration-none" id="admin_shutdown"><i class="bi bi-sign-stop-fill"></i> 关闭站点</a></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Script{
+    <script>
+        document.querySelector("#admin_upload").addEventListener("click", function () {
+            var input = document.createElement('input');
+            input.type = 'file';
+            input.setAttribute("name", "file");
+
+            input.onchange = e => {
+                var file = e.target.files[0];
+                let formData = new FormData();
+                formData.append("file", file)
+                submitRequest("/@Constants.AreaAdmin/file/upload", {
+                    method: "POST",
+                    body: formData,
+                    contentType: "",
+                    okAction: function (url) {
+                        showInfoMessageModal(`<img class="img-fluid" src="${url}"><p class="text-center">${url}</p>`);
+                    }
+                });
+            }
+
+            input.click();
+        });
+
+        document.querySelector("#admin_shutdown").addEventListener("click", function () {
+            submitRequest("/@Constants.AreaAdmin/shutdown");
+        });
+    </script>
+}

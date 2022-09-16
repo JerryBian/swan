@@ -33,7 +33,7 @@ namespace Laobian.Web.Areas.Admin.Controllers
         public async Task<IActionResult> Add()
         {
             List<BlogPostView> posts = await _blogService.GetAllPostsAsync();
-            ViewData["Title"] = "添加新的阅读";
+            ViewData["Title"] = "添加新的阅读 - Admin";
             return View(posts.OrderByDescending(x => x.Raw.CreateTime));
         }
 
@@ -71,7 +71,7 @@ namespace Laobian.Web.Areas.Admin.Controllers
                 Posts = await _blogService.GetAllPostsAsync(),
                 Item = item.Raw
             };
-            ViewData["Title"] = $"编辑阅读 - {item.Raw.BookName}";
+            ViewData["Title"] = $"编辑阅读: {item.Raw.BookName} - Admin";
             return View(model);
         }
 
