@@ -2,6 +2,7 @@
 using Laobian.Lib.Extension;
 using Laobian.Lib.Option;
 using Laobian.Lib.Service;
+using Laobian.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.Text;
@@ -12,17 +13,20 @@ namespace Laobian.Web.Controllers
     {
         private readonly IBlogService _blogService;
         private readonly LaobianOption _option;
+        private readonly Quote _quote;
 
-        public HomeController(IBlogService blogService, IOptions<LaobianOption> option)
+        public HomeController(IBlogService blogService, IOptions<LaobianOption> option, Quote quote)
         {
+            _quote = quote;
             _option = option.Value;
             _blogService = blogService;
         }
 
+        [ResponseCache(CacheProfileName = Constants.CacheProfileName)]
         public IActionResult Index()
         {
-
-            return View();
+            Tuple<string, string> q = _quote.GetOne();
+            return View(q);
         }
 
         [Route("/sitemap")]

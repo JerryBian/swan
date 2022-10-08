@@ -1,16 +1,20 @@
-﻿@inject IOptions<LaobianOption> _option
+﻿@model Tuple<string, string>
+@inject IOptions<LaobianOption> _option
 @{
     Layout = "_Layout";
     ViewData["BrandName"] = $"{_option.Value.Title}";
     ViewData["BrandLink"] = "/";
+    ViewData["Description"] = $"{_option.Value.Title}";
 }
-<div class="text-center my-5">
-    <h1 class="mb-3">@_option.Value.Title</h1>
-    <p>
-        <a href="/blog" class="text-reset">博客</a> &middot;
-        <a href="/read" class="text-reset">阅读</a>
-    </p>
-</div>
+
+<figure class="text-center mt-5 pt-5">
+    <blockquote class="blockquote" style="background-color:transparent;border-left:none;">
+        <p>@Model.Item2</p>
+    </blockquote>
+    <figcaption class="blockquote-footer">
+        <cite title="来源">@Model.Item1</cite>
+    </figcaption>
+</figure>
 
 @section Script{
     <script>

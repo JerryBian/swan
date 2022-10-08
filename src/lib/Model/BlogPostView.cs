@@ -15,9 +15,11 @@
 
         public string Metadata { get; set; }
 
+        public string Excerpt { get; set; }
+
         public bool IsPublished()
         {
-            return Raw.IsPublic && Raw.PublishTime >= DateTime.Now;
+            return Raw.IsPublic && Raw.PublishTime <= DateTime.Now;
         }
     }
 }

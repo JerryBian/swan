@@ -36,7 +36,6 @@ package-lock.json text -diff
 *.yml             text
 *.*ignore         text
 
-Dockerfile.* linguist-language=Dockerfile
 **/*.cshtml -linguist-detectable
-sample -linguist-detectable
-wwwroot -linguist-detectable
+**/*.min.css -linguist-detectable
+**/*.min.js -linguist-detectable

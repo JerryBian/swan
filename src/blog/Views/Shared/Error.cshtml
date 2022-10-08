@@ -1,8 +1,0 @@
-﻿@inject IOptions<BlogOptions> _config
-@{
-    ViewData["Title"] = "Error";
-    ViewData["RobotsEnabled"] = bool.FalseString;
-}
-
-
-<h2 class="text-danger">哪里出错了，请联系 <a href="mailto:@_config.Value.AdminEmail">@_config.Value.AdminEmail</a>。</h2>

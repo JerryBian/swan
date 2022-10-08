@@ -1,11 +1,26 @@
 ﻿@inject IOptions<LaobianOption> _option
 @{
     Layout = "_Layout";
-    ViewData["BrandName"] = $"{_option.Value.Title}的管理界面";
+    ViewData["BrandName"] = $"{_option.Value.Title}的后台";
     ViewData["BrandLink"] = "/admin";
 }
 <div>
     @RenderBody()
+</div>
+
+<div class="modal fade" tabindex="-1" id="messageModal" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="messageModalTitle">Modal title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="messageModalBody">
+            </div>
+            <div class="modal-footer" id="messageModalFooter">
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Script{

@@ -22,13 +22,14 @@ namespace Laobian.Web.Areas.Blog.Controllers
             _blogService = blogService;
         }
 
+        [ResponseCache(CacheProfileName = Constants.CacheProfileName)]
         public async Task<IActionResult> Index()
         {
             bool isAuthenticated = HttpContext.User?.Identity?.IsAuthenticated == true;
             List<BlogPostView> items = await _blogService.GetAllPostsAsync();
             if (!isAuthenticated)
             {
-                items = items.Where(x => x.Raw.IsPublic).ToList();
+                items = items.Where(x => x.IsPublished()).ToList();
             }
 
             List<BlogPostView> model = items.OrderByDescending(x => x.Raw.PublishTime).ToList();

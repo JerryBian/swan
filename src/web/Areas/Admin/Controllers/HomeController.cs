@@ -50,14 +50,14 @@ namespace Laobian.Web.Areas.Admin.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var model = new IndexViewModel();
-            var allPosts = await _blogService.GetAllPostsAsync();
+            IndexViewModel model = new();
+            List<BlogPostView> allPosts = await _blogService.GetAllPostsAsync();
             model.BlogPostTotal = allPosts.Count;
             model.BlogPostPublic = allPosts.Count(x => x.IsPublished());
             model.BlogPostPrivate = allPosts.Count(x => !x.IsPublished());
             model.BlogPostVisitTotal = allPosts.Sum(x => x.Raw.AccessCount);
 
-            var allReadItems = await _readService.GetAllAsync();
+            List<ReadItemView> allReadItems = await _readService.GetAllAsync();
             model.ReadItemTotal = allReadItems.Count;
             model.ReadItemPublic = allReadItems.Count(x => x.Raw.IsPublic);
             model.ReadItemPrivate = allReadItems.Count(x => !x.Raw.IsPublic);

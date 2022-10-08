@@ -30,7 +30,8 @@ namespace Laobian.Lib.Service
                     {
                         HtmlContent = MarkdownHelper.ToHtml(item.MdContent),
                         FullLink = $"/blog/{item.PublishTime:yyyy/MM}/{item.Link.ToLowerInvariant()}.html",
-                        Metadata = $"{item.PublishTime.ToCnDate()} &middot; {item.AccessCount} 次阅读"
+                        Metadata = $"{item.PublishTime.ToCnDate()} &middot; {item.AccessCount} 次阅读",
+                        Excerpt = item.MdContent[..Math.Min(120, item.MdContent.Length)].Replace("\n", string.Empty)
                     };
                     result.Add(view);
                 }
