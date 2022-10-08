@@ -14,6 +14,7 @@ namespace Laobian.Web.Areas.Read.Controllers
             _readService = readService;
         }
 
+        [ResponseCache(CacheProfileName = Constants.CacheProfileName)]
         public async Task<IActionResult> Index()
         {
             bool isAuthenticated = HttpContext.User?.Identity?.IsAuthenticated == true;

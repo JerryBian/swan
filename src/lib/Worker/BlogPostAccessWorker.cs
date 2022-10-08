@@ -36,7 +36,7 @@ namespace Laobian.Lib.Worker
             while (!_cts.IsCancellationRequested)
             {
                 await ProcessInternalAsync();
-                await Task.Delay(TimeSpan.FromHours(12)).OkForCancel();
+                await Task.Delay(TimeSpan.FromHours(0.5)).OkForCancel();
             }
         }
 
