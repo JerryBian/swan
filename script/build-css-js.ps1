@@ -3,7 +3,13 @@ $NodeModulesLoc = Join-Path $PSScriptRoot .. node_modules
 
 Copy-Item -Path $(Join-Path $NodeModulesLoc bootstrap-icons font fonts *) `
     -Destination $(Join-Path $WWWRootLoc fonts)
-Write-Output "Fonts copied"
+Write-Output "[all]: Fonts copied"
+
+npx sass $(Join-Path $WWWRootLoc css home.scss) $(Join-Path $WWWRootLoc home.css)
+uglifycss --ugly-comments `
+    --output $(Join-Path $WWWRootLoc home.min.css) `
+    $(Join-Path $WWWRootLoc home.css)
+Write-Output "[home]: CSS completed"
 
 npx sass $(Join-Path $WWWRootLoc css style.scss) $(Join-Path $WWWRootLoc style.css)
 uglifycss --ugly-comments `

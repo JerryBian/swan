@@ -11,8 +11,8 @@ $code-color: #0a3d62;
 $body-bg: whitesmoke;
 $color-1: #4a69bd;
 $secondary: #b2bec3;
-@import "../../../../node_modules/bootstrap-icons/font/bootstrap-icons";
-@import "../../../../node_modules/bootstrap/scss/bootstrap";
+
+@import "_shared";
 
 #main {
     max-width: 960px;
@@ -53,9 +53,7 @@ blockquote *:last-child {
     margin-bottom: 0.1rem;
 }
 
-a {
-    text-underline-offset: 0.18em;
-}
+
 
 .form-control{
     background-color: transparent;

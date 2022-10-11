@@ -7,7 +7,6 @@ using Laobian.Lib.Repository;
 using Laobian.Lib.Service;
 using Laobian.Lib.Worker;
 using Laobian.Web.HostedServices;
-using Laobian.Web.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
@@ -48,7 +47,6 @@ builder.Services.AddSingleton<ICommandClient, CommandClient>();
 builder.Services.AddSingleton<IBlogPostAccessWorker, BlogPostAccessWorker>();
 builder.Services.AddSingleton<IFileRepository, FileRepository>();
 builder.Services.AddSingleton<IFileService, FileService>();
-builder.Services.AddSingleton<Quote>();
 
 builder.Services.AddMemoryCache();
 builder.Services.AddHostedService<GitFileHostedService>();

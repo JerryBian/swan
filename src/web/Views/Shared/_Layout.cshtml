@@ -22,52 +22,11 @@
         var headerBuilder = new HtmlHeadBuilder(_option.Value, buildOption);
         @Html.Raw(headerBuilder.Build())
     }
-    <link href="~/style.min.css" rel="stylesheet" asp-append-version="true" />
+
+    @await RenderSectionAsync("Style", false)
 </head>
-<body class="w-100 d-flex flex-column min-vh-100">
-    <nav class="navbar navbar-expand-lg wrapper my-1">
-        <div class="container">
-            <a class="navbar-brand" href="@ViewData["BrandLink"]">@ViewData["BrandName"]</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/" id="nav_home"><i class="bi bi-house"></i> 首页</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/blog" id="nav_blog"><i class="bi bi-type-bold"></i> 博客</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/read" id="nav_read"><i class="bi bi-book"></i> 阅读</a>
-                    </li>
-                    @if (Context.Request.HttpContext.User?.Identity?.IsAuthenticated == true)
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" href="/admin" id="nav_admin"><i class="bi bi-gear-wide-connected"></i> Admin</a>
-                        </li>
-                    }
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <main class="py-5 container shadow-sm my-2 rounded-1 bg-white" id="main">
-        <div class="wrapper">@RenderBody()</div>
-    </main>
-
-    <footer class="mt-auto small py-2 text-center wrapper">
-        &copy; @DateTime.Now.Year &middot;
-        <a href="mailto:@_option.Value.AdminEmail" class="text-reset"><i class="bi bi-envelope"></i></a>
-        @if (Context.Request.HttpContext.User?.Identity?.IsAuthenticated == true)
-        {
-            <text>&middot;</text>
-            <a href="/logout" class="text-dark">登出</a>
-        }
-    </footer>
-
-    <script src="~/script.min.js" asp-append-version="true"></script>
+<body class="w-100 min-vh-100">
+    @RenderBody()
     @await RenderSectionAsync("Script", false)
 
     @if (_env.IsProduction())

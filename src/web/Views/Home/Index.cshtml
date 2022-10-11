@@ -1,5 +1,4 @@
-﻿@model Tuple<string, string>
-@inject IOptions<LaobianOption> _option
+﻿@inject IOptions<LaobianOption> _option
 @{
     Layout = "_Layout";
     ViewData["BrandName"] = $"{_option.Value.Title}";
@@ -7,17 +6,14 @@
     ViewData["Description"] = $"{_option.Value.Title}";
 }
 
-<figure class="text-center mt-5 pt-5">
-    <blockquote class="blockquote" style="background-color:transparent;border-left:none;">
-        <p>@Model.Item2</p>
-    </blockquote>
-    <figcaption class="blockquote-footer">
-        <cite title="来源">@Model.Item1</cite>
-    </figcaption>
-</figure>
-
-@section Script{
-    <script>
-        activeNavItem("#nav_home");
-    </script>
+@section Style{
+    <link href="~/home.min.css" rel="stylesheet" asp-append-version="true" />
 }
+
+<div class="d-flex min-vh-100 w-100 flex-column justify-content-center align-items-center">
+    <h2 class="mb-4">@_option.Value.Title</h2>
+    <div class="fs-5">
+            <a href="/blog" class="text-reset mx-1 text-decoration-none"><i class="bi bi-type-bold"></i> 博客</a> &middot;
+            <a href="/read" class="text-reset mx-1 text-decoration-none"><i class="bi bi-book"></i> 阅读</a>
+    </div>
+</div>
