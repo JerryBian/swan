@@ -1,62 +1,46 @@
-﻿@model List<ReadItemView>
+﻿@model List<ReadIndexViewModel>
 @{
     Layout = "_ReadLayout";
-    ViewData["DatePublished"] = Model.Min(x => x.Raw.CreateTime);
-    ViewData["DateModified"] = Model.Max(x => x.Raw.LastUpdateTime);
+    ViewData["DatePublished"] = Model.SelectMany(x => x.Items).Min(x => x.Raw.CreateTime);
+    ViewData["DateModified"] = Model.SelectMany(x => x.Items).Max(x => x.Raw.LastUpdateTime);
 }
 
-<div class="alert alert-secondary">
-    以下是我的部分书籍的阅读记录。
-</div>
-
-@for (var i = Model.Count - 1; i >= 0; i--)
+@foreach (var item in Model)
 {
-    var item = Model[i];
-    var index = i + 1;
+    <h4>@item.Title</h4>
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+        @foreach (var r in item.Items)
+        {
+            var c = r.Raw.IsPublic ? "" : "text-bg-secondary";
+            <div class="col">
+                <div class="card @c">
+                    <div class="card-header d-flex align-items-center">
+                        <span>@r.Raw.BookName</span>
+                        <div class="d-flex ms-auto">@r.Raw.CreateTime.ToCnDate()</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-text">
+                            @if (!string.IsNullOrEmpty(r.Raw.PostCommentId))
+                            {
+                                <blockquote class="my-2">
+                                    博客链接：<a href="@r.PostCommentUrl" class="text-success"><i class="bi bi-link-45deg"></i> @r.PostCommentTitle</a>
+                                </blockquote>
+                            }
 
-    var c = item.Raw.IsPublic ? "" : "text-secondary";
-    <div class="@c mb-3">
-        <div class="d-flex">
-            <span class="flex-grow-1">
-                <span class="small">@index.</span> 
-                <span>@item.Raw.BookName</span>
-                @if (item.Raw.Grade == ReadItemGrade.Bad)
-                {
-                    <i class="bi bi-hand-thumbs-down-fill text-danger"></i>
-                }
-                else if (item.Raw.Grade == ReadItemGrade.Good)
-                {
-                    <i class="bi bi-hand-thumbs-up-fill text-success"></i>
-                }
-            </span>
-
-            <span class="small">
-                @item.Raw.CreateTime.ToCnDate() &middot;
-
-                @if (Context.Request.HttpContext.User?.Identity?.IsAuthenticated == true)
-                {
-                    <a href="/admin/read/edit/@item.Raw.Id"><i class="bi bi-pencil-square text-success"></i></a> <text>&middot;</text>
-                }
-
-                <a href="#@item.Raw.Id" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="@item.Raw.Id"><i class="bi bi-chevron-expand text-dark"></i></a>
-            </span>
-        </div>
-        <div class="collapse small" id="@item.Raw.Id">
-            <div class="mb-2 ps-3">@item.Metadata</div>
-
-            @if(!string.IsNullOrEmpty(item.Raw.PostCommentId))
-            {
-                <blockquote class="my-2">
-                    博客链接：<a href="@item.PostCommentUrl" class="text-success"><i class="bi bi-link-45deg"></i> @item.PostCommentTitle</a>
-                </blockquote>
-            }
-
-            @if (!string.IsNullOrEmpty(item.CommentHtml))
-            {
-                <blockquote class="my-1">
-                    @Html.Raw(item.CommentHtml)
-                </blockquote>
-            }
-        </div>
+                            @if (!string.IsNullOrEmpty(r.CommentHtml))
+                            {
+                                <blockquote class="my-1">
+                                    @Html.Raw(r.CommentHtml)
+                                </blockquote>
+                            }
+                            </div>
+                    </div>
+                    <div class="card-footer text-muted small">
+                        @Html.Raw(r.Metadata)
+                    </div>
+                </div>
+            </div>
+        }
     </div>
+
 }

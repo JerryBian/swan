@@ -22,6 +22,19 @@ uglifyjs --compress -o $(Join-Path $WWWRootLoc blog.min.js) `
     $(Join-Path $NodeModulesLoc bootstrap dist js bootstrap.bundle.js) `
     $(Join-Path $NodeModulesLoc anchor-js anchor.js) `
     $(Join-Path $NodeModulesLoc \@highlightjs cdn-assets highlight.js) `
-    $(Join-Path $WWWRootLoc js shared.js)
+    $(Join-Path $WWWRootLoc js shared.js) `
     $(Join-Path $WWWRootLoc js blog.js)
 Write-Output "[blog]: JS completed"
+
+npx sass $(Join-Path $WWWRootLoc css read.scss) $(Join-Path $WWWRootLoc read.css)
+uglifycss --ugly-comments `
+    --output $(Join-Path $WWWRootLoc read.min.css) `
+    $(Join-Path $WWWRootLoc read.css)
+Write-Output "[read]: CSS completed"
+
+uglifyjs --compress -o $(Join-Path $WWWRootLoc read.min.js) `
+    $(Join-Path $NodeModulesLoc bootstrap dist js bootstrap.bundle.js) `
+    $(Join-Path $NodeModulesLoc anchor-js anchor.js) `
+    $(Join-Path $WWWRootLoc js shared.js) `
+    $(Join-Path $WWWRootLoc js read.js)
+Write-Output "[read]: JS completed"
