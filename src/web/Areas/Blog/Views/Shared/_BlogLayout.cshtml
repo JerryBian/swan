@@ -5,11 +5,20 @@
     ViewData["BrandLink"] = "/blog";
 }
 
-<div>
-    @RenderBody()
-</div>
+@section Style{
+    <link href="~/blog.min.css" rel="stylesheet" asp-append-version="true" />
+}
 
-@section Script{
+    <div class="d-flex min-vh-100 w-100 flex-column">
+        <partial name="_Navbar" />
+        <main class="container">
+            @RenderBody()
+        </main>
+        <partial name="_Footer" />
+    </div>
+
+    @section Script{
+    <script src="~/blog.min.js" asp-append-version="true"></script>
     <script>
         activeNavItem("#nav_blog");
     </script>
