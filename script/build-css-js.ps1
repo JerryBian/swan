@@ -11,6 +11,10 @@ uglifycss --ugly-comments `
     $(Join-Path $WWWRootLoc home.css)
 Write-Output "[home]: CSS completed"
 
+uglifyjs --compress -o $(Join-Path $WWWRootLoc home.min.js) `
+    $(Join-Path $NodeModulesLoc ga-lite dist ga-lite.js)
+Write-Output "[home]: JS completed"
+
 npx sass $(Join-Path $WWWRootLoc css blog.scss) $(Join-Path $WWWRootLoc blog.css)
 uglifycss --ugly-comments `
     --output $(Join-Path $WWWRootLoc blog.min.css) `
@@ -21,6 +25,7 @@ Write-Output "[blog]: CSS completed"
 uglifyjs --compress -o $(Join-Path $WWWRootLoc blog.min.js) `
     $(Join-Path $NodeModulesLoc bootstrap dist js bootstrap.bundle.js) `
     $(Join-Path $NodeModulesLoc anchor-js anchor.js) `
+    $(Join-Path $NodeModulesLoc ga-lite dist ga-lite.js) `
     $(Join-Path $NodeModulesLoc \@highlightjs cdn-assets highlight.js) `
     $(Join-Path $WWWRootLoc js shared.js) `
     $(Join-Path $WWWRootLoc js blog.js)
@@ -35,6 +40,7 @@ Write-Output "[read]: CSS completed"
 uglifyjs --compress -o $(Join-Path $WWWRootLoc read.min.js) `
     $(Join-Path $NodeModulesLoc bootstrap dist js bootstrap.bundle.js) `
     $(Join-Path $NodeModulesLoc anchor-js anchor.js) `
+    $(Join-Path $NodeModulesLoc ga-lite dist ga-lite.js) `
     $(Join-Path $WWWRootLoc js shared.js) `
     $(Join-Path $WWWRootLoc js read.js)
 Write-Output "[read]: JS completed"

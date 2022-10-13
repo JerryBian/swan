@@ -18259,6 +18259,22 @@ a {
   border-bottom-style: solid;
 }
 
+blockquote {
+  background-color: #f5f6fa;
+  border-left: 2px solid #dcdde1;
+  margin-bottom: 1.5rem;
+  padding: 10px;
+  font-size: 95%;
+}
+
+blockquote p {
+  margin-bottom: 1rem;
+}
+
+blockquote *:last-child {
+  margin-bottom: 0.1rem;
+}
+
 #main {
   max-width: 960px;
   margin: 0 auto;
@@ -18275,22 +18291,6 @@ a {
 
 .bg-1 {
   background-color: #ECF0F1;
-}
-
-blockquote {
-  background-color: #f5f6fa;
-  border-left: 2px solid #dcdde1;
-  margin-bottom: 1.5rem;
-  padding: 10px;
-  font-size: 95%;
-}
-
-blockquote p {
-  margin-bottom: 1rem;
-}
-
-blockquote *:last-child {
-  margin-bottom: 0.1rem;
 }
 
 .form-control {

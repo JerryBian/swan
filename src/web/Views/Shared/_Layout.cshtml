@@ -31,14 +31,13 @@
 
     @if (_env.IsProduction())
     {
-        <!-- Google tag (gtag.js) -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZB78XKVE3V"></script>
         <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag() { dataLayer.push(arguments); }
-            gtag('js', new Date());
-
-            gtag('config', 'G-ZB78XKVE3V');
+            galite('create', 'UA-241002412-1', 'auto');
+            galite('send', 'pageview');
+            var terminationEvent = 'onpagehide' in window ? 'pagehide' : 'unload';
+            window.addEventListener(terminationEvent, function () {
+                galite('send', 'timing', 'JS Dependencies', 'unload')
+            })
         </script>
     }
 </body>

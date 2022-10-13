@@ -22,7 +22,7 @@ namespace Laobian.Web.Areas.Blog.Controllers
             _blogService = blogService;
         }
 
-        [ResponseCache(CacheProfileName = Constants.CacheProfileName)]
+        [ResponseCache(CacheProfileName = Constants.CacheProfileServerShort)]
         public async Task<IActionResult> Index()
         {
             bool isAuthenticated = HttpContext.User?.Identity?.IsAuthenticated == true;
@@ -39,7 +39,7 @@ namespace Laobian.Web.Areas.Blog.Controllers
 
         [Route("/blog/rss")]
         [Route("/blog/feed")]
-        [ResponseCache(CacheProfileName = Constants.CacheProfileName)]
+        [ResponseCache(CacheProfileName = Constants.CacheProfileServerShort)]
         public async Task<IActionResult> Rss()
         {
             SyndicationFeed feed = new(_option.Title, _option.Description,

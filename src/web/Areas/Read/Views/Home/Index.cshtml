@@ -11,31 +11,39 @@
     <div class="row row-cols-1 row-cols-md-2 g-4 mb-5">
         @foreach (var r in item.Items)
         {
-            var c = r.Raw.IsPublic ? "" : "text-bg-secondary";
+            var c = r.Raw.IsPublic ? "" : "border-dark";
             <div class="col">
                 <div class="card @c">
                     <div class="card-header d-flex align-items-center">
-                        <span>@r.Raw.BookName</span>
-                        <div class="d-flex ms-auto">@r.Raw.CreateTime.ToCnDate()</div>
+                        <span><i class="bi bi-book"></i> @r.Raw.BookName</span>
+                        <div class="ms-auto small text-muted">
+                            <i class="bi bi-calendar2-date"></i> @r.Raw.CreateTime.ToCnDate()
+                            @if (Context.Request.HttpContext.User?.Identity?.IsAuthenticated == true)
+                            {
+                                <text>&middot; </text>
+                                <a href="/admin/read/edit/@r.Raw.Id"><i class="bi bi-pencil-square text-success"></i></a>
+                            }
+                        </div>
                     </div>
                     <div class="card-body">
-                        <div class="card-text">
+                        <div class="card-text py-3">
                             @if (!string.IsNullOrEmpty(r.Raw.PostCommentId))
                             {
-                                <blockquote class="my-2">
+                                <blockquote class="my-2 bg-transparent">
                                     博客链接：<a href="@r.PostCommentUrl" class="text-success"><i class="bi bi-link-45deg"></i> @r.PostCommentTitle</a>
                                 </blockquote>
                             }
 
                             @if (!string.IsNullOrEmpty(r.CommentHtml))
                             {
-                                <blockquote class="my-1 read-comment">
+                                <blockquote class="my-1 read-comment bg-transparent small">
                                     @Html.Raw(r.CommentHtml)
                                 </blockquote>
                             }
                         </div>
                     </div>
                     <div class="card-footer text-muted small">
+                        <i class="bi bi-hash"></i>
                         @Html.Raw(r.Metadata)
                     </div>
                 </div>

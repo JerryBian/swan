@@ -19,7 +19,7 @@ namespace Laobian.Web.Controllers
             _blogService = blogService;
         }
 
-        [ResponseCache(CacheProfileName = Constants.CacheProfileName)]
+        [ResponseCache(CacheProfileName = Constants.CacheProfileServerLong)]
         public IActionResult Index()
         {
             return View();
@@ -27,7 +27,7 @@ namespace Laobian.Web.Controllers
 
         [Route("/sitemap")]
         [Route("/sitemap.xml")]
-        [ResponseCache(CacheProfileName = Constants.CacheProfileName)]
+        [ResponseCache(CacheProfileName = Constants.CacheProfileServerLong)]
         public async Task<IActionResult> Sitemap()
         {
             StringBuilder sb = new();

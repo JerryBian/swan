@@ -10,11 +10,17 @@
 <div class="row row-cols-1 row-cols-md-2 g-4">
     @foreach(var item in Model)
     {
-        var c = item.IsPublished() ? "" : "text-bg-secondary";
+        var c = item.IsPublished() ? "" : "border-dark";
         <div class="col">
             <div class="card @c">
-                <div class="card-header">
+                <div class="card-header d-flex align-items-center">
                     <a href="@item.FullLink" class="stretched-link text-reset text-decoration-none"><i class="bi bi-signpost"></i> @item.Raw.Title</a>
+                    @if(Context.Request.HttpContext.User?.Identity?.IsAuthenticated == true)
+                    {
+                        <div class="d-flex ms-auto">
+                            <a href="/admin/blog/post/edit/@item.Raw.Id"><i class="bi bi-pencil-square text-success"></i></a>
+                        </div>
+                    }
                 </div>
                 <div class="card-body">
                     <div class="card-text">@Html.Raw(item.Excerpt)</div>

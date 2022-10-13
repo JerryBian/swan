@@ -15,7 +15,7 @@ namespace Laobian.Web.Areas.Read.Controllers
             _readService = readService;
         }
 
-        [ResponseCache(CacheProfileName = Constants.CacheProfileName)]
+        [ResponseCache(CacheProfileName = Constants.CacheProfileServerShort)]
         public async Task<IActionResult> Index()
         {
             bool isAuthenticated = HttpContext.User?.Identity?.IsAuthenticated == true;
@@ -26,7 +26,7 @@ namespace Laobian.Web.Areas.Read.Controllers
             }
 
             var model = new List<ReadIndexViewModel>();
-            foreach(var item in items.GroupBy(x => x.Raw.CreateTime.Year).OrderByDescending(x => x.Key))
+            foreach (var item in items.GroupBy(x => x.Raw.CreateTime.Year).OrderByDescending(x => x.Key))
             {
                 var vm = new ReadIndexViewModel
                 {

@@ -18259,4 +18259,20 @@ a {
   border-bottom-style: solid;
 }
 
+blockquote {
+  background-color: #f5f6fa;
+  border-left: 2px solid #dcdde1;
+  margin-bottom: 1.5rem;
+  padding: 10px;
+  font-size: 95%;
+}
+
+blockquote p {
+  margin-bottom: 1rem;
+}
+
+blockquote *:last-child {
+  margin-bottom: 0.1rem;
+}
+
 /*# sourceMappingURL=home.css.map */

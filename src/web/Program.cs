@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
+using Microsoft.Net.Http.Headers;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 
@@ -53,10 +54,24 @@ builder.Services.AddHostedService<GitFileHostedService>();
 builder.Services.AddHostedService<BlogPostHostedService>();
 builder.Services.AddControllersWithViews(option =>
 {
-    option.CacheProfiles.Add(Constants.CacheProfileName, new CacheProfile
+    option.CacheProfiles.Add(Constants.CacheProfileClientShort, new CacheProfile
     {
         Duration = (int)TimeSpan.FromMinutes(1).TotalSeconds,
         Location = ResponseCacheLocation.Client,
+        VaryByHeader = "User-Agent"
+    });
+
+    option.CacheProfiles.Add(Constants.CacheProfileServerShort, new CacheProfile
+    {
+        Duration = (int)TimeSpan.FromHours(1).TotalSeconds,
+        Location = ResponseCacheLocation.Any,
+        VaryByHeader = "User-Agent"
+    });
+
+    option.CacheProfiles.Add(Constants.CacheProfileServerLong, new CacheProfile
+    {
+        Duration = (int)TimeSpan.FromDays(1).TotalSeconds,
+        Location = ResponseCacheLocation.Any,
         VaryByHeader = "User-Agent"
     });
 }).AddJsonOptions(config =>
@@ -99,7 +114,19 @@ Directory.CreateDirectory(dir);
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(Path.GetFullPath(dir)),
-    RequestPath = $"/{Constants.RouterFile}"
+    RequestPath = $"/{Constants.RouterFile}",
+    OnPrepareResponse = context =>
+    {
+        if (!app.Environment.IsDevelopment())
+        {
+            var headers = context.Context.Response.GetTypedHeaders();
+            headers.CacheControl = new CacheControlHeaderValue
+            {
+                Public = true,
+                MaxAge = TimeSpan.FromDays(7)
+            };
+        }
+    }
 });
 
 app.UseRouting();

@@ -18,7 +18,7 @@ namespace Laobian.Web.Areas.Blog.Controllers
         }
 
         [HttpGet("/blog/{year}/{month}/{link}.html")]
-        [ResponseCache(CacheProfileName = Constants.CacheProfileName)]
+        [ResponseCache(CacheProfileName = Constants.CacheProfileClientShort)]
         public async Task<IActionResult> Index([FromRoute] int year, [FromRoute] int month, [FromRoute] string link)
         {
             Lib.Model.BlogPostView post = await _blogService.GetPostAsync(year, month, link);
