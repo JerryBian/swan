@@ -1,1 +1,7 @@
 ﻿@import "_shared";
+
+.read-comment {
+    max-height: 100px;
+    scroll-behavior: auto;
+    overflow-y: auto;
+}

@@ -7506,7 +7506,7 @@
   --bs-border-radius-pill: 50rem;
   --bs-link-color: #0d6efd;
   --bs-link-hover-color: #0a58ca;
-  --bs-code-color: #0a3d62;
+  --bs-code-color: #d63384;
   --bs-highlight-bg: #fff3cd;
 }
 
@@ -18254,6 +18254,11 @@ a {
   text-underline-offset: 0.18em;
 }
 
+.active {
+  border-bottom-color: #4a69bd;
+  border-bottom-style: solid;
+}
+
 #main {
   max-width: 960px;
   margin: 0 auto;
@@ -18266,11 +18271,6 @@ a {
   max-width: 750px;
   margin: 0 auto;
   width: 100%;
-}
-
-.active {
-  border-bottom-color: #4a69bd;
-  border-bottom-style: solid;
 }
 
 .bg-1 {

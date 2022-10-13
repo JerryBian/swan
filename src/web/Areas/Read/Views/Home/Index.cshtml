@@ -7,8 +7,8 @@
 
 @foreach (var item in Model)
 {
-    <h4>@item.Title</h4>
-    <div class="row row-cols-1 row-cols-md-2 g-4">
+    <h4 class="mb-4" id="@item.Id"><i class="bi bi-list"></i> @item.Title (@item.Count)</h4>
+    <div class="row row-cols-1 row-cols-md-2 g-4 mb-5">
         @foreach (var r in item.Items)
         {
             var c = r.Raw.IsPublic ? "" : "text-bg-secondary";
@@ -29,11 +29,11 @@
 
                             @if (!string.IsNullOrEmpty(r.CommentHtml))
                             {
-                                <blockquote class="my-1">
+                                <blockquote class="my-1 read-comment">
                                     @Html.Raw(r.CommentHtml)
                                 </blockquote>
                             }
-                            </div>
+                        </div>
                     </div>
                     <div class="card-footer text-muted small">
                         @Html.Raw(r.Metadata)
@@ -42,5 +42,19 @@
             </div>
         }
     </div>
+}
 
+@section Script {
+    <script>
+        document.addEventListener('DOMContentLoaded', function (event) {
+            anchors.options = {
+                placement: "right",
+                visible: "hover",
+                icon: "¶",
+                base: "/read",
+                class: "text-reset"
+            };
+            anchors.add("h4");
+        });
+    </script>
 }
