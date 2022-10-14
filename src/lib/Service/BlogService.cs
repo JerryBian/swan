@@ -28,11 +28,11 @@ namespace Laobian.Lib.Service
         {
             return await _cacheManager.GetOrCreateAsync(PostCacheKey, async () =>
             {
-                var sw = Stopwatch.StartNew();
+                Stopwatch sw = Stopwatch.StartNew();
                 List<BlogPostView> result = new();
                 await foreach (BlogPost item in _blogRepository.ReadAllPostsAsync(cancellationToken))
                 {
-                    var htmlDoc = GetPostHtmlDoc(item.MdContent);
+                    HtmlDocument htmlDoc = GetPostHtmlDoc(item.MdContent);
                     BlogPostView view = new(item)
                     {
                         ExcerptText = GetPostExcerpt(htmlDoc),
@@ -83,8 +83,8 @@ namespace Laobian.Lib.Service
 
         private string GetPostExcerpt(HtmlDocument htmlDoc)
         {
-            var excerptText = string.Empty;
-            var paraNodes =
+            string excerptText = string.Empty;
+            HtmlNode paraNodes =
                 htmlDoc.DocumentNode
                     .Descendants()
                     .Where(_ =>
@@ -92,7 +92,7 @@ namespace Laobian.Lib.Service
                         _.Descendants().FirstOrDefault(c => StringHelper.EqualsIgoreCase(c.Name, "img")) == null
                         && _.InnerText.Length > 5)
                     .FirstOrDefault();
-            if(paraNodes != null)
+            if (paraNodes != null)
             {
                 excerptText += paraNodes.InnerText[..Math.Min(120, paraNodes.InnerText.Length)];
             }
@@ -102,12 +102,12 @@ namespace Laobian.Lib.Service
 
         private HtmlDocument GetPostHtmlDoc(string mdContent)
         {
-            var html = MarkdownHelper.ToHtml(mdContent);
-            var htmlDoc = new HtmlDocument();
+            string html = MarkdownHelper.ToHtml(mdContent);
+            HtmlDocument htmlDoc = new();
             htmlDoc.LoadHtml(html);
 
-            var imageNodes = htmlDoc.DocumentNode.Descendants("img").ToList();
-            foreach (var imageNode in imageNodes)
+            List<HtmlNode> imageNodes = htmlDoc.DocumentNode.Descendants("img").ToList();
+            foreach (HtmlNode imageNode in imageNodes)
             {
                 if (imageNode.Attributes.Contains("src"))
                 {
@@ -116,21 +116,21 @@ namespace Laobian.Lib.Service
                 }
             }
 
-            var tableNodes = htmlDoc.DocumentNode.Descendants("table").ToList();
-            foreach (var tableNode in tableNodes)
+            List<HtmlNode> tableNodes = htmlDoc.DocumentNode.Descendants("table").ToList();
+            foreach (HtmlNode tableNode in tableNodes)
             {
                 tableNode.AddClass("table table-striped table-bordered table-responsive");
             }
 
-            var h3 = htmlDoc.DocumentNode.Descendants("h3").ToList();
-            foreach(var h3Node in h3)
+            List<HtmlNode> h3 = htmlDoc.DocumentNode.Descendants("h3").ToList();
+            foreach (HtmlNode h3Node in h3)
             {
                 h3Node.Id = h3Node.InnerText;
                 h3Node.InnerHtml = $"<i class=\"bi bi-dash small text-dark\"></i> {h3Node.InnerHtml} <i class=\"bi bi-dash small text-dark\"></i>";
             }
 
-            var h4 = htmlDoc.DocumentNode.Descendants("h4").ToList();
-            foreach (var h4Node in h4)
+            List<HtmlNode> h4 = htmlDoc.DocumentNode.Descendants("h4").ToList();
+            foreach (HtmlNode h4Node in h4)
             {
                 h4Node.Id = h4Node.InnerText;
                 h4Node.InnerHtml = $"<i class=\"bi bi-dash small text-secondary\"></i> {h4Node.InnerHtml} <i class=\"bi bi-dash small text-secondary\"></i>";

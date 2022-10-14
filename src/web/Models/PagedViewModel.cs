@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Laobian.Web.Models;
+﻿namespace Laobian.Web.Models;
 
 public class PagedViewModel<T>
 {

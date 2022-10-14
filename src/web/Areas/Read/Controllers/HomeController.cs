@@ -25,10 +25,10 @@ namespace Laobian.Web.Areas.Read.Controllers
                 items = items.Where(x => x.Raw.IsPublic).ToList();
             }
 
-            var model = new List<ReadIndexViewModel>();
-            foreach (var item in items.GroupBy(x => x.Raw.CreateTime.Year).OrderByDescending(x => x.Key))
+            List<ReadIndexViewModel> model = new();
+            foreach (IGrouping<int, Lib.Model.ReadItemView> item in items.GroupBy(x => x.Raw.CreateTime.Year).OrderByDescending(x => x.Key))
             {
-                var vm = new ReadIndexViewModel
+                ReadIndexViewModel vm = new()
                 {
                     Title = item.Key.ToString(),
                     Id = item.Key.ToString(),

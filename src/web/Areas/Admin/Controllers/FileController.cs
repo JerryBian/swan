@@ -1,5 +1,4 @@
 ﻿using Laobian.Lib.Helper;
-using Laobian.Lib.Model;
 using Laobian.Lib.Service;
 using Laobian.Web.Areas.Admin.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -29,7 +28,7 @@ namespace Laobian.Web.Areas.Admin.Controllers
         [RequestSizeLimit(2 * 1024 * 1024)]
         public async Task<IActionResult> Upload([FromForm(Name = "file")] IFormFile file)
         {
-            var res = new StackEditorImageUploadRes();
+            StackEditorImageUploadRes res = new();
             try
             {
                 string fileName = StringHelper.Random();

@@ -15,7 +15,18 @@
             <div class="col">
                 <div class="card @c">
                     <div class="card-header d-flex align-items-center">
-                        <span><i class="bi bi-book"></i> @r.Raw.BookName</span>
+                        <span>
+                            <i class="bi bi-book"></i> @r.Raw.BookName
+                            @if(r.Raw.Grade == ReadItemGrade.Good)
+                            {
+                                <i class="bi bi-hand-thumbs-up text-success"></i>
+                            }
+
+                            @if(r.Raw.Grade == ReadItemGrade.Bad)
+                            {
+                                <i class="bi bi-hand-thumbs-down text-danger"></i>
+                            }
+                        </span>
                         <div class="ms-auto small text-muted">
                             <i class="bi bi-calendar2-date"></i> @r.Raw.CreateTime.ToCnDate()
                             @if (Context.Request.HttpContext.User?.Identity?.IsAuthenticated == true)

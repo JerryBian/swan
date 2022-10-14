@@ -33,15 +33,15 @@ namespace Laobian.Web.Areas.Blog.Controllers
                 items = items.Where(x => x.IsPublishedNow).ToList();
             }
 
-            var model = new PagedViewModel<BlogPostView>(page, items.Count, _option.ItemsPerPage) { Url = Request.Path };
-            foreach(var item in items.OrderByDescending(x => x.Raw.PublishTime).Chunk(_option.ItemsPerPage).ElementAtOrDefault(model.CurrentPage -1) ?? Enumerable.Empty<BlogPostView>())
+            PagedViewModel<BlogPostView> model = new(page, items.Count, _option.ItemsPerPage) { Url = Request.Path };
+            foreach (BlogPostView item in items.OrderByDescending(x => x.Raw.PublishTime).Chunk(_option.ItemsPerPage).ElementAtOrDefault(model.CurrentPage - 1) ?? Enumerable.Empty<BlogPostView>())
             {
                 model.Items.Add(item);
             }
 
             ViewData["Title"] = "博客";
 
-            if(model.CurrentPage > 1)
+            if (model.CurrentPage > 1)
             {
                 ViewData["RobotsEnabled"] = false;
                 ViewData["Title"] = $"第{model.CurrentPage}页 - 博客";
