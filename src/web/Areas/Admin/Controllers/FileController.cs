@@ -1,6 +1,7 @@
 ﻿using Laobian.Lib.Helper;
 using Laobian.Lib.Model;
 using Laobian.Lib.Service;
+using Laobian.Web.Areas.Admin.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,11 +25,11 @@ namespace Laobian.Web.Areas.Admin.Controllers
             return View();
         }
 
-        [HttpPost("/admin/file/upload")]
-        [RequestSizeLimit(100 * 1024 * 1024)]
+        [HttpPost("/image/upload")]
+        [RequestSizeLimit(2 * 1024 * 1024)]
         public async Task<IActionResult> Upload([FromForm(Name = "file")] IFormFile file)
         {
-            ApiResponse<string> res = new();
+            var res = new StackEditorImageUploadRes();
             try
             {
                 string fileName = StringHelper.Random();
@@ -37,12 +38,10 @@ namespace Laobian.Web.Areas.Admin.Controllers
                 await file.CopyToAsync(ms);
                 _ = ms.Seek(0, SeekOrigin.Begin);
                 string url = await _fileService.AddAsync(fileName + ext, ms.ToArray());
-                res.Content = url;
+                res.UploadedImage = url;
             }
             catch (Exception ex)
             {
-                res.Message = ex.Message;
-                res.IsOk = false;
                 _logger.LogError(ex, "File upload failed.");
             }
 

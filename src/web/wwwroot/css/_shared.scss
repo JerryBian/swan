@@ -39,3 +39,13 @@ blockquote p {
 blockquote *:last-child {
     margin-bottom: 0.1rem;
 }
+
+.form-control {
+    &:focus {
+        background-color: transparent;
+    }
+}
+
+.form-check-input, .form-control {
+    background-color: transparent;
+}

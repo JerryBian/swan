@@ -1,6 +1,8 @@
 $WWWRootLoc = Join-Path $PSScriptRoot .. src web wwwroot
 $NodeModulesLoc = Join-Path $PSScriptRoot .. node_modules
 
+ncu -u
+
 Copy-Item -Path $(Join-Path $NodeModulesLoc bootstrap-icons font fonts *) `
     -Destination $(Join-Path $WWWRootLoc fonts)
 Write-Output "[all]: Fonts copied"
@@ -44,3 +46,20 @@ uglifyjs --compress -o $(Join-Path $WWWRootLoc read.min.js) `
     $(Join-Path $WWWRootLoc js shared.js) `
     $(Join-Path $WWWRootLoc js read.js)
 Write-Output "[read]: JS completed"
+
+npx sass $(Join-Path $WWWRootLoc css admin.scss) $(Join-Path $WWWRootLoc admin.css)
+uglifycss --ugly-comments `
+    --output $(Join-Path $WWWRootLoc admin.min.css) `
+    $(Join-Path $NodeModulesLoc \@stackoverflow stacks dist css stacks.css) `
+    $(Join-Path $NodeModulesLoc \@stackoverflow stacks-editor dist styles.css) `
+    $(Join-Path $WWWRootLoc admin.css)
+Write-Output "[admin]: CSS completed"
+
+uglifyjs --compress -o $(Join-Path $WWWRootLoc admin.min.js) `
+    $(Join-Path $NodeModulesLoc bootstrap dist js bootstrap.bundle.js) `
+    $(Join-Path $NodeModulesLoc \@highlightjs cdn-assets highlight.js) `
+    $(Join-Path $NodeModulesLoc \@stackoverflow stacks dist js stacks.js) `
+    $(Join-Path $NodeModulesLoc \@stackoverflow stacks-editor dist app.bundle.js) `
+    $(Join-Path $WWWRootLoc js shared.js) `
+    $(Join-Path $WWWRootLoc js admin.js)
+Write-Output "[admin]: JS completed"

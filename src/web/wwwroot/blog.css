@@ -18275,29 +18275,18 @@ blockquote *:last-child {
   margin-bottom: 0.1rem;
 }
 
-#main {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 0 2%;
-  width: 100%;
-  min-height: 60vh;
-}
-
-.wrapper {
-  max-width: 750px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-.bg-1 {
-  background-color: #ECF0F1;
-}
-
-.form-control {
-  background-color: transparent;
-}
 .form-control:focus {
   background-color: transparent;
+}
+
+.form-check-input, .form-control {
+  background-color: transparent;
+}
+
+#post {
+  width: 100%;
+  max-width: 21cm;
+  padding: 5%;
 }
 
 .post {

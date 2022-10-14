@@ -18283,10 +18283,4 @@ blockquote *:last-child {
   background-color: transparent;
 }
 
-.read-comment {
-  max-height: 128px;
-  scroll-behavior: auto;
-  overflow-y: auto;
-}
-
-/*# sourceMappingURL=read.css.map */
+/*# sourceMappingURL=admin.css.map */

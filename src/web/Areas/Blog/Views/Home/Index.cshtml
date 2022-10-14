@@ -18,7 +18,9 @@
                     @if(Context.Request.HttpContext.User?.Identity?.IsAuthenticated == true)
                     {
                         <div class="d-flex ms-auto">
-                            <a href="/admin/blog/post/edit/@item.Raw.Id"><i class="bi bi-pencil-square text-success"></i></a>
+                            <a href="/admin/blog/post/edit/@item.Raw.Id" style="position: relative;"><i class="bi bi-pencil-square text-success"></i>
+
+                        </a>
                         </div>
                     }
                 </div>

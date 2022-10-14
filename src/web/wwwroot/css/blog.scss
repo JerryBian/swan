@@ -1,36 +1,10 @@
 ﻿@import "_shared";
 
-#main {
-    max-width: 960px;
-    margin: 0 auto;
-    padding: 0 2%;
+#post {
     width: 100%;
-    min-height: 60vh;
+    max-width: 21cm;
+    padding: 5%;
 }
-
-.wrapper {
-    max-width: 750px;
-    margin: 0 auto;
-    width: 100%;
-}
-
-
-
-.bg-1 {
-    background-color: #ECF0F1;
-}
-
-
-
-
-
-.form-control{
-    background-color: transparent;
-    &:focus {
-        background-color: transparent;
-    }
-}
-
 
 .post {
     font-weight: 400;

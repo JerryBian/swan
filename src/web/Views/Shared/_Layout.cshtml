@@ -25,11 +25,11 @@
 
     @await RenderSectionAsync("Style", false)
 </head>
-<body class="w-100 min-vh-100">
+<body class="w-100 min-vh-100 bg-light">
     @RenderBody()
     @await RenderSectionAsync("Script", false)
 
-    @if (_env.IsProduction())
+    @if (_env.IsProduction() && Context.Request.HttpContext.User?.Identity?.IsAuthenticated != true)
     {
         <script>
             galite('create', 'UA-241002412-1', 'auto');
