@@ -1,36 +1,30 @@
-﻿@model List<BlogPostView>
+﻿@model PagedViewModel<BlogPostView>
 @inject IOptions<LaobianOption> _option
 @{
     Layout = "_BlogLayout";
-    ViewData["DatePublished"] = Model.Min(x => x.Raw.PublishTime);
-    ViewData["DateModified"] = Model.Max(x => x.Raw.PublishTime);
     ViewData["Description"] = $"{_option.Value.Title}的博客";
 }
 
-<div class="row row-cols-1 row-cols-md-2 g-4">
-    @foreach(var item in Model)
-    {
-        var c = item.IsPublished() ? "" : "border-dark";
-        <div class="col">
-            <div class="card @c">
-                <div class="card-header d-flex align-items-center">
-                    <a href="@item.FullLink" class="stretched-link text-reset text-decoration-none"><i class="bi bi-signpost"></i> @item.Raw.Title</a>
-                    @if(Context.Request.HttpContext.User?.Identity?.IsAuthenticated == true)
-                    {
-                        <div class="d-flex ms-auto">
-                            <a href="/admin/blog/post/edit/@item.Raw.Id" style="position: relative;"><i class="bi bi-pencil-square text-success"></i>
-
-                        </a>
-                        </div>
-                    }
-                </div>
-                <div class="card-body">
-                    <div class="card-text">@Html.Raw(item.Excerpt)</div>
-                </div>
-                <div class="card-footer text-muted small">
-                    @Html.Raw(item.Metadata)
+<div class="bg-white mx-auto shadow p-4 rounded">
+    <div class="row row-cols-1 row-cols-md-2 g-5">
+        @foreach (var item in Model.Items)
+        {
+            var c = item.IsPublishedNow ? "" : "border-dark";
+            <div class="col">
+                <div class="card @c">
+                    <div class="card-header d-flex align-items-center">
+                        <a href="@item.FullLink" class="stretched-link text-reset text-decoration-none"><i class="bi bi-hash small text-muted"></i> @item.Raw.Title</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-text">@item.ExcerptText</div>
+                    </div>
+                    <div class="card-footer text-muted small">
+                        @Html.Raw(item.Metadata)
+                    </div>
                 </div>
             </div>
-        </div>
-    }
+        }
+    </div>
+
+    <page total-pages="@Model.TotalPages" current-page="@Model.CurrentPage" url="@Model.Url"></page>
 </div>

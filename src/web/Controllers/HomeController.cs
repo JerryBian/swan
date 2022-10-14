@@ -39,7 +39,7 @@ namespace Laobian.Web.Controllers
                 $"<url><loc>{_option.BaseUrl}/read</loc><lastmod>{DateTime.Now.ToDate()}</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>");
 
             List<Lib.Model.BlogPostView> posts = await _blogService.GetAllPostsAsync();
-            foreach (Lib.Model.BlogPostView post in posts.Where(x => x.IsPublished()))
+            foreach (Lib.Model.BlogPostView post in posts.Where(x => x.IsPublishedNow))
             {
                 _ = sb.AppendLine(
                     $"<url><loc>{_option.BaseUrl}{post.FullLink}</loc><lastmod>{post.Raw.LastUpdateTime.ToDate()}</lastmod><changefreq>daily</changefreq><priority>0.6</priority></url>");

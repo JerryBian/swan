@@ -2,6 +2,7 @@
 using Laobian.Lib.Model;
 using Laobian.Lib.Option;
 using Laobian.Lib.Service;
+using Laobian.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.ServiceModel.Syndication;
@@ -23,17 +24,28 @@ namespace Laobian.Web.Areas.Blog.Controllers
         }
 
         [ResponseCache(CacheProfileName = Constants.CacheProfileServerShort)]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index([FromQuery] int page)
         {
             bool isAuthenticated = HttpContext.User?.Identity?.IsAuthenticated == true;
             List<BlogPostView> items = await _blogService.GetAllPostsAsync();
             if (!isAuthenticated)
             {
-                items = items.Where(x => x.IsPublished()).ToList();
+                items = items.Where(x => x.IsPublishedNow).ToList();
             }
 
-            List<BlogPostView> model = items.OrderByDescending(x => x.Raw.PublishTime).ToList();
+            var model = new PagedViewModel<BlogPostView>(page, items.Count, _option.ItemsPerPage) { Url = Request.Path };
+            foreach(var item in items.OrderByDescending(x => x.Raw.PublishTime).Chunk(_option.ItemsPerPage).ElementAtOrDefault(model.CurrentPage -1) ?? Enumerable.Empty<BlogPostView>())
+            {
+                model.Items.Add(item);
+            }
+
             ViewData["Title"] = "博客";
+
+            if(model.CurrentPage > 1)
+            {
+                ViewData["RobotsEnabled"] = false;
+                ViewData["Title"] = $"第{model.CurrentPage}页 - 博客";
+            }
             return View(model);
         }
 
@@ -56,7 +68,7 @@ namespace Laobian.Web.Areas.Blog.Controllers
             feed.Language = "zh-cn";
             List<SyndicationItem> items = new();
             List<BlogPostView> posts = await _blogService.GetAllPostsAsync();
-            foreach (BlogPostView post in posts.Where(x => x.IsPublished()))
+            foreach (BlogPostView post in posts.Where(x => x.IsPublishedNow))
             {
                 items.Add(new SyndicationItem(post.Raw.Title, post.HtmlContent,
                     new Uri($"{_option.BaseUrl}{post.FullLink}"),

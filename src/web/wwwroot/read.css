@@ -7551,39 +7551,34 @@ h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1 {
 }
 
 h1, .h1 {
-  font-size: calc(1.327rem + 0.924vw);
+  font-size: calc(1.3068rem + 0.6816vw);
 }
 @media (min-width: 1200px) {
   h1, .h1 {
-    font-size: 2.02rem;
+    font-size: 1.818rem;
   }
 }
 
 h2, .h2 {
-  font-size: calc(1.30175rem + 0.621vw);
+  font-size: calc(1.2866rem + 0.4392vw);
 }
 @media (min-width: 1200px) {
   h2, .h2 {
-    font-size: 1.7675rem;
+    font-size: 1.616rem;
   }
 }
 
 h3, .h3 {
-  font-size: calc(1.2765rem + 0.318vw);
+  font-size: calc(1.2563rem + 0.0756vw);
 }
 @media (min-width: 1200px) {
   h3, .h3 {
-    font-size: 1.515rem;
+    font-size: 1.313rem;
   }
 }
 
 h4, .h4 {
-  font-size: calc(1.2563rem + 0.0756vw);
-}
-@media (min-width: 1200px) {
-  h4, .h4 {
-    font-size: 1.313rem;
-  }
+  font-size: 1.212rem;
 }
 
 h5, .h5 {
@@ -15343,19 +15338,19 @@ textarea.form-control-lg {
 }
 
 .fs-1 {
-  font-size: calc(1.327rem + 0.924vw) !important;
+  font-size: calc(1.3068rem + 0.6816vw) !important;
 }
 
 .fs-2 {
-  font-size: calc(1.30175rem + 0.621vw) !important;
+  font-size: calc(1.2866rem + 0.4392vw) !important;
 }
 
 .fs-3 {
-  font-size: calc(1.2765rem + 0.318vw) !important;
+  font-size: calc(1.2563rem + 0.0756vw) !important;
 }
 
 .fs-4 {
-  font-size: calc(1.2563rem + 0.0756vw) !important;
+  font-size: 1.212rem !important;
 }
 
 .fs-5 {
@@ -18206,15 +18201,12 @@ textarea.form-control-lg {
 }
 @media (min-width: 1200px) {
   .fs-1 {
-    font-size: 2.02rem !important;
+    font-size: 1.818rem !important;
   }
   .fs-2 {
-    font-size: 1.7675rem !important;
+    font-size: 1.616rem !important;
   }
   .fs-3 {
-    font-size: 1.515rem !important;
-  }
-  .fs-4 {
     font-size: 1.313rem !important;
   }
 }
