@@ -1,12 +1,12 @@
 ﻿@model BlogPost
 @{
     Layout = "_AdminLayout";
-    ViewData["Title"] = "添加新的文章";
+    ViewData["Title"] = "编辑文章";
 }
 
 <div class="container">
     <fieldset>
-        <legend>添加新的文章</legend>
+        <legend>编辑文章</legend>
         <form class="needs-validation" novalidate>
             <div class="mb-3">
                 <label for="title" class="form-label">文章标题</label>
@@ -32,7 +32,7 @@
             </div>
             <div class="mb-3">
                 <label for="mdContent" class="form-label">文章内容</label>
-                <textarea class="form-control" id="mdContent" name="mdContent" rows="5" placeholder="文章内容" autocomplete="off">@Model.MdContent</textarea>
+                <div id="mdContent"></div>
             </div>
             <div class="form-check form-switch mb-3">
                 @if (Model.IsTopping)
@@ -77,13 +77,15 @@
 
 @section Script {
     <script>
-        //const shortCommentEditor = createEditor("comment")
+        let editor = createEditor("#mdContent", "@Model.MdContent");
         const form = document.querySelector("form");
         form.addEventListener('submit',
             function (event) {
                 event.preventDefault();
                 event.stopPropagation();
-                submitRequest("/@Constants.AreaAdmin/blog/post", { form: form, method: "PUT", body: new URLSearchParams(new FormData(form)), contentType: "application/x-www-form-urlencoded" });
+                var formData = new FormData(form);
+                formData.append("mdContent", editor.content);
+                submitRequest("/@Constants.AreaAdmin/blog/post", { form: form, method: "PUT", body: new URLSearchParams(formData), contentType: "application/x-www-form-urlencoded" });
             });
     </script>
 }

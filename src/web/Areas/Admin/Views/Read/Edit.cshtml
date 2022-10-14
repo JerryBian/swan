@@ -59,7 +59,7 @@
     </div>
     <div class="mb-3">
         <label for="comment" class="form-label">短评</label>
-        <textarea class="form-control" id="comment" name="comment" rows="3" placeholder="短评" autocomplete="off">@Model.Item.Comment</textarea>
+        <div id="comment"></div>
     </div>
     <div class="mb-3">
         <label for="grade" class="form-label">评分</label>
@@ -86,13 +86,15 @@
 
 @section Script {
     <script>
-        //const shortCommentEditor = prepareEditor(document.querySelector("#shortComment"), "read_update_short_comment_@Model.Item.Id");
+        let editor = createEditor("#comment", "@Model.Item.Comment");
         const form = document.querySelector("form");
         form.addEventListener('submit',
             function (event) {
                 event.preventDefault();
                 event.stopPropagation();
-                submitRequest("/@Constants.AreaAdmin/read/edit", { form: form, method: "PUT", body: new URLSearchParams(new FormData(form)), contentType: "application/x-www-form-urlencoded" });
+                var formData = new FormData(form);
+                formData.append("comment", editor.content);
+                submitRequest("/@Constants.AreaAdmin/read/edit", { form: form, method: "PUT", body: new URLSearchParams(formData), contentType: "application/x-www-form-urlencoded" });
             });
     </script>
 }
