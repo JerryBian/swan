@@ -18,6 +18,10 @@
 
         public const string RouterFile = "file";
 
-        public const string CacheProfileName = "cache0";
+        public const string CacheProfileClientShort = "cache0";
+
+        public const string CacheProfileServerShort = "cache1";
+
+        public const string CacheProfileServerLong = "cache2";
     }
 }

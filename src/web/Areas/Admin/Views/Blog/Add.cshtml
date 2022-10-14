@@ -31,7 +31,7 @@
             </div>
             <div class="mb-3">
                 <label for="mdContent" class="form-label">文章内容</label>
-                <textarea class="form-control" id="mdContent" name="mdContent" rows="5" placeholder="文章内容" autocomplete="off"></textarea>
+                <div id="mdContent"></div>
             </div>
             <div class="form-check form-switch mb-3">
                 <input class="form-check-input" type="checkbox" id="isTopping" name="isTopping">
@@ -51,16 +51,17 @@
         </form>
     </fieldset>
 </div>
-
 @section Script {
     <script>
-        //const shortCommentEditor = createEditor("comment")
+        let editor = createEditor("#mdContent");
         const form = document.querySelector("form");
         form.addEventListener('submit',
             function(event) {
                 event.preventDefault();
                 event.stopPropagation();
-                submitRequest("/@Constants.AreaAdmin/blog/add", { form: form, body: new URLSearchParams(new FormData(form)), contentType: "application/x-www-form-urlencoded" });
+                var formData = new FormData(form);
+                formData.append("mdContent", editor.content);
+                submitRequest("/@Constants.AreaAdmin/blog/post", { form: form, body: new URLSearchParams(formData), contentType: "application/x-www-form-urlencoded" });
             });
     </script>
 }

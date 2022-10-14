@@ -1,5 +1,6 @@
 ﻿using Laobian.Lib;
 using Laobian.Lib.Service;
+using Laobian.Web.Areas.Read.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Laobian.Web.Areas.Read.Controllers
@@ -14,7 +15,7 @@ namespace Laobian.Web.Areas.Read.Controllers
             _readService = readService;
         }
 
-        [ResponseCache(CacheProfileName = Constants.CacheProfileName)]
+        [ResponseCache(CacheProfileName = Constants.CacheProfileServerShort)]
         public async Task<IActionResult> Index()
         {
             bool isAuthenticated = HttpContext.User?.Identity?.IsAuthenticated == true;
@@ -24,10 +25,23 @@ namespace Laobian.Web.Areas.Read.Controllers
                 items = items.Where(x => x.Raw.IsPublic).ToList();
             }
 
+            List<ReadIndexViewModel> model = new();
+            foreach (IGrouping<int, Lib.Model.ReadItemView> item in items.GroupBy(x => x.Raw.CreateTime.Year).OrderByDescending(x => x.Key))
+            {
+                ReadIndexViewModel vm = new()
+                {
+                    Title = item.Key.ToString(),
+                    Id = item.Key.ToString(),
+                    Count = item.Count(),
+                    Items = item.OrderByDescending(x => x.Raw.CreateTime).ToList()
+                };
+                model.Add(vm);
+            }
+
             ViewData["Title"] = $"阅读";
             ViewData["DatePublished"] = items.Min(x => x.Raw.CreateTime);
             ViewData["DateModified"] = items.Max(x => x.Raw.LastUpdateTime);
-            return View(items);
+            return View(model);
         }
     }
 }

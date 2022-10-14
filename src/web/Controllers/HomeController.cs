@@ -2,7 +2,6 @@
 using Laobian.Lib.Extension;
 using Laobian.Lib.Option;
 using Laobian.Lib.Service;
-using Laobian.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.Text;
@@ -13,25 +12,22 @@ namespace Laobian.Web.Controllers
     {
         private readonly IBlogService _blogService;
         private readonly LaobianOption _option;
-        private readonly Quote _quote;
 
-        public HomeController(IBlogService blogService, IOptions<LaobianOption> option, Quote quote)
+        public HomeController(IBlogService blogService, IOptions<LaobianOption> option)
         {
-            _quote = quote;
             _option = option.Value;
             _blogService = blogService;
         }
 
-        [ResponseCache(CacheProfileName = Constants.CacheProfileName)]
+        [ResponseCache(CacheProfileName = Constants.CacheProfileServerLong)]
         public IActionResult Index()
         {
-            Tuple<string, string> q = _quote.GetOne();
-            return View(q);
+            return View();
         }
 
         [Route("/sitemap")]
         [Route("/sitemap.xml")]
-        [ResponseCache(CacheProfileName = Constants.CacheProfileName)]
+        [ResponseCache(CacheProfileName = Constants.CacheProfileServerLong)]
         public async Task<IActionResult> Sitemap()
         {
             StringBuilder sb = new();
@@ -43,7 +39,7 @@ namespace Laobian.Web.Controllers
                 $"<url><loc>{_option.BaseUrl}/read</loc><lastmod>{DateTime.Now.ToDate()}</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>");
 
             List<Lib.Model.BlogPostView> posts = await _blogService.GetAllPostsAsync();
-            foreach (Lib.Model.BlogPostView post in posts.Where(x => x.IsPublished()))
+            foreach (Lib.Model.BlogPostView post in posts.Where(x => x.IsPublishedNow))
             {
                 _ = sb.AppendLine(
                     $"<url><loc>{_option.BaseUrl}{post.FullLink}</loc><lastmod>{post.Raw.LastUpdateTime.ToDate()}</lastmod><changefreq>daily</changefreq><priority>0.6</priority></url>");

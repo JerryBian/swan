@@ -67,7 +67,7 @@ namespace Laobian.Web.HostedServices
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                await Task.Delay(TimeSpan.FromMilliseconds(900));
+                await Task.Delay(TimeSpan.FromMilliseconds(100));
 
                 if (!_option.SkipGitOperations && DateTime.Now.Minute == 0 && DateTime.Now.Second == 0)
                 {

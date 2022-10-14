@@ -53,8 +53,8 @@ namespace Laobian.Web.Areas.Admin.Controllers
             IndexViewModel model = new();
             List<BlogPostView> allPosts = await _blogService.GetAllPostsAsync();
             model.BlogPostTotal = allPosts.Count;
-            model.BlogPostPublic = allPosts.Count(x => x.IsPublished());
-            model.BlogPostPrivate = allPosts.Count(x => !x.IsPublished());
+            model.BlogPostPublic = allPosts.Count(x => x.IsPublishedNow);
+            model.BlogPostPrivate = allPosts.Count(x => !x.IsPublishedNow);
             model.BlogPostVisitTotal = allPosts.Sum(x => x.Raw.AccessCount);
 
             List<ReadItemView> allReadItems = await _readService.GetAllAsync();

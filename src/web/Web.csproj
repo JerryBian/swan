@@ -10,13 +10,9 @@
 
   <ItemGroup>
     <Compile Remove="Areas\Blog\Models\**" />
-    <Compile Remove="Areas\Read\Models\**" />
     <Content Remove="Areas\Blog\Models\**" />
-    <Content Remove="Areas\Read\Models\**" />
     <EmbeddedResource Remove="Areas\Blog\Models\**" />
-    <EmbeddedResource Remove="Areas\Read\Models\**" />
     <None Remove="Areas\Blog\Models\**" />
-    <None Remove="Areas\Read\Models\**" />
   </ItemGroup>
 
   <ItemGroup>

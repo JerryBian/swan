@@ -4,9 +4,6 @@
     ViewData["BrandName"] = $"{_option.Value.Title}的后台";
     ViewData["BrandLink"] = "/admin";
 }
-<div>
-    @RenderBody()
-</div>
 
 <div class="modal fade" tabindex="-1" id="messageModal" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered">
@@ -23,7 +20,20 @@
     </div>
 </div>
 
-@section Script{
+@section Style{
+    <link href="~/admin.min.css" rel="stylesheet" asp-append-version="true" />
+}
+
+    <div class="d-flex min-vh-100 w-100 flex-column">
+        <partial name="_Navbar" />
+        <main class="container shadow bg-white px-4 py-5">
+            @RenderBody()
+        </main>
+        <partial name="_Footer" />
+    </div>
+
+    @section Script{
+    <script src="~/admin.min.js" asp-append-version="true"></script>
     <script>
         activeNavItem("#nav_admin");
     </script>

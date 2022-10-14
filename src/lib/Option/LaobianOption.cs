@@ -50,6 +50,9 @@ namespace Laobian.Lib.Option
         [EnvOption("APP_NAME", Default = "app")]
         public string AppName { get; set; }
 
+        [EnvOption("ITEMS_PER_PAGE", Default = "8")]
+        public int ItemsPerPage { get; set; }
+
         public void FetchFromEnv(IConfiguration configuration)
         {
             foreach (PropertyInfo propertyInfo in GetType().GetProperties())

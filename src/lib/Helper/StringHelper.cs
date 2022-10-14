@@ -11,5 +11,10 @@
         {
             return string.IsNullOrEmpty(val) ? val : val[..Math.Min(val.Length, maxLength)];
         }
+
+        public static bool EqualsIgoreCase(string left, string right)
+        {
+            return string.Equals(left, right, StringComparison.OrdinalIgnoreCase);
+        }
     }
 }

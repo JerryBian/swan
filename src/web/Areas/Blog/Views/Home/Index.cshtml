@@ -1,68 +1,30 @@
-﻿@model List<BlogPostView>
+﻿@model PagedViewModel<BlogPostView>
 @inject IOptions<LaobianOption> _option
 @{
     Layout = "_BlogLayout";
-    ViewData["DatePublished"] = Model.Min(x => x.Raw.PublishTime);
-    ViewData["DateModified"] = Model.Max(x => x.Raw.PublishTime);
     ViewData["Description"] = $"{_option.Value.Title}的博客";
 }
 
-@{
-    var maxItems = 10;
-    var initItems = Model.Take(maxItems).ToList();
-    var hiddenItems = Model.Skip(maxItems).ToList();
-
-    foreach (var item in initItems)
-    {
-        var c = item.Raw.IsPublic ? "" : "text-secondary";
-        <div class="@c mb-3">
-            <div class="small text-muted d-flex">
-                <span class="flex-grow-1">@Html.Raw(item.Metadata)</span>
-                <span>
-                    @if (Context.Request.HttpContext.User?.Identity?.IsAuthenticated == true)
-                    {
-                        <a href="/admin/blog/post/edit/@item.Raw.Id"><i class="bi bi-pencil-square text-success"></i></a>
-                    }
-                </span>
-            </div>
-            <a href="@item.FullLink" class="fs-5 text-reset text-decoration-none">
-                @item.Raw.Title
-            </a>
-        </div>
-    }
-
-    if (hiddenItems.Any())
-    {
-        <div class="d-grid" id="moreItemsButtonDiv">
-            <button class="btn btn-light" type="button" data-bs-toggle="collapse" data-bs-target="#moreItems" aria-expanded="false" aria-controls="moreItems">点击显示所有文章</button>
-        </div>
-        <div class="collapse" id="moreItems">
-            @foreach (var item in hiddenItems)
-            {
-                var c = item.Raw.IsPublic ? "" : "text-secondary";
-                <div class="@c mb-3">
-                    <div class="small text-muted d-flex">
-                        <span class="flex-grow-1">@Html.Raw(item.Metadata)</span>
-                        <span>
-                            @if (Context.Request.HttpContext.User?.Identity?.IsAuthenticated == true)
-                            {
-                                <a href="/admin/blog/post/edit/@item.Raw.Id"><i class="bi bi-pencil-square text-success"></i></a>
-                            }
-                        </span>
+<div class="bg-white mx-auto shadow p-4 rounded">
+    <div class="row row-cols-1 row-cols-md-2 g-5">
+        @foreach (var item in Model.Items)
+        {
+            var c = item.IsPublishedNow ? "" : "border-dark";
+            <div class="col">
+                <div class="card @c">
+                    <div class="card-header d-flex align-items-center">
+                        <a href="@item.FullLink" class="stretched-link text-reset text-decoration-none"><i class="bi bi-hash small text-muted"></i> @item.Raw.Title</a>
                     </div>
-                    <a href="@item.FullLink" class="fs-5 text-reset text-decoration-none">
-                        @item.Raw.Title
-                    </a>
+                    <div class="card-body">
+                        <div class="card-text">@item.ExcerptText</div>
+                    </div>
+                    <div class="card-footer text-muted small">
+                        @Html.Raw(item.Metadata)
+                    </div>
                 </div>
-            }
-        </div>
-    }
-}
+            </div>
+        }
+    </div>
 
-@section Script{
-    <script>
-        document.querySelector("#moreItemsButtonDiv").addEventListener("click", function () {
-            this.classList.add("d-none");
-        })
-    </script>
-}
+    <page total-pages="@Model.TotalPages" current-page="@Model.CurrentPage" url="@Model.Url"></page>
+</div>
