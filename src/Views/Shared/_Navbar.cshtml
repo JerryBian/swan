@@ -1,0 +1,23 @@
+﻿@inject IOptions<LaobianOption> _option
+
+<nav class="navbar navbar-expand bg-white mb-3">
+    <div class="container">
+        <a class="navbar-brand" href="/">@_option.Value.Title</a>
+        <div>
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="/blog" id="nav_blog"><i class="bi bi-type-bold"></i> 博客</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/read" id="nav_read"><i class="bi bi-book"></i> 阅读</a>
+                </li>
+                @if (Context.Request.HttpContext.User?.Identity?.IsAuthenticated == true)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="/admin" id="nav_admin"><i class="bi bi-gear-wide-connected"></i> Admin</a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</nav>

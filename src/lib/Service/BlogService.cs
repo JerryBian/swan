@@ -4,7 +4,6 @@ using Laobian.Lib.Extension;
 using Laobian.Lib.Helper;
 using Laobian.Lib.Model;
 using Laobian.Lib.Repository;
-using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 
 namespace Laobian.Lib.Service
@@ -97,6 +96,7 @@ namespace Laobian.Lib.Service
                 excerptText += paraNodes.InnerText[..Math.Min(120, paraNodes.InnerText.Length)];
             }
 
+            excerptText = excerptText.TrimEnd('.', '?', '!', ':', '。', '！', '？', '：');
             return excerptText;
         }
 

@@ -1,6 +1,5 @@
 ﻿using Laobian.Lib.Extension;
 using Laobian.Lib.Service;
-using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 
 namespace Laobian.Lib.Worker

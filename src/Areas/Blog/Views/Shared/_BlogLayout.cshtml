@@ -1,0 +1,26 @@
+﻿@inject IOptions<LaobianOption> _option
+@{
+    Layout = "_Layout";
+    ViewData["BrandName"] = $"{_option.Value.Title}的博客";
+    ViewData["BrandLink"] = "/blog";
+}
+
+@section Style{
+    <link href="~/blog.min.css" rel="stylesheet" asp-append-version="true" />
+}
+
+    <div class="d-flex min-vh-100 w-100 flex-column">
+        <partial name="_Navbar" />
+        <main class="container py-2">
+            @RenderBody()
+        </main>
+        <partial name="_Footer" />
+    </div>
+
+    @section Script{
+    <script src="~/blog.min.js" asp-append-version="true"></script>
+    <script>
+        activeNavItem("#nav_blog");
+    </script>
+    @await RenderSectionAsync("Script", false)
+}

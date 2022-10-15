@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace Laobian.Lib.Option
 {

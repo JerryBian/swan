@@ -10,7 +10,7 @@ RUN dotnet publish \
     -o /publish \
     -v normal \
     /property:Version=${ver} \
-    ./web/Web.csproj
+    ./Laobian.csproj
 
 FROM mcr.microsoft.com/dotnet/aspnet:6.0
 WORKDIR /app
