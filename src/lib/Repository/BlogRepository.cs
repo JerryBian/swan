@@ -2,7 +2,6 @@
 using Laobian.Lib.Helper;
 using Laobian.Lib.Model;
 using Laobian.Lib.Option;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Runtime.CompilerServices;
 

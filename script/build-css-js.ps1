@@ -1,7 +1,8 @@
-$WWWRootLoc = Join-Path $PSScriptRoot .. src web wwwroot
+$WWWRootLoc = Join-Path $PSScriptRoot .. src wwwroot
 $NodeModulesLoc = Join-Path $PSScriptRoot .. node_modules
 
 ncu -u
+npm install
 
 Copy-Item -Path $(Join-Path $NodeModulesLoc bootstrap-icons font fonts *) `
     -Destination $(Join-Path $WWWRootLoc fonts)
