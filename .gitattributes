@@ -36,6 +36,6 @@ package-lock.json text -diff
 *.yml             text
 *.*ignore         text
 
-src/**/*.cshtml -linguist-detectable
-src/**/*.min.css -linguist-detectable
-src/**/*.min.js -linguist-detectable
+*.cshtml linguist-vendored
+*.css linguist-vendored
+*.js linguist-vendored

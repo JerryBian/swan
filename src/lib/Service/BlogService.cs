@@ -96,6 +96,7 @@ namespace Laobian.Lib.Service
                 excerptText += paraNodes.InnerText[..Math.Min(120, paraNodes.InnerText.Length)];
             }
 
+            excerptText = excerptText.TrimEnd('.', '?', '!', ':', '。', '！', '？', '：');
             return excerptText;
         }
 

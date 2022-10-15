@@ -13,7 +13,7 @@
         {
             var c = r.Raw.IsPublic ? "" : "border-dark";
             <div class="col">
-                <div class="card @c">
+                <div class="card bg-transparent @c">
                     <div class="card-header d-flex align-items-center">
                         <span>
                             <i class="bi bi-book"></i> @r.Raw.BookName
@@ -37,19 +37,18 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <div class="card-text py-3">
-                            @if (!string.IsNullOrEmpty(r.Raw.PostCommentId))
-                            {
-                                <blockquote class="my-2 bg-transparent">
-                                    博客链接：<a href="@r.PostCommentUrl" class="text-success"><i class="bi bi-link-45deg"></i> @r.PostCommentTitle</a>
-                                </blockquote>
-                            }
-
+                        <div class="card-text">
                             @if (!string.IsNullOrEmpty(r.CommentHtml))
                             {
-                                <blockquote class="my-1 read-comment bg-transparent small">
+                                <blockquote class="my-1 read-comment bg-transparent">
                                     @Html.Raw(r.CommentHtml)
                                 </blockquote>
+                            }
+                            @if (!string.IsNullOrEmpty(r.Raw.PostCommentId))
+                            {
+                                <div class="my-2">
+                                    博客：<a href="@r.PostCommentUrl" class="text-success"><i class="bi bi-link-45deg"></i> @r.PostCommentTitle</a>
+                                </div>
                             }
                         </div>
                     </div>
