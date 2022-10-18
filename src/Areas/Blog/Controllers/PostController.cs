@@ -30,7 +30,7 @@ namespace Laobian.Areas.Blog.Controllers
                 return NotFound();
             }
 
-            if(!post.IsPublishedNow && Request.HttpContext.User?.Identity?.IsAuthenticated != true)
+            if (!post.IsPublishedNow && Request.HttpContext.User?.Identity?.IsAuthenticated != true)
             {
                 _logger.LogWarning($"Attempt to access non published post, IP={Request.HttpContext.Connection.RemoteIpAddress}, URL={Request.GetDisplayUrl()}");
                 return NotFound();
