@@ -1,6 +1,7 @@
 ﻿using Laobian.Lib;
 using Laobian.Lib.Service;
 using Laobian.Lib.Worker;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Laobian.Areas.Blog.Controllers
@@ -9,12 +10,14 @@ namespace Laobian.Areas.Blog.Controllers
     public class PostController : Controller
     {
         private readonly IBlogService _blogService;
+        private readonly ILogger<PostController> _logger;
         private readonly IBlogPostAccessWorker _blogPostAccessWorker;
 
-        public PostController(IBlogService blogService, IBlogPostAccessWorker blogPostAccessWorker)
+        public PostController(IBlogService blogService, IBlogPostAccessWorker blogPostAccessWorker, ILogger<PostController> logger)
         {
             _blogService = blogService;
             _blogPostAccessWorker = blogPostAccessWorker;
+            _logger = logger;
         }
 
         [HttpGet("/blog/{year}/{month}/{link}.html")]
@@ -24,6 +27,12 @@ namespace Laobian.Areas.Blog.Controllers
             Lib.Model.BlogPostView post = await _blogService.GetPostAsync(year, month, link);
             if (post == null)
             {
+                return NotFound();
+            }
+
+            if (!post.IsPublishedNow && Request.HttpContext.User?.Identity?.IsAuthenticated != true)
+            {
+                _logger.LogWarning($"Attempt to access non published post, IP={Request.HttpContext.Connection.RemoteIpAddress}, URL={Request.GetDisplayUrl()}");
                 return NotFound();
             }
 
