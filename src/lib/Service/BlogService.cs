@@ -37,7 +37,7 @@ namespace Laobian.Lib.Service
                         ExcerptText = GetPostExcerpt(htmlDoc),
                         HtmlContent = htmlDoc.DocumentNode.OuterHtml,
                         FullLink = $"/blog/{item.PublishTime:yyyy/MM}/{item.Link.ToLowerInvariant()}.html",
-                        Metadata = $"<i class=\"bi bi-calendar2-date\"></i> {item.PublishTime.ToCnDate()} &middot; <i class=\"bi bi-eye\"></i> {item.AccessCount} 次阅读",
+                        Metadata = $"<span><i class=\"bi bi-calendar2-date\" title=\"最后修改于：{item.LastUpdateTime.ToCnDateTime()}\"></i> {item.PublishTime.ToCnDate()} &middot; <i class=\"bi bi-eye\"></i> {item.AccessCount} 次阅读</span>",
                     };
 
                     result.Add(view);

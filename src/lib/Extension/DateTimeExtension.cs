@@ -16,5 +16,10 @@
         {
             return time.ToString("HH:mm:ss");
         }
+
+        public static string ToCnDateTime(this DateTime time)
+        {
+            return time.ToString("yyyy年MM月dd日 HH时mm分ss秒");
+        }
     }
 }
