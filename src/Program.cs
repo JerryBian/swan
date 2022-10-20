@@ -3,6 +3,7 @@ using Laobian.Lib;
 using Laobian.Lib.Cache;
 using Laobian.Lib.Command;
 using Laobian.Lib.Converter;
+using Laobian.Lib.Log;
 using Laobian.Lib.Option;
 using Laobian.Lib.Repository;
 using Laobian.Lib.Service;
@@ -32,7 +33,11 @@ builder.Host.ConfigureLogging(l =>
         _ = l.AddDebug();
     }
 
-    _ = l.AddConsole();
+    var c = l.AddConsole();
+    _ = l.AddFile(c =>
+    {
+        c.MinLogLevel = c.MinLogLevel;
+    });
 });
 
 // Add services to the container.
@@ -48,6 +53,7 @@ builder.Services.AddSingleton<ICommandClient, CommandClient>();
 builder.Services.AddSingleton<IBlogPostAccessWorker, BlogPostAccessWorker>();
 builder.Services.AddSingleton<IFileRepository, FileRepository>();
 builder.Services.AddSingleton<IFileService, FileService>();
+builder.Services.AddSingleton<IFileLoggerProcessor, FileLoggerProcessor>();
 
 builder.Services.AddMemoryCache();
 builder.Services.AddHostedService<GitFileHostedService>();
