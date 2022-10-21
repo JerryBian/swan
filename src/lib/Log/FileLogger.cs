@@ -33,7 +33,7 @@
                 var log = new LaobianLog
                 {
                     Message = formatter(state, exception),
-                    Exception = exception,
+                    Exception = exception?.ToString(),
                     Level = logLevel,
                     Timestamp = DateTime.Now
                 };

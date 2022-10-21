@@ -1,5 +1,7 @@
 ﻿using Laobian.Lib.Helper;
 using Laobian.Lib.Option;
+using Laobian.Lib.Provider;
+using Laobian.Lib.Service;
 using Microsoft.Extensions.Options;
 using System.Collections.Concurrent;
 using System.Text;
@@ -10,15 +12,15 @@ namespace Laobian.Lib.Log
     {
         private readonly object _lock;
         private readonly Thread _outputThread;
-        private readonly LaobianOption _option;
+        private readonly ILogService _logService;
         private readonly ConcurrentQueue<LaobianLog> _messageQueue;
 
         private bool _isAddingCompleted;
 
-        public FileLoggerProcessor(IOptions<LaobianOption> option)
+        public FileLoggerProcessor(ILogService logService)
         {
             _lock = new object();
-            _option = option.Value;
+            _logService = logService;
             _messageQueue = new ConcurrentQueue<LaobianLog>();
             _outputThread = new Thread(ProcessLogQueue)
             {
@@ -87,28 +89,13 @@ namespace Laobian.Lib.Log
             {
                 try
                 {
-                    var file = GetLogFileName(log.Timestamp);
-                    var logs = new List<LaobianLog>();
-                    if (File.Exists(file))
-                    {
-                        logs.AddRange(JsonHelper.Deserialize<IEnumerable<LaobianLog>>(File.ReadAllText(file, Encoding.UTF8)));
-                    }
-
-                    logs.Add(log);
-                    File.WriteAllText(file, JsonHelper.Serialize(logs));
+                    _logService.AddLog(log);
                 }
                 catch(Exception ex)
                 {
                     Console.WriteLine($"Write file log failed. Log={JsonHelper.Serialize(log)}. Error={ex}");
                 }
             }
-        }
-
-        private string GetLogFileName(DateTime timestamp)
-        {
-            var dir = Path.Combine(_option.AssetLocation, Constants.FolderAsset, Constants.FolderTemp, Constants.FolderTempLog);
-            Directory.CreateDirectory(dir);
-            return Path.Combine(dir, $"{timestamp.Year:D4}-{timestamp.Month:D2}-{timestamp.Day:D2}.log");
         }
     }
 }

@@ -1,0 +1,28 @@
+﻿@model List<LaobianLog>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "日志";
+}
+
+@foreach(var item in Model)
+{
+    var c = "";
+    if(item.Level == LogLevel.Warning)
+    {
+        c = "border-warning";
+    }
+
+    if(item.Level == LogLevel.Error)
+    {
+        c = "border-danger";
+    }
+
+    <div class="card mb-3 @c">
+        <div class="card-body">
+            <h6 class="card-subtitle mb-2 text-muted"><i class="bi bi-calendar2-date"></i> @item.Timestamp.ToFullDateTime()</h6>
+            <p class="card-text">@item.Message</p>
+            <a href="#" class="card-link">Card link</a>
+            <a href="#" class="card-link">Another link</a>
+        </div>
+    </div>
+}
