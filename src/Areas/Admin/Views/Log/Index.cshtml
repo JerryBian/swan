@@ -4,15 +4,21 @@
     ViewData["Title"] = "日志";
 }
 
-@foreach(var item in Model)
+<p class="font-monospace">
+    <span>Info: </span> @Model.Count(x => x.Level == LogLevel.Information) &middot; 
+    <span class="text-warning">Warn: </span> @Model.Count(x => x.Level == LogLevel.Warning) &middot;
+    <span class="text-danger">Error: </span> @Model.Count(x => x.Level == LogLevel.Error)
+</p>
+
+@foreach (var item in Model)
 {
     var c = "";
-    if(item.Level == LogLevel.Warning)
+    if (item.Level == LogLevel.Warning)
     {
         c = "border-warning";
     }
 
-    if(item.Level == LogLevel.Error)
+    if (item.Level == LogLevel.Error)
     {
         c = "border-danger";
     }
@@ -21,8 +27,14 @@
         <div class="card-body">
             <h6 class="card-subtitle mb-2 text-muted"><i class="bi bi-calendar2-date"></i> @item.Timestamp.ToFullDateTime()</h6>
             <p class="card-text">@item.Message</p>
-            <a href="#" class="card-link">Card link</a>
-            <a href="#" class="card-link">Another link</a>
+            @if (!string.IsNullOrEmpty(item.Exception))
+            {
+                var id = StringHelper.Random();
+                <p><button class="btn btn-danger" type="button" data-bs-toggle="collapse" data-bs-target="#details-@id" aria-expanded="false">Toggle Exception</button></p>
+                <div class="collapse" id="details-@id">
+                    <pre>@item.Exception</pre>
+                </div>
+            }
         </div>
     </div>
 }
