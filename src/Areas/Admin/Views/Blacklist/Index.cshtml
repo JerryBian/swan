@@ -11,7 +11,13 @@
 <div class="mt-4">
     @foreach (var item in Model)
     {
-        <div class="card mb-4">
+        var c = "";
+        if(item.InvalidTo > DateTime.Now)
+        {
+            c = "border-success";
+        }
+
+        <div class="card mb-4 @c">
             <div class="card-body">
                 <h5 class="card-title mb-2 d-flex">
                     <i class="bi bi-signpost-split-fill"></i> @item.Ip
