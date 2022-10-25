@@ -14,7 +14,7 @@ namespace Laobian.Controllers;
 [AllowAnonymous]
 public class AccountController : Controller
 {
-    private static ConcurrentDictionary<string, int> _failures = new ConcurrentDictionary<string, int>();
+    private static readonly ConcurrentDictionary<string, int> _failures = new();
 
     private readonly LaobianOption _option;
     private readonly IBlacklistService _blacklistService;
@@ -42,6 +42,7 @@ public class AccountController : Controller
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
+        string ip = HttpContext.Connection.RemoteIpAddress.ToString();
         if (userName == _option.AdminUserName && password == _option.AdminPassword)
         {
             List<Claim> claims = new()
@@ -62,40 +63,36 @@ public class AccountController : Controller
 
             if (string.IsNullOrEmpty(returnUrl))
             {
-                returnUrl = "/";
+                returnUrl = "/admin";
             }
             else if (!Url.IsLocalUrl(returnUrl))
             {
-                Uri uri = new(returnUrl);
-                if (!uri.Host.EndsWith("localhost") && !uri.Host.EndsWith(".laobian.me"))
-                {
-                    _logger.LogWarning($"Invalid Return Url: {returnUrl}");
-                    returnUrl = "/";
-                }
+                _logger.LogWarning($"Invalid Return Url: {returnUrl}");
+                returnUrl = "/";
             }
 
+            _ = _failures.TryRemove(ip, out _);
             _logger.LogInformation($"Login successfully, user={userName}.");
             return Redirect(returnUrl);
         }
 
-        var ip = HttpContext.Connection.RemoteIpAddress.ToString();
-        var val = _failures.AddOrUpdate(ip, 1, (k, v) =>
+        int val = _failures.AddOrUpdate(ip, 1, (k, v) =>
         {
-            Interlocked.Increment(ref v);
+            _ = Interlocked.Increment(ref v);
             return v;
         });
         _logger.LogWarning(
             $"Login failed. User Name = {userName}, Password = {password}. IP: {ip}(Times={val}), User Agent: {Request.Headers[HeaderNames.UserAgent]}");
-        if(val >=3)
+        if (val >= 3)
         {
             await _blacklistService.UdpateAsync(new Lib.Model.BlacklistItem
             {
-               Ip = ip,
-               InvalidTo = DateTime.Now.AddHours(1),
-               Reason = "Automatically added to blacklist by system, due to this IP address had tried to login 3 times, and yet failed."
+                Ip = ip,
+                InvalidTo = DateTime.Now.AddHours(1),
+                Reason = "Automatically added to blacklist by system, due to this IP address had tried to login 3 times, and yet failed."
             });
 
-            _failures.TryRemove(ip, out _);
+            _ = _failures.TryRemove(ip, out _);
         }
         return Redirect("/");
     }

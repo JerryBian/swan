@@ -68,8 +68,8 @@ namespace Laobian.Lib.Repository
             {
                 foreach (string file in Directory.EnumerateFiles(GetLogBaseDir(), $"*{LogExt}", SearchOption.AllDirectories))
                 {
-                    var lastModifiedAt = new FileInfo(file).LastWriteTime;
-                    if(DateTime.Now - lastModifiedAt > TimeSpan.FromDays(7))
+                    DateTime lastModifiedAt = new FileInfo(file).LastWriteTime;
+                    if (DateTime.Now - lastModifiedAt > TimeSpan.FromDays(7))
                     {
                         File.Delete(file);
                     }
@@ -77,7 +77,7 @@ namespace Laobian.Lib.Repository
             }
             finally
             {
-                _semaphoreSlim.Release();
+                _ = _semaphoreSlim.Release();
             }
         }
 

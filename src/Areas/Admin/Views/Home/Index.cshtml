@@ -3,13 +3,22 @@
     Layout = "_AdminLayout";
 }
 
-<div class="row align-items-start">
-    <div class="col-md-6 mb-4">
+<div class="row">
+    <div class="col-md-4 mb-4 h-100">
+        <div class="list-group">
+            <a href="/admin/log" class="list-group-item list-group-item-action"><i class="bi bi-journal"></i> 查看日志</a>
+            <a href="/admin/blacklist" class="list-group-item list-group-item-action"><i class="bi bi-x-octagon"></i> 管理黑名单</a>
+            <a href="/admin/blog/post/add" class="list-group-item list-group-item-action"><i class="bi bi-type-bold"></i> 发表新的文章</a>
+            <a href="/admin/read/add" class="list-group-item list-group-item-action"><i class="bi bi-book"></i> 发表新的阅读</a>
+
+            <a href="javascript:;" id="admin_shutdown" class="list-group-item list-group-item-action text-danger"><i class="bi bi-sign-stop-fill"></i> 关闭站点</a>
+        </div>
+    </div>
+
+
+    <div class="col-md-4 mb-4">
         <div class="card border-success">
             <div class="card-header  text-center fw-bold">博客</div>
-            <div class="card-body">
-                <a href="/admin/blog/post/add" class="card-link text-success text-decoration-none"><i class="bi bi-plus-circle"></i> 发表新的文章</a>
-            </div>
             <ul class="list-group list-group-flush">
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     文章总数
@@ -21,22 +30,19 @@
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     未公开文章总数
-                    <span class="badge bg-secondary rounded-pill">@Model.BlogPostPrivate</span>
+                    <span class="badge bg-dark rounded-pill">@Model.BlogPostPrivate</span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     文章访问总数
-                    <span class="badge bg-secondary rounded-pill">@Model.BlogPostVisitTotal</span>
+                    <span class="badge bg-dark rounded-pill">@Model.BlogPostVisitTotal</span>
                 </li>
             </ul>
 
         </div>
     </div>
-    <div class="col-md-6 mb-4">
+    <div class="col-md-4 mb-4">
         <div class="card border-success">
             <div class="card-header text-center fw-bold">阅读</div>
-            <div class="card-body">
-                <a href="/admin/read/add" class="card-link text-success text-decoration-none"><i class="bi bi-plus-circle"></i> 发表新的阅读</a>
-            </div>
             <ul class="list-group list-group-flush">
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     阅读总数
@@ -48,18 +54,9 @@
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     未公开阅读总数
-                    <span class="badge bg-secondary rounded-pill">@Model.ReadItemPrivate</span>
+                    <span class="badge bg-dark rounded-pill">@Model.ReadItemPrivate</span>
                 </li>
             </ul>
-        </div>
-    </div>
-    <div class="col-md-6 mb-4">
-        <div class="card border-secondary">
-            <div class="card-header  text-center fw-bold">其他</div>
-            <div class="card-body">
-                <div class="mb-2"><a class="card-link text-success text-decoration-none" href="javascript:;" id="admin_upload"><i class="bi bi-upload"></i> 上传文件</a></div>
-                <div><a href="javascript:;" class="card-link text-danger text-decoration-none" id="admin_shutdown"><i class="bi bi-sign-stop-fill"></i> 关闭站点</a></div>
-            </div>
         </div>
     </div>
 </div>

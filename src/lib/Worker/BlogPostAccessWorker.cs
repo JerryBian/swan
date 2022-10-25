@@ -20,7 +20,7 @@ namespace Laobian.Lib.Worker
             _cts = new CancellationTokenSource();
         }
 
-        public async void Add( PostAccessItem item)
+        public async void Add(PostAccessItem item)
         {
             if (_cts.IsCancellationRequested)
             {
@@ -54,7 +54,7 @@ namespace Laobian.Lib.Worker
                 while (_posts.TryDequeue(out var v))
                 {
                     var lastTimestamp = items.Where(x => x.Id == v.Id && x.Ip == v.Ip).LastOrDefault().Timestamp;
-                    if(v.Timestamp - lastTimestamp > TimeSpan.FromMinutes(1))
+                    if (v.Timestamp - lastTimestamp > TimeSpan.FromMinutes(1))
                     {
                         items.Add(v);
                     }

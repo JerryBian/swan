@@ -15,22 +15,22 @@ namespace Laobian.HostedServices
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var lastExecuteAt = DateTime.Now;
-            while(!stoppingToken.IsCancellationRequested)
+            DateTime lastExecuteAt = DateTime.Now;
+            while (!stoppingToken.IsCancellationRequested)
             {
-                if(DateTime.Now - lastExecuteAt < TimeSpan.FromMinutes(1))
+                if (DateTime.Now - lastExecuteAt < TimeSpan.FromMinutes(1))
                 {
                     await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
                     continue;
                 }
 
-                if(DateTime.Now.Hour == 1 && DateTime.Now.Minute == 0)
+                if (DateTime.Now.Hour == 1 && DateTime.Now.Minute == 0)
                 {
                     try
                     {
                         _logService.Cleanup();
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         _logger.LogError(ex, "Cleanup log files failed.");
                     }

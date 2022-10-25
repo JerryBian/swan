@@ -10,6 +10,7 @@ using Laobian.Lib.Service;
 using Laobian.Lib.Worker;
 using Laobian.Middlewares;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
@@ -44,6 +45,12 @@ builder.Host.ConfigureLogging(l =>
 // Add services to the container.
 builder.Services.Configure<LaobianOption>(o => { o.FetchFromEnv(builder.Configuration); });
 
+var assetLoc = builder.Configuration.GetValue<string>("ASSET_LOCATION");
+var dpFolder = Path.Combine(assetLoc, "dp", builder.Environment.EnvironmentName);
+Directory.CreateDirectory(dpFolder);
+builder.Services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(dpFolder))
+    .SetApplicationName($"LAOBIAN_{builder.Environment.EnvironmentName}");
+
 builder.Services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
 builder.Services.AddSingleton<IReadRepository, ReadRepository>();
 builder.Services.AddSingleton<IReadService, ReadService>();
@@ -64,6 +71,7 @@ builder.Services.AddMemoryCache();
 builder.Services.AddHostedService<GitFileHostedService>();
 builder.Services.AddHostedService<BlogPostHostedService>();
 builder.Services.AddHostedService<CleanupHostedService>();
+builder.Services.AddHostedService<TimerHostedService>();
 builder.Services.AddControllersWithViews(option =>
 {
     option.CacheProfiles.Add(Constants.CacheProfileClientShort, new CacheProfile
