@@ -24,6 +24,8 @@
 
         public const string FolderTempRead = "read";
 
+        public const string BlacklistFile = "blacklist.json";
+
         public const string RouterFile = "file";
 
         public const string CacheProfileClientShort = "cache0";
