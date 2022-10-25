@@ -12,6 +12,11 @@
             return time.ToString("yyyy年MM月dd日");
         }
 
+        public static string ToFullDateTime(this DateTime time)
+        {
+            return time.ToString("yyyy-MM-dd HH:mm:ss.fff");
+        }
+
         public static string ToTime(this DateTime time)
         {
             return time.ToString("HH:mm:ss");

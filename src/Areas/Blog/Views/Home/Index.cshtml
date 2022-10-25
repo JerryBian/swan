@@ -9,11 +9,15 @@
     <div class="row row-cols-1 row-cols-md-2 g-5">
         @foreach (var item in Model.Items)
         {
-            var c = item.IsPublishedNow ? "" : "border-dark";
+            var d = "bi bi-hash small text-muted";
+            if(!item.IsPublishedNow)
+            {
+                d = "bi bi-file-lock small text-info";
+            }
             <div class="col">
-                <div class="card bg-transparent @c">
+                <div class="card bg-transparent">
                     <div class="card-header d-flex align-items-center">
-                        <a href="@item.FullLink" class="stretched-link text-reset text-decoration-none"><i class="bi bi-hash small text-muted"></i> @item.Raw.Title</a>
+                        <a href="@item.FullLink" class="stretched-link text-reset text-decoration-none"><i class="@d"></i> @item.Raw.Title</a>
                     </div>
                     <div class="card-body">
                         <div class="card-text">

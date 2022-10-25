@@ -160,5 +160,12 @@ namespace Laobian.Lib.Repository
             _ = Directory.CreateDirectory(path);
             return path;
         }
+
+        private string GetTempPostDir()
+        {
+            string path = Path.Combine(_option.AssetLocation, "asset", "temp", "post");
+            _ = Directory.CreateDirectory(path);
+            return path;
+        }
     }
 }

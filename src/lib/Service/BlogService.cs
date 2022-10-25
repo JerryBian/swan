@@ -46,7 +46,7 @@ namespace Laobian.Lib.Service
                 sw.Stop();
                 _logger.LogInformation($"Reloaded all blog posts, elapsed {sw.ElapsedMilliseconds}ms.");
                 return result;
-            });
+            }, TimeSpan.FromDays(1));
         }
 
         public async Task<BlogPostView> GetPostAsync(string id, CancellationToken cancellationToken = default)

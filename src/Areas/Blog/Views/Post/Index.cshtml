@@ -7,9 +7,14 @@
 }
 
 @{
-    var c = Model.Raw.IsPublic ? "" : "text-dark";
+    var d = "bi bi-hash small text-muted";
+    if (!Model.IsPublishedNow)
+    {
+        d = "bi bi-file-lock small text-info";
+    }
+
     <div id="post" class="bg-white mx-auto rounded w-100">
-        <div class="@c mb-4">
+        <div class="mb-4">
             <div class="small text-muted d-flex">
                 <div>@Html.Raw(Model.Metadata)</div>
                 @if (Context.Request.HttpContext.User?.Identity?.IsAuthenticated == true)
@@ -20,7 +25,7 @@
                 }
             </div>
             <div class="fs-4">
-                <i class="bi bi-hash small text-muted"></i>
+                <i class="@d"></i>
                 @Model.Raw.Title
             </div>
         </div>

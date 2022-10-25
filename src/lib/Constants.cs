@@ -16,6 +16,16 @@
 
         public const string FolderFile = "file";
 
+        public const string FolderTemp = "temp";
+
+        public const string FolderTempLog = "log";
+
+        public const string FolderTempPost = "post";
+
+        public const string FolderTempRead = "read";
+
+        public const string BlacklistFile = "blacklist.json";
+
         public const string RouterFile = "file";
 
         public const string CacheProfileClientShort = "cache0";

@@ -13,7 +13,7 @@ namespace Laobian.Lib.Converter
 
         public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
         {
-            writer.WriteStringValue(value.ToString("yyyy-MM-ddTHH:mm:ss"));
+            writer.WriteStringValue(value.ToString("yyyy-MM-ddTHH:mm:ss.fff"));
         }
     }
 }
