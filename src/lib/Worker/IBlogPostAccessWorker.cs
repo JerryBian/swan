@@ -1,8 +1,10 @@
-﻿namespace Laobian.Lib.Worker
+﻿using Laobian.Lib.Model;
+
+namespace Laobian.Lib.Worker
 {
     public interface IBlogPostAccessWorker
     {
-        void Add(string id);
+        void Add(PostAccessItem item);
 
         Task ProcessAsync();
 

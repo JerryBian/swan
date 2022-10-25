@@ -22,7 +22,7 @@ namespace Laobian.Areas.Admin.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var model = await _blacklistService.GetAllAsync();
+            List<BlacklistItem> model = await _blacklistService.GetAllAsync();
             return View(model);
         }
 
@@ -46,7 +46,7 @@ namespace Laobian.Areas.Admin.Controllers
         }
 
         [HttpDelete("/admin/blacklist")]
-        public async Task<IActionResult> Delete([FromQuery]string ip)
+        public async Task<IActionResult> Delete([FromQuery] string ip)
         {
             ApiResponse<object> res = new();
             try

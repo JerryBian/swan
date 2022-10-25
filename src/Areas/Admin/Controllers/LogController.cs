@@ -1,6 +1,5 @@
 ﻿using Laobian.Lib;
 using Laobian.Lib.Log;
-using Laobian.Lib.Provider;
 using Laobian.Lib.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,16 +19,16 @@ namespace Laobian.Areas.Admin.Controllers
 
         public IActionResult Index([FromQuery] string level)
         {
-            var minLevel = LogLevel.Trace;
-            if(!string.IsNullOrEmpty(level))
+            LogLevel minLevel = LogLevel.Trace;
+            if (!string.IsNullOrEmpty(level))
             {
-                if(Enum.TryParse<LogLevel>(level, out var l))
+                if (Enum.TryParse<LogLevel>(level, out LogLevel l))
                 {
                     minLevel = l;
                 }
             }
 
-            var logs = _logService.ReadAllAsync(minLevel).OrderByDescending(x => x.Timestamp).ToList();
+            List<LaobianLog> logs = _logService.ReadAll(minLevel).OrderByDescending(x => x.Timestamp).ToList();
             return View(logs);
         }
     }

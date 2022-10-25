@@ -15,7 +15,7 @@ namespace Laobian.Lib.Helper
                 Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
             };
 
-            if(converters != null)
+            if (converters != null)
             {
                 converters.ForEach(x => option.Converters.Add(x));
             }
@@ -23,7 +23,7 @@ namespace Laobian.Lib.Helper
             {
                 option.Converters.Add(new IsoDateTimeConverter());
             }
-            
+
             return JsonSerializer.Serialize(obj, option);
         }
 

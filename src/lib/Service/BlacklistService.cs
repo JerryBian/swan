@@ -33,8 +33,8 @@ namespace Laobian.Lib.Service
         {
             return await _cacheManager.GetOrCreateAsync(CacheKey, async () =>
             {
-                var result = await _repository.GetAllAsync();
-                foreach (var item in result)
+                List<BlacklistItem> result = await _repository.GetAllAsync();
+                foreach (BlacklistItem item in result)
                 {
                     item.IpBytes = IPAddress.Parse(item.Ip).GetAddressBytes();
                 }

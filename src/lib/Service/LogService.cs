@@ -1,8 +1,5 @@
-﻿using Laobian.Lib.Helper;
-using Laobian.Lib.Log;
-using Laobian.Lib.Provider;
+﻿using Laobian.Lib.Log;
 using Laobian.Lib.Repository;
-using System.Text;
 
 namespace Laobian.Lib.Service
 {
@@ -20,9 +17,14 @@ namespace Laobian.Lib.Service
             _repository.AddLog(log);
         }
 
-        public List<LaobianLog> ReadAllAsync(LogLevel minLogLevel)
+        public void Cleanup()
         {
-            return _repository.ReadAllAsync(minLogLevel);
+            _repository.Cleanup();
+        }
+
+        public List<LaobianLog> ReadAll(LogLevel minLogLevel)
+        {
+            return _repository.ReadAll(minLogLevel);
         }
     }
 }

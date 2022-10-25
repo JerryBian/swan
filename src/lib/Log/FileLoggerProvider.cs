@@ -1,5 +1,4 @@
-﻿using Laobian.Lib.Option;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using System.Collections.Concurrent;
 
 namespace Laobian.Lib.Log

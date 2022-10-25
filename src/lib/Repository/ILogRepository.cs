@@ -4,8 +4,10 @@ namespace Laobian.Lib.Repository
 {
     public interface ILogRepository
     {
-        List<LaobianLog> ReadAllAsync(LogLevel minLogLevel);
+        List<LaobianLog> ReadAll(LogLevel minLogLevel);
 
         void AddLog(LaobianLog log);
+
+        void Cleanup();
     }
 }

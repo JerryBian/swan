@@ -1,5 +1,4 @@
-﻿using Laobian.Lib.Option;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+﻿using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging.Configuration;
 
 namespace Laobian.Lib.Log
@@ -14,7 +13,7 @@ namespace Laobian.Lib.Log
                 .RegisterProviderOptions<FileLoggerOption, FileLoggerProvider>(builder.Services);
             if (configure != null)
             {
-                builder.Services.Configure(configure);
+                _ = builder.Services.Configure(configure);
             }
 
             return builder;

@@ -4,8 +4,10 @@ namespace Laobian.Lib.Service
 {
     public interface ILogService
     {
-        List<LaobianLog> ReadAllAsync(LogLevel minLogLevel);
+        List<LaobianLog> ReadAll(LogLevel minLogLevel);
 
         void AddLog(LaobianLog log);
+
+        void Cleanup();
     }
 }

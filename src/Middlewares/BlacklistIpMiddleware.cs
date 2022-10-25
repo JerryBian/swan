@@ -18,22 +18,22 @@ namespace Laobian.Middlewares
 
         public async Task Invoke(HttpContext context)
         {
-            var items = await _blacklistService.GetAllAsync();
-            var remoteIp = context.Connection.RemoteIpAddress;
+            List<Lib.Model.BlacklistItem> items = await _blacklistService.GetAllAsync();
+            IPAddress remoteIp = context.Connection.RemoteIpAddress;
             _logger.LogDebug($"Request from remote ip: {remoteIp}");
 
-            var badIp = false;
-            var bytes = remoteIp.GetAddressBytes();
-            foreach(var item in items)
+            bool badIp = false;
+            byte[] bytes = remoteIp.GetAddressBytes();
+            foreach (Lib.Model.BlacklistItem item in items)
             {
-                if(item.InvalidTo < DateTime.Now && item.IpBytes.SequenceEqual(bytes))
+                if (item.InvalidTo > DateTime.Now && item.IpBytes.SequenceEqual(bytes))
                 {
                     badIp = true;
                     break;
                 }
             }
 
-            if(badIp)
+            if (badIp)
             {
                 _logger.LogWarning(
                     "Forbidden Request from Remote IP address: {RemoteIp}", remoteIp);

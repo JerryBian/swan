@@ -1,10 +1,6 @@
 ﻿using Laobian.Lib.Helper;
-using Laobian.Lib.Option;
-using Laobian.Lib.Provider;
 using Laobian.Lib.Service;
-using Microsoft.Extensions.Options;
 using System.Collections.Concurrent;
-using System.Text;
 
 namespace Laobian.Lib.Log
 {
@@ -35,14 +31,14 @@ namespace Laobian.Lib.Log
             CompleteAdding();
             try
             {
-                _outputThread.Join(5000);
+                _ = _outputThread.Join(5000);
             }
             catch { }
         }
 
         public void Ingest(LaobianLog log)
         {
-            if(!Enqueue(log))
+            if (!Enqueue(log))
             {
                 Write(log);
             }
@@ -52,13 +48,13 @@ namespace Laobian.Lib.Log
         {
             while (!_isAddingCompleted)
             {
-                if(_messageQueue.TryDequeue(out var item))
+                if (_messageQueue.TryDequeue(out LaobianLog item))
                 {
                     Write(item);
                 }
             }
 
-            while(_messageQueue.TryDequeue(out var item))
+            while (_messageQueue.TryDequeue(out LaobianLog item))
             {
                 Write(item);
             }
@@ -77,7 +73,7 @@ namespace Laobian.Lib.Log
 
         private void CompleteAdding()
         {
-            lock(_messageQueue)
+            lock (_messageQueue)
             {
                 _isAddingCompleted = true;
             }
@@ -85,13 +81,13 @@ namespace Laobian.Lib.Log
 
         private void Write(LaobianLog log)
         {
-            lock(_lock)
+            lock (_lock)
             {
                 try
                 {
                     _logService.AddLog(log);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Console.WriteLine($"Write file log failed. Log={JsonHelper.Serialize(log)}. Error={ex}");
                 }

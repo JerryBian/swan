@@ -36,7 +36,7 @@ namespace Laobian.Areas.Blog.Controllers
                 return NotFound();
             }
 
-            _blogPostAccessWorker.Add(post.Raw.Id);
+            _blogPostAccessWorker.Add(new Lib.Model.PostAccessItem(post.Raw.Id, Request.HttpContext.Connection.RemoteIpAddress.ToString()));
             ViewData["Title"] = $"{post.Raw.Title} - 博客";
             ViewData["DatePublished"] = post.Raw.PublishTime;
             ViewData["DateModified"] = post.Raw.LastUpdateTime;

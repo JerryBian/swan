@@ -5,7 +5,6 @@ using Laobian.Lib.Command;
 using Laobian.Lib.Converter;
 using Laobian.Lib.Log;
 using Laobian.Lib.Option;
-using Laobian.Lib.Provider;
 using Laobian.Lib.Repository;
 using Laobian.Lib.Service;
 using Laobian.Lib.Worker;
@@ -56,7 +55,6 @@ builder.Services.AddSingleton<IBlogPostAccessWorker, BlogPostAccessWorker>();
 builder.Services.AddSingleton<IFileRepository, FileRepository>();
 builder.Services.AddSingleton<IFileService, FileService>();
 builder.Services.AddSingleton<IFileLoggerProcessor, FileLoggerProcessor>();
-builder.Services.AddSingleton<IAssetFileProvider, AssetFileProvider>();
 builder.Services.AddSingleton<ILogRepository, LogRepository>();
 builder.Services.AddSingleton<ILogService, LogService>();
 builder.Services.AddSingleton<IBlacklistRepository, BlacklistRepository>();
@@ -65,6 +63,7 @@ builder.Services.AddSingleton<IBlacklistService, BlacklistService>();
 builder.Services.AddMemoryCache();
 builder.Services.AddHostedService<GitFileHostedService>();
 builder.Services.AddHostedService<BlogPostHostedService>();
+builder.Services.AddHostedService<CleanupHostedService>();
 builder.Services.AddControllersWithViews(option =>
 {
     option.CacheProfiles.Add(Constants.CacheProfileClientShort, new CacheProfile

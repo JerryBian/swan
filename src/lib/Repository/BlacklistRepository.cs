@@ -22,8 +22,8 @@ namespace Laobian.Lib.Repository
             await _semaphoreSlim.WaitAsync();
             try
             {
-                var items = await GetItemsAsync();
-                var existingItem = items.FirstOrDefault(x => x.Ip == item.Ip);
+                List<BlacklistItem> items = await GetItemsAsync();
+                BlacklistItem existingItem = items.FirstOrDefault(x => x.Ip == item.Ip);
                 if (existingItem != null)
                 {
                     existingItem.LastUpdateAt = DateTime.Now;
@@ -48,7 +48,7 @@ namespace Laobian.Lib.Repository
             }
             finally
             {
-                _semaphoreSlim.Release();
+                _ = _semaphoreSlim.Release();
             }
         }
 
@@ -57,17 +57,17 @@ namespace Laobian.Lib.Repository
             await _semaphoreSlim.WaitAsync();
             try
             {
-                var items = await GetItemsAsync();
-                var existingItem = items.FirstOrDefault(x => x.Ip == ip);
-                if(existingItem != null)
+                List<BlacklistItem> items = await GetItemsAsync();
+                BlacklistItem existingItem = items.FirstOrDefault(x => x.Ip == ip);
+                if (existingItem != null)
                 {
-                    items.Remove(existingItem);
+                    _ = items.Remove(existingItem);
                     await SaveItemsAsync(items);
                 }
             }
             finally
             {
-                _semaphoreSlim.Release();
+                _ = _semaphoreSlim.Release();
             }
         }
 
@@ -76,19 +76,19 @@ namespace Laobian.Lib.Repository
             await _semaphoreSlim.WaitAsync();
             try
             {
-                var items = await GetItemsAsync();
+                List<BlacklistItem> items = await GetItemsAsync();
                 return items;
             }
             finally
             {
-                _semaphoreSlim.Release();
+                _ = _semaphoreSlim.Release();
             }
         }
 
         private async Task SaveItemsAsync(List<BlacklistItem> items)
         {
-            var file = GetFilePath();
-            var content = JsonHelper.Serialize(items.OrderByDescending(x => x.LastUpdateAt), true);
+            string file = GetFilePath();
+            string content = JsonHelper.Serialize(items.OrderByDescending(x => x.LastUpdateAt), true);
             await File.WriteAllTextAsync(file, content, Encoding.UTF8);
         }
 
@@ -99,11 +99,11 @@ namespace Laobian.Lib.Repository
 
         private async Task<List<BlacklistItem>> GetItemsAsync()
         {
-            var items = new List<BlacklistItem>();
-            var file = GetFilePath();
+            List<BlacklistItem> items = new();
+            string file = GetFilePath();
             if (File.Exists(file))
             {
-                var c = await File.ReadAllTextAsync(file, Encoding.UTF8);
+                string c = await File.ReadAllTextAsync(file, Encoding.UTF8);
                 items.AddRange(JsonHelper.Deserialize<List<BlacklistItem>>(c));
             }
 

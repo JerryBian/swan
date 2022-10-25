@@ -1,4 +1,5 @@
 ﻿using Laobian.Lib.Extension;
+using Laobian.Lib.Model;
 using Laobian.Lib.Service;
 using System.Collections.Concurrent;
 
@@ -6,7 +7,7 @@ namespace Laobian.Lib.Worker
 {
     public class BlogPostAccessWorker : IBlogPostAccessWorker
     {
-        private readonly ConcurrentQueue<string> _posts;
+        private readonly ConcurrentQueue<PostAccessItem> _posts;
         private readonly IBlogService _blogService;
         private readonly ILogger<BlogPostAccessWorker> _logger;
         private readonly CancellationTokenSource _cts;
@@ -15,19 +16,19 @@ namespace Laobian.Lib.Worker
         {
             _logger = logger;
             _blogService = blogService;
-            _posts = new ConcurrentQueue<string>();
+            _posts = new ConcurrentQueue<PostAccessItem>();
             _cts = new CancellationTokenSource();
         }
 
-        public async void Add(string id)
+        public async void Add( PostAccessItem item)
         {
             if (_cts.IsCancellationRequested)
             {
-                _ = await _blogService.AddPostAccessAsync(id, 1);
+                _ = await _blogService.AddPostAccessAsync(item.Id, 1);
                 return;
             }
 
-            _posts.Enqueue(id);
+            _posts.Enqueue(item);
         }
 
         public async Task ProcessAsync()
@@ -49,20 +50,23 @@ namespace Laobian.Lib.Worker
         {
             try
             {
-                Dictionary<string, int> dict = new();
-                while (_posts.TryDequeue(out string id))
+                List<PostAccessItem> items = new();
+                while (_posts.TryDequeue(out var v))
                 {
-                    if (!dict.ContainsKey(id))
+                    var lastTimestamp = items.Where(x => x.Id == v.Id && x.Ip == v.Ip).LastOrDefault().Timestamp;
+                    if(v.Timestamp - lastTimestamp > TimeSpan.FromMinutes(1))
                     {
-                        dict.Add(id, 0);
+                        items.Add(v);
                     }
-
-                    dict[id]++;
+                    else
+                    {
+                        _logger.LogWarning($"Discard IP {v.Ip} access count for post {v.Id}. Timestamp {v.Timestamp}, last access {lastTimestamp}.");
+                    }
                 }
 
-                foreach (KeyValuePair<string, int> item in dict)
+                foreach (var item in items.GroupBy(x => x.Id))
                 {
-                    _ = await _blogService.AddPostAccessAsync(item.Key, item.Value);
+                    _ = await _blogService.AddPostAccessAsync(item.Key, item.Count());
                 }
             }
             catch (Exception ex)
