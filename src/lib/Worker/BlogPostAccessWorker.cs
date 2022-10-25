@@ -53,7 +53,7 @@ namespace Laobian.Lib.Worker
                 List<PostAccessItem> items = new();
                 while (_posts.TryDequeue(out var v))
                 {
-                    var lastTimestamp = items.Where(x => x.Id == v.Id && x.Ip == v.Ip).LastOrDefault().Timestamp;
+                    var lastTimestamp = items.Where(x => x.Id == v.Id && x.Ip == v.Ip).LastOrDefault()?.Timestamp ?? default;
                     if (v.Timestamp - lastTimestamp > TimeSpan.FromMinutes(1))
                     {
                         items.Add(v);
