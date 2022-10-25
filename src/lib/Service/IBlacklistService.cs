@@ -1,10 +1,10 @@
 ﻿using Laobian.Lib.Model;
 
-namespace Laobian.Lib.Repository
+namespace Laobian.Lib.Service
 {
-    public interface IBlacklistRepository
+    public interface IBlacklistService
     {
-        Task UpdateAsync(BlacklistItem item);
+        Task UdpateAsync(BlacklistItem item);
 
         Task DeleteAsync(string ip);
 

@@ -9,6 +9,7 @@ using Laobian.Lib.Provider;
 using Laobian.Lib.Repository;
 using Laobian.Lib.Service;
 using Laobian.Lib.Worker;
+using Laobian.Middlewares;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
@@ -58,6 +59,8 @@ builder.Services.AddSingleton<IFileLoggerProcessor, FileLoggerProcessor>();
 builder.Services.AddSingleton<IAssetFileProvider, AssetFileProvider>();
 builder.Services.AddSingleton<ILogRepository, LogRepository>();
 builder.Services.AddSingleton<ILogService, LogService>();
+builder.Services.AddSingleton<IBlacklistRepository, BlacklistRepository>();
+builder.Services.AddSingleton<IBlacklistService, BlacklistService>();
 
 builder.Services.AddMemoryCache();
 builder.Services.AddHostedService<GitFileHostedService>();
@@ -109,6 +112,8 @@ if (!app.Environment.IsDevelopment())
     _ = app.UseExceptionHandler("/Error");
 }
 app.UseStatusCodePages();
+
+app.UseMiddleware<BlacklistIpMiddleware>();
 
 FileExtensionContentTypeProvider fileContentTypeProvider = new()
 {

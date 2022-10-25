@@ -1,4 +1,6 @@
-﻿namespace Laobian.Lib.Model
+﻿using System.Text.Json.Serialization;
+
+namespace Laobian.Lib.Model
 {
     public class BlacklistItem
     {
@@ -11,5 +13,8 @@
         public string Reason { get; set; }
 
         public DateTime InvalidTo { get; set; }
+
+        [JsonIgnore]
+        public byte[] IpBytes { get; set; }
     }
 }
