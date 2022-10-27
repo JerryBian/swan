@@ -4,6 +4,7 @@
     {
         public PostAccessItem(string id, string ip)
         {
+            Id = id;
             Ip = ip;
             Timestamp = DateTime.Now;
         }
