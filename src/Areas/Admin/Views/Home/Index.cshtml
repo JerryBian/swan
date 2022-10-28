@@ -11,6 +11,7 @@
             <a href="/admin/blog/post/add" class="list-group-item list-group-item-action"><i class="bi bi-type-bold"></i> 发表新的文章</a>
             <a href="/admin/read/add" class="list-group-item list-group-item-action"><i class="bi bi-book"></i> 发表新的阅读</a>
 
+            <a href="javascript:;" id="admin_upload" class="list-group-item list-group-item-action text-success"><i class="bi bi-cloud-upload"></i> 上传文件</a>
             <a href="javascript:;" id="admin_shutdown" class="list-group-item list-group-item-action text-danger"><i class="bi bi-sign-stop-fill"></i> 关闭站点</a>
         </div>
     </div>
@@ -21,19 +22,31 @@
             <div class="card-header  text-center fw-bold">博客</div>
             <ul class="list-group list-group-flush">
                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                    文章总数
+                    <span>
+                        <i class="bi bi-info-circle"></i>
+                        文章总数
+                    </span>
                     <span class="badge bg-info rounded-pill">@Model.BlogPostTotal</span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                    公开文章总数
+                    <span>
+                        <i class="bi bi-info-circle"></i>
+                        公开文章总数
+                    </span>
                     <span class="badge bg-success rounded-pill">@Model.BlogPostPublic</span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                    未公开文章总数
+                    <span>
+                        <i class="bi bi-info-circle"></i>
+                        未公开文章总数
+                    </span>
                     <span class="badge bg-dark rounded-pill">@Model.BlogPostPrivate</span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                    文章访问总数
+                    <span>
+                        <i class="bi bi-info-circle"></i>
+                        文章访问总数
+                    </span>
                     <span class="badge bg-dark rounded-pill">@Model.BlogPostVisitTotal</span>
                 </li>
             </ul>
@@ -45,15 +58,24 @@
             <div class="card-header text-center fw-bold">阅读</div>
             <ul class="list-group list-group-flush">
                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                    阅读总数
+                    <span>
+                        <i class="bi bi-info-circle"></i>
+                        阅读总数
+                    </span>
                     <span class="badge bg-info rounded-pill">@Model.ReadItemTotal</span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                    公开阅读总数
+                    <span>
+                        <i class="bi bi-info-circle"></i>
+                        公开阅读总数
+                    </span>
                     <span class="badge bg-success rounded-pill">@Model.ReadItemPublic</span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                    未公开阅读总数
+                    <span>
+                        <i class="bi bi-info-circle"></i>
+                        未公开阅读总数
+                    </span>
                     <span class="badge bg-dark rounded-pill">@Model.ReadItemPrivate</span>
                 </li>
             </ul>

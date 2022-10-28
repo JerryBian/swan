@@ -18271,8 +18271,12 @@ blockquote *:last-child {
   background-color: transparent;
 }
 
-.form-check-input, .form-control {
+.form-check-input, .form-control, .form-select {
   background-color: transparent;
+}
+
+option:checked {
+  background: green linear-gradient(0deg, green 0%, green 100%);
 }
 
 /*# sourceMappingURL=home.css.map */

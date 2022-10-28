@@ -13,8 +13,12 @@
 <div class="d-flex min-vh-100 w-100 flex-column justify-content-center align-items-center">
     <h2 class="mb-4">@_option.Value.Title</h2>
     <div class="fs-5">
-            <a href="/blog" class="text-reset mx-1 text-decoration-none"><i class="bi bi-type-bold"></i> 博客</a> &middot;
-            <a href="/read" class="text-reset mx-1 text-decoration-none"><i class="bi bi-book"></i> 阅读</a>
+            <a href="/blog" class="mx-1 text-decoration-none btn btn-outline-dark"><i class="bi bi-type-bold"></i> 博客</a> 
+            <a href="/read" class="mx-1 text-decoration-none btn btn-outline-dark"><i class="bi bi-book"></i> 阅读</a>
+            @if(Context.User?.Identity?.IsAuthenticated == true)
+            {
+            <a href="/admin" class="mx-1 text-decoration-none btn btn-outline-success"><i class="bi bi-gear-wide-connected"></i> Admin</a>
+            }
     </div>
 </div>
 

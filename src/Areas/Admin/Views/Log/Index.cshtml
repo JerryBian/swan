@@ -1,7 +1,7 @@
 ﻿@model List<LaobianLog>
 @{
     Layout = "_AdminLayout";
-    ViewData["Title"] = "日志";
+    ViewData["Title"] = "日志 - Admin";
 }
 
 <p class="font-monospace" id="levels">
@@ -30,7 +30,10 @@
 
         <div class="card mb-3 @c" data-card-selector="@s">
             <div class="card-body">
-                <h6 class="card-subtitle mb-2 text-muted"><i class="bi bi-calendar2-date"></i> @item.Timestamp.ToFullDateTime()</h6>
+                <h6 class="card-subtitle mb-2 text-muted d-flex">
+                    <span><i class="bi bi-calendar2-date"></i> @item.Timestamp.ToFullDateTime()</span>
+                    <span class="ms-auto">@item.Level</span>
+                    </h6>
                 <p class="card-text">@item.Message</p>
                 @if (!string.IsNullOrEmpty(item.Exception))
                 {

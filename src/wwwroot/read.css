@@ -18271,12 +18271,21 @@ blockquote *:last-child {
   background-color: transparent;
 }
 
-.form-check-input, .form-control {
+.form-check-input, .form-control, .form-select {
   background-color: transparent;
+}
+
+option:checked {
+  background: green linear-gradient(0deg, green 0%, green 100%);
 }
 
 .commentModal .modal-body {
   max-width: 21cm;
+  min-width: 300px;
+}
+
+.blockquote {
+  font-size: 90% !important;
 }
 
 /*# sourceMappingURL=read.css.map */
