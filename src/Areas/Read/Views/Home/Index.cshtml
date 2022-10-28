@@ -18,7 +18,7 @@
             }
 
             <div class="mb-3">
-                
+
                 <div class="d-flex ps-2 pe-1">
                     <div>
                         @if (string.IsNullOrEmpty(r.Raw.Comment) && !r.Posts.Any())
@@ -31,7 +31,7 @@
                         {
                             <a href="javascript:;" data-bs-toggle="modal" class="text-reset" data-bs-target="#@r.Raw.Id">
                                 <i class="@d"></i> @r.Raw.BookName
-                                
+
                             </a>
                             <div class="modal fade commentModal" id="@r.Raw.Id">
                                 <div class="modal-dialog modal-fullscreen modal-dialog-scrollable">
@@ -43,7 +43,7 @@
                                                 {
                                                     <small class="text-muted fst-italic d-block small">@r.Metadata</small>
                                                 }
-                                                </h1>
+                                            </h1>
                                             <button type="button" class="btn-close m-0" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body mx-auto d-flex flex-column py-3">
@@ -85,13 +85,13 @@
                             <i class="bi bi-hand-thumbs-down text-danger text-decoration-none"></i>
                         }
 
-                        @if(!string.IsNullOrEmpty(r.Metadata))
+                        @if (!string.IsNullOrEmpty(r.Metadata))
                         {
-                            <small class="text-muted fst-italic"> @r.Metadata</small>
+                            <small class="text-muted fst-italic d-none d-lg-inline-block px-1"> @r.Metadata</small>
                         }
-                        </div>
+                    </div>
 
-                    <div class="ms-auto small text-muted">
+                    <div class="ms-auto small text-muted px-1">
                         <i class="bi bi-calendar2-date"></i> @r.Raw.CreateTime.ToCnDate()
                         @if (Context.Request.HttpContext.User?.Identity?.IsAuthenticated == true)
                         {
@@ -100,6 +100,11 @@
                         }
                     </div>
                 </div>
+
+                @if (!string.IsNullOrEmpty(r.Metadata))
+                {
+                    <small class="text-muted fst-italic d-lg-none ps-3"> @r.Metadata</small>
+                }
             </div>
 
         }
