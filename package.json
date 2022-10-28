@@ -1,6 +1,6 @@
 {
   "name": "laobian.me",
-  "version": "7.6.0",
+  "version": "7.8.0",
   "description": "![master](https://github.com/JerryBian/blog.laobian.me/workflows/master/badge.svg)",
   "main": "index.js",
   "directories": {

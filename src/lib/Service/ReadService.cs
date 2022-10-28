@@ -29,8 +29,6 @@ namespace Laobian.Lib.Service
                 await foreach (ReadItem item in _readRepository.ReadAllAsync(cancellationToken))
                 {
                     ReadItemView view = new(item);
-                    // TODO:
-
                     List<string> metadata = new();
                     string author = item.Author;
                     if (!string.IsNullOrEmpty(author))
@@ -61,13 +59,15 @@ namespace Laobian.Lib.Service
                     view.Metadata = string.Join(" / ", metadata);
                     view.CommentHtml = MarkdownHelper.ToHtml(item.Comment);
 
-                    if (!string.IsNullOrEmpty(item.PostCommentId))
+                    if (item.Posts != null && item.Posts.Any())
                     {
-                        BlogPostView post = await _blogService.GetPostAsync(item.PostCommentId);
-                        if (post != null)
+                        foreach (string p in item.Posts)
                         {
-                            view.PostCommentTitle = post.Raw.Title;
-                            view.PostCommentUrl = post.FullLink;
+                            BlogPostView post = await _blogService.GetPostAsync(p);
+                            if (post != null)
+                            {
+                                view.Posts.Add(new Tuple<string, string, string>(post.Raw.Id, post.Raw.Title, post.Raw.Link));
+                            }
                         }
                     }
 

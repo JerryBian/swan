@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<BlogPostView>
 @{
     Layout = "_AdminLayout";
-    ViewData["Title"] = "添加新的阅读";
+    ViewData["Title"] = "添加新的阅读 - Admin";
 }
 
 <div class="container">
@@ -37,18 +37,18 @@
             </div>
             <div class="mb-3">
                 <label for="startTime" class="form-label">创建时间</label>
-                <input type="date" class="form-control" id="createTime" name="createTime" value="@DateTime.Now.ToDate()" autocomplete="off">
+                <input type="datetime-local" class="form-control" id="createTime" name="createTime" value="@DateTime.Now.ToFullDateTime()" autocomplete="off">
                 <div class="invalid-feedback">
                     必填
                 </div>
             </div>
             <div class="mb-3">
-                <label for="postCommentId" class="form-label">文章链接</label>
-                <select class="form-select" name="postCommentId">
-                    <option selected value="">-- 选择博客文章 --</option>
+                <label for="posts" class="form-label">文章链接</label>
+                <select class="form-select font-monospace" id="posts" name="posts" multiple size="10">
+                    <option selected value="" class="small">-- 选择博客文章（支持多选） --</option>
                     @foreach(var p in Model)
                     {
-                        <option value="@p.Raw.Id">@p.Raw.Title</option>
+                        <option value="@p.Raw.Id" class="my-1 ps-1">@p.Raw.Title</option>
                     }
                 </select>
             </div>

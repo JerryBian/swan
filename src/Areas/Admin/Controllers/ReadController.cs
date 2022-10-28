@@ -43,6 +43,7 @@ namespace Laobian.Areas.Admin.Controllers
             ApiResponse<object> res = new();
             try
             {
+                _ = item.Posts.Remove(string.Empty);
                 item.IsPublic = Request.Form["isPublic"] == "on";
                 await _readService.AddAsync(item);
                 res.RedirectTo = "/read";
@@ -81,6 +82,7 @@ namespace Laobian.Areas.Admin.Controllers
             ApiResponse<object> res = new();
             try
             {
+                _ = item.Posts.Remove(string.Empty);
                 item.IsPublic = Request.Form["isPublic"] == "on";
                 await _readService.UpdateAsync(item);
                 res.RedirectTo = "/read";

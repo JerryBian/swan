@@ -4,6 +4,11 @@ namespace Laobian.Lib.Model
 {
     public class ReadItem
     {
+        public ReadItem()
+        {
+            Posts = new List<string>();
+        }
+
         [JsonPropertyName("id")]
         public string Id { get; set; }
 
@@ -34,8 +39,8 @@ namespace Laobian.Lib.Model
         [JsonPropertyName("comment")]
         public string Comment { get; set; }
 
-        [JsonPropertyName("postCommentId")]
-        public string PostCommentId { get; set; }
+        [JsonPropertyName("posts")]
+        public List<string> Posts { get; set; }
 
         [JsonPropertyName("lastUpdateTime")]
         public DateTime LastUpdateTime { get; set; }

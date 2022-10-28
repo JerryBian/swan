@@ -51,20 +51,20 @@ namespace Laobian.Lib.Worker
             try
             {
                 List<PostAccessItem> items = new();
-                while (_posts.TryDequeue(out var v))
+                while (_posts.TryDequeue(out PostAccessItem v))
                 {
-                    var lastTimestamp = items.Where(x => x.Id == v.Id && x.Ip == v.Ip).LastOrDefault()?.Timestamp ?? default;
+                    DateTime lastTimestamp = items.Where(x => x.Id == v.Id && x.Ip == v.Ip).LastOrDefault()?.Timestamp ?? default;
                     if (v.Timestamp - lastTimestamp > TimeSpan.FromMinutes(1))
                     {
                         items.Add(v);
                     }
                     else
                     {
-                        _logger.LogWarning($"Discard IP {v.Ip} access count for post {v.Id}. Timestamp {v.Timestamp}, last access {lastTimestamp}.");
+                        _logger.LogWarning($"Discard IP [{v.Ip}] access count for post [{v.Id}]. Timestamp {v.Timestamp}, last valid access {lastTimestamp}.");
                     }
                 }
 
-                foreach (var item in items.GroupBy(x => x.Id))
+                foreach (IGrouping<string, PostAccessItem> item in items.GroupBy(x => x.Id))
                 {
                     _ = await _blogService.AddPostAccessAsync(item.Key, item.Count());
                 }
