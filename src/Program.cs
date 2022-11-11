@@ -20,26 +20,18 @@ using System.Text.Encodings.Web;
 using System.Text.Unicode;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-builder.WebHost.ConfigureAppConfiguration((hostContext, config) => { _ = config.AddEnvironmentVariables("ENV_"); });
+builder.Configuration.AddEnvironmentVariables("ENV_");
+builder.WebHost.CaptureStartupErrors(true);
+builder.WebHost.UseShutdownTimeout(TimeSpan.FromMinutes(5));
 
-builder.Host.ConfigureLogging(l =>
+builder.Logging.ClearProviders();
+var minLogLevel = builder.Environment.IsProduction() ? LogLevel.Information : LogLevel.Trace;
+
+builder.Logging.AddDebug();
+builder.Logging.AddConsole();
+builder.Logging.AddFile(x =>
 {
-    _ = l.ClearProviders();
-    if (builder.Environment.IsProduction())
-    {
-        _ = l.SetMinimumLevel(LogLevel.Information);
-    }
-    else
-    {
-        _ = l.SetMinimumLevel(LogLevel.Trace);
-        _ = l.AddDebug();
-    }
-
-    var c = l.AddConsole();
-    _ = l.AddFile(c =>
-    {
-        c.MinLogLevel = c.MinLogLevel;
-    });
+    x.MinLogLevel = minLogLevel;
 });
 
 // Add services to the container.

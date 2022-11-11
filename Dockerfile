@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 
 ARG ver=1.0
@@ -12,7 +12,7 @@ RUN dotnet publish \
     /property:Version=${ver} \
     ./Laobian.csproj
 
-FROM mcr.microsoft.com/dotnet/aspnet:6.0
+FROM mcr.microsoft.com/dotnet/aspnet:7.0
 WORKDIR /app
 COPY --from=build /publish ./
 RUN apt update -y && apt install git -y --no-install-recommends && rm -rf /var/lib/apt/lists/*
