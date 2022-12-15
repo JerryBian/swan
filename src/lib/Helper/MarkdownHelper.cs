@@ -1,6 +1,6 @@
 ﻿using Markdig;
 
-namespace Laobian.Lib.Helper
+namespace Swan.Lib.Helper
 {
     internal class MarkdownHelper
     {

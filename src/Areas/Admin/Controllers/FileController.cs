@@ -1,11 +1,11 @@
-﻿using Laobian.Areas.Admin.Models;
-using Laobian.Lib.Helper;
-using Laobian.Lib.Model;
-using Laobian.Lib.Service;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swan.Areas.Admin.Models;
+using Swan.Lib.Helper;
+using Swan.Lib.Model;
+using Swan.Lib.Service;
 
-namespace Laobian.Areas.Admin.Controllers
+namespace Swan.Areas.Admin.Controllers
 {
     [Authorize]
     public class FileController : Controller

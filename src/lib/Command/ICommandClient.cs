@@ -1,4 +1,4 @@
-﻿namespace Laobian.Lib.Command
+﻿namespace Swan.Lib.Command
 {
     public interface ICommandClient
     {

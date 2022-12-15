@@ -1,15 +1,15 @@
-﻿using Laobian.Lib.Helper;
-using Laobian.Lib.Option;
+﻿using Swan.Lib.Helper;
+using Swan.Lib.Option;
 using System.Text;
 
-namespace Laobian.Lib.HtmlHead;
+namespace Swan.Lib.HtmlHead;
 
 public class HtmlHeadBuilder
 {
     private readonly HtmlHeadBuildOption _buildOption;
-    private readonly LaobianOption _option;
+    private readonly SwanOption _option;
 
-    public HtmlHeadBuilder(LaobianOption option, HtmlHeadBuildOption buildOption)
+    public HtmlHeadBuilder(SwanOption option, HtmlHeadBuildOption buildOption)
     {
         _option = option;
         _buildOption = buildOption;

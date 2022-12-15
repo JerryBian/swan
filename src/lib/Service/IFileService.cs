@@ -1,4 +1,4 @@
-﻿namespace Laobian.Lib.Service
+﻿namespace Swan.Lib.Service
 {
     public interface IFileService
     {

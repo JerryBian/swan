@@ -1,7 +1,7 @@
-﻿using Laobian.Lib.Log;
-using Laobian.Lib.Repository;
+﻿using Swan.Lib.Log;
+using Swan.Lib.Repository;
 
-namespace Laobian.Lib.Service
+namespace Swan.Lib.Service
 {
     public class LogService : ILogService
     {
@@ -12,7 +12,7 @@ namespace Laobian.Lib.Service
             _repository = logRepository;
         }
 
-        public void AddLog(LaobianLog log)
+        public void AddLog(SwanLog log)
         {
             _repository.AddLog(log);
         }
@@ -22,7 +22,7 @@ namespace Laobian.Lib.Service
             _repository.Cleanup();
         }
 
-        public List<LaobianLog> ReadAll(LogLevel minLogLevel)
+        public List<SwanLog> ReadAll(LogLevel minLogLevel)
         {
             return _repository.ReadAll(minLogLevel);
         }

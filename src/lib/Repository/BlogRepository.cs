@@ -1,21 +1,21 @@
-﻿using Laobian.Lib.Extension;
-using Laobian.Lib.Helper;
-using Laobian.Lib.Model;
-using Laobian.Lib.Option;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
+using Swan.Lib.Extension;
+using Swan.Lib.Helper;
+using Swan.Lib.Model;
+using Swan.Lib.Option;
 using System.Runtime.CompilerServices;
 
-namespace Laobian.Lib.Repository
+namespace Swan.Lib.Repository
 {
     public class BlogRepository : BaseRepository, IBlogRepository
     {
         private const string FileExt = ".json";
 
-        private readonly LaobianOption _option;
+        private readonly SwanOption _option;
         private readonly ILogger<BlogRepository> _logger;
         private readonly SemaphoreSlim _semaphoreSlim;
 
-        public BlogRepository(IOptions<LaobianOption> option, ILogger<BlogRepository> logger)
+        public BlogRepository(IOptions<SwanOption> option, ILogger<BlogRepository> logger)
         {
             _logger = logger;
             _option = option.Value;

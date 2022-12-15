@@ -1,4 +1,4 @@
-﻿namespace Laobian.Lib.Extension
+﻿namespace Swan.Lib.Extension
 {
     public static class TaskExtension
     {

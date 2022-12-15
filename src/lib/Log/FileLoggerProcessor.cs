@@ -1,15 +1,15 @@
-﻿using Laobian.Lib.Helper;
-using Laobian.Lib.Service;
+﻿using Swan.Lib.Helper;
+using Swan.Lib.Service;
 using System.Collections.Concurrent;
 
-namespace Laobian.Lib.Log
+namespace Swan.Lib.Log
 {
     public class FileLoggerProcessor : IFileLoggerProcessor
     {
         private readonly object _lock;
         private readonly Thread _outputThread;
         private readonly ILogService _logService;
-        private readonly ConcurrentQueue<LaobianLog> _messageQueue;
+        private readonly ConcurrentQueue<SwanLog> _messageQueue;
 
         private bool _isAddingCompleted;
 
@@ -17,7 +17,7 @@ namespace Laobian.Lib.Log
         {
             _lock = new object();
             _logService = logService;
-            _messageQueue = new ConcurrentQueue<LaobianLog>();
+            _messageQueue = new ConcurrentQueue<SwanLog>();
             _outputThread = new Thread(ProcessLogQueue)
             {
                 IsBackground = true,
@@ -36,7 +36,7 @@ namespace Laobian.Lib.Log
             catch { }
         }
 
-        public void Ingest(LaobianLog log)
+        public void Ingest(SwanLog log)
         {
             if (!Enqueue(log))
             {
@@ -48,19 +48,19 @@ namespace Laobian.Lib.Log
         {
             while (!_isAddingCompleted)
             {
-                if (_messageQueue.TryDequeue(out LaobianLog item))
+                if (_messageQueue.TryDequeue(out SwanLog item))
                 {
                     Write(item);
                 }
             }
 
-            while (_messageQueue.TryDequeue(out LaobianLog item))
+            while (_messageQueue.TryDequeue(out SwanLog item))
             {
                 Write(item);
             }
         }
 
-        private bool Enqueue(LaobianLog log)
+        private bool Enqueue(SwanLog log)
         {
             if (!_isAddingCompleted)
             {
@@ -79,7 +79,7 @@ namespace Laobian.Lib.Log
             }
         }
 
-        private void Write(LaobianLog log)
+        private void Write(SwanLog log)
         {
             lock (_lock)
             {

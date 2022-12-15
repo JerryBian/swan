@@ -1,9 +1,9 @@
-﻿using Laobian.Lib.Converter;
+﻿using Swan.Lib.Converter;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Laobian.Lib.Helper
+namespace Swan.Lib.Helper
 {
     public static class JsonHelper
     {

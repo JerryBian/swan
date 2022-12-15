@@ -1,4 +1,4 @@
-﻿namespace Laobian.Lib.Cache
+﻿namespace Swan.Lib.Cache
 {
     public interface ICacheManager
     {

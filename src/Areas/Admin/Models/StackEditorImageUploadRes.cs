@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Laobian.Areas.Admin.Models
+namespace Swan.Areas.Admin.Models
 {
     public class StackEditorImageUploadRes
     {

@@ -1,4 +1,4 @@
-﻿namespace Laobian.Lib.Option
+﻿namespace Swan.Lib.Option
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
     public class EnvOptionAttribute : Attribute

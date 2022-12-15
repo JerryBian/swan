@@ -1,6 +1,6 @@
-﻿using Laobian.Lib.Worker;
+﻿using Swan.Lib.Worker;
 
-namespace Laobian.HostedServices
+namespace Swan.HostedServices
 {
     public class BlogPostHostedService : BackgroundService
     {

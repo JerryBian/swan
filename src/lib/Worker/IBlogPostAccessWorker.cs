@@ -1,6 +1,6 @@
-﻿using Laobian.Lib.Model;
+﻿using Swan.Lib.Model;
 
-namespace Laobian.Lib.Worker
+namespace Swan.Lib.Worker
 {
     public interface IBlogPostAccessWorker
     {

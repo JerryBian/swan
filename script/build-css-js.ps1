@@ -1,6 +1,7 @@
 $WWWRootLoc = Join-Path $PSScriptRoot .. src wwwroot
 $NodeModulesLoc = Join-Path $PSScriptRoot .. node_modules
 
+npm install
 ncu -u
 npm install
 

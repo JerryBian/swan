@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging.Configuration;
 
-namespace Laobian.Lib.Log
+namespace Swan.Lib.Log
 {
     public static class FileLoggerExtension
     {

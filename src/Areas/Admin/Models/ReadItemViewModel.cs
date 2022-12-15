@@ -1,6 +1,6 @@
-﻿using Laobian.Lib.Model;
+﻿using Swan.Lib.Model;
 
-namespace Laobian.Areas.Admin.Models
+namespace Swan.Areas.Admin.Models
 {
     public class ReadItemViewModel
     {

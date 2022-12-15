@@ -1,17 +1,17 @@
-﻿using Laobian.Lib.Command;
-using Laobian.Lib.Extension;
-using Laobian.Lib.Option;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
+using Swan.Lib.Command;
+using Swan.Lib.Extension;
+using Swan.Lib.Option;
 
-namespace Laobian.HostedServices
+namespace Swan.HostedServices
 {
     public class GitFileHostedService : BackgroundService
     {
-        private readonly LaobianOption _option;
+        private readonly SwanOption _option;
         private readonly ICommandClient _commandClient;
         private readonly ILogger<GitFileHostedService> _logger;
 
-        public GitFileHostedService(ICommandClient commandClient, IOptions<LaobianOption> option, ILogger<GitFileHostedService> logger)
+        public GitFileHostedService(ICommandClient commandClient, IOptions<SwanOption> option, ILogger<GitFileHostedService> logger)
         {
             _commandClient = commandClient;
             _option = option.Value;
@@ -36,7 +36,7 @@ namespace Laobian.HostedServices
                         $"https://{_option.GitHubApiToken}@github.com/{_option.GitHubUserName}/{_option.GitHubRepoName}.git";
                     string command = $"git clone -b {_option.GitHubBranchName} --single-branch {repoUrl} {dir}";
                     command += $" && cd {dir}";
-                    command += " && git config --local user.name \"LAOBIAN.ME\"";
+                    command += " && git config --local user.name \"swan\"";
                     command += $" && git config --local user.email \"{_option.GitHubUserEmail}\"";
                     if (retryTimes > 1)
                     {

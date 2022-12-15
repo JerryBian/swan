@@ -1,9 +1,9 @@
-﻿using Laobian.Lib.Extension;
-using Laobian.Lib.Model;
-using Laobian.Lib.Service;
+﻿using Swan.Lib.Extension;
+using Swan.Lib.Model;
+using Swan.Lib.Service;
 using System.Collections.Concurrent;
 
-namespace Laobian.Lib.Worker
+namespace Swan.Lib.Worker
 {
     public class BlogPostAccessWorker : IBlogPostAccessWorker
     {

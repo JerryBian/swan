@@ -1,4 +1,4 @@
-﻿namespace Laobian.Lib.Helper
+﻿namespace Swan.Lib.Helper
 {
     public static class StringHelper
     {

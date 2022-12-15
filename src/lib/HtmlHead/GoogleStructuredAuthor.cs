@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Laobian.Lib.HtmlHead;
+namespace Swan.Lib.HtmlHead;
 
 public class GoogleStructuredAuthor
 {

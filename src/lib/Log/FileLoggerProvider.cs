@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using System.Collections.Concurrent;
 
-namespace Laobian.Lib.Log
+namespace Swan.Lib.Log
 {
     public class FileLoggerProvider : ILoggerProvider
     {
