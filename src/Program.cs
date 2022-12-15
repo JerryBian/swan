@@ -41,7 +41,7 @@ var assetLoc = builder.Configuration.GetValue<string>("ASSET_LOCATION");
 var dpFolder = Path.Combine(assetLoc, "dp", builder.Environment.EnvironmentName);
 Directory.CreateDirectory(dpFolder);
 builder.Services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(dpFolder))
-    .SetApplicationName($"SWAN_{builder.Environment.EnvironmentName}");
+    .SetApplicationName($"APP_{builder.Environment.EnvironmentName}");
 
 builder.Services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
 builder.Services.AddSingleton<IReadRepository, ReadRepository>();
@@ -95,7 +95,7 @@ builder.Services.AddControllersWithViews(option =>
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
             {
-                options.Cookie.Name = $".SITE.AUTH.{builder.Environment.EnvironmentName}";
+                options.Cookie.Name = $".APP.{builder.Environment.EnvironmentName}";
                 options.ExpireTimeSpan = TimeSpan.FromDays(7);
                 options.Cookie.HttpOnly = true;
                 options.ReturnUrlParameter = "returnUrl";
