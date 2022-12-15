@@ -1,4 +1,4 @@
-﻿namespace Laobian.Lib.Log
+﻿namespace Swan.Lib.Log
 {
     public class FileLoggerOption
     {

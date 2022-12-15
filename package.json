@@ -1,7 +1,7 @@
 {
-  "name": "laobian.me",
-  "version": "7.9.0",
-  "description": "![master](https://github.com/JerryBian/blog.laobian.me/workflows/master/badge.svg)",
+  "name": "swan",
+  "version": "8.0.0",
+  "description": "![master](https://github.com/JerryBian/swan/workflows/master/badge.svg)",
   "main": "index.js",
   "directories": {
     "test": "test"
@@ -11,23 +11,23 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JerryBian/laobian.me.git"
+    "url": "git+https://github.com/JerryBian/swan.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/JerryBian/laobian.me/issues"
+    "url": "https://github.com/JerryBian/swan/issues"
   },
-  "homepage": "https://github.com/JerryBian/laobian.me#readme",
+  "homepage": "https://github.com/JerryBian/swan#readme",
   "devDependencies": {
-    "@highlightjs/cdn-assets": "^11.6.0",
-    "@stackoverflow/stacks-editor": "^0.8.2",
+    "@highlightjs/cdn-assets": "^11.7.0",
+    "@stackoverflow/stacks-editor": "^0.8.3",
     "anchor-js": "^4.3.1",
-    "bootstrap": "^5.2.2",
-    "bootstrap-icons": "^1.9.1",
+    "bootstrap": "^5.2.3",
+    "bootstrap-icons": "^1.10.2",
     "ga-lite": "^2.1.6",
-    "npm-check-updates": "^16.3.18",
-    "sass": "^1.56.1",
+    "npm-check-updates": "^16.6.0",
+    "sass": "^1.56.2",
     "uglify-js": "^3.17.4",
     "uglifycss": "^0.0.29"
   }

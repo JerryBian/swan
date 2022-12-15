@@ -1,24 +1,24 @@
-﻿using Laobian.Lib.Helper;
-using Laobian.Lib.Log;
-using Laobian.Lib.Option;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
+using Swan.Lib.Helper;
+using Swan.Lib.Log;
+using Swan.Lib.Option;
 using System.Text;
 
-namespace Laobian.Lib.Repository
+namespace Swan.Lib.Repository
 {
     public class LogRepository : ILogRepository
     {
         private const string LogExt = ".log";
-        private readonly LaobianOption _options;
+        private readonly SwanOption _options;
         private readonly SemaphoreSlim _semaphoreSlim;
 
-        public LogRepository(IOptions<LaobianOption> options)
+        public LogRepository(IOptions<SwanOption> options)
         {
             _semaphoreSlim = new SemaphoreSlim(1, 1);
             _options = options.Value;
         }
 
-        public void AddLog(LaobianLog log)
+        public void AddLog(SwanLog log)
         {
             _semaphoreSlim.Wait();
             try
@@ -26,7 +26,7 @@ namespace Laobian.Lib.Repository
                 string dir = GetLogBaseDir();
                 DateTime timestamp = log.Timestamp;
                 string file = Path.Combine(dir, $"{timestamp.Year:D4}-{timestamp.Month:D2}-{timestamp.Day:D2}{LogExt}");
-                List<LaobianLog> logs = new();
+                List<SwanLog> logs = new();
                 if (File.Exists(file))
                 {
                     logs.AddRange(GetLogs(file));
@@ -41,15 +41,15 @@ namespace Laobian.Lib.Repository
             }
         }
 
-        public List<LaobianLog> ReadAll(LogLevel minLogLevel)
+        public List<SwanLog> ReadAll(LogLevel minLogLevel)
         {
             _semaphoreSlim.Wait();
             try
             {
-                List<LaobianLog> logs = new();
+                List<SwanLog> logs = new();
                 foreach (string file in Directory.EnumerateFiles(GetLogBaseDir(), $"*{LogExt}", SearchOption.AllDirectories))
                 {
-                    List<LaobianLog> fileLogs = GetLogs(file);
+                    List<SwanLog> fileLogs = GetLogs(file);
                     logs.AddRange(fileLogs.Where(x => x.Level >= minLogLevel));
                 }
 
@@ -81,10 +81,10 @@ namespace Laobian.Lib.Repository
             }
         }
 
-        private List<LaobianLog> GetLogs(string file)
+        private List<SwanLog> GetLogs(string file)
         {
             string content = File.ReadAllText(file, Encoding.UTF8);
-            List<LaobianLog> logs = JsonHelper.Deserialize<List<LaobianLog>>(content);
+            List<SwanLog> logs = JsonHelper.Deserialize<List<SwanLog>>(content);
             return logs;
         }
 

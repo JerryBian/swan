@@ -1,7 +1,7 @@
-﻿using Laobian.Lib.Extension;
+﻿using Swan.Lib.Extension;
 using System.Text;
 
-namespace Laobian.Lib.Repository
+namespace Swan.Lib.Repository
 {
     public abstract class BaseRepository
     {

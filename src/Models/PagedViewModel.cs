@@ -1,4 +1,4 @@
-﻿namespace Laobian.Models;
+﻿namespace Swan.Models;
 
 public class PagedViewModel<T>
 {

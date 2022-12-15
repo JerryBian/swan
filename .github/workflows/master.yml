@@ -50,10 +50,10 @@ jobs:
           build-args: |
             ver=${{ env.APP_VERSION }}
           tags: |
-            cnbian/laobian.me:${{ env.APP_VERSION }}
-            cnbian/laobian.me:latest
-            ghcr.io/jerrybian/laobian.me:${{ env.APP_VERSION }}
-            ghcr.io/jerrybian/laobian.me:latest
+            cnbian/swan:${{ env.APP_VERSION }}
+            cnbian/swan:latest
+            ghcr.io/jerrybian/swan:${{ env.APP_VERSION }}
+            ghcr.io/jerrybian/swan:latest
 
   deploy_server:
     name: Deploy to remote server
@@ -77,4 +77,4 @@ jobs:
           password: ${{ secrets.VPS_SSH_PASSWORD }}
           port: ${{ secrets.VPS_SSH_PORT }}
           script: |
-            sh /ga/script/deploy-laobian-me.sh ${{ env.APP_VERSION }}
+            sh /ga/script/deploy-swan.sh ${{ env.APP_VERSION }}

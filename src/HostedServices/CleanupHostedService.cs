@@ -1,6 +1,6 @@
-﻿using Laobian.Lib.Service;
+﻿using Swan.Lib.Service;
 
-namespace Laobian.HostedServices
+namespace Swan.HostedServices
 {
     public class CleanupHostedService : BackgroundService
     {

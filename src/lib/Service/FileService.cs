@@ -1,6 +1,7 @@
-﻿using Laobian.Lib.Repository;
+﻿using Swan.Lib;
+using Swan.Lib.Repository;
 
-namespace Laobian.Lib.Service
+namespace Swan.Lib.Service
 {
     public class FileService : IFileService
     {

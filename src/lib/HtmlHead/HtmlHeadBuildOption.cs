@@ -1,4 +1,4 @@
-﻿namespace Laobian.Lib.HtmlHead;
+﻿namespace Swan.Lib.HtmlHead;
 
 public class HtmlHeadBuildOption
 {

@@ -1,5 +1,5 @@
 ﻿@model PagedViewModel<BlogPostView>
-@inject IOptions<LaobianOption> _option
+@inject IOptions<SwanOption> _option
 @{
     Layout = "_BlogLayout";
     ViewData["Description"] = $"{_option.Value.Title}的博客";

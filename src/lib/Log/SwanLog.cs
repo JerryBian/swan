@@ -1,6 +1,6 @@
-﻿namespace Laobian.Lib.Log
+﻿namespace Swan.Lib.Log
 {
-    public class LaobianLog
+    public class SwanLog
     {
         public string Message { get; set; }
 

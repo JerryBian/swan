@@ -1,9 +1,9 @@
-﻿using Laobian.Lib.Cache;
-using Laobian.Lib.Model;
-using Laobian.Lib.Repository;
+﻿using Swan.Lib.Cache;
+using Swan.Lib.Model;
+using Swan.Lib.Repository;
 using System.Net;
 
-namespace Laobian.Lib.Service
+namespace Swan.Lib.Service
 {
     public class BlacklistService : IBlacklistService
     {

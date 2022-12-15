@@ -1,12 +1,12 @@
-﻿using Laobian.Lib.Log;
+﻿using Swan.Lib.Log;
 
-namespace Laobian.Lib.Repository
+namespace Swan.Lib.Repository
 {
     public interface ILogRepository
     {
-        List<LaobianLog> ReadAll(LogLevel minLogLevel);
+        List<SwanLog> ReadAll(LogLevel minLogLevel);
 
-        void AddLog(LaobianLog log);
+        void AddLog(SwanLog log);
 
         void Cleanup();
     }

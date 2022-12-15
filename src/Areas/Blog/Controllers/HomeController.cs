@@ -1,23 +1,23 @@
-﻿using Laobian.Lib;
-using Laobian.Lib.Model;
-using Laobian.Lib.Option;
-using Laobian.Lib.Service;
-using Laobian.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Swan.Lib;
+using Swan.Lib.Model;
+using Swan.Lib.Option;
+using Swan.Lib.Service;
+using Swan.Models;
 using System.ServiceModel.Syndication;
 using System.Text;
 using System.Xml;
 
-namespace Laobian.Areas.Blog.Controllers
+namespace Swan.Areas.Blog.Controllers
 {
     [Area(Constants.AreaBlog)]
     public class HomeController : Controller
     {
         private readonly IBlogService _blogService;
-        private readonly LaobianOption _option;
+        private readonly SwanOption _option;
 
-        public HomeController(IBlogService blogService, IOptions<LaobianOption> option)
+        public HomeController(IBlogService blogService, IOptions<SwanOption> option)
         {
             _option = option.Value;
             _blogService = blogService;

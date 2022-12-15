@@ -1,8 +1,8 @@
-﻿using Laobian.Lib.Extension;
+﻿using Swan.Lib.Extension;
 using System.Diagnostics;
 using System.Text;
 
-namespace Laobian.Lib.Command
+namespace Swan.Lib.Command
 {
     public class CommandClient : ICommandClient
     {

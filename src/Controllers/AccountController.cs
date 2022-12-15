@@ -1,26 +1,26 @@
-﻿using Laobian.Lib.Option;
-using Laobian.Lib.Service;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
+using Swan.Lib.Option;
+using Swan.Lib.Service;
 using System.Collections.Concurrent;
 using System.Security.Claims;
 
-namespace Laobian.Controllers;
+namespace Swan.Controllers;
 
 [AllowAnonymous]
 public class AccountController : Controller
 {
     private static readonly ConcurrentDictionary<string, int> _failures = new();
 
-    private readonly LaobianOption _option;
+    private readonly SwanOption _option;
     private readonly IBlacklistService _blacklistService;
     private readonly ILogger<AccountController> _logger;
 
-    public AccountController(ILogger<AccountController> logger, IOptions<LaobianOption> options, IBlacklistService blacklistService)
+    public AccountController(ILogger<AccountController> logger, IOptions<SwanOption> options, IBlacklistService blacklistService)
     {
         _logger = logger;
         _option = options.Value;

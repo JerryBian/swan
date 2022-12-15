@@ -1,4 +1,4 @@
-﻿namespace Laobian.Lib.Log
+﻿namespace Swan.Lib.Log
 {
     public class FileLogger : ILogger
     {
@@ -30,7 +30,7 @@
 
             try
             {
-                LaobianLog log = new()
+                SwanLog log = new()
                 {
                     Message = formatter(state, exception),
                     Exception = exception?.ToString(),

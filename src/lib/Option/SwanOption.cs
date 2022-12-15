@@ -1,8 +1,8 @@
 ﻿using System.Reflection;
 
-namespace Laobian.Lib.Option
+namespace Swan.Lib.Option
 {
-    public class LaobianOption
+    public class SwanOption
     {
         [EnvOption("SKIP_GIT_OPERATIONS")]
         public bool SkipGitOperations { get; set; }

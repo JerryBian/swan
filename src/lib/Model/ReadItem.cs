@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Laobian.Lib.Model
+namespace Swan.Lib.Model
 {
     public class ReadItem
     {

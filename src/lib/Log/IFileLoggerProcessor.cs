@@ -1,7 +1,7 @@
-﻿namespace Laobian.Lib.Log
+﻿namespace Swan.Lib.Log
 {
     public interface IFileLoggerProcessor : IDisposable
     {
-        void Ingest(LaobianLog log);
+        void Ingest(SwanLog log);
     }
 }

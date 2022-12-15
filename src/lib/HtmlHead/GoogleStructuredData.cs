@@ -1,7 +1,7 @@
-﻿using Laobian.Lib.Converter;
+﻿using Swan.Lib.Converter;
 using System.Text.Json.Serialization;
 
-namespace Laobian.Lib.HtmlHead;
+namespace Swan.Lib.HtmlHead;
 
 public class GoogleStructuredData
 {

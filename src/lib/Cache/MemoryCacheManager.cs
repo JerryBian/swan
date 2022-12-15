@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 
-namespace Laobian.Lib.Cache
+namespace Swan.Lib.Cache
 {
     public class MemoryCacheManager : ICacheManager
     {

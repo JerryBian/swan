@@ -1,6 +1,6 @@
-﻿using Laobian.Lib.Model;
+﻿using Swan.Lib.Model;
 
-namespace Laobian.Lib.Service
+namespace Swan.Lib.Service
 {
     public interface IBlogService
     {

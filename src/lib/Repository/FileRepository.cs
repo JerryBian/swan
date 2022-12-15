@@ -1,13 +1,14 @@
-﻿using Laobian.Lib.Option;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
+using Swan.Lib;
+using Swan.Lib.Option;
 
-namespace Laobian.Lib.Repository
+namespace Swan.Lib.Repository
 {
     public class FileRepository : BaseRepository, IFileRepository
     {
-        private readonly LaobianOption _option;
+        private readonly SwanOption _option;
 
-        public FileRepository(IOptions<LaobianOption> option)
+        public FileRepository(IOptions<SwanOption> option)
         {
             _option = option.Value;
         }

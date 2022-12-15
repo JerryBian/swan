@@ -1,20 +1,20 @@
-﻿using Laobian.Lib.Extension;
-using Laobian.Lib.Helper;
-using Laobian.Lib.Model;
-using Laobian.Lib.Option;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
+using Swan.Lib.Extension;
+using Swan.Lib.Helper;
+using Swan.Lib.Model;
+using Swan.Lib.Option;
 using System.Runtime.CompilerServices;
 
-namespace Laobian.Lib.Repository
+namespace Swan.Lib.Repository
 {
     public class ReadRepository : BaseRepository, IReadRepository
     {
         private const string FileExt = ".json";
 
-        private readonly LaobianOption _option;
+        private readonly SwanOption _option;
         private readonly SemaphoreSlim _semaphoreSlim;
 
-        public ReadRepository(IOptions<LaobianOption> option)
+        public ReadRepository(IOptions<SwanOption> option)
         {
             _option = option.Value;
             _semaphoreSlim = new SemaphoreSlim(1, 1);

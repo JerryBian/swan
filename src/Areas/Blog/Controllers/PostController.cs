@@ -1,10 +1,10 @@
-﻿using Laobian.Lib;
-using Laobian.Lib.Service;
-using Laobian.Lib.Worker;
-using Microsoft.AspNetCore.Http.Extensions;
+﻿using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Swan.Lib;
+using Swan.Lib.Service;
+using Swan.Lib.Worker;
 
-namespace Laobian.Areas.Blog.Controllers
+namespace Swan.Areas.Blog.Controllers
 {
     [Area(Constants.AreaBlog)]
     public class PostController : Controller

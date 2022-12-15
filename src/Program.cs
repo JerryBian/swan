@@ -1,14 +1,3 @@
-using Laobian.HostedServices;
-using Laobian.Lib;
-using Laobian.Lib.Cache;
-using Laobian.Lib.Command;
-using Laobian.Lib.Converter;
-using Laobian.Lib.Log;
-using Laobian.Lib.Option;
-using Laobian.Lib.Repository;
-using Laobian.Lib.Service;
-using Laobian.Lib.Worker;
-using Laobian.Middlewares;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +5,17 @@ using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
+using Swan.HostedServices;
+using Swan.Lib;
+using Swan.Lib.Cache;
+using Swan.Lib.Command;
+using Swan.Lib.Converter;
+using Swan.Lib.Log;
+using Swan.Lib.Option;
+using Swan.Lib.Repository;
+using Swan.Lib.Service;
+using Swan.Lib.Worker;
+using Swan.Middlewares;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 
@@ -35,13 +35,13 @@ builder.Logging.AddFile(x =>
 });
 
 // Add services to the container.
-builder.Services.Configure<LaobianOption>(o => { o.FetchFromEnv(builder.Configuration); });
+builder.Services.Configure<SwanOption>(o => { o.FetchFromEnv(builder.Configuration); });
 
 var assetLoc = builder.Configuration.GetValue<string>("ASSET_LOCATION");
 var dpFolder = Path.Combine(assetLoc, "dp", builder.Environment.EnvironmentName);
 Directory.CreateDirectory(dpFolder);
 builder.Services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(dpFolder))
-    .SetApplicationName($"LAOBIAN_{builder.Environment.EnvironmentName}");
+    .SetApplicationName($"APP_{builder.Environment.EnvironmentName}");
 
 builder.Services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
 builder.Services.AddSingleton<IReadRepository, ReadRepository>();
@@ -95,7 +95,7 @@ builder.Services.AddControllersWithViews(option =>
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
             {
-                options.Cookie.Name = $".SITE.AUTH.{builder.Environment.EnvironmentName}";
+                options.Cookie.Name = $".APP.{builder.Environment.EnvironmentName}";
                 options.ExpireTimeSpan = TimeSpan.FromDays(7);
                 options.Cookie.HttpOnly = true;
                 options.ReturnUrlParameter = "returnUrl";
@@ -122,7 +122,7 @@ FileExtensionContentTypeProvider fileContentTypeProvider = new()
             }
 };
 app.UseStaticFiles(new StaticFileOptions { ContentTypeProvider = fileContentTypeProvider });
-LaobianOption option = app.Services.GetService<IOptions<LaobianOption>>().Value;
+SwanOption option = app.Services.GetService<IOptions<SwanOption>>().Value;
 string dir = Path.Combine(option.AssetLocation, Constants.FolderAsset, Constants.FolderFile);
 Directory.CreateDirectory(dir);
 app.UseStaticFiles(new StaticFileOptions

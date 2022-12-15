@@ -1,4 +1,4 @@
-﻿namespace Laobian.HostedServices
+﻿namespace Swan.HostedServices
 {
     public class TimerHostedService : BackgroundService
     {

@@ -1,4 +1,4 @@
-﻿namespace Laobian.Lib.Repository
+﻿namespace Swan.Lib.Repository
 {
     public interface IFileRepository
     {

@@ -4,8 +4,8 @@
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <AssemblyName>laobian</AssemblyName>
-    <RootNamespace>Laobian</RootNamespace>
+    <AssemblyName>swan</AssemblyName>
+    <RootNamespace>Swan</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

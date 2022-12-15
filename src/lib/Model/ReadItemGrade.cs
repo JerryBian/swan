@@ -1,4 +1,4 @@
-﻿namespace Laobian.Lib.Model
+﻿namespace Swan.Lib.Model
 {
     public enum ReadItemGrade : byte
     {

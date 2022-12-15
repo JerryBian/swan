@@ -1,4 +1,4 @@
-﻿namespace Laobian.Areas.Admin.Models
+﻿namespace Swan.Areas.Admin.Models
 {
     public class IndexViewModel
     {

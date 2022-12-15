@@ -1,7 +1,8 @@
-﻿using Laobian.Lib.Service;
+﻿using Swan.Lib.Model;
+using Swan.Lib.Service;
 using System.Net;
 
-namespace Laobian.Middlewares
+namespace Swan.Middlewares
 {
     public class BlacklistIpMiddleware
     {
@@ -18,13 +19,13 @@ namespace Laobian.Middlewares
 
         public async Task Invoke(HttpContext context)
         {
-            List<Lib.Model.BlacklistItem> items = await _blacklistService.GetAllAsync();
+            List<BlacklistItem> items = await _blacklistService.GetAllAsync();
             IPAddress remoteIp = context.Connection.RemoteIpAddress;
             _logger.LogDebug($"Request from remote ip: {remoteIp}");
 
             bool badIp = false;
             byte[] bytes = remoteIp.GetAddressBytes();
-            foreach (Lib.Model.BlacklistItem item in items)
+            foreach (BlacklistItem item in items)
             {
                 if (item.InvalidTo > DateTime.Now && item.IpBytes.SequenceEqual(bytes))
                 {

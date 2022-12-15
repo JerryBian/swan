@@ -1,10 +1,10 @@
-﻿using Laobian.Lib;
-using Laobian.Lib.Log;
-using Laobian.Lib.Service;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swan.Lib;
+using Swan.Lib.Log;
+using Swan.Lib.Service;
 
-namespace Laobian.Areas.Admin.Controllers
+namespace Swan.Areas.Admin.Controllers
 {
     [Area(Constants.AreaAdmin)]
     [Authorize]
@@ -22,13 +22,13 @@ namespace Laobian.Areas.Admin.Controllers
             LogLevel minLevel = LogLevel.Trace;
             if (!string.IsNullOrEmpty(level))
             {
-                if (Enum.TryParse<LogLevel>(level, out LogLevel l))
+                if (Enum.TryParse(level, out LogLevel l))
                 {
                     minLevel = l;
                 }
             }
 
-            List<LaobianLog> logs = _logService.ReadAll(minLevel).OrderByDescending(x => x.Timestamp).ToList();
+            List<SwanLog> logs = _logService.ReadAll(minLevel).OrderByDescending(x => x.Timestamp).ToList();
             return View(logs);
         }
     }

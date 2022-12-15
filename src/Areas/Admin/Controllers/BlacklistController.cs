@@ -1,11 +1,11 @@
-﻿using Laobian.Lib;
-using Laobian.Lib.Helper;
-using Laobian.Lib.Model;
-using Laobian.Lib.Service;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swan.Lib;
+using Swan.Lib.Helper;
+using Swan.Lib.Model;
+using Swan.Lib.Service;
 
-namespace Laobian.Areas.Admin.Controllers
+namespace Swan.Areas.Admin.Controllers
 {
     [Area(Constants.AreaAdmin)]
     [Authorize]

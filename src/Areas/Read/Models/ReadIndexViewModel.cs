@@ -1,6 +1,6 @@
-﻿using Laobian.Lib.Model;
+﻿using Swan.Lib.Model;
 
-namespace Laobian.Areas.Read.Models
+namespace Swan.Areas.Read.Models
 {
     public class ReadIndexViewModel
     {

@@ -1,17 +1,18 @@
-﻿using Laobian.Lib.Helper;
-using Laobian.Lib.Model;
-using Laobian.Lib.Option;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
+using Swan.Lib;
+using Swan.Lib.Helper;
+using Swan.Lib.Model;
+using Swan.Lib.Option;
 using System.Text;
 
-namespace Laobian.Lib.Repository
+namespace Swan.Lib.Repository
 {
     public class BlacklistRepository : IBlacklistRepository
     {
-        private readonly LaobianOption _option;
+        private readonly SwanOption _option;
         private readonly SemaphoreSlim _semaphoreSlim;
 
-        public BlacklistRepository(IOptions<LaobianOption> option)
+        public BlacklistRepository(IOptions<SwanOption> option)
         {
             _option = option.Value;
             _semaphoreSlim = new SemaphoreSlim(1, 1);

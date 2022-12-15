@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Razor.TagHelpers;
 using System.Text;
 
-namespace Laobian.TagHelpers;
+namespace Swan.TagHelpers;
 
 public class PageTagHelper : TagHelper
 {

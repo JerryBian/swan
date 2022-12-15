@@ -1,9 +1,10 @@
-﻿using Laobian.Areas.Read.Models;
-using Laobian.Lib;
-using Laobian.Lib.Service;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Swan.Areas.Read.Models;
+using Swan.Lib;
+using Swan.Lib.Model;
+using Swan.Lib.Service;
 
-namespace Laobian.Areas.Read.Controllers
+namespace Swan.Areas.Read.Controllers
 {
     [Area(Constants.AreaRead)]
     public class HomeController : Controller
@@ -19,14 +20,14 @@ namespace Laobian.Areas.Read.Controllers
         public async Task<IActionResult> Index()
         {
             bool isAuthenticated = HttpContext.User?.Identity?.IsAuthenticated == true;
-            List<Lib.Model.ReadItemView> items = await _readService.GetAllAsync();
+            List<ReadItemView> items = await _readService.GetAllAsync();
             if (!isAuthenticated)
             {
                 items = items.Where(x => x.Raw.IsPublic).ToList();
             }
 
             List<ReadIndexViewModel> model = new();
-            foreach (IGrouping<int, Lib.Model.ReadItemView> item in items.GroupBy(x => x.Raw.CreateTime.Year).OrderByDescending(x => x.Key))
+            foreach (IGrouping<int, ReadItemView> item in items.GroupBy(x => x.Raw.CreateTime.Year).OrderByDescending(x => x.Key))
             {
                 ReadIndexViewModel vm = new()
                 {

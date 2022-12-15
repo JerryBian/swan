@@ -10,7 +10,7 @@ RUN dotnet publish \
     -o /publish \
     -v normal \
     /property:Version=${ver} \
-    ./Laobian.csproj
+    ./Swan.csproj
 
 FROM mcr.microsoft.com/dotnet/aspnet:7.0
 WORKDIR /app
@@ -19,4 +19,4 @@ RUN apt update -y && apt install git -y --no-install-recommends && rm -rf /var/l
 
 ENV TZ=Asia/Shanghai
 
-CMD ["dotnet", "laobian.dll"]
+CMD ["dotnet", "swan.dll"]
