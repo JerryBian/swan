@@ -48,9 +48,16 @@ namespace Swan.Lib.Log
         {
             while (!_isAddingCompleted)
             {
-                if (_messageQueue.TryDequeue(out SwanLog item))
+                var hasItems = false;
+                while (_messageQueue.TryDequeue(out SwanLog item))
                 {
+                    hasItems = true;
                     Write(item);
+                }
+
+                if(!hasItems && !_isAddingCompleted)
+                {
+                    Thread.Sleep(TimeSpan.FromSeconds(5));
                 }
             }
 
