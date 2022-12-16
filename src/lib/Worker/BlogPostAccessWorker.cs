@@ -36,7 +36,7 @@ namespace Swan.Lib.Worker
             while (!_cts.IsCancellationRequested)
             {
                 await ProcessInternalAsync();
-                await Task.Delay(TimeSpan.FromHours(0.5)).OkForCancel();
+                await Task.Delay(TimeSpan.FromHours(0.5), _cts.Token).OkForCancel();
             }
         }
 

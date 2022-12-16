@@ -60,10 +60,11 @@ builder.Services.AddSingleton<IBlacklistRepository, BlacklistRepository>();
 builder.Services.AddSingleton<IBlacklistService, BlacklistService>();
 
 builder.Services.AddMemoryCache();
+builder.Services.AddHostedService<TimerHostedService>();
 builder.Services.AddHostedService<GitFileHostedService>();
 builder.Services.AddHostedService<BlogPostHostedService>();
 builder.Services.AddHostedService<CleanupHostedService>();
-builder.Services.AddHostedService<TimerHostedService>();
+builder.Services.AddHostedService<AutoShutdownHostedService>();
 builder.Services.AddControllersWithViews(option =>
 {
     option.CacheProfiles.Add(Constants.CacheProfileClientShort, new CacheProfile
