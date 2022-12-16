@@ -69,7 +69,7 @@ namespace Swan.Lib.Repository
                 foreach (string file in Directory.EnumerateFiles(GetLogBaseDir(), $"*{LogExt}", SearchOption.AllDirectories))
                 {
                     DateTime lastModifiedAt = new FileInfo(file).LastWriteTime;
-                    if (DateTime.Now - lastModifiedAt > TimeSpan.FromDays(7))
+                    if (DateTime.Now - lastModifiedAt > TimeSpan.FromDays(30))
                     {
                         File.Delete(file);
                     }

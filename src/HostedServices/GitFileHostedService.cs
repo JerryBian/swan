@@ -67,13 +67,13 @@ namespace Swan.HostedServices
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                await Task.Delay(TimeSpan.FromMilliseconds(100));
+                await Task.Delay(TimeSpan.FromHours(1), stoppingToken).OkForCancel();
 
-                if (!_option.SkipGitOperations && DateTime.Now.Minute == 0 && DateTime.Now.Second == 0)
+                if (!_option.SkipGitOperations)
                 {
                     try
                     {
-                        await GitPushAsync(":alarm_clock: Schedule", stoppingToken);
+                        await GitPushAsync(":alarm_clock: Schedule");
                     }
                     catch (Exception ex)
                     {
@@ -87,13 +87,13 @@ namespace Swan.HostedServices
         {
             if (!_option.SkipGitOperations)
             {
-                await GitPushAsync("Stop", cancellationToken);
+                await GitPushAsync("Stop");
             }
 
             await base.StopAsync(cancellationToken);
         }
 
-        private async Task GitPushAsync(string message, CancellationToken cancellationToken = default)
+        private async Task GitPushAsync(string message)
         {
             string dir = GetBaseDir();
             if (!Directory.Exists(dir))
@@ -109,7 +109,7 @@ namespace Swan.HostedServices
         };
             string command =
                 $"{string.Join(" && ", commands)}";
-            string output = await _commandClient.RunAsync(command, cancellationToken);
+            string output = await _commandClient.RunAsync(command);
             _logger.LogInformation($"Git push finished: {output}");
         }
 

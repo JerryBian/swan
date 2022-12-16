@@ -1,4 +1,5 @@
-﻿using Swan.Lib.Service;
+﻿using Swan.Lib.Extension;
+using Swan.Lib.Service;
 
 namespace Swan.HostedServices
 {
@@ -15,29 +16,17 @@ namespace Swan.HostedServices
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            DateTime lastExecuteAt = DateTime.Now;
             while (!stoppingToken.IsCancellationRequested)
             {
-                if (DateTime.Now - lastExecuteAt < TimeSpan.FromMinutes(1))
-                {
-                    await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
-                    continue;
-                }
+                await Task.Delay(TimeSpan.FromDays(1), stoppingToken).OkForCancel();
 
-                if (DateTime.Now.Hour == 1 && DateTime.Now.Minute == 0)
+                try
                 {
-                    try
-                    {
-                        _logService.Cleanup();
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "Cleanup log files failed.");
-                    }
-                    finally
-                    {
-                        lastExecuteAt = DateTime.Now;
-                    }
+                    _logService.Cleanup();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Cleanup log files failed.");
                 }
             }
         }
