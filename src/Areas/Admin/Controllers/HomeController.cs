@@ -14,17 +14,14 @@ namespace Swan.Areas.Admin.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IBlogService _blogService;
-        private readonly IReadService _readService;
         private readonly IHostApplicationLifetime _hostApplicationLifetime;
 
         public HomeController(
             ILogger<HomeController> logger,
-            IReadService readService,
             IBlogService blogService,
             IHostApplicationLifetime hostApplicationLifetime)
         {
             _logger = logger;
-            _readService = readService;
             _blogService = blogService;
             _hostApplicationLifetime = hostApplicationLifetime;
         }
@@ -57,11 +54,6 @@ namespace Swan.Areas.Admin.Controllers
             model.BlogPostPublic = allPosts.Count(x => x.IsPublishedNow);
             model.BlogPostPrivate = allPosts.Count(x => !x.IsPublishedNow);
             model.BlogPostVisitTotal = allPosts.Sum(x => x.Raw.AccessCount);
-
-            List<ReadItemView> allReadItems = await _readService.GetAllAsync();
-            model.ReadItemTotal = allReadItems.Count;
-            model.ReadItemPublic = allReadItems.Count(x => x.Raw.IsPublic);
-            model.ReadItemPrivate = allReadItems.Count(x => !x.Raw.IsPublic);
 
             ViewData["Title"] = "Admin";
             return View(model);

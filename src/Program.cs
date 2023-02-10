@@ -46,8 +46,6 @@ builder.Services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(d
     .SetApplicationName($"APP_{builder.Environment.EnvironmentName}");
 
 builder.Services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
-builder.Services.AddSingleton<IReadRepository, ReadRepository>();
-builder.Services.AddSingleton<IReadService, ReadService>();
 builder.Services.AddSingleton<IBlogRepository, BlogRepository>();
 builder.Services.AddSingleton<IBlogService, BlogService>();
 builder.Services.AddSingleton<ICacheManager, MemoryCacheManager>();
