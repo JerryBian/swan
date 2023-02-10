@@ -6,7 +6,7 @@ namespace Swan.Core.Repository
 {
     public class BlogPostObjectRepository : SingleFileObjectRepository<BlogPostObject>, IBlogPostObjectRepository
     {
-        public BlogPostObjectRepository(IOptions<SwanOption> option) : base(Path.Combine(option.Value.AssetLocation, Constants.BlogPostPath))
+        public BlogPostObjectRepository(IOptions<SwanOption> option) : base(Path.Combine(option.Value.AssetLocation, Constants.FolderAsset, Constants.BlogPostPath))
         {
         }
     }
