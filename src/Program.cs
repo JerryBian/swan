@@ -5,13 +5,15 @@ using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
+using Swan.Core;
+using Swan.Core.Cache;
+using Swan.Core.Command;
+using Swan.Core.Converter;
+using Swan.Core.Log;
+using Swan.Core.Option;
+using Swan.Core.Repository;
+
 using Swan.HostedServices;
-using Swan.Lib;
-using Swan.Lib.Cache;
-using Swan.Lib.Command;
-using Swan.Lib.Converter;
-using Swan.Lib.Log;
-using Swan.Lib.Option;
 using Swan.Lib.Repository;
 using Swan.Lib.Service;
 using Swan.Lib.Worker;
@@ -58,6 +60,11 @@ builder.Services.AddSingleton<ILogRepository, LogRepository>();
 builder.Services.AddSingleton<ILogService, LogService>();
 builder.Services.AddSingleton<IBlacklistRepository, BlacklistRepository>();
 builder.Services.AddSingleton<IBlacklistService, BlacklistService>();
+
+builder.Services.AddSingleton<IBlogPostObjectRepository, BlogPostObjectRepository>();
+builder.Services.AddSingleton<IReadObjectRepository, ReadObjectRepository>();
+builder.Services.AddSingleton<Swan.Core.Service.IBlogService, Swan.Core.Service.BlogService>();
+builder.Services.AddSingleton<Swan.Core.Service.IReadService, Swan.Core.Service.ReadService>();
 
 builder.Services.AddMemoryCache();
 builder.Services.AddHostedService<TimerHostedService>();
@@ -149,9 +156,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
-
-app.MapAreaControllerRoute(Constants.AreaAdmin, Constants.AreaAdmin, "{area:exists}/{controller=Home}/{action=Index}/{id?}");
-app.MapAreaControllerRoute(Constants.AreaRead, Constants.AreaRead, "{area:exists}/{controller=Home}/{action=Index}/{id?}");
-app.MapAreaControllerRoute(Constants.AreaBlog, Constants.AreaBlog, "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

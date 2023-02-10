@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Swan.Lib;
-using Swan.Lib.Log;
+using Swan.Core;
+using Swan.Core.Log;
 using Swan.Lib.Service;
 
 namespace Swan.Areas.Admin.Controllers

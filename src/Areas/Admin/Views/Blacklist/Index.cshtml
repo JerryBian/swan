@@ -1,4 +1,4 @@
-﻿@model List<BlacklistItem>
+﻿@*@model List<BlacklistItem>
 @{
     Layout = "_AdminLayout";
     ViewData["Title"] = "黑名单 - Admin";
@@ -93,4 +93,4 @@
                 submitRequest("/@Constants.AreaAdmin/blacklist", { form: form, body: new URLSearchParams(formData), contentType: "application/x-www-form-urlencoded" });
             });
     </script>
-            }
+            }*@

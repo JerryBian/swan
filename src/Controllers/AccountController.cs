@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
-using Swan.Lib.Option;
+using Swan.Core.Option;
 using Swan.Lib.Service;
 using System.Collections.Concurrent;
 using System.Security.Claims;

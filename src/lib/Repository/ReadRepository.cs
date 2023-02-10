@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Options;
-using Swan.Lib.Extension;
-using Swan.Lib.Helper;
+using Swan.Core.Extension;
+using Swan.Core.Helper;
+using Swan.Core.Option;
 using Swan.Lib.Model;
-using Swan.Lib.Option;
 using System.Runtime.CompilerServices;
 
 namespace Swan.Lib.Repository

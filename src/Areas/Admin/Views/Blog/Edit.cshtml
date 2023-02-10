@@ -1,4 +1,4 @@
-﻿@model BlogPost
+﻿@*@model BlogPost
 @{
     Layout = "_AdminLayout";
     ViewData["Title"] = "编辑文章 - Admin";
@@ -88,4 +88,4 @@
                 submitRequest("/@Constants.AreaAdmin/blog/post", { form: form, method: "PUT", body: new URLSearchParams(formData), contentType: "application/x-www-form-urlencoded" });
             });
     </script>
-}
+}*@

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
-using Swan.Lib;
+using Swan.Core;
 using Swan.Lib.Service;
 using Swan.Lib.Worker;
 

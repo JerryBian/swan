@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
-using Swan.Lib;
-using Swan.Lib.Option;
+using Swan.Core;
+using Swan.Core.Option;
 
 namespace Swan.Lib.Repository
 {

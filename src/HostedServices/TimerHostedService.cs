@@ -1,5 +1,5 @@
 ﻿using ByteSizeLib;
-using Swan.Lib.Extension;
+using Swan.Core.Extension;
 using System.Diagnostics;
 
 namespace Swan.HostedServices

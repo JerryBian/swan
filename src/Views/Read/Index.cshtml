@@ -1,0 +1,90 @@
+﻿@model List<ReadModel>
+@{
+    //Layout = "_ReadLayout";
+    //ViewData["DatePublished"] = Model.SelectMany(x => x.Items).Min(x => x.Raw.CreateTime);
+    //ViewData["DateModified"] = Model.SelectMany(x => x.Items).Max(x => x.Raw.LastUpdateTime);
+}
+
+@foreach (var item in Model.GroupBy(x => x.Object.CreateTime.Year).OrderByDescending(x => x.Key))
+{
+    <div class="mb-4">
+        <h4 class="mb-3 bg-secondary py-2 px-1" id="@item.Key"><i class="bi bi-list"></i> @item.Key (@item.Count())</h4>
+        @foreach (var r in item.OrderByDescending(x => x.Object.CreateTime))
+        {
+            var d = "bi bi-hash small text-muted";
+            if (!r.Object.IsPublic)
+            {
+                d = "bi bi-file-lock small text-info";
+            }
+
+            <div class="mb-3">
+                <div class="d-flex ps-2 pe-1">
+                    <div class="text-truncate">
+                        <span>
+                            <i class="@d"></i> @r.Object.BookName
+                        </span>
+                        @if (r.Object.Grade == (int)ReadItemGrade.Good)
+                        {
+                            <i class="bi bi-hand-thumbs-up text-success text-decoration-none"></i>
+                        }
+
+                        @if (r.Object.Grade == (int)ReadItemGrade.Bad)
+                        {
+                            <i class="bi bi-hand-thumbs-down text-danger text-decoration-none"></i>
+                        }
+                    </div>
+                    <div class="ms-auto small text-muted px-1 text-nowrap">
+                        <i class="bi bi-calendar2-date"></i> @r.Object.CreateTime.ToCnDate()
+                        @if (Context.Request.HttpContext.User?.Identity?.IsAuthenticated == true)
+                        {
+                            <text>&middot; </text>
+                            <a href="/read/edit/@r.Object.Id"><i class="bi bi-pencil-square text-success"></i></a>
+                        }
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(r.Metadata))
+                {
+                    <small class="text-muted fst-italic d-none d-lg-inline-block px-1"> @r.Metadata</small>
+                }
+
+                @if (!string.IsNullOrEmpty(r.CommentHtml))
+                {
+                    <div class="my-1 small bg-warning p-2">
+                        @Html.Raw(r.CommentHtml)
+                    </div>
+                }
+            </div>
+
+        }
+    </div>
+}
+
+@section Section {
+    @if (Context.Request.HttpContext.User?.Identity?.IsAuthenticated == true)
+    {
+        <div class="card border-success mb-3">
+            <div class="card-header">Admin Area</div>
+            <div class="card-body text-success">
+                <div class="card-text d-grid gap-2">
+                    <a class="btn btn-primary" href="/read/add"><i class="bi bi-plus-lg"></i> 发表阅读</a>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@section Script {
+    <script>
+        document.addEventListener('DOMContentLoaded', function (event) {
+            anchors.options = {
+                placement: "right",
+                visible: "hover",
+                icon: "¶",
+                base: "/read",
+                class: "text-reset"
+            };
+            anchors.add("h4");
+        });
+    </script>
+}

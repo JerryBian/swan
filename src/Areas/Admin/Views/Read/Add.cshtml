@@ -1,4 +1,4 @@
-﻿@model IEnumerable<BlogPostView>
+﻿@*@model IEnumerable<BlogPostView>
 @{
     Layout = "_AdminLayout";
     ViewData["Title"] = "添加新的阅读 - Admin";
@@ -85,4 +85,4 @@
                 submitRequest("/@Constants.AreaAdmin/read/add", { form: form, body: new URLSearchParams(formData), contentType: "application/x-www-form-urlencoded" });
             });
     </script>
-}
+}*@

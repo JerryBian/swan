@@ -1,4 +1,4 @@
-﻿using Swan.Lib.Log;
+﻿using Swan.Core.Log;
 using Swan.Lib.Repository;
 
 namespace Swan.Lib.Service

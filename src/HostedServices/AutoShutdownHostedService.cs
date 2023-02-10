@@ -1,4 +1,4 @@
-﻿using Swan.Lib.Extension;
+﻿using Swan.Core.Extension;
 
 namespace Swan.HostedServices
 {

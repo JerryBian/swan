@@ -1,4 +1,4 @@
-﻿using Swan.Lib.Cache;
+﻿using Swan.Core.Cache;
 using Swan.Lib.Model;
 using Swan.Lib.Repository;
 using System.Net;

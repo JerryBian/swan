@@ -1,4 +1,4 @@
-﻿@model PagedViewModel<BlogPostView>
+﻿@*@model PagedViewModel<BlogPostView>
 @inject IOptions<SwanOption> _option
 @{
     Layout = "_BlogLayout";
@@ -34,3 +34,4 @@
 
     <page total-pages="@Model.TotalPages" current-page="@Model.CurrentPage" url="@Model.Url"></page>
 </div>
+*@

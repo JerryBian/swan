@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swan.Areas.Admin.Models;
-using Swan.Lib.Helper;
-using Swan.Lib.Model;
+using Swan.Core.Helper;
+using Swan.Core.Model;
 using Swan.Lib.Service;
 
 namespace Swan.Areas.Admin.Controllers

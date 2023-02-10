@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Swan.Lib;
+using Swan.Core;
+using Swan.Core.Option;
 using Swan.Lib.Model;
-using Swan.Lib.Option;
 using Swan.Lib.Service;
 using Swan.Models;
 using System.ServiceModel.Syndication;

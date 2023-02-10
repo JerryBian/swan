@@ -1,14 +1,38 @@
-﻿function createEditor(ele, content) {
-    let e = document.querySelector(ele);
-    return new window.stacksEditor.StacksEditor(
-        e,
-        content ?? e.innerHTML,
-        {
-            parserFeatures: {
-                tables: true,
-            }
-        }
-    );
+﻿function createEditor(textArea, u) {
+    const editor = new EasyMDE({
+        element: textArea,
+        autosave: {
+            enabled: true,
+            uniqueId: u,
+            text: "自动保存："
+        },
+        lineNumbers: false,
+        lineWrapping: true,
+        maxHeight: "200px",
+        previewClass: "editor-preview",
+        promptURLs: true,
+        uploadImage: true,
+        imageMaxSize: 1024 * 1024 * 20,
+        imageAccept: ["image/png", "image/jpeg", "application/pdf", "image/svg+xml", "image/bmp", "image/gif", "image/tiff", "image/webp"],
+        imageUploadEndpoint: "/file/upload",
+        imagePathAbsolute: true,
+        imageTexts: {
+            sbInit: "拖拽或者从剪切板复制图片",
+            sbOnDragEnter: "拖拽图片",
+            sbOnDrop: "正在上传图片 #images_names#",
+            sbProgress: "正在上传 #file_name#: #progress#",
+            sbOnUploaded: "成功上传 #image_name#"
+        },
+        errorCallback: function (err) {
+            showErrorMessageModal(err);
+        },
+        renderingConfig: {
+            codeSyntaxHighlighting: true,
+            hljs: window.hljs
+        },
+        spellChecker: false
+    });
+    return editor;
 }
 
 function submitRequest(url, option) {
@@ -88,7 +112,7 @@ function submitRequest(url, option) {
 }
 
 function showMessageModal(title, bodyHtml, footerHtml) {
-    let messageModalEl = document.querySelector("#messageModal");
+    let messageModalEl = document.querySelector("#modalDialog");
     if (!messageModalEl) {
         return;
     }
@@ -96,30 +120,30 @@ function showMessageModal(title, bodyHtml, footerHtml) {
     let messageModal = bootstrap.Modal.getOrCreateInstance(messageModalEl);
     messageModal.show();
 
-    let messageModalTitle = document.querySelector("#messageModalTitle");
+    let messageModalTitle = document.querySelector("#modalDialogHeader");
     if (messageModalTitle) {
         messageModalTitle.innerHTML = title;
     }
 
-    let messageModalBody = document.querySelector("#messageModalBody");
+    let messageModalBody = document.querySelector("#modalDialogBody");
     if (messageModalBody) {
         messageModalBody.innerHTML = bodyHtml;
     }
 
-    let messageModalFooter = document.querySelector("#messageModalFooter");
+    let messageModalFooter = document.querySelector("#modalDialogFooter");
     if (messageModalFooter) {
-        footerHtml = footerHtml ??
-            "<button type=\"button\" class=\"btn btn-info\" data-bs-dismiss=\"modal\">Ok</button>";
+        footerHtml = footerHtml ?? "";
+        footerHtml += "<button type=\"button\" class=\"btn btn-secondary\" data-bs-dismiss=\"modal\">Close</button>";
         messageModalFooter.innerHTML = footerHtml;
     }
 }
 
 function showInfoMessageModal(message) {
-    showMessageModal(`<i class="bi bi-info-circle"></i> Info`, `<div>${message}</div>`);
+    showMessageModal(`<i class="fa-solid fa-circle-info text-info"></i> Info`, `<p>${message}</p>`);
 }
 
 function showErrorMessageModal(message) {
-    showMessageModal(`<i class="bi bi-exclamation-circle text-danger"></i> Error`, `<div>${message}</div>`);
+    showMessageModal(`<i class="fa-solid fa-circle-exclamation text-danger"></i> Error`, `<p>${message}</p>`);
 }
 
 function showConfirmMessageModal(message, yesHandler) {

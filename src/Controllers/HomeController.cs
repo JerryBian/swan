@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Swan.Lib;
-using Swan.Lib.Extension;
-using Swan.Lib.Option;
+using Swan.Core;
+using Swan.Core.Extension;
+using Swan.Core.Option;
 using Swan.Lib.Service;
 using System.Text;
 

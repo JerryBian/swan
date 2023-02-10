@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Swan.Lib;
-using Swan.Lib.Helper;
+using Swan.Core;
+using Swan.Core.Helper;
+using Swan.Core.Model;
 using Swan.Lib.Model;
 using Swan.Lib.Service;
 

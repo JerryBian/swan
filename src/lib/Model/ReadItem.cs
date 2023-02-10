@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using Swan.Core.Model;
 
 namespace Swan.Lib.Model
 {

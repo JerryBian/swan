@@ -1,4 +1,4 @@
-﻿using Swan.Lib.Extension;
+﻿using Swan.Core.Extension;
 using Swan.Lib.Model;
 using Swan.Lib.Service;
 using System.Collections.Concurrent;

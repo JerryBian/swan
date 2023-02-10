@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Swan.Areas.Read.Models;
-using Swan.Lib;
+using Swan.Core;
 using Swan.Lib.Model;
 using Swan.Lib.Service;
 

@@ -1,4 +1,4 @@
-﻿using Swan.Lib.Extension;
+﻿using Swan.Core.Extension;
 using System.Text;
 
 namespace Swan.Lib.Repository

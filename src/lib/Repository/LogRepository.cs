@@ -1,7 +1,8 @@
 ﻿using Microsoft.Extensions.Options;
-using Swan.Lib.Helper;
-using Swan.Lib.Log;
-using Swan.Lib.Option;
+using Swan.Core;
+using Swan.Core.Helper;
+using Swan.Core.Log;
+using Swan.Core.Option;
 using System.Text;
 
 namespace Swan.Lib.Repository

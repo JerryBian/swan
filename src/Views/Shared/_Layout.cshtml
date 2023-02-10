@@ -23,10 +23,47 @@
         @Html.Raw(headerBuilder.Build())
     }
 
-    @await RenderSectionAsync("Style", false)
+    @if (Context.Request.HttpContext.User?.Identity?.IsAuthenticated == true)
+    {
+        <link href="~/admin.min.css" rel="stylesheet" asp-append-version="true" />
+    }
+    else
+    {
+        <link href="~/style.min.css" rel="stylesheet" asp-append-version="true" />
+    }
 </head>
-<body class="w-100 min-vh-100 bg-light">
-    @RenderBody()
+<body class="d-flex min-vh-100 w-100 flex-column">
+    <partial name="_Navbar" />
+    <main class="container py-2">
+        <div class="row">
+            <div class="col-9">@RenderBody()</div>
+            <div class="col-3">
+                @await RenderSectionAsync("Section", false)
+            </div>
+        </div>
+    </main>
+    <partial name="_Footer" />
+
+    @if (Context.Request.HttpContext.User?.Identity?.IsAuthenticated == true)
+    {
+        <div class="modal fade" id="modalDialog">
+            <div class="modal-dialog modal-fullscreen">
+                <div class="modal-content">
+                    <div class="modal-header" id="modalDialogHeader"></div>
+                    <div class="modal-body" id="modalDialogBody"></div>
+                    <div class="modal-footer" id="modalDialogFooter"></div>
+                </div>
+            </div>
+        </div>
+
+
+        <script src="~/admin.min.js" asp-append-version="true"></script>
+    }
+    else
+    {
+        <script src="~/script.min.js" asp-append-version="true"></script>
+    }
+
     @await RenderSectionAsync("Script", false)
 
     @if (_env.IsProduction() && Context.Request.HttpContext.User?.Identity?.IsAuthenticated != true)
