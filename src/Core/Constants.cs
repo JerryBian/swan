@@ -41,5 +41,9 @@
         public const string BlogPostPath = "blog/post";
 
         public const string ReadPath = "read";
+
+        public const string BlogTagPath = "blog";
+
+        public const string BlogSeriesPath = "series";
     }
 }

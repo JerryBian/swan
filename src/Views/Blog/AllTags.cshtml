@@ -1,0 +1,27 @@
+﻿@model List<BlogTag>
+
+@foreach(var tag in Model)
+{
+    <div class="d-flex mb-3 p-2 bg-success">
+        <div class="text-truncate">
+            @tag.Object.Name
+        </div>
+        <div class="ms-auto text-nowrap">
+            <a href="/blog/tag/@tag.Object.Url" class="text-reset">@tag.Posts.Count</a> 篇文章
+        </div>
+    </div>
+}
+
+@section Section {
+    @if (Context.Request.HttpContext.User?.Identity?.IsAuthenticated == true)
+    {
+        <div class="card border-success mb-3">
+            <div class="card-header">Admin Area</div>
+            <div class="card-body text-success">
+                <div class="card-text d-grid gap-2">
+                    <a class="btn btn-primary" href="/blog/tag/add"><i class="bi bi-plus-lg"></i> 创建标签</a>
+                </div>
+            </div>
+        </div>
+    }
+}

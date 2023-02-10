@@ -61,6 +61,8 @@ builder.Services.AddSingleton<IBlacklistService, BlacklistService>();
 
 builder.Services.AddSingleton<IBlogPostObjectRepository, BlogPostObjectRepository>();
 builder.Services.AddSingleton<IReadObjectRepository, ReadObjectRepository>();
+builder.Services.AddSingleton<IBlogTagObjectRepository, BlogTagObjectRepository>();
+builder.Services.AddSingleton<IBlogSeriesObjectRepository, BlogSeriesObjectRepository>();
 builder.Services.AddSingleton<Swan.Core.Service.IBlogService, Swan.Core.Service.BlogService>();
 builder.Services.AddSingleton<Swan.Core.Service.IReadService, Swan.Core.Service.ReadService>();
 

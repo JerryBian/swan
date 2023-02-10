@@ -1,0 +1,24 @@
+﻿@model BlogTag
+
+<h3>@Model.Posts.Count</h3>
+
+@foreach(var p in Model.Posts)
+{
+    <div>
+        <a href="#">@p.Object.Title</a>
+    </div>
+}
+
+@section Section {
+    @if (Context.Request.HttpContext.User?.Identity?.IsAuthenticated == true)
+    {
+                <div class="card border-success mb-3">
+                    <div class="card-header">Admin Area</div>
+                    <div class="card-body text-success">
+                        <div class="card-text d-grid gap-2">
+                            <a class="btn btn-primary" href="/blog/tag/@Model.Object.Id/edit"><i class="bi bi-plus-lg"></i> 编辑标签</a>
+                        </div>
+                    </div>
+                </div>
+    }
+}
