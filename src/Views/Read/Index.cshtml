@@ -23,12 +23,12 @@
                         <span>
                             <i class="@d"></i> @r.Object.BookName
                         </span>
-                        @if (r.Object.Grade == (int)ReadItemGrade.Good)
+                        @if (r.Object.Grade == 2)
                         {
                             <i class="bi bi-hand-thumbs-up text-success text-decoration-none"></i>
                         }
 
-                        @if (r.Object.Grade == (int)ReadItemGrade.Bad)
+                        @if (r.Object.Grade == 0)
                         {
                             <i class="bi bi-hand-thumbs-down text-danger text-decoration-none"></i>
                         }

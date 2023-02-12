@@ -21,6 +21,8 @@ namespace Swan.Core.Service
             _blogSeriesObjectRepository = blogSeriesObjectRepository;
         }
 
+        #region Posts
+
         public async Task<List<BlogPost>> GetAllPostsAsync()
         {
             var result = new List<BlogPost>();
@@ -33,6 +35,50 @@ namespace Swan.Core.Service
 
             return result;
         }
+
+        public async Task<BlogPost> GetPostAsync(string id)
+        {
+            var obj = await _blogPostObjectRepository.GetAsync(id);
+            if(obj == null)
+            {
+                return null;
+            }
+
+            var post = new BlogPost(obj);
+            return post;
+        }
+
+        public async Task<BlogPost> GetPostByLinkAsync(string link)
+        {
+            var allPosts = await _blogPostObjectRepository.GetAllAsync();
+            var obj = allPosts.FirstOrDefault(x => StringHelper.EqualsIgoreCase(x.Link, link));
+            if (obj == null)
+            {
+                return null;
+            }
+
+            var post = new BlogPost(obj);
+            return post;
+        }
+
+        public async Task<BlogPostObject> CreatePostAsync(BlogPostObject obj)
+        {
+            return await _blogPostObjectRepository.CreateAsync(obj);
+        }
+
+        public async Task<BlogPostObject> UpdatePostAsync(BlogPostObject obj)
+        {
+            return await _blogPostObjectRepository.UpdateAsync(obj);
+        }
+
+        public async Task DeletePostAsync(string id)
+        {
+            await _blogPostObjectRepository.DeleteAsync(id);
+        }
+
+        #endregion
+
+        #region Tags
 
         public async Task<BlogTag> GetTagAsync(string id)
         {
@@ -85,6 +131,10 @@ namespace Swan.Core.Service
             await _blogTagObjectRepository.DeleteAsync(id);
         }
 
+        #endregion
+
+        #region Series
+
         public async Task<BlogSeries> GetSeriesAsync(string id)
         {
             var series = await _blogSeriesObjectRepository.GetAsync(id);
@@ -135,5 +185,7 @@ namespace Swan.Core.Service
         {
             await _blogSeriesObjectRepository.DeleteAsync(id);
         }
+
+        #endregion
     }
 }

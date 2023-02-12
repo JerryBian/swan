@@ -18,10 +18,86 @@ namespace Swan.Controllers
             _blogService = blogService;
         }
 
-        public IActionResult Index()
+        [HttpGet]
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var posts = await _blogService.GetAllPostsAsync();
+            return View(posts);
         }
+
+        #region Posts
+
+        [HttpGet("{link}.html")]
+        public async Task<IActionResult> GetPost([FromRoute]string link)
+        {
+            var post = await _blogService.GetPostByLinkAsync(link);
+            if(post == null)
+            {
+                return NotFound();
+            }
+
+            return View("Post", post);
+        }
+
+        [HttpGet("post/add")]
+        public async Task<IActionResult> AddPost()
+        {
+            return View("AddPost");
+        }
+
+        [HttpPut("post")]
+        public async Task<IActionResult> AddPost([FromForm]BlogPostObject obj)
+        {
+            ApiResponse<object> res = new();
+            try
+            {
+                var post = await _blogService.CreatePostAsync(obj);
+                res.RedirectTo = post.GetUrl();
+            }
+            catch (Exception ex)
+            {
+                res.IsOk = false;
+                res.Message = ex.Message;
+                _logger.LogError(ex, $"Add new read item failed => {JsonHelper.Serialize(obj)}");
+            }
+
+            return Json(res);
+        }
+
+        [HttpGet("post/{id}/edit")]
+        public async Task<IActionResult> EditPost([FromRoute]string id)
+        {
+            var post = await _blogService.GetPostAsync(id);
+            if(post == null)
+            {
+                return NotFound();
+            }
+
+            return View("EditPost", post);
+        }
+
+        [HttpPost("post")]
+        public async Task<IActionResult> EditPost([FromForm] BlogPostObject obj)
+        {
+            ApiResponse<object> res = new();
+            try
+            {
+                var post = await _blogService.UpdatePostAsync(obj);
+                res.RedirectTo = post.GetUrl();
+            }
+            catch (Exception ex)
+            {
+                res.IsOk = false;
+                res.Message = ex.Message;
+                _logger.LogError(ex, $"Add new read item failed => {JsonHelper.Serialize(obj)}");
+            }
+
+            return Json(res);
+        }
+
+        #endregion
+
+        #region Tags
 
         [HttpGet("tag")]
         public async Task<IActionResult> GetTags()
@@ -48,7 +124,7 @@ namespace Swan.Controllers
             return View("AddTag");
         }
 
-        [HttpPost("tag/add")]
+        [HttpPut("tag/add")]
         public async Task<IActionResult> AddTag([FromForm] BlogTagObject item)
         {
             ApiResponse<object> res = new();
@@ -79,7 +155,7 @@ namespace Swan.Controllers
             return View("EditTag", item);
         }
 
-        [HttpPut("tag/edit")]
+        [HttpPost("tag/edit")]
         public async Task<IActionResult> EditTag([FromForm] BlogTagObject item)
         {
             ApiResponse<object> res = new();
@@ -97,6 +173,10 @@ namespace Swan.Controllers
 
             return Json(res);
         }
+
+        #endregion
+
+        #region Series
 
         [HttpGet("series")]
         public async Task<IActionResult> GetSeries()
@@ -123,7 +203,7 @@ namespace Swan.Controllers
             return View("AddSeries");
         }
 
-        [HttpPost("series/add")]
+        [HttpPut("series/add")]
         public async Task<IActionResult> AddSeries([FromForm] BlogSeriesObject item)
         {
             ApiResponse<object> res = new();
@@ -154,7 +234,7 @@ namespace Swan.Controllers
             return View("EditSeries", item);
         }
 
-        [HttpPut("series/edit")]
+        [HttpPost("series/edit")]
         public async Task<IActionResult> EditSeries([FromForm] BlogSeriesObject item)
         {
             ApiResponse<object> res = new();
@@ -172,5 +252,7 @@ namespace Swan.Controllers
 
             return Json(res);
         }
+
+        #endregion
     }
 }

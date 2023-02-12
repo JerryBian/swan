@@ -37,5 +37,15 @@ namespace Swan.Core.Model.Object
 
             return $"{Id}{Constants.JsonFileExt}";
         }
+
+        public string GetUrl()
+        {
+            return $"/blog/{Link}.html";
+        }
+
+        public bool IsPublished()
+        {
+            return PublishTime <= DateTime.Now;
+        }
     }
 }

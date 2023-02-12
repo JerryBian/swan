@@ -1,0 +1,10 @@
+﻿@model List<BlogPost>
+
+<ul>
+    @foreach(var item in Model)
+    {
+        <li>
+            <a href="@item.Object.GetUrl()">@item.Object.Title</a>
+        </li>
+    }
+</ul>

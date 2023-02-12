@@ -7,6 +7,16 @@ namespace Swan.Core.Service
     {
         Task<List<BlogPost>> GetAllPostsAsync();
 
+        Task<BlogPost> GetPostAsync(string id);
+
+        Task<BlogPost> GetPostByLinkAsync(string link);
+
+        Task<BlogPostObject> CreatePostAsync(BlogPostObject obj);
+
+        Task<BlogPostObject> UpdatePostAsync(BlogPostObject obj);
+
+        Task DeletePostAsync(string id);
+
         Task<BlogTag> GetTagAsync(string id);
 
         Task<BlogTag> GetTagByUrlAsync(string url);
