@@ -2,7 +2,7 @@
 
 namespace Swan.Core.Model.Object
 {
-    public class BlogPostObject : FileObjectBase
+    public class BlogPostObject : FileObjectBase, ISingleObject
     {
         [JsonPropertyName("link")]
         public string Link { get; set; }

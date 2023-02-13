@@ -10,9 +10,10 @@ using Swan.Core.Cache;
 using Swan.Core.Command;
 using Swan.Core.Converter;
 using Swan.Core.Log;
+using Swan.Core.Model.Object;
 using Swan.Core.Option;
 using Swan.Core.Repository;
-
+using Swan.Core.Store;
 using Swan.HostedServices;
 using Swan.Lib.Repository;
 using Swan.Lib.Service;
@@ -65,6 +66,9 @@ builder.Services.AddSingleton<IBlogTagObjectRepository, BlogTagObjectRepository>
 builder.Services.AddSingleton<IBlogSeriesObjectRepository, BlogSeriesObjectRepository>();
 builder.Services.AddSingleton<Swan.Core.Service.IBlogService, Swan.Core.Service.BlogService>();
 builder.Services.AddSingleton<Swan.Core.Service.IReadService, Swan.Core.Service.ReadService>();
+
+builder.Services.AddSingleton<IFileObjectStore<BlogPostObject>>
+    (x => new FileObjectStore<BlogPostObject>(x.GetRequiredService<IOptions<SwanOption>>(), Constants.BlogPostPath, Constants.JsonFileFilter));
 
 builder.Services.AddMemoryCache();
 builder.Services.AddHostedService<TimerHostedService>();
