@@ -12,7 +12,6 @@ using Swan.Core.Converter;
 using Swan.Core.Log;
 using Swan.Core.Model.Object;
 using Swan.Core.Option;
-using Swan.Core.Repository;
 using Swan.Core.Store;
 using Swan.HostedServices;
 using Swan.Lib.Repository;
@@ -60,15 +59,17 @@ builder.Services.AddSingleton<ILogService, LogService>();
 builder.Services.AddSingleton<IBlacklistRepository, BlacklistRepository>();
 builder.Services.AddSingleton<IBlacklistService, BlacklistService>();
 
-builder.Services.AddSingleton<IBlogPostObjectRepository, BlogPostObjectRepository>();
-builder.Services.AddSingleton<IReadObjectRepository, ReadObjectRepository>();
-builder.Services.AddSingleton<IBlogTagObjectRepository, BlogTagObjectRepository>();
-builder.Services.AddSingleton<IBlogSeriesObjectRepository, BlogSeriesObjectRepository>();
 builder.Services.AddSingleton<Swan.Core.Service.IBlogService, Swan.Core.Service.BlogService>();
 builder.Services.AddSingleton<Swan.Core.Service.IReadService, Swan.Core.Service.ReadService>();
 
 builder.Services.AddSingleton<IFileObjectStore<BlogPostObject>>
     (x => new FileObjectStore<BlogPostObject>(x.GetRequiredService<IOptions<SwanOption>>(), Constants.BlogPostPath, Constants.JsonFileFilter));
+builder.Services.AddSingleton<IFileObjectStore<BlogTagObject>>
+    (x => new FileObjectStore<BlogTagObject>(x.GetRequiredService<IOptions<SwanOption>>(), Constants.BlogTagPath, Constants.JsonFileFilter));
+builder.Services.AddSingleton<IFileObjectStore<BlogSeriesObject>>
+    (x => new FileObjectStore<BlogSeriesObject>(x.GetRequiredService<IOptions<SwanOption>>(), Constants.BlogSeriesPath, Constants.JsonFileFilter));
+builder.Services.AddSingleton<IFileObjectStore<ReadObject>>
+    (x => new FileObjectStore<ReadObject>(x.GetRequiredService<IOptions<SwanOption>>(), Constants.ReadPath, Constants.JsonFileFilter));
 
 builder.Services.AddMemoryCache();
 builder.Services.AddHostedService<TimerHostedService>();

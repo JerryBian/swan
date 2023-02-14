@@ -2,24 +2,24 @@
 using Swan.Core.Helper;
 using Swan.Core.Model;
 using Swan.Core.Model.Object;
-using Swan.Core.Repository;
+using Swan.Core.Store;
 using Swan.Lib.Model;
 
 namespace Swan.Core.Service
 {
     public class ReadService : IReadService
     {
-        private readonly IReadObjectRepository _readObjectRepository;
+        private readonly IFileObjectStore<ReadObject> _readObjectStore;
 
-        public ReadService(IReadObjectRepository readObjectRepository)
+        public ReadService(IFileObjectStore<ReadObject> readObjectStore)
         {
-            _readObjectRepository = readObjectRepository;
+            _readObjectStore = readObjectStore;
         }
 
         public async Task<List<ReadModel>> GetAllAsync()
         {
             var result = new List<ReadModel>();
-            var readObjs = await _readObjectRepository.GetAllAsync();
+            var readObjs = await _readObjectStore.GetAllAsync();
             foreach(var obj in readObjs)
             {
                 var readModel = new ReadModel(obj);
@@ -64,7 +64,8 @@ namespace Swan.Core.Service
 
         public async Task<ReadModel> GetAsync(string id)
         {
-            var obj = await _readObjectRepository.GetAsync(id);
+            var objs = await _readObjectStore.GetAllAsync();
+            var obj = objs.FirstOrDefault(x => x.Id == id);
             if(obj == null)
             {
                 return null;
@@ -75,12 +76,12 @@ namespace Swan.Core.Service
 
         public async Task AddAsync(ReadObject item)
         {
-            await _readObjectRepository.CreateAsync(item);
+            await _readObjectStore.AddAsync(item);
         }
 
         public async Task UpdateAsync(ReadObject item)
         {
-            await _readObjectRepository.UpdateAsync(item);
+            await _readObjectStore.UpdateAsync(item);
         }
     }
 }

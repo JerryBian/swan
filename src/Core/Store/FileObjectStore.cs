@@ -24,13 +24,13 @@ namespace Swan.Core.Store
             _cachedObjects = new List<List<T>>();
         }
 
-        public async Task<List<T>> GetAllAsync()
+        public async Task<IEnumerable<T>> GetAllAsync()
         {
             await _semaphoreSlim.WaitAsync();
             try
             {
                 var items = await ReadAllAsync();
-                return items.SelectMany(x => x).ToList();
+                return items.SelectMany(x => x);
             }
             finally
             {
@@ -97,6 +97,7 @@ namespace Swan.Core.Store
                         throw new Exception($"File already exists: {path}");
                     }
 
+                    _cachedObjects.Add(new List<T> { obj });
                     await WriteAsync(path, obj);
                 }
 
@@ -152,8 +153,6 @@ namespace Swan.Core.Store
 
                         if (IsStoredAsArray())
                         {
-                            item.Remove(oldObj);
-                            item.Add(obj);
                             await WriteAsync(path, item.OrderByDescending(x => x.CreateTime));
                         }
                         else
@@ -161,6 +160,8 @@ namespace Swan.Core.Store
                             await WriteAsync(path, obj);
                         }
 
+                        item.Remove(oldObj);
+                        item.Add(obj);
                         found = true;
                         break;
                     }
@@ -239,7 +240,7 @@ namespace Swan.Core.Store
         {
             if (!_cachedObjects.Any())
             {
-                foreach (var file in Directory.EnumerateDirectories(_dir, _filter, SearchOption.TopDirectoryOnly))
+                foreach (var file in Directory.EnumerateFiles(_dir, _filter, SearchOption.TopDirectoryOnly))
                 {
                     var content = await File.ReadAllTextAsync(file, Encoding.UTF8);
                     List<T> obj;
