@@ -43,7 +43,7 @@ namespace Swan.Core.Option
         [EnvOption("TITLE", Default = "Blog Title")]
         public string Title { get; set; }
 
-        [EnvOption("DESCRIPTION", Default = "Blog Description")]
+        [EnvOption("DESCRIPTION", Default = "Site Description")]
         public string Description { get; set; }
 
         [EnvOption("APP_NAME", Default = "app")]

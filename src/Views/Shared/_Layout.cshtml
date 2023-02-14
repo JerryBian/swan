@@ -23,7 +23,7 @@
         @Html.Raw(headerBuilder.Build())
     }
 
-    @if (Context.Request.HttpContext.User?.Identity?.IsAuthenticated == true)
+    @if (Context.IsAuthorized())
     {
         <link href="~/admin.min.css" rel="stylesheet" asp-append-version="true" />
     }
@@ -32,7 +32,7 @@
         <link href="~/style.min.css" rel="stylesheet" asp-append-version="true" />
     }
 </head>
-<body class="d-flex min-vh-100 w-100 flex-column">
+<body class="d-flex min-vh-100 w-100 flex-column bg-light">
     <partial name="_Navbar" />
     <main class="container py-2">
         <div class="row">
@@ -44,10 +44,10 @@
     </main>
     <partial name="_Footer" />
 
-    @if (Context.Request.HttpContext.User?.Identity?.IsAuthenticated == true)
+    @if (Context.IsAuthorized())
     {
         <div class="modal fade" id="modalDialog">
-            <div class="modal-dialog modal-fullscreen">
+            <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header" id="modalDialogHeader"></div>
                     <div class="modal-body" id="modalDialogBody"></div>
@@ -55,7 +55,6 @@
                 </div>
             </div>
         </div>
-
 
         <script src="~/admin.min.js" asp-append-version="true"></script>
     }
