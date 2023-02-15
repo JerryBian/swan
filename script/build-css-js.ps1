@@ -13,7 +13,7 @@ npx sass $(Join-Path $WWWRootLoc css style.scss) $(Join-Path $WWWRootLoc style.c
 uglifycss --ugly-comments `
     --output $(Join-Path $WWWRootLoc style.min.css) `
 $(Join-Path $NodeModulesLoc \@highlightjs cdn-assets styles atom-one-light.min.css) `
-$(Join-Path $WWWRootLoc blog.css)
+$(Join-Path $WWWRootLoc style.css)
 Write-Output "[normal]: CSS completed"
 
 uglifyjs --compress -o $(Join-Path $WWWRootLoc script.min.js) `

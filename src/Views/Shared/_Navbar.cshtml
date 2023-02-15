@@ -1,7 +1,7 @@
 ﻿@inject IOptions<SwanOption> _option
 
 <nav class="navbar navbar-expand bg-white mb-3">
-    <div class="container">
+    <div class="container wrapper">
         <a class="navbar-brand" href="/">@_option.Value.Title</a>
         <div>
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
@@ -21,11 +21,12 @@
                           <li><a class="dropdown-item disabled"><i class="bi bi-type-bold"></i> 管理博客</a></li>
                         <li><a class="dropdown-item ps-4" href="/blog/post"><i class="bi bi-list-ul"></i> 所有文章</a></li>
                         <li><a class="dropdown-item ps-4" href="/blog/post/add"><i class="bi bi-plus-square"></i> 添加文章</a></li>
+                        <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item disabled"><i class="bi bi-book"></i> 管理阅读</a></li>
                         <li><a class="dropdown-item ps-4" href="/read"><i class="bi bi-list-ul"></i> 所有阅读</a></li>
                         <li><a class="dropdown-item ps-4" href="/read"><i class="bi bi-plus-square"></i> 添加阅读</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="/logout"><i class="bi bi-box-arrow-in-left"></i> 登出</a></li>
+                        <li><a class="dropdown-item" href="/logout"><i class="bi bi-box-arrow-in-right"></i> 登出</a></li>
                       </ul>
                     </li>
                 }

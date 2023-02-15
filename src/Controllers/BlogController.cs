@@ -3,18 +3,23 @@ using Swan.Core.Helper;
 using Swan.Core.Model.Object;
 using Swan.Core.Model;
 using Swan.Core.Service;
+using Swan.Core.Extension;
+using Microsoft.Extensions.Options;
+using Swan.Core.Option;
 
 namespace Swan.Controllers
 {
     [Route("blog")]
     public class BlogController : Controller
     {
-        private ILogger<BlogController> _logger;
+        private readonly ILogger<BlogController> _logger;
         private readonly IBlogService _blogService;
+        private readonly SwanOption _option;
 
-        public BlogController(IBlogService blogService, ILogger<BlogController> logger)
+        public BlogController(IBlogService blogService, ILogger<BlogController> logger, IOptions<SwanOption> option)
         {
             _logger = logger;
+            _option = option.Value;
             _blogService = blogService;
         }
 
@@ -22,7 +27,8 @@ namespace Swan.Controllers
         public async Task<IActionResult> Index()
         {
             var posts = await _blogService.GetAllPostsAsync();
-            return View(posts);
+            var model = Request.HttpContext.IsAuthorized() ? posts.Take(_option.ItemsPerPage) : posts.Where(x => x.Object.IsPublished()).Take(_option.ItemsPerPage);
+            return View(model);
         }
 
         #region Posts

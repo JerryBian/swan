@@ -3,3 +3,8 @@ $pagination-color: inherit;
 $pagination-active-bg: gray;
 
 @import "_shared";
+
+.wrapper {
+    width: 100%;
+    max-width: 21cm;
+}

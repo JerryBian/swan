@@ -1,11 +1,6 @@
 ﻿@inject IOptions<SwanOption> _option
 
-<footer class="mt-auto small pt-5 pb-2 text-center wrapper">
+<footer class="mt-auto small pt-5 pb-2 text-center">
     &copy; @DateTime.Now.Year &middot;
     <a href="mailto:@_option.Value.AdminEmail" class="text-reset"><i class="bi bi-envelope"></i></a>
-    @if (Context.Request.HttpContext.User?.Identity?.IsAuthenticated == true)
-    {
-        <text>&middot;</text>
-        <a href="/logout" class="text-dark">登出</a>
-    }
 </footer>

@@ -7,6 +7,7 @@ namespace Swan.Core.Service
 {
     public class BlogService : IBlogService
     {
+
         private readonly IFileObjectStore<BlogTagObject> _blogTagObjectStore;
         private readonly IFileObjectStore<BlogSeriesObject> _blogSeriesObjectStore;
         private readonly IFileObjectStore<BlogPostObject> _blogPostObjectStore;
@@ -33,7 +34,7 @@ namespace Swan.Core.Service
                 result.Add(post);
             }
 
-            return result;
+            return result.OrderByDescending(x => x.Object.PublishTime).ToList();
         }
 
         public async Task<BlogPost> GetPostAsync(string id)

@@ -34,13 +34,8 @@
 </head>
 <body class="d-flex min-vh-100 w-100 flex-column bg-light">
     <partial name="_Navbar" />
-    <main class="container py-2">
-        <div class="row">
-            <div class="col-9">@RenderBody()</div>
-            <div class="col-3">
-                @await RenderSectionAsync("Section", false)
-            </div>
-        </div>
+    <main class="container py-2 wrapper bg-white rounded">
+        @RenderBody()
     </main>
     <partial name="_Footer" />
 

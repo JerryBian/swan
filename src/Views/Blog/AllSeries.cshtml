@@ -11,17 +11,3 @@
         </div>
     </div>
 }
-
-@section Section {
-    @if (Context.Request.HttpContext.User?.Identity?.IsAuthenticated == true)
-    {
-        <div class="card border-success mb-3">
-            <div class="card-header">Admin Area</div>
-            <div class="card-body text-success">
-                <div class="card-text d-grid gap-2">
-                    <a class="btn btn-primary" href="/blog/series/add"><i class="bi bi-plus-lg"></i> 创建系列</a>
-                </div>
-            </div>
-        </div>
-    }
-}

@@ -18845,6 +18845,11 @@ option:checked {
   background: green linear-gradient(0deg, green 0%, green 100%);
 }
 
+.wrapper {
+  width: 100%;
+  max-width: 21cm;
+}
+
 html, body {
   --fs-base: 0.95rem;
 }
