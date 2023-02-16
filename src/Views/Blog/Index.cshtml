@@ -1,15 +1,18 @@
 ﻿@model IEnumerable<BlogPost>
 
 <div>
+    <h3 class="text-center">最新的文章</h3>
     @foreach (var item in Model)
     {
-        <div class="d-flex mb-3 p-1">
-            <a href="@item.Object.GetUrl()" class="d-flex text-decoration-none">
-               @item.Object.Title
-            </a>
-            <span class="ms-auto small text-muted">
-                <i class="bi bi-calendar2-date" title="最后修改于：@item.Object.LastUpdateTime.ToCnDateTime()"></i> @item.Object.PublishTime.ToCnDate()
+        <div class="d-flex position-relative fs-4 mb-3">
+            <div class="text-truncate">
+                @item.Object.Title
+            </div>
+            <span class="ms-auto text-nowrap" title="最后修改于：@item.Object.LastUpdateTime.ToCnDateTime()">
+                <i class="bi bi-calendar2-date"></i> 
+                @item.Object.PublishTime.ToCnDate()
             </span>
+            <a href="@item.Object.GetUrl()" class="top-0 bottom-0 start-0 end-0 position-absolute"></a>
         </div>
     }
 </div>
