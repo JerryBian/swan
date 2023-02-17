@@ -1,18 +1,33 @@
 ﻿@model IEnumerable<BlogPost>
 
 <div>
-    <h3 class="text-center">最新的文章</h3>
     @foreach (var item in Model)
     {
-        <div class="d-flex position-relative fs-4 mb-3">
+        <div class="d-flex position-relative post-item py-2">
             <div class="text-truncate">
-                @item.Object.Title
+                <i class="bi bi-signpost small text-muted pe-1"></i>
+                <span class="fs-5">@item.Object.Title </span>
             </div>
-            <span class="ms-auto text-nowrap" title="最后修改于：@item.Object.LastUpdateTime.ToCnDateTime()">
-                <i class="bi bi-calendar2-date"></i> 
-                @item.Object.PublishTime.ToCnDate()
-            </span>
-            <a href="@item.Object.GetUrl()" class="top-0 bottom-0 start-0 end-0 position-absolute"></a>
+            <div class="text-muted text-nowrap ms-auto small pt-1 fst-italic ps-1">- @item.Object.PublishTime.ToCnDate()</div>
+            <a href="@item.Object.GetUrl()" class="top-0 bottom-0 start-0 end-0 position-absolute" title="最后修改于：@item.Object.LastUpdateTime.ToCnDateTime()"></a>
         </div>
     }
+
+    <div class="d-flex position-relative post-item py-2 fst-italic">
+        <div class="text-truncate">
+            <i class="bi bi-signpost small text-muted pe-1"></i>
+            <span class="fs-6 text-success">阅读更多文章 <i class="bi bi-three-dots small"></i></span>
+        </div>
+        <a href="/blog/post#from-index" class="top-0 bottom-0 start-0 end-0 position-absolute"></a>
+    </div>
 </div>
+
+@section Header {
+    <h2 class="text-info"><i class="bi bi-hash small text-muted"></i> 最新的文章 <i class="bi bi-hash small text-muted"></i></h2>
+}
+
+@section Script {
+    <script>
+        activeNavItem("#nav_blog");
+    </script>
+}

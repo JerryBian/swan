@@ -1,6 +1,8 @@
 ﻿@inject IOptions<SwanOption> _option
 
-<footer class="mt-auto small pt-5 pb-2 text-center">
-    &copy; @DateTime.Now.Year &middot;
-    <a href="mailto:@_option.Value.AdminEmail" class="text-reset"><i class="bi bi-envelope"></i></a>
-</footer>
+<nav class="navbar navbar-expand bg-light small mt-auto">
+    <div class="container wrapper d-block text-center p-2">
+        &copy; @DateTime.Now.Year &middot;
+        <a href="mailto:@_option.Value.AdminEmail" class="text-reset"><i class="bi bi-envelope"></i></a>
+    </div>
+</nav>

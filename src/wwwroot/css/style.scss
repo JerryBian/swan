@@ -12,3 +12,7 @@ $pagination-active-bg: gray;
 .read-item {
     cursor:pointer;
 }
+
+.post-item + .post-item {
+    border-top: 0.15rem solid var(--bs-gray-100);
+}
