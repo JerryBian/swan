@@ -1,4 +1,4 @@
-$pagination-hover-color: inherit;
+﻿$pagination-hover-color: inherit;
 $pagination-color: inherit;
 $pagination-active-bg: gray;
 
@@ -9,11 +9,11 @@ $pagination-active-bg: gray;
     max-width: 21cm;
 }
 
-.read-item-item {
+.read-item {
     cursor:pointer;
 }
 
-.post-item + .post-item,
+.post-item + .post-item，
 .read-item + .read-item {
     border-top: 0.15rem solid var(--bs-gray-100);
 }

@@ -18850,11 +18850,12 @@ option:checked {
   max-width: 21cm;
 }
 
-.read-item {
+.read-item-item {
   cursor: pointer;
 }
 
-.post-item + .post-item {
+.post-item + .post-item,
+.read-item + .read-item {
   border-top: 0.15rem solid var(--bs-gray-100);
 }
 

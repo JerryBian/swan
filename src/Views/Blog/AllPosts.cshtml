@@ -1,27 +1,51 @@
 ﻿@model IEnumerable<BlogPost>
+@inject IOptions<SwanOption> _options;
+@{
+    var i = 0;
+}
 
 @foreach (var item in Model.GroupBy(x => x.Object.PublishTime.Year))
 {
-    <h3>@item.Key (@item.Count())</h3>
+    <h3 class="mb-3 mt-4 border border-secondary px-1 py-2" style="--bs-border-opacity: .5;" id="year-@item.Key">
+        <i class="bi bi-collection small text-muted pe-1"></i>
+        @item.Key (@item.Count())
+    </h3>
     @foreach (var item2 in item.OrderByDescending(x => x.Object.PublishTime))
     {
-        <div class="d-flex">
-            <span class="text-truncate">
-                <a href="@item2.Object.GetUrl()">@item2.Object.Title </a>
-                <i class="text-muted small">(@item2.Object.PublishTime.ToCnDate(true))</i>
-            </span>
-            <span class="ms-auto">
-                @if (Context.IsAuthorized())
-                {
-                    <a href="/blog/post/@item2.Object.Id/edit"><i class="bi bi-pencil-square"></i></a>
-                }
-            </span>
+        <div class="d-flex position-relative post-item py-2">
+            <div class="text-truncate">
+                <i class="bi bi-signpost small text-muted pe-1"></i>
+                <span class="fs-5">@item2.Object.Title </span>
+            </div>
+            <div class="text-muted text-nowrap ms-auto small pt-1 fst-italic ps-1">- @item2.Object.PublishTime.ToCnDate(true)</div>
+            <a href="@item2.Object.GetUrl()" class="top-0 bottom-0 start-0 end-0 position-absolute" title="最后修改于：@item2.Object.LastUpdateTime.ToCnDateTime()"></a>
         </div>
+
+        if(i == _options.Value.ItemsPerPage)
+        {
+            <div id="from-index"></div>
+        }
+
+        i++;
     }
 }
 
 @section Script {
     <script>
         activeNavItem("#nav_blog");
+        document.addEventListener('DOMContentLoaded', function (event) {
+            anchors.options = {
+                placement: "right",
+                visible: "hover",
+                icon: "¶",
+                base: "/blog/post",
+                class: "text-muted small"
+            };
+            anchors.add("h3");
+        });
     </script>
+}
+
+@section Header {
+    <h2 class="text-info"><i class="bi bi-hash small text-muted"></i> 所有文章 (@Model.Count()) <i class="bi bi-hash small text-muted"></i></h2>
 }
