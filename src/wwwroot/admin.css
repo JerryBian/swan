@@ -18850,6 +18850,10 @@ option:checked {
   max-width: 21cm;
 }
 
+.read-item {
+  cursor: pointer;
+}
+
 html, body {
   --fs-base: 0.95rem;
 }

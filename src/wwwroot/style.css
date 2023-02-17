@@ -18850,4 +18850,8 @@ option:checked {
   max-width: 21cm;
 }
 
+.read-item {
+  cursor: pointer;
+}
+
 /*# sourceMappingURL=style.css.map */

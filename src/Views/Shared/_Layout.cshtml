@@ -39,18 +39,18 @@
     </main>
     <partial name="_Footer" />
 
-    @if (Context.IsAuthorized())
-    {
-        <div class="modal fade" id="modalDialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header" id="modalDialogHeader"></div>
-                    <div class="modal-body" id="modalDialogBody"></div>
-                    <div class="modal-footer" id="modalDialogFooter"></div>
-                </div>
+    <div class="modal fade" id="modalDialog">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" id="modalDialogHeader"></div>
+                <div class="modal-body" id="modalDialogBody"></div>
+                <div class="modal-footer" id="modalDialogFooter"></div>
             </div>
         </div>
+    </div>
 
+    @if (Context.IsAuthorized())
+    {
         <script src="~/admin.min.js" asp-append-version="true"></script>
     }
     else
