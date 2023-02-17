@@ -1,0 +1,21 @@
+﻿@model IEnumerable<BlogPost>
+
+@foreach (var item in Model.GroupBy(x => x.Object.PublishTime.Year))
+{
+    <h3>@item.Key (@item.Count())</h3>
+    @foreach (var item2 in item.OrderByDescending(x => x.Object.PublishTime))
+    {
+        <div class="d-flex">
+            <span class="text-truncate">
+                <a href="@item2.Object.GetUrl()">@item2.Object.Title </a>
+                <i class="text-muted small">(@item2.Object.PublishTime.ToCnDate(true))</i>
+            </span>
+            <span class="ms-auto">
+                @if (Context.IsAuthorized())
+                {
+                    <a href="/blog/post/@item2.Object.Id/edit"><i class="bi bi-pencil-square"></i></a>
+                }
+            </span>
+        </div>
+    }
+}

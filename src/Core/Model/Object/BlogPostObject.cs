@@ -40,7 +40,7 @@ namespace Swan.Core.Model.Object
 
         public string GetUrl()
         {
-            return $"/blog/{Link}.html";
+            return $"/blog/post/{Link}.html";
         }
 
         public bool IsPublished()

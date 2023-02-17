@@ -31,13 +31,33 @@ namespace Swan.Controllers
             return View(model);
         }
 
+        [HttpGet("post")]
+        public async Task<IActionResult> GetPosts()
+        {
+            var posts = await _blogService.GetAllPostsAsync();
+            var model = Request.HttpContext.IsAuthorized() ? posts : posts.Where(x => x.Object.IsPublished());
+            return View("AllPosts", model);
+        }
+
         #region Posts
 
-        [HttpGet("{link}.html")]
+        [HttpGet("post/{link}.html")]
         public async Task<IActionResult> GetPost([FromRoute]string link)
         {
             var post = await _blogService.GetPostByLinkAsync(link);
             if(post == null)
+            {
+                return NotFound();
+            }
+
+            return View("Post", post);
+        }
+
+        [HttpGet("post/{id}")]
+        public async Task<IActionResult> GetPostById([FromRoute] string id)
+        {
+            var post = await _blogService.GetPostAsync(id);
+            if (post == null)
             {
                 return NotFound();
             }

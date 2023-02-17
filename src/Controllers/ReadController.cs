@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Swan.Core.Extension;
 using Swan.Core.Helper;
 using Swan.Core.Model;
 using Swan.Core.Model.Object;
@@ -22,7 +23,8 @@ namespace Swan.Controllers
         public async Task<IActionResult> Index()
         {
             var reads = await _readService.GetAllAsync();
-            return View(reads);
+            var model = Request.HttpContext.IsAuthorized() ? reads : reads.Where(x => x.Object.IsPublic);
+            return View(model);
         }
 
         public async Task<IActionResult> Add()

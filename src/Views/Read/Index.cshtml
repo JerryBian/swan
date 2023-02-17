@@ -1,4 +1,4 @@
-﻿@model List<ReadModel>
+﻿@model IEnumerable<ReadModel>
 @{
     //Layout = "_ReadLayout";
     //ViewData["DatePublished"] = Model.SelectMany(x => x.Items).Min(x => x.Raw.CreateTime);
@@ -44,7 +44,7 @@
                 <div class="d-none">
                     <div class="read-item-modal-header"><div><i class="@d"></i> @r.Object.BookName</div></div>
                     <div class="read-item-modal-body">
-                        <small class="text-muted fst-italic d-none d-lg-inline-block px-1"> @r.Metadata</small>
+                        <small class="text-muted fst-italic d-none d-lg-inline-block py-1"><i class="bi bi-info"></i> @r.Metadata</small>
                         @if (!string.IsNullOrEmpty(r.CommentHtml))
                         {
                             <div class="my-1 small py-2">
