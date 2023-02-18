@@ -93,6 +93,7 @@
 
 @section Script {
     <script>
+        activeNavItem("#nav_admin");
         let editor = createEditor(document.querySelector("#comment"), "edit_read_@Model.Object.Id");
         editor.value("@Model.Object.Comment");
         const form = document.querySelector("form");

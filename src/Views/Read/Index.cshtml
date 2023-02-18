@@ -14,10 +14,12 @@
         </h3>
         @foreach (var r in item.OrderByDescending(x => x.Object.CreateTime))
         {
-            var d = "bi bi-hash small text-muted";
+            var c = "text-muted";
+            var d = "bi bi-hash small";
             if (!r.Object.IsPublic)
             {
-                d = "bi bi-file-lock small text-info";
+                c = "text-warning";
+                d = "bi bi-file-lock small";
             }
 
             <div class="py-1 read-item" onclick="showInfo(this)">
@@ -25,7 +27,7 @@
                     <div class="d-flex ps-2 pe-1">
                         <div class="text-truncate">
                             <span>
-                                <i class="@d"></i> @r.Object.BookName <i class="text-muted small">(@r.Object.CreateTime.ToCnDate(true))</i>
+                                <i class="@d @c"></i> @r.Object.BookName
                             </span>
                             @if (r.Object.Grade == 2)
                             {
@@ -37,9 +39,11 @@
                                 <i class="bi bi-hand-thumbs-down text-danger text-decoration-none small"></i>
                             }
                         </div>
-                        <div class="ms-auto small text-muted px-1 text-nowrap">
+                        <div class="@c text-nowrap ms-auto small pt-1 fst-italic ps-1">
+                            <span>- @r.Object.CreateTime.ToCnDate(true)</span>
                             @if (Context.Request.HttpContext.User?.Identity?.IsAuthenticated == true)
                             {
+                                <text> &middot; </text>
                                 <a href="/read/edit/@r.Object.Id"><i class="bi bi-pencil-square text-success"></i></a>
                             }
                         </div>
@@ -66,6 +70,7 @@
 
 @section Script {
     <script>
+        activeNavItem("#nav_read");
         document.addEventListener('DOMContentLoaded', function (event) {
             anchors.options = {
                 placement: "right",

@@ -77,7 +77,7 @@
 
 @section Script {
     <script>
-        activeNavItem("#nav_blog");
+        activeNavItem("#nav_admin");
         let editor = createEditor(document.querySelector("#mdContent"), "edit_post_@Model.Object.Id");
         editor.value("@Model.Object.MdContent");
         const form = document.querySelector("form");
