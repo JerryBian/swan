@@ -15,8 +15,6 @@ namespace Swan.Core.Service
 
         Task<BlogPostObject> UpdatePostAsync(BlogPostObject obj);
 
-        Task DeletePostAsync(string id);
-
         Task<BlogTag> GetTagAsync(string id);
 
         Task<BlogTag> GetTagByUrlAsync(string url);

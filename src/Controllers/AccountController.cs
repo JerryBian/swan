@@ -63,7 +63,7 @@ public class AccountController : Controller
 
             if (string.IsNullOrEmpty(returnUrl))
             {
-                returnUrl = "/admin";
+                returnUrl = "/";
             }
             else if (!Url.IsLocalUrl(returnUrl))
             {

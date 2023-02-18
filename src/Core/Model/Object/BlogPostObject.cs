@@ -28,6 +28,12 @@ namespace Swan.Core.Model.Object
         [JsonPropertyName("accessCount")]
         public int AccessCount { get; set; }
 
+        [JsonPropertyName("tags")]
+        public List<string> Tags { get; set; }
+
+        [JsonPropertyName("series")]
+        public string Series { get; set; }
+
         public override string GetFileName()
         {
             if(string.IsNullOrEmpty(Id))

@@ -3,7 +3,7 @@ $NodeModulesLoc = Join-Path $PSScriptRoot .. node_modules
 
 npm install
 ncu -u
-npm installbootstrap
+npm install
 
 Copy-Item -Path $(Join-Path $NodeModulesLoc bootstrap-icons font fonts *) `
     -Destination $(Join-Path $WWWRootLoc fonts)

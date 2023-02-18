@@ -1,15 +1,17 @@
 ﻿@model List<BlogTag>
 
-@foreach(var tag in Model)
+@foreach (var tag in Model)
 {
-    <div class="d-flex mb-3 p-2 bg-success">
-        <div class="text-truncate">
-            @tag.Object.Name
+    if (tag.Posts.Any())
+    {
+        <div class="d-flex post-item py-2">
+            <div class="text-truncate">
+                <i class="bi bi-hash small text-muted pe-1"></i>
+                <a class="fs-5" href="/blog/tag/@tag.Object.Url">@tag.Object.Name </a>
+            </div>
+            <div class="text-muted text-nowrap ms-auto small pt-1 fst-italic ps-1">- @tag.Posts.Count 篇文章</div>
         </div>
-        <div class="ms-auto text-nowrap">
-            <a href="/blog/tag/@tag.Object.Url" class="text-reset">@tag.Posts.Count</a> 篇文章
-        </div>
-    </div>
+    }
 }
 
 @section Script {

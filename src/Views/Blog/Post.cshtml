@@ -16,7 +16,6 @@
     <div id="post" class="bg-white mx-auto rounded w-100">
         <div class="mb-4">
             <div class="small text-muted d-flex">
-                <div>@Html.Raw(Model.Metadata)</div>
                 @if (Context.Request.HttpContext.User?.Identity?.IsAuthenticated == true)
                 {
                     <div class="ms-auto">
