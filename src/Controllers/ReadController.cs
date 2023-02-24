@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Swan.Core.Extension;
 using Swan.Core.Helper;
 using Swan.Core.Model;
@@ -26,12 +27,14 @@ namespace Swan.Controllers
             return View(reads);
         }
 
+        [Authorize]
         public async Task<IActionResult> Add()
         {
             var posts = await _blogService.GetAllPostsAsync(true);
             return View(posts);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Add([FromForm] ReadObject item)
         {
@@ -53,6 +56,7 @@ namespace Swan.Controllers
             return Json(res);
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> Edit([FromRoute] string id)
         {
@@ -62,11 +66,12 @@ namespace Swan.Controllers
                 return NotFound();
             }
 
-            ViewBag.Posts = new List<BlogPost>();
+            ViewBag.Posts = await _blogService.GetAllPostsAsync(true);
             ViewData["Title"] = $"编辑阅读: {item.Object.BookName}";
             return View(item);
         }
 
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> Edit([FromForm] ReadObject item)
         {

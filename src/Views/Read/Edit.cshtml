@@ -53,13 +53,13 @@
             
             @foreach (var p in ViewBag.Posts)
             {
-                if (Model.Object.Posts.Contains(p.Raw.Id))
+                if (Model.Object.Posts.Contains(p.Object.Id))
                 {
-                    <option value="@p.Raw.Id" selected>@p.Raw.Title</option>
+                    <option value="@p.Object.Id" selected>@p.Object.Title</option>
                 }
                 else
                 {
-                    <option value="@p.Raw.Id">@p.Raw.Title</option>
+                    <option value="@p.Object.Id">@p.Object.Title</option>
                 }
             }
         </select>

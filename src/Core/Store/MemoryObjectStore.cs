@@ -350,7 +350,7 @@ namespace Swan.Core.Store
                     var readModel = new ReadModel(obj);
                     readModel.Metadata = GetReadMetadata(obj);
                     readModel.CommentHtml = MarkdownHelper.ToHtml(obj.Comment);
-                    readModel.BlogPosts.AddRange(blogPosts.Where(x => x.Object.Id == obj.Id));
+                    readModel.BlogPosts.AddRange(blogPosts.Where(x => obj.Posts.Contains(x.Object.Id)));
                     readModels.Add(readModel);
                 } 
             }
