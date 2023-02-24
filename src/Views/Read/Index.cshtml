@@ -2,80 +2,78 @@
 
 @foreach (var item in Model.GroupBy(x => x.Object.CreateTime.Year).OrderByDescending(x => x.Key))
 {
-    <div class="mb-">
-        <h3 class="mb-3 mt-4 border border-secondary px-1 py-2" style="--bs-border-opacity: .5;" id="year-@item.Key">
-            <i class="bi bi-collection small text-muted pe-1"></i>
-            @item.Key (@item.Count())
-        </h3>
-        @foreach (var r in item.OrderByDescending(x => x.Object.CreateTime))
+    <h3 class="mb-3 mt-4 border-bottom border-2 border-info px-1 py-2" style="--bs-border-opacity: .3;" id="year-@item.Key">
+        <i class="bi bi-slash small text-muted pe-1"></i>
+        @item.Key (@item.Count())
+    </h3>
+    @foreach (var r in item.OrderByDescending(x => x.Object.CreateTime))
+    {
+        var c = "text-muted";
+        var d = "bi bi-hash small";
+        if (!r.Object.IsPublic)
         {
-            var c = "text-muted";
-            var d = "bi bi-hash small";
-            if (!r.Object.IsPublic)
-            {
-                c = "text-warning";
-                d = "bi bi-file-lock small";
-            }
+            c = "text-warning";
+            d = "bi bi-file-lock small";
+        }
 
-            <div class="py-1 read-item" onclick="showInfo(this)">
-                <div class="py-1 read-item-item">
-                    <div class="d-flex ps-2 pe-1">
-                        <div class="text-truncate">
-                            <span>
-                                <i class="@d @c"></i> @r.Object.BookName
-                            </span>
-                            @if (r.Object.Grade == 2)
-                            {
-                                <i class="bi bi-hand-thumbs-up text-success text-decoration-none small"></i>
-                            }
+        <div class="py-1 read-item fs-5" onclick="showInfo(this)">
+            <div class="py-1 read-item-item">
+                <div class="d-flex ps-2 pe-1">
+                    <div class="text-truncate">
+                        <span>
+                            <i class="@d @c"></i> @r.Object.BookName
+                        </span>
+                        @if (r.Object.Grade == 2)
+                        {
+                            <i class="bi bi-hand-thumbs-up text-success text-decoration-none small"></i>
+                        }
 
-                            @if (r.Object.Grade == 0)
-                            {
-                                <i class="bi bi-hand-thumbs-down text-danger text-decoration-none small"></i>
-                            }
-                        </div>
-                        <div class="@c text-nowrap ms-auto small pt-1 fst-italic ps-1">
-                            <span>- @r.Object.CreateTime.ToCnDate(true)</span>
-                        </div>
+                        @if (r.Object.Grade == 0)
+                        {
+                            <i class="bi bi-hand-thumbs-down text-danger text-decoration-none small"></i>
+                        }
                     </div>
+                    <div class="@c text-nowrap ms-auto small pt-1 fst-italic ps-1">
+                        <span>- @r.Object.CreateTime.ToCnDate(true)</span>
+                    </div>
+                </div>
 
-                    <div class="d-none">
-                        <div class="read-item-modal-header"><div><i class="@d"></i> @r.Object.BookName</div></div>
-                        <div class="read-item-modal-body">
-                            <small class="text-muted fst-italic d-none d-lg-inline-block py-1 mb-1"><i class="bi bi-info"></i> @r.Metadata</small>
-                            @if (r.BlogPosts.Any())
-                            {
-                                <div class="alert alert-secondary small" role="alert">
-                                    <div class="fs-6 mb-2">
-                                        相关博客文章
+                <div class="d-none">
+                    <div class="read-item-modal-header"><div><i class="@d"></i> @r.Object.BookName</div></div>
+                    <div class="read-item-modal-body">
+                        <small class="text-muted fst-italic d-none d-lg-inline-block py-1 mb-1"><i class="bi bi-info"></i> @r.Metadata</small>
+                        @if (r.BlogPosts.Any())
+                        {
+                            <div class="alert alert-secondary small" role="alert">
+                                <div class="fs-6 mb-2">
+                                    相关博客文章
+                                </div>
+                                @foreach (var post in r.BlogPosts)
+                                {
+                                    <div class="mb-2">
+                                        <a href="@post.GetUrl()" class="text-decoration-none"><i class="bi bi-hash text-muted"></i> @post.Object.Title</a>
                                     </div>
-                                    @foreach (var post in r.BlogPosts)
-                                    {
-                                        <div class="mb-2">
-                                            <a href="@post.GetUrl()" class="text-decoration-none"><i class="bi bi-hash text-muted"></i> @post.Object.Title</a>
-                                        </div>
-                                    }
-                                </div>
-                            }
+                                }
+                            </div>
+                        }
 
-                            @if (!string.IsNullOrEmpty(r.CommentHtml))
-                            {
-                                <div class="my-1 small py-2">
-                                    @Html.Raw(r.CommentHtml)
-                                </div>
-                            }
-                        </div>
-                        <div class="read-item-modal-footer">
-                            @if (Context.IsAuthorized())
-                            {
-                                <a class="btn btn-success" href="/read/edit/@r.Object.Id"><i class="bi bi-pencil-square"></i> 编辑</a>
-                            }
-                        </div>
+                        @if (!string.IsNullOrEmpty(r.CommentHtml))
+                        {
+                            <div class="my-1 small py-2">
+                                @Html.Raw(r.CommentHtml)
+                            </div>
+                        }
+                    </div>
+                    <div class="read-item-modal-footer">
+                        @if (Context.IsAuthorized())
+                        {
+                            <a class="btn btn-success" href="/read/edit/@r.Object.Id"><i class="bi bi-pencil-square"></i> 编辑</a>
+                        }
                     </div>
                 </div>
             </div>
-        }
-    </div>
+        </div>
+    }
 }
 
 

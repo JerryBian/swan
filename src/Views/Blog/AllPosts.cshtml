@@ -6,8 +6,8 @@
 
 @foreach (var item in Model.GroupBy(x => x.Object.PublishTime.Year))
 {
-    <h3 class="mb-3 mt-4 border border-secondary px-1 py-2" style="--bs-border-opacity: .5;" id="year-@item.Key">
-        <i class="bi bi-collection small text-muted pe-1"></i>
+    <h3 class="mb-3 mt-4 border-bottom border-2 border-info px-1 py-2" style="--bs-border-opacity: .5;" id="year-@item.Key">
+        <i class="bi bi-slash small text-muted pe-1"></i>
         @item.Key (@item.Count())
     </h3>
     @foreach (var item2 in item.OrderByDescending(x => x.Object.PublishTime))

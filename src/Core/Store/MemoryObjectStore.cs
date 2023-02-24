@@ -434,15 +434,15 @@ namespace Swan.Core.Store
             {
                 h3Node.Id = h3Node.InnerText;
                 h3Node.RemoveClass();
-                h3Node.AddClass("mb-3 mt-4 border border-secondary px-1 py-2 text-truncate");
-                h3Node.InnerHtml = $"<i class=\"bi bi-collection small text-muted pe-1\"></i> {h3Node.InnerHtml}";
+                h3Node.AddClass("mb-3 mt-4 border-bottom border-2 border-info px-1 py-2");
+                h3Node.InnerHtml = $"<i class=\"bi bi-slash small text-muted pe-1\"></i> {h3Node.InnerHtml}";
             }
 
             List<HtmlNode> h4 = htmlDoc.DocumentNode.Descendants("h4").ToList();
             foreach (HtmlNode h4Node in h4)
             {
                 h4Node.Id = h4Node.InnerText;
-                h4Node.InnerHtml = $"<i class=\"bi bi-collection small text-muted pe-1\"></i> {h4Node.InnerHtml} <i class=\"bi bi-dash small text-secondary\"></i>";
+                h4Node.InnerHtml = $"<i class=\"bi bi-caret-right small text-muted pe-1\"></i> {h4Node.InnerHtml} <i class=\"bi bi-dash small text-secondary\"></i>";
             }
 
             return htmlDoc;
