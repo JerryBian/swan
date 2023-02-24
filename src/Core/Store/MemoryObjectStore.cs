@@ -361,7 +361,7 @@ namespace Swan.Core.Store
                 post.BlogSeries = blogSereis.FirstOrDefault(x => x.Posts.Contains(post));
             }
 
-            if(isAdmin)
+            if(!isAdmin)
             {
                 blogTags.RemoveAll(x => !x.Posts.Any());
                 blogSereis.RemoveAll(x => !x.Posts.Any());

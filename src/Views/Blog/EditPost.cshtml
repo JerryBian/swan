@@ -31,6 +31,58 @@
                 <input type="number" class="form-control" id="accessCount" name="accessCount" value="@Model.Object.AccessCount" min="0" step="1" autocomplete="off">
             </div>
             <div class="mb-3">
+                <label for="series" class="form-label">文章系列</label>
+                <select class="form-select font-monospace" id="series" name="series">
+                    @if (!((List<BlogSeries>)(ViewBag.Series)).Any())
+                    {
+                        <option selected value="" class="small">-- 选择博客系列 --</option>
+                    }
+                    else
+                    {
+                        <option value="" class="small">-- 选择博客系列 --</option>
+                    }
+
+
+                    @foreach (var p in ViewBag.Series)
+                    {
+                        if (Model.Object.Series == p.Object.Id)
+                        {
+                            <option value="@p.Object.Id" selected>@p.Object.Name</option>
+                        }
+                        else
+                        {
+                            <option value="@p.Object.Id">@p.Object.Name</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="tags" class="form-label">文章标签</label>
+                <select class="form-select font-monospace" id="tags" name="tags" multiple size="10">
+                    @if (!((List<BlogTag>)(ViewBag.Tags)).Any())
+                    {
+                        <option selected value="" class="small">-- 选择博客标签（支持多选） --</option>
+                    }
+                    else
+                    {
+                        <option value="" class="small">-- 选择博客标签（支持多选） --</option>
+                    }
+
+
+                    @foreach (var p in ViewBag.Tags)
+                    {
+                        if (Model.Object.Tags.Contains(p.Object.Id))
+                        {
+                            <option value="@p.Object.Id" selected>@p.Object.Name</option>
+                        }
+                        else
+                        {
+                            <option value="@p.Object.Id">@p.Object.Name</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="mb-3">
                 <label for="mdContent" class="form-label">文章内容</label>
                 <textarea id="mdContent"></textarea>
             </div>

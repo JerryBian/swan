@@ -1,21 +1,23 @@
 ﻿@model List<BlogTag>
 
-@foreach (var tag in Model)
+@foreach (var item in Model)
 {
-    if (tag.Posts.Any())
-    {
-        <div class="d-flex post-item py-2">
-            <div class="text-truncate">
-                <i class="bi bi-hash small text-muted pe-1"></i>
-                <a class="fs-5" href="/blog/tag/@tag.Object.Url">@tag.Object.Name </a>
-            </div>
-            <div class="text-muted text-nowrap ms-auto small pt-1 fst-italic ps-1">- @tag.Posts.Count 篇文章</div>
+    <div class="d-flex position-relative post-item py-2">
+        <div class="text-truncate">
+            <i class="bi bi-signpost small text-muted pe-1"></i>
+            <span class="fs-5">@item.Object.Name </span>
         </div>
-    }
+        <div class="text-muted text-nowrap ms-auto small pt-1 fst-italic ps-1">- @item.Posts.Count 篇文章</div>
+        <a href="@item.GetUrl()" class="top-0 bottom-0 start-0 end-0 position-absolute"></a>
+    </div>
 }
 
 @section Script {
     <script>
         activeNavItem("#nav_blog");
     </script>
+}
+
+@section Header {
+    <h2 class="text-info"><i class="bi bi-hash small text-muted"></i> 所有标签 <i class="bi bi-hash small text-muted"></i></h2>
 }

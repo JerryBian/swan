@@ -14,20 +14,24 @@
                 @if (Context.IsAuthorized())
                 {
                     <li class="nav-item dropdown">
-                      <a class="nav-link dropdown-toggle text-success" id="nav_admin" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-gear-wide-connected"></i> Admin
-                      </a>
-                      <ul class="dropdown-menu dropdown-menu-end">
-                          <li><a class="dropdown-item disabled"><i class="bi bi-type-bold"></i> 管理博客</a></li>
-                        <li><a class="dropdown-item ps-4" href="/blog/post"><i class="bi bi-list-ul"></i> 所有文章</a></li>
-                        <li><a class="dropdown-item ps-4" href="/blog/post/add"><i class="bi bi-plus-square"></i> 添加文章</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item disabled"><i class="bi bi-book"></i> 管理阅读</a></li>
-                        <li><a class="dropdown-item ps-4" href="/read"><i class="bi bi-list-ul"></i> 所有阅读</a></li>
-                        <li><a class="dropdown-item ps-4" href="/read/add"><i class="bi bi-plus-square"></i> 添加阅读</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="/logout"><i class="bi bi-box-arrow-in-right"></i> 登出</a></li>
-                      </ul>
+                        <a class="nav-link dropdown-toggle text-success" id="nav_admin" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-gear-wide-connected"></i> Admin
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item disabled"><i class="bi bi-type-bold"></i> 管理博客</a></li>
+                            <li><a class="dropdown-item ps-4" href="/blog/post"><i class="bi bi-list-ul"></i> 所有文章</a></li>
+                            <li><a class="dropdown-item ps-4" href="/blog/post/add"><i class="bi bi-plus-square"></i> 添加文章</a></li>
+                            <li><a class="dropdown-item ps-4" href="/blog/tag"><i class="bi bi-list-ul"></i> 所有标签</a></li>
+                            <li><a class="dropdown-item ps-4" href="/blog/tag/add"><i class="bi bi-plus-square"></i> 添加标签</a></li>
+                            <li><a class="dropdown-item ps-4" href="/blog/series"><i class="bi bi-list-ul"></i> 所有系列</a></li>
+                            <li><a class="dropdown-item ps-4" href="/blog/series/add"><i class="bi bi-plus-square"></i> 添加系列</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item disabled"><i class="bi bi-book"></i> 管理阅读</a></li>
+                            <li><a class="dropdown-item ps-4" href="/read"><i class="bi bi-list-ul"></i> 所有阅读</a></li>
+                            <li><a class="dropdown-item ps-4" href="/read/add"><i class="bi bi-plus-square"></i> 添加阅读</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/logout"><i class="bi bi-box-arrow-in-right"></i> 登出</a></li>
+                        </ul>
                     </li>
                 }
             </ul>

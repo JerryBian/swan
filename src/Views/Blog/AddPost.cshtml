@@ -30,6 +30,26 @@
                 <input type="number" class="form-control" id="accessCount" name="accessCount" value="100" min="0" step="1" autocomplete="off">
             </div>
             <div class="mb-3">
+                <label for="series" class="form-label">文章系列</label>
+                <select class="form-select font-monospace" id="series" name="series">
+                    <option selected value="" class="small">-- 选择博客系列 --</option>
+                    @foreach(var p in ViewBag.Series)
+                    {
+                        <option value="@p.Object.Id" class="my-1 ps-1">@p.Object.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="tags" class="form-label">文章标签</label>
+                <select class="form-select font-monospace" id="tags" name="tags" multiple size="10">
+                    <option selected value="" class="small">-- 选择博客标签（支持多选） --</option>
+                    @foreach(var p in ViewBag.Tags)
+                    {
+                        <option value="@p.Object.Id" class="my-1 ps-1">@p.Object.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="mb-3">
                 <label for="mdContent" class="form-label">文章内容</label>
                 <textarea id="mdContent"></textarea>
             </div>
@@ -54,7 +74,7 @@
 @section Script {
     <script>
         activeNavItem("#nav_admin");
-        let editor = createEditor(document.querySelector("#mdContent", "new_post"));
+        let editor = createEditor(document.querySelector("#mdContent"), "new_post");
         const form = document.querySelector("form");
         form.addEventListener('submit',
             function(event) {

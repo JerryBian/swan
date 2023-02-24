@@ -68,7 +68,7 @@ namespace Swan.Core.Service
         public async Task<List<BlogTag>> GetAllTagsAsync(bool isAdmin)
         {
             var tags = await _store.GetBlogTagsAsync(isAdmin);
-            return tags.OrderByDescending(x => x.Posts.Max(y => y.Object.PublishTime)).ToList();
+            return tags.OrderByDescending(x => x.Posts.Any() ? x.Posts.Max(y => y.Object.PublishTime) : default).ToList();
         }
 
         public async Task<BlogTag> AddTagAsync(BlogTagObject obj)
@@ -107,7 +107,7 @@ namespace Swan.Core.Service
         public async Task<List<BlogSeries>> GetAllSeriesAsync(bool isAdmin)
         {
             var result = await _store.GetBlogSeriesAsync(isAdmin);
-            return result.OrderByDescending(x => x.Posts.Max(y => y.Object.PublishTime)).ToList();
+            return result.OrderByDescending(x => x.Posts.Any() ? x.Posts.Max(y => y.Object.PublishTime) : default).ToList();
         }
 
         public async Task<BlogSeries> AddSeriesAsync(BlogSeriesObject obj)

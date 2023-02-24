@@ -53,6 +53,7 @@ namespace Swan.Controllers
             return View("Post", post);
         }
 
+        [Authorize]
         [HttpGet("post/{id}")]
         public async Task<IActionResult> GetPostById([FromRoute] string id)
         {
@@ -84,6 +85,10 @@ namespace Swan.Controllers
             ApiResponse<object> res = new();
             try
             {
+                obj.Tags.Remove(string.Empty);
+                obj.IsPublic = Request.Form["isPublic"] == "on";
+                obj.IsTopping = Request.Form["isTopping"] == "on";
+                obj.ContainsMath = Request.Form["containsMath"] == "on";
                 var post = await _blogService.AddPostAsync(obj);
                 res.RedirectTo = post.GetUrl();
             }
@@ -107,6 +112,11 @@ namespace Swan.Controllers
                 return NotFound();
             }
 
+            var tags = await _blogService.GetAllTagsAsync(true);
+            var series = await _blogService.GetAllSeriesAsync(true);
+
+            ViewBag.Tags = tags;
+            ViewBag.Series = series;
             return View("EditPost", post);
         }
 
@@ -117,6 +127,10 @@ namespace Swan.Controllers
             ApiResponse<object> res = new();
             try
             {
+                obj.Tags.Remove(string.Empty);
+                obj.IsPublic = Request.Form["isPublic"] == "on";
+                obj.IsTopping = Request.Form["isTopping"] == "on";
+                obj.ContainsMath = Request.Form["containsMath"] == "on";
                 var post = await _blogService.UpdatePostAsync(obj);
                 res.RedirectTo = post.GetUrl();
             }
