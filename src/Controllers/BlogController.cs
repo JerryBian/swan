@@ -7,6 +7,9 @@ using Swan.Core.Extension;
 using Microsoft.Extensions.Options;
 using Swan.Core.Option;
 using Microsoft.AspNetCore.Authorization;
+using System.ServiceModel.Syndication;
+using System.Text;
+using System.Xml;
 
 namespace Swan.Controllers
 {
@@ -311,5 +314,54 @@ namespace Swan.Controllers
         }
 
         #endregion
+
+        [Route("rss")]
+        [Route("feed")]
+        //[ResponseCache(CacheProfileName = Constants.CacheProfileServerShort)]
+        public async Task<IActionResult> Rss()
+        {
+            SyndicationFeed feed = new(_option.Title, _option.Description,
+                    new Uri($"{_option.BaseUrl}/blog/rss"),
+                    _option.AppName, DateTimeOffset.UtcNow)
+            {
+                Copyright = new TextSyndicationContent(
+                        $"&#x26;amp;#169; {DateTime.Now.Year} {_option.AdminUserFullName}")
+            };
+            feed.Authors.Add(new SyndicationPerson(_option.AdminEmail,
+                _option.AdminUserFullName,
+                _option.BaseUrl));
+            feed.BaseUri = new Uri(_option.BaseUrl);
+            feed.Language = "zh-cn";
+            List<SyndicationItem> items = new();
+            List<BlogPost> posts = await _blogService.GetAllPostsAsync(false);
+            foreach (var post in posts)
+            {
+                items.Add(new SyndicationItem(post.Object.Title, post.HtmlContent,
+                    new Uri($"{_option.BaseUrl}{post.GetUrl()}"),
+                    $"{_option.BaseUrl}{post.GetUrl()}",
+                    new DateTimeOffset(post.Object.LastUpdateTime, TimeSpan.FromHours(8))));
+            }
+
+            feed.Items = items;
+            XmlWriterSettings settings = new()
+            {
+                Encoding = Encoding.UTF8,
+                NewLineHandling = NewLineHandling.Entitize,
+                NewLineOnAttributes = false,
+                Async = true,
+                Indent = true
+            };
+
+            using MemoryStream ms = new();
+            using (XmlWriter xmlWriter = XmlWriter.Create(ms, settings))
+            {
+                Rss20FeedFormatter rssFormatter = new(feed, false);
+                rssFormatter.WriteTo(xmlWriter);
+                xmlWriter.Flush();
+            }
+
+            string rss = Encoding.UTF8.GetString(ms.ToArray());
+            return Content(rss, "application/rss+xml", Encoding.UTF8);
+        }
     }
 }
