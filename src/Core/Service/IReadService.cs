@@ -5,12 +5,9 @@ namespace Swan.Core.Service
 {
     public interface IReadService
     {
-        Task<List<ReadModel>> GetAllAsync();
-
+        Task<ReadModel> AddAsync(ReadObject item);
+        Task<List<ReadModel>> GetAllAsync(bool isAdmin);
         Task<ReadModel> GetAsync(string id);
-
-        Task AddAsync(ReadObject item);
-
-        Task UpdateAsync(ReadObject item);
+        Task<ReadModel> UpdateAsync(ReadObject item);
     }
 }

@@ -29,7 +29,7 @@ namespace Swan.Core.Model.Object
         public int AccessCount { get; set; }
 
         [JsonPropertyName("tags")]
-        public List<string> Tags { get; set; }
+        public List<string> Tags { get; init; } = new();
 
         [JsonPropertyName("series")]
         public string Series { get; set; }
@@ -42,16 +42,6 @@ namespace Swan.Core.Model.Object
             }
 
             return $"{Id}{Constants.JsonFileExt}";
-        }
-
-        public string GetUrl()
-        {
-            return $"/blog/post/{Link}.html";
-        }
-
-        public bool IsPublished()
-        {
-            return PublishTime <= DateTime.Now;
         }
     }
 }

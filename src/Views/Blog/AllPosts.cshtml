@@ -18,7 +18,7 @@
                 <span class="fs-5">@item2.Object.Title </span>
             </div>
             <div class="text-muted text-nowrap ms-auto small pt-1 fst-italic ps-1">- @item2.Object.PublishTime.ToCnDate(true)</div>
-            <a href="@item2.Object.GetUrl()" class="top-0 bottom-0 start-0 end-0 position-absolute" title="最后修改于：@item2.Object.LastUpdateTime.ToCnDateTime()"></a>
+            <a href="@item2.GetUrl()" class="top-0 bottom-0 start-0 end-0 position-absolute" title="最后修改于：@item2.Object.LastUpdateTime.ToCnDateTime()"></a>
         </div>
 
         if(i == _options.Value.ItemsPerPage)

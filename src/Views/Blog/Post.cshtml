@@ -8,7 +8,7 @@
 
 @{
     var d = "bi bi-hash small text-muted";
-    if (!Model.Object.IsPublished())
+    if (!Model.IsPublished())
     {
         d = "bi bi-file-lock small text-info";
     }
@@ -47,7 +47,7 @@
                 placement: "right",
                 visible: "hover",
                 icon: "¶",
-                base: "@Model.Object.GetUrl()",
+                base: "@Model.GetUrl()",
                 class: "text-reset"
             };
             anchors.add("h4");

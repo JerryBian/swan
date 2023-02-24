@@ -6,6 +6,7 @@ using Swan.Core.Service;
 using Swan.Core.Extension;
 using Microsoft.Extensions.Options;
 using Swan.Core.Option;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Swan.Controllers
 {
@@ -26,17 +27,16 @@ namespace Swan.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var posts = await _blogService.GetAllPostsAsync();
-            var model = Request.HttpContext.IsAuthorized() ? posts.Take(_option.ItemsPerPage) : posts.Where(x => x.Object.IsPublished()).Take(_option.ItemsPerPage);
+            var posts = await _blogService.GetAllPostsAsync(Request.HttpContext.IsAuthorized());
+            var model = posts.Take(_option.ItemsPerPage);
             return View(model);
         }
 
         [HttpGet("post")]
         public async Task<IActionResult> GetPosts()
         {
-            var posts = await _blogService.GetAllPostsAsync();
-            var model = Request.HttpContext.IsAuthorized() ? posts : posts.Where(x => x.Object.IsPublished());
-            return View("AllPosts", model);
+            var posts = await _blogService.GetAllPostsAsync(Request.HttpContext.IsAuthorized());
+            return View("AllPosts", posts);
         }
 
         #region Posts
@@ -44,7 +44,7 @@ namespace Swan.Controllers
         [HttpGet("post/{link}.html")]
         public async Task<IActionResult> GetPost([FromRoute]string link)
         {
-            var post = await _blogService.GetPostByLinkAsync(link);
+            var post = await _blogService.GetPostByLinkAsync(link, Request.HttpContext.IsAuthorized());
             if(post == null)
             {
                 return NotFound();
@@ -65,19 +65,26 @@ namespace Swan.Controllers
             return View("Post", post);
         }
 
+        [Authorize]
         [HttpGet("post/add")]
         public async Task<IActionResult> AddPost()
         {
+            var tags = await _blogService.GetAllTagsAsync(true);
+            var series = await _blogService.GetAllSeriesAsync(true);
+
+            ViewBag.Tags = tags;
+            ViewBag.Series = series;
             return View("AddPost");
         }
 
+        [Authorize]
         [HttpPut("post")]
         public async Task<IActionResult> AddPost([FromForm]BlogPostObject obj)
         {
             ApiResponse<object> res = new();
             try
             {
-                var post = await _blogService.CreatePostAsync(obj);
+                var post = await _blogService.AddPostAsync(obj);
                 res.RedirectTo = post.GetUrl();
             }
             catch (Exception ex)
@@ -90,6 +97,7 @@ namespace Swan.Controllers
             return Json(res);
         }
 
+        [Authorize]
         [HttpGet("post/{id}/edit")]
         public async Task<IActionResult> EditPost([FromRoute]string id)
         {
@@ -102,6 +110,7 @@ namespace Swan.Controllers
             return View("EditPost", post);
         }
 
+        [Authorize]
         [HttpPost("post")]
         public async Task<IActionResult> EditPost([FromForm] BlogPostObject obj)
         {
@@ -128,14 +137,14 @@ namespace Swan.Controllers
         [HttpGet("tag")]
         public async Task<IActionResult> GetTags()
         {
-            var tags = await _blogService.GetAllTagsAsync();
+            var tags = await _blogService.GetAllTagsAsync(Request.HttpContext.IsAuthorized());
             return View("AllTags", tags);
         }
 
         [HttpGet("tag/{url}")]
         public async Task<IActionResult> GetTag([FromRoute]string url)
         {
-            var tag = await _blogService.GetTagByUrlAsync(url);
+            var tag = await _blogService.GetTagByUrlAsync(url, Request.HttpContext.IsAuthorized());
             if(tag == null)
             {
                 return NotFound();
@@ -144,20 +153,22 @@ namespace Swan.Controllers
             return View("Tag", tag);
         }
 
+        [Authorize]
         [Route("tag/add")]
         public IActionResult AddTag()
         {
             return View("AddTag");
         }
 
+        [Authorize]
         [HttpPut("tag/add")]
         public async Task<IActionResult> AddTag([FromForm] BlogTagObject item)
         {
             ApiResponse<object> res = new();
             try
             {
-                await _blogService.CreateTagAsync(item);
-                res.RedirectTo = "/blog/tag";
+                var result = await _blogService.AddTagAsync(item);
+                res.RedirectTo = result.GetUrl();
             }
             catch (Exception ex)
             {
@@ -169,6 +180,7 @@ namespace Swan.Controllers
             return Json(res);
         }
 
+        [Authorize]
         [HttpGet("tag/{id}/edit")]
         public async Task<IActionResult> EditTag([FromRoute] string id)
         {
@@ -181,6 +193,7 @@ namespace Swan.Controllers
             return View("EditTag", item);
         }
 
+        [Authorize]
         [HttpPost("tag/edit")]
         public async Task<IActionResult> EditTag([FromForm] BlogTagObject item)
         {
@@ -207,14 +220,14 @@ namespace Swan.Controllers
         [HttpGet("series")]
         public async Task<IActionResult> GetSeries()
         {
-            var series = await _blogService.GetAllSeriesAsync();
+            var series = await _blogService.GetAllSeriesAsync(Request.HttpContext.IsAuthorized());
             return View("AllSeries", series);
         }
 
         [HttpGet("series/{url}")]
         public async Task<IActionResult> GetSeries([FromRoute] string url)
         {
-            var series = await _blogService.GetSeriesByUrlAsync(url);
+            var series = await _blogService.GetSeriesByUrlAsync(url, Request.HttpContext.IsAuthorized());
             if (series == null)
             {
                 return NotFound();
@@ -223,19 +236,21 @@ namespace Swan.Controllers
             return View("series", series);
         }
 
+        [Authorize]
         [Route("series/add")]
         public IActionResult AddSeries()
         {
             return View("AddSeries");
         }
 
+        [Authorize]
         [HttpPut("series/add")]
         public async Task<IActionResult> AddSeries([FromForm] BlogSeriesObject item)
         {
             ApiResponse<object> res = new();
             try
             {
-                await _blogService.CreateSeriesAsync(item);
+                await _blogService.AddSeriesAsync(item);
                 res.RedirectTo = "/blog/series";
             }
             catch (Exception ex)
@@ -248,6 +263,7 @@ namespace Swan.Controllers
             return Json(res);
         }
 
+        [Authorize]
         [HttpGet("series/{id}/edit")]
         public async Task<IActionResult> EditSeries([FromRoute] string id)
         {
@@ -260,14 +276,15 @@ namespace Swan.Controllers
             return View("EditSeries", item);
         }
 
+        [Authorize]
         [HttpPost("series/edit")]
         public async Task<IActionResult> EditSeries([FromForm] BlogSeriesObject item)
         {
             ApiResponse<object> res = new();
             try
             {
-                await _blogService.UpdateSeriesAsync(item);
-                res.RedirectTo = "/blog/series";
+                var result = await _blogService.UpdateSeriesAsync(item);
+                res.RedirectTo = result.GetUrl();
             }
             catch (Exception ex)
             {

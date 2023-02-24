@@ -16,6 +16,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Core\Model\Object\hzew3drp.grl~" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="wwwroot\fonts\" />
   </ItemGroup>
 

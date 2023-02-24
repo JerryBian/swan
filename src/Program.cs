@@ -59,6 +59,8 @@ builder.Services.AddSingleton<ILogService, LogService>();
 builder.Services.AddSingleton<IBlacklistRepository, BlacklistRepository>();
 builder.Services.AddSingleton<IBlacklistService, BlacklistService>();
 
+builder.Services.AddSingleton<IMemoryObjectStore, MemoryObjectStore>();
+
 builder.Services.AddSingleton<Swan.Core.Service.IBlogService, Swan.Core.Service.BlogService>();
 builder.Services.AddSingleton<Swan.Core.Service.IReadService, Swan.Core.Service.ReadService>();
 

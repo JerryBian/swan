@@ -30,7 +30,7 @@ namespace Swan.Core.Model.Object
         public string Comment { get; set; }
 
         [JsonPropertyName("posts")]
-        public List<string> Posts { get; set; }
+        public List<string> Posts { get; init; } = new();
 
         [JsonPropertyName("isPublic")]
         public bool IsPublic { get; set; }

@@ -22,14 +22,13 @@ namespace Swan.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var reads = await _readService.GetAllAsync();
-            var model = Request.HttpContext.IsAuthorized() ? reads : reads.Where(x => x.Object.IsPublic);
-            return View(model);
+            var reads = await _readService.GetAllAsync(Request.HttpContext.IsAuthorized());
+            return View(reads);
         }
 
         public async Task<IActionResult> Add()
         {
-            var posts = new List<BlogPost>();
+            var posts = await _blogService.GetAllPostsAsync(true);
             return View(posts);
         }
 

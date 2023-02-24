@@ -53,6 +53,18 @@
                         <div class="read-item-modal-header"><div><i class="@d"></i> @r.Object.BookName</div></div>
                         <div class="read-item-modal-body">
                             <small class="text-muted fst-italic d-none d-lg-inline-block py-1"><i class="bi bi-info"></i> @r.Metadata</small>
+                            @if (r.BlogPosts.Any())
+                            {
+                                <div class="alert alert-secondary" role="alert">
+                                    @foreach(var post in r.BlogPosts)
+                                    {
+                                        <div>
+                                            <a href="@post.GetUrl()">@post.Object.Title</a>
+                                        </div>
+                                    }
+                                </div>
+                            }
+
                             @if (!string.IsNullOrEmpty(r.CommentHtml))
                             {
                                 <div class="my-1 small py-2">
@@ -82,7 +94,7 @@
             anchors.add("h3");
         });
 
-        function showInfo(ele){
+        function showInfo(ele) {
             let modalHeader = ele.querySelector(".read-item-modal-header");
             let modalBody = ele.querySelector(".read-item-modal-body");
             showMessageModal(modalHeader.innerHTML, modalBody.innerHTML);

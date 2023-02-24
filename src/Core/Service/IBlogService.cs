@@ -5,38 +5,38 @@ namespace Swan.Core.Service
 {
     public interface IBlogService
     {
-        Task<List<BlogPost>> GetAllPostsAsync();
+        Task<BlogPost> AddPostAsync(BlogPostObject obj);
 
-        Task<BlogPost> GetPostAsync(string id);
+        Task<BlogSeries> AddSeriesAsync(BlogSeriesObject obj);
 
-        Task<BlogPost> GetPostByLinkAsync(string link);
+        Task<BlogTag> AddTagAsync(BlogTagObject obj);
 
-        Task<BlogPostObject> CreatePostAsync(BlogPostObject obj);
-
-        Task<BlogPostObject> UpdatePostAsync(BlogPostObject obj);
-
-        Task<BlogTag> GetTagAsync(string id);
-
-        Task<BlogTag> GetTagByUrlAsync(string url);
-
-        Task<List<BlogTag>> GetAllTagsAsync();
-
-        Task<BlogTagObject> CreateTagAsync(BlogTagObject obj);
-
-        Task<BlogTagObject> UpdateTagAsync(BlogTagObject obj);
+        Task DeleteSeriesAsync(string id);
 
         Task DeleteTagAsync(string id);
 
+        Task<List<BlogPost>> GetAllPostsAsync(bool isAdmin);
+
+        Task<List<BlogSeries>> GetAllSeriesAsync(bool isAdmin);
+
+        Task<List<BlogTag>> GetAllTagsAsync(bool isAdmin);
+
+        Task<BlogPost> GetPostAsync(string id);
+
+        Task<BlogPost> GetPostByLinkAsync(string link, bool isAdmin);
+
         Task<BlogSeries> GetSeriesAsync(string id);
 
-        Task<BlogSeries> GetSeriesByUrlAsync(string url);
+        Task<BlogSeries> GetSeriesByUrlAsync(string url, bool isAdmin);
 
-        Task<List<BlogSeries>> GetAllSeriesAsync();
+        Task<BlogTag> GetTagAsync(string id);
 
-        Task<BlogSeriesObject> CreateSeriesAsync(BlogSeriesObject obj);
+        Task<BlogTag> GetTagByUrlAsync(string url, bool isAdmin);
 
-        Task<BlogSeriesObject> UpdateSeriesAsync(BlogSeriesObject obj);
+        Task<BlogPost> UpdatePostAsync(BlogPostObject obj);
 
-        Task DeleteSeriesAsync(string id);
+        Task<BlogSeries> UpdateSeriesAsync(BlogSeriesObject obj);
+
+        Task<BlogTag> UpdateTagAsync(BlogTagObject obj);
     }
 }
