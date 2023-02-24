@@ -345,11 +345,14 @@ namespace Swan.Core.Store
             var readModels = new List<ReadModel>();
             foreach (var obj in readModelObjs)
             {
-                var readModel = new ReadModel(obj);
-                readModel.Metadata = GetReadMetadata(obj);
-                readModel.CommentHtml = MarkdownHelper.ToHtml(obj.Comment);
-                readModel.BlogPosts.AddRange(blogPosts.Where(x => x.Object.Id == obj.Id));
-                readModels.Add(readModel);
+                if(isAdmin || obj.IsPublic)
+                {
+                    var readModel = new ReadModel(obj);
+                    readModel.Metadata = GetReadMetadata(obj);
+                    readModel.CommentHtml = MarkdownHelper.ToHtml(obj.Comment);
+                    readModel.BlogPosts.AddRange(blogPosts.Where(x => x.Object.Id == obj.Id));
+                    readModels.Add(readModel);
+                } 
             }
 
             foreach (var post in blogPosts)
