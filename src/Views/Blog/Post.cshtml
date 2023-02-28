@@ -18,8 +18,36 @@
             @Html.Raw(Model.HtmlContent)
             <p class="font-monospace">(完)</p>
         </article>
-        <div class="alert alert-warning mt-3">
-            所有文章均为个人言论，除非特殊声明，均与我的雇主或者其他任何团体无关。未经授权，不可转载演绎。
+        
+        <div class="alert alert-secondary mt-3 small">
+            @{
+                var tags = new List<string>();
+                foreach (var item in Model.BlogTags)
+                {
+                    tags.Add($"<a href=\"{item.GetUrl()}\" class=\"text-reset text-decoration-none\"><i class=\"bi bi-tag\"></i> {item.Object.Name}</a>");
+                }
+
+                if (tags.Any())
+                {
+                    <div class="row">
+                        <div class="col-md-3 text-muted mb-1">文章标签：</div>
+                        <div class="col-md-9">@Html.Raw(string.Join(", ", tags))</div>
+                    </div>
+                }
+            }
+
+            @if (Model.BlogSeries != null)
+            {
+                <div class="row mt-2">
+                    <div class="col-md-3 text-muted mb-1">文章系列：</div>
+                    <div class="col-md-9">@Html.Raw($"<a href=\"{Model.BlogSeries.GetUrl()}\" class=\"text-reset text-decoration-none\"><i class=\"bi bi-bookmark\"></i> {Model.BlogSeries.Object.Name}</a>")</div>
+                </div>
+            }
+
+            <div class="row mt-2">
+                <div class="col-md-3 text-muted mb-1">最后修改于：</div>
+                <div class="col-md-9"><i class="bi bi-calendar-minus"></i> @Model.Object.LastUpdateTime.ToCnDateTime()</div>
+            </div>
         </div>
     </div>
 }
@@ -42,8 +70,12 @@
 }
 
 @section Header {
-    
+
     <div class="small text-muted mb-2">
+        <div class="alert alert-warning my-3 small">
+            <i class="bi bi-exclamation-circle"></i>
+            所有文章均为个人言论，除非特殊声明，均与我的雇主或者其他任何团体无关。未经授权，不可转载演绎。
+        </div>
         <i class="bi bi-calendar-minus"></i> @Model.Object.PublishTime.ToCnDate()
         @if (Context.IsAuthorized())
         {
@@ -51,28 +83,9 @@
             <a href="/blog/post/@Model.Object.Id/edit"><i class="bi bi-pencil"></i></a>
         }
     </div>
-    <h2 class="text-info">
+    <h2 class="text-info mb-2">
         <i class="bi bi-hash small text-muted"></i>
         @Model.Object.Title
         <i class="bi bi-hash small text-muted"></i>
     </h2>
-    <div class="small text-muted mb-2">
-        @{
-            var tags = new List<string>();
-            foreach (var item in Model.BlogTags)
-            {
-                tags.Add($"<a href=\"{item.GetUrl()}\" class=\"text-reset text-decoration-none\">{item.Object.Name}</a>");
-            }
-
-            if (tags.Any())
-            {
-                <text>@Html.Raw($"<i class=\"bi bi-tags\"></i> {string.Join(", ", tags)}")</text>
-            }
-        }
-
-        @if (Model.BlogSeries != null)
-        {
-            @Html.Raw($"<a href=\"{Model.BlogSeries.GetUrl()}\" class=\"text-reset text-decoration-none\"><i class=\"bi bi-bookmark\"></i> {Model.BlogSeries.Object.Name}</a>")
-        }
-    </div>
 }
