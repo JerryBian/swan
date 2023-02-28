@@ -34,7 +34,7 @@ namespace Swan.Core.Model
 
         public bool IsPublished()
         {
-            return Object.PublishTime <= DateTime.Now;
+            return Object.IsPublic && Object.PublishTime <= DateTime.Now;
         }
 
         public List<BlogTag> GetTags(bool isAdmin)
