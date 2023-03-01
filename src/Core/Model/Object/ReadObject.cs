@@ -1,5 +1,4 @@
-﻿using Swan.Lib.Model;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace Swan.Core.Model.Object
 {
@@ -42,7 +41,7 @@ namespace Swan.Core.Model.Object
                 throw new Exception("Create time is invalid.");
             }
 
-            return $"{CreateTime:yyyy}{Constants.JsonFileExt}";
+            return $"{CreateTime:yyyy}{Constants.Misc.JsonFileExt}";
         }
     }
 }

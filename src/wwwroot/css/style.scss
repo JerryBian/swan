@@ -3,6 +3,7 @@ $pagination-color: inherit;
 $pagination-active-bg: gray;
 
 @import "_shared";
+@import "../../../node_modules/@highlightjs/cdn-assets/styles/kimbie-light.min";
 
 .wrapper {
     width: 100%;

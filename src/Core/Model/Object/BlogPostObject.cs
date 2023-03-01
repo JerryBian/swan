@@ -41,7 +41,7 @@ namespace Swan.Core.Model.Object
                 throw new Exception("Is is invalid.");
             }
 
-            return $"{Id}{Constants.JsonFileExt}";
+            return $"{Id}{Constants.Misc.JsonFileExt}";
         }
     }
 }

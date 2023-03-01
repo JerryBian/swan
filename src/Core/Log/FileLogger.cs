@@ -1,4 +1,6 @@
-﻿namespace Swan.Core.Log
+﻿using Swan.Core.Model.Object;
+
+namespace Swan.Core.Log
 {
     public class FileLogger : ILogger
     {
@@ -30,7 +32,7 @@
 
             try
             {
-                SwanLog log = new()
+                LogObject log = new()
                 {
                     Message = formatter(state, exception),
                     Exception = exception?.ToString(),

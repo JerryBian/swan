@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using Swan.Core.Option;
-using Swan.Lib.Service;
 using System.Collections.Concurrent;
 using System.Security.Claims;
 
@@ -17,14 +16,12 @@ public class AccountController : Controller
     private static readonly ConcurrentDictionary<string, int> _failures = new();
 
     private readonly SwanOption _option;
-    private readonly IBlacklistService _blacklistService;
     private readonly ILogger<AccountController> _logger;
 
-    public AccountController(ILogger<AccountController> logger, IOptions<SwanOption> options, IBlacklistService blacklistService)
+    public AccountController(ILogger<AccountController> logger, IOptions<SwanOption> options)
     {
         _logger = logger;
         _option = options.Value;
-        _blacklistService = blacklistService;
     }
 
     [HttpGet]
@@ -76,24 +73,8 @@ public class AccountController : Controller
             return Redirect(returnUrl);
         }
 
-        int val = _failures.AddOrUpdate(ip, 1, (k, v) =>
-        {
-            _ = Interlocked.Increment(ref v);
-            return v;
-        });
         _logger.LogWarning(
-            $"Login failed. User Name = {userName}, Password = {password}. IP: {ip}(Times={val}), User Agent: {Request.Headers[HeaderNames.UserAgent]}");
-        if (val >= 3)
-        {
-            await _blacklistService.UdpateAsync(new Lib.Model.BlacklistItem
-            {
-                Ip = ip,
-                InvalidTo = DateTime.Now.AddHours(1),
-                Reason = "Automatically added to blacklist by system, due to this IP address had tried to login 3 times, and yet failed."
-            });
-
-            _ = _failures.TryRemove(ip, out _);
-        }
+            $"Login failed. User Name = {userName}, Password = {password}. IP: {ip}, User Agent: {Request.Headers[HeaderNames.UserAgent]}");
         return Redirect("/");
     }
 

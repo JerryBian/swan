@@ -1,7 +1,9 @@
-﻿namespace Swan.Core.Log
+﻿using Swan.Core.Model.Object;
+
+namespace Swan.Core.Log
 {
     public interface IFileLoggerProcessor : IDisposable
     {
-        void Ingest(SwanLog log);
+        void Ingest(LogObject log);
     }
 }

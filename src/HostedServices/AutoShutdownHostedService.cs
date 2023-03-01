@@ -22,7 +22,7 @@ namespace Swan.HostedServices
                 return;
             }
 
-            await Task.Delay(TimeSpan.FromDays(1), stoppingToken).OkForCancel();
+            await Task.Delay(TimeSpan.FromDays(3), stoppingToken).OkForCancel();
 
             if(!stoppingToken.IsCancellationRequested)
             {

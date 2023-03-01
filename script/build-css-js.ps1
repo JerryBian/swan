@@ -12,7 +12,6 @@ Write-Output "[all]: Fonts copied"
 npx sass $(Join-Path $WWWRootLoc css style.scss) $(Join-Path $WWWRootLoc style.css)
 uglifycss --ugly-comments `
     --output $(Join-Path $WWWRootLoc style.min.css) `
-$(Join-Path $NodeModulesLoc \@highlightjs cdn-assets styles atom-one-dark.min.css) `
 $(Join-Path $WWWRootLoc style.css)
 Write-Output "[normal]: CSS completed"
 

@@ -10,14 +10,14 @@ namespace Swan.Core.Store
     public class MemoryObjectStore : IMemoryObjectStore
     {
         private readonly SemaphoreSlim _semaphoreSlim;
-        private readonly ICacheManager _cacheManager;
+        private readonly ICacheClient _cacheManager;
         private readonly IFileObjectStore<ReadObject> _readObjectStore;
         private readonly IFileObjectStore<BlogTagObject> _blogTagObjectStore;
         private readonly IFileObjectStore<BlogSeriesObject> _blogSeriesObjectStore;
         private readonly IFileObjectStore<BlogPostObject> _blogPostObjectStore;
 
         public MemoryObjectStore(
-            ICacheManager cacheManager,
+            ICacheClient cacheManager,
             IFileObjectStore<ReadObject> readObjectStore,
             IFileObjectStore<BlogTagObject> blogTagObjectStore,
             IFileObjectStore<BlogSeriesObject> blogSeriesObjectStore,
@@ -304,7 +304,7 @@ namespace Swan.Core.Store
             return await _cacheManager.GetOrCreateAsync(cacheKey, async () =>
             {
                 return await GetMemoryObjectFromStoreAsync(isAdmin);
-            });
+            }, isAdmin ? null : TimeSpan.FromHours(2));
         }
 
         private async Task<MemoryObject> GetMemoryObjectFromStoreAsync(bool isAdmin)

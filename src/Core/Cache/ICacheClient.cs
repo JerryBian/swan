@@ -1,6 +1,6 @@
 ﻿namespace Swan.Core.Cache
 {
-    public interface ICacheManager
+    public interface ICacheClient
     {
         Task<T> GetOrCreateAsync<T>(string key, Func<Task<T>> func, TimeSpan? expireAfter = null);
 

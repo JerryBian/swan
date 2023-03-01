@@ -1,7 +1,4 @@
-﻿using HtmlAgilityPack;
-using Swan.Core.Cache;
-using Swan.Core.Extension;
-using Swan.Core.Helper;
+﻿using Swan.Core.Helper;
 using Swan.Core.Model;
 using Swan.Core.Model.Object;
 using Swan.Core.Store;

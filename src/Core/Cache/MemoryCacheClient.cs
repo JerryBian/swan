@@ -2,11 +2,11 @@
 
 namespace Swan.Core.Cache
 {
-    public class MemoryCacheManager : ICacheManager
+    public class MemoryCacheClient : ICacheClient
     {
         private readonly IMemoryCache _memoryCache;
 
-        public MemoryCacheManager(IMemoryCache memoryCache)
+        public MemoryCacheClient(IMemoryCache memoryCache)
         {
             _memoryCache = memoryCache;
         }

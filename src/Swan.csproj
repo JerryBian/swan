@@ -9,13 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Areas\Blog\Models\**" />
-    <Content Remove="Areas\Blog\Models\**" />
-    <EmbeddedResource Remove="Areas\Blog\Models\**" />
-    <None Remove="Areas\Blog\Models\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="Core\Model\Object\hzew3drp.grl~" />
   </ItemGroup>
 

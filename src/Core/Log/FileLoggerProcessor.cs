@@ -1,23 +1,25 @@
 ﻿using Swan.Core.Helper;
-using Swan.Lib.Service;
+using Swan.Core.Model;
+using Swan.Core.Model.Object;
+using Swan.Core.Service;
 using System.Collections.Concurrent;
 
 namespace Swan.Core.Log
 {
     public class FileLoggerProcessor : IFileLoggerProcessor
     {
-        private readonly object _lock;
+        private readonly SemaphoreSlim _lock;
         private readonly Thread _outputThread;
         private readonly ILogService _logService;
-        private readonly ConcurrentQueue<SwanLog> _messageQueue;
+        private readonly ConcurrentQueue<LogObject> _messageQueue;
 
         private bool _isAddingCompleted;
 
         public FileLoggerProcessor(ILogService logService)
         {
-            _lock = new object();
+            _lock = new SemaphoreSlim(1, 1);
             _logService = logService;
-            _messageQueue = new ConcurrentQueue<SwanLog>();
+            _messageQueue = new ConcurrentQueue<LogObject>();
             _outputThread = new Thread(ProcessLogQueue)
             {
                 IsBackground = true,
@@ -36,11 +38,11 @@ namespace Swan.Core.Log
             catch { }
         }
 
-        public void Ingest(SwanLog log)
+        public void Ingest(LogObject log)
         {
             if (!Enqueue(log))
             {
-                Write(log);
+                WriteAsync(log).Wait();
             }
         }
 
@@ -49,10 +51,10 @@ namespace Swan.Core.Log
             while (!_isAddingCompleted)
             {
                 var hasItems = false;
-                while (_messageQueue.TryDequeue(out SwanLog item))
+                while (_messageQueue.TryDequeue(out LogObject item))
                 {
                     hasItems = true;
-                    Write(item);
+                    WriteAsync(item).Wait();
                 }
 
                 if (!hasItems && !_isAddingCompleted)
@@ -61,13 +63,13 @@ namespace Swan.Core.Log
                 }
             }
 
-            while (_messageQueue.TryDequeue(out SwanLog item))
+            while (_messageQueue.TryDequeue(out LogObject item))
             {
-                Write(item);
+                WriteAsync(item).Wait();
             }
         }
 
-        private bool Enqueue(SwanLog log)
+        private bool Enqueue(LogObject log)
         {
             if (!_isAddingCompleted)
             {
@@ -86,18 +88,21 @@ namespace Swan.Core.Log
             }
         }
 
-        private void Write(SwanLog log)
+        private async Task WriteAsync(LogObject log)
         {
-            lock (_lock)
+            await _lock.WaitAsync();
+
+            try
             {
-                try
-                {
-                    _logService.AddLog(log);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Write file log failed. Log={JsonHelper.Serialize(log)}. Error={ex}");
-                }
+                await _logService.AddLogAsync(new SwanLog(log));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Write file log failed. Log={JsonHelper.Serialize(log)}. Error={ex}");
+            }
+            finally
+            {
+                _lock.Release();
             }
         }
     }

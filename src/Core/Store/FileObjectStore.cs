@@ -16,7 +16,7 @@ namespace Swan.Core.Store
 
         public FileObjectStore(IOptions<SwanOption> option, string path, string filter)
         {
-            _dir = Path.Combine(option.Value.AssetLocation, Constants.FolderAsset, path);
+            _dir = Path.Combine(option.Value.AssetLocation, Constants.Asset.BasePath, path);
             Directory.CreateDirectory(_dir);
 
             _filter = filter;

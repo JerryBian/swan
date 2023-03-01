@@ -18,7 +18,7 @@
             @Html.Raw(Model.HtmlContent)
             <p class="font-monospace">(完)</p>
         </article>
-        
+
         <div class="alert alert-secondary mt-3 small">
             @{
                 var tags = new List<string>();
@@ -70,12 +70,12 @@
 }
 
 @section Header {
+    <div class="alert alert-warning my-3 small">
+        <i class="bi bi-exclamation-circle"></i>
+        所有文章均为个人言论，除非特殊声明，均与我的雇主或者其他任何团体无关。未经授权，不可转载演绎。
+    </div>
+    <div class="small text-muted mb-2 mt-4">
 
-    <div class="small text-muted mb-2">
-        <div class="alert alert-warning my-3 small">
-            <i class="bi bi-exclamation-circle"></i>
-            所有文章均为个人言论，除非特殊声明，均与我的雇主或者其他任何团体无关。未经授权，不可转载演绎。
-        </div>
         <i class="bi bi-calendar-minus"></i> @Model.Object.PublishTime.ToCnDate()
         @if (Context.IsAuthorized())
         {
@@ -83,7 +83,7 @@
             <a href="/blog/post/@Model.Object.Id/edit"><i class="bi bi-pencil"></i></a>
         }
     </div>
-    <h2 class="text-info mb-2">
+    <h2 class="text-info mb-4">
         <i class="bi bi-hash small text-muted"></i>
         @Model.Object.Title
         <i class="bi bi-hash small text-muted"></i>
