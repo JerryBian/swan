@@ -1,5 +1,4 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using Swan.Core.Helper;
 using Swan.Core.Model.Object;
 using Swan.Core.Option;
@@ -7,7 +6,7 @@ using System.Text;
 
 namespace Swan.Core.Store
 {
-    public class FileObjectStore<T>  : IFileObjectStore<T> where T : FileObjectBase
+    public class FileObjectStore<T> : IFileObjectStore<T> where T : FileObjectBase
     {
         private readonly string _dir;
         private readonly string _filter;
@@ -16,8 +15,8 @@ namespace Swan.Core.Store
 
         public FileObjectStore(IOptions<SwanOption> option, string path, string filter)
         {
-            _dir = Path.Combine(option.Value.AssetLocation, Constants.Asset.BasePath, path);
-            Directory.CreateDirectory(_dir);
+            _dir = Path.Combine(option.Value.AssetLocation, Constants.Asset.BaseDir, path);
+            _ = Directory.CreateDirectory(_dir);
 
             _filter = filter;
             _semaphoreSlim = new SemaphoreSlim(1, 1);
@@ -29,12 +28,12 @@ namespace Swan.Core.Store
             await _semaphoreSlim.WaitAsync();
             try
             {
-                var items = await ReadAllAsync();
+                List<List<T>> items = await ReadAllAsync();
                 return items.SelectMany(x => x);
             }
             finally
             {
-                _semaphoreSlim.Release();
+                _ = _semaphoreSlim.Release();
             }
         }
 
@@ -48,8 +47,8 @@ namespace Swan.Core.Store
                     obj.Id = StringHelper.Random();
                 }
 
-                var fileName = obj.GetFileName();
-                var path = Path.Combine(_dir, fileName);
+                string fileName = obj.GetFileName();
+                string path = Path.Combine(_dir, fileName);
 
                 if (obj.CreateTime == default)
                 {
@@ -61,12 +60,12 @@ namespace Swan.Core.Store
                     obj.LastUpdateTime = DateTime.Now;
                 }
 
-                var objs = await ReadAllAsync();
-                var arrayObjs = new List<T>();
-                foreach (var item in objs)
+                List<List<T>> objs = await ReadAllAsync();
+                List<T> arrayObjs = new();
+                foreach (List<T> item in objs)
                 {
-                    var found = false;
-                    foreach (var item2 in item)
+                    bool found = false;
+                    foreach (T item2 in item)
                     {
                         if (item2.Id == obj.Id)
                         {
@@ -105,7 +104,7 @@ namespace Swan.Core.Store
             }
             finally
             {
-                _semaphoreSlim.Release();
+                _ = _semaphoreSlim.Release();
             }
         }
 
@@ -119,23 +118,23 @@ namespace Swan.Core.Store
                     throw new Exception("Missing id.");
                 }
 
-                var fileName = obj.GetFileName();
-                var path = Path.Combine(_dir, fileName);
+                string fileName = obj.GetFileName();
+                string path = Path.Combine(_dir, fileName);
                 if (!File.Exists(path))
                 {
                     throw new Exception($"File not exists: {path}");
                 }
 
-                var found = false;
-                var objs = await ReadAllAsync();
-                foreach (var item in objs)
+                bool found = false;
+                List<List<T>> objs = await ReadAllAsync();
+                foreach (List<T> item in objs)
                 {
                     T oldObj = null;
-                    foreach (var item2 in item)
+                    foreach (T item2 in item)
                     {
                         if (item2.Id == obj.Id)
                         {
-                            var item2FileName = item2.GetFileName();
+                            string item2FileName = item2.GetFileName();
                             if (item2FileName != fileName)
                             {
                                 throw new Exception($"Found same id: {obj.Id} with different file: {item2FileName} vs {fileName}");
@@ -160,23 +159,18 @@ namespace Swan.Core.Store
                             await WriteAsync(path, obj);
                         }
 
-                        item.Remove(oldObj);
+                        _ = item.Remove(oldObj);
                         item.Add(obj);
                         found = true;
                         break;
                     }
                 }
 
-                if (!found)
-                {
-                    throw new Exception($"No existing id found: {obj.Id}");
-                }
-
-                return obj;
+                return !found ? throw new Exception($"No existing id found: {obj.Id}") : obj;
             }
             finally
             {
-                _semaphoreSlim.Release();
+                _ = _semaphoreSlim.Release();
             }
         }
 
@@ -185,12 +179,12 @@ namespace Swan.Core.Store
             await _semaphoreSlim.WaitAsync();
             try
             {
-                var objs = await ReadAllAsync();
-                var deleted = false;
-                foreach (var item in objs)
+                List<List<T>> objs = await ReadAllAsync();
+                bool deleted = false;
+                foreach (List<T> item in objs)
                 {
                     T obj = null;
-                    foreach (var item2 in item)
+                    foreach (T item2 in item)
                     {
                         if (item2.Id == id)
                         {
@@ -201,12 +195,12 @@ namespace Swan.Core.Store
 
                     if (obj != null)
                     {
-                        var file = obj.GetFileName();
-                        var path = Path.Combine(_dir, file);
+                        string file = obj.GetFileName();
+                        string path = Path.Combine(_dir, file);
                         if (IsStoredAsArray())
                         {
-                            item.Remove(obj);
-                            if(item.Any())
+                            _ = item.Remove(obj);
+                            if (item.Any())
                             {
                                 await WriteAsync(path, item.OrderByDescending(x => x.CreateTime));
                             }
@@ -225,14 +219,14 @@ namespace Swan.Core.Store
                     }
                 }
 
-                if(!deleted)
+                if (!deleted)
                 {
                     throw new Exception($"Id not found: {id}");
                 }
             }
             finally
             {
-                _semaphoreSlim.Release();
+                _ = _semaphoreSlim.Release();
             }
         }
 
@@ -240,19 +234,10 @@ namespace Swan.Core.Store
         {
             if (!_cachedObjects.Any())
             {
-                foreach (var file in Directory.EnumerateFiles(_dir, _filter, SearchOption.TopDirectoryOnly))
+                foreach (string file in Directory.EnumerateFiles(_dir, _filter, SearchOption.TopDirectoryOnly))
                 {
-                    var content = await File.ReadAllTextAsync(file, Encoding.UTF8);
-                    List<T> obj;
-                    if (!IsStoredAsArray())
-                    {
-                        obj = new List<T> { JsonHelper.Deserialize<T>(content) };
-                    }
-                    else
-                    {
-                        obj = JsonHelper.Deserialize<List<T>>(content);
-                    }
-
+                    string content = await File.ReadAllTextAsync(file, Encoding.UTF8);
+                    List<T> obj = !IsStoredAsArray() ? new List<T> { JsonHelper.Deserialize<T>(content) } : JsonHelper.Deserialize<List<T>>(content);
                     _cachedObjects.Add(obj);
                 }
             }
@@ -262,7 +247,7 @@ namespace Swan.Core.Store
 
         private async Task WriteAsync(string file, object obj)
         {
-            var path = Path.Combine(_dir, file);
+            string path = Path.Combine(_dir, file);
             await File.WriteAllTextAsync(path, JsonHelper.Serialize(obj), Encoding.UTF8);
         }
 

@@ -24,7 +24,7 @@ builder.WebHost.CaptureStartupErrors(true);
 builder.WebHost.UseShutdownTimeout(TimeSpan.FromMinutes(5));
 
 builder.Logging.ClearProviders();
-var minLogLevel = builder.Environment.IsProduction() ? LogLevel.Information : LogLevel.Trace;
+LogLevel minLogLevel = builder.Environment.IsProduction() ? LogLevel.Information : LogLevel.Trace;
 
 builder.Logging.AddDebug();
 builder.Logging.AddConsole();
@@ -36,8 +36,8 @@ builder.Logging.AddFile(x =>
 // Add services to the container.
 builder.Services.Configure<SwanOption>(o => { o.FetchFromEnv(builder.Configuration); });
 
-var assetLoc = builder.Configuration.GetValue<string>("ASSET_LOCATION");
-var dpFolder = Path.Combine(assetLoc, "dp", builder.Environment.EnvironmentName);
+string assetLoc = builder.Configuration.GetValue<string>("ASSET_LOCATION");
+string dpFolder = Path.Combine(assetLoc, "dp", builder.Environment.EnvironmentName);
 Directory.CreateDirectory(dpFolder);
 builder.Services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(dpFolder))
     .SetApplicationName($"APP_{builder.Environment.EnvironmentName}");
@@ -49,25 +49,28 @@ builder.Services.AddSingleton<ICommandClient, CommandClient>();
 builder.Services.AddSingleton<IFileLoggerProcessor, FileLoggerProcessor>();
 builder.Services.AddSingleton<IMemoryObjectStore, MemoryObjectStore>();
 
-builder.Services.AddSingleton<IBlogService, Swan.Core.Service.BlogService>();
+builder.Services.AddSingleton<IBlogService, BlogService>();
 builder.Services.AddSingleton<Swan.Core.Service.IReadService, Swan.Core.Service.ReadService>();
 builder.Services.AddSingleton<ILogService, LogService>();
+builder.Services.AddSingleton<IBlogPostAccessService, BlogPostAccessService>();
 
 builder.Services.AddSingleton<IFileObjectStore<BlogPostObject>>
-    (x => new FileObjectStore<BlogPostObject>(x.GetRequiredService<IOptions<SwanOption>>(), Constants.Asset.BlogPostPath, Constants.Misc.JsonFileFilter));
+    (x => new FileObjectStore<BlogPostObject>(x.GetRequiredService<IOptions<SwanOption>>(), Constants.Asset.BlogPostDir, Constants.Misc.JsonFileFilter));
 builder.Services.AddSingleton<IFileObjectStore<BlogTagObject>>
-    (x => new FileObjectStore<BlogTagObject>(x.GetRequiredService<IOptions<SwanOption>>(), Constants.Asset.BlogTagPath, Constants.Misc.JsonFileFilter));
+    (x => new FileObjectStore<BlogTagObject>(x.GetRequiredService<IOptions<SwanOption>>(), Constants.Asset.BlogTagDir, Constants.Asset.BlogTagFile));
 builder.Services.AddSingleton<IFileObjectStore<BlogSeriesObject>>
-    (x => new FileObjectStore<BlogSeriesObject>(x.GetRequiredService<IOptions<SwanOption>>(), Constants.Asset.BlogSeriesPath, Constants.Misc.JsonFileFilter));
+    (x => new FileObjectStore<BlogSeriesObject>(x.GetRequiredService<IOptions<SwanOption>>(), Constants.Asset.BlogSeriesDir, Constants.Asset.BlogSeriesFile));
 builder.Services.AddSingleton<IFileObjectStore<ReadObject>>
-    (x => new FileObjectStore<ReadObject>(x.GetRequiredService<IOptions<SwanOption>>(), Constants.Asset.ReadPath, Constants.Misc.JsonFileFilter));
+    (x => new FileObjectStore<ReadObject>(x.GetRequiredService<IOptions<SwanOption>>(), Constants.Asset.ReadDir, Constants.Misc.JsonFileFilter));
 builder.Services.AddSingleton<IFileObjectStore<LogObject>>
-    (x => new FileObjectStore<LogObject>(x.GetRequiredService<IOptions<SwanOption>>(), Constants.Asset.LogPath, Constants.Misc.JsonFileFilter));
+    (x => new FileObjectStore<LogObject>(x.GetRequiredService<IOptions<SwanOption>>(), Constants.Asset.LogDir, Constants.Asset.LogFile));
+builder.Services.AddSingleton<IFileObjectStore<BlogPostAccessObject>>
+    (x => new FileObjectStore<BlogPostAccessObject>(x.GetRequiredService<IOptions<SwanOption>>(), Constants.Asset.BlogPostAccessDir, Constants.Asset.BlogPostAccessFile));
+
 
 builder.Services.AddMemoryCache();
-builder.Services.AddHostedService<TimerHostedService>();
 builder.Services.AddHostedService<GitFileHostedService>();
-builder.Services.AddHostedService<AutoShutdownHostedService>();
+builder.Services.AddHostedService<NonProdHostedService>();
 builder.Services.AddControllersWithViews(option =>
 {
     option.CacheProfiles.Add(Constants.Misc.CacheProfileClientShort, new CacheProfile
@@ -125,7 +128,7 @@ FileExtensionContentTypeProvider fileContentTypeProvider = new()
 };
 app.UseStaticFiles(new StaticFileOptions { ContentTypeProvider = fileContentTypeProvider });
 SwanOption option = app.Services.GetService<IOptions<SwanOption>>().Value;
-string dir = Path.Combine(option.AssetLocation, Constants.Asset.BasePath, Constants.Asset.FilePath);
+string dir = Path.Combine(option.AssetLocation, Constants.Asset.BaseDir, Constants.Asset.FileDir);
 Directory.CreateDirectory(dir);
 app.UseStaticFiles(new StaticFileOptions
 {
@@ -135,7 +138,7 @@ app.UseStaticFiles(new StaticFileOptions
     {
         if (!app.Environment.IsDevelopment())
         {
-            var headers = context.Context.Response.GetTypedHeaders();
+            Microsoft.AspNetCore.Http.Headers.ResponseHeaders headers = context.Context.Response.GetTypedHeaders();
             headers.CacheControl = new CacheControlHeaderValue
             {
                 Public = true,

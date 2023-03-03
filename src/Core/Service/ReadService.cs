@@ -15,13 +15,13 @@ namespace Swan.Core.Service
 
         public async Task<List<ReadModel>> GetAllAsync(bool isAdmin)
         {
-            var readModels = await _store.GetReadModelsAsync(isAdmin);
+            List<ReadModel> readModels = await _store.GetReadModelsAsync(isAdmin);
             return readModels.OrderByDescending(x => x.Object.CreateTime).ToList();
         }
 
         public async Task<ReadModel> GetAsync(string id)
         {
-            var result = await _store.GetReadModelsAsync(true);
+            List<ReadModel> result = await _store.GetReadModelsAsync(true);
             return result.FirstOrDefault(x => x.Object.Id == id);
         }
 

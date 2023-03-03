@@ -15,7 +15,7 @@ namespace Swan.Core.Model.Object
 
         public override string GetFileName()
         {
-            return "series.json";
+            return Constants.Asset.BlogSeriesFile;
         }
     }
 }

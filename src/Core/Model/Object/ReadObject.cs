@@ -36,12 +36,7 @@ namespace Swan.Core.Model.Object
 
         public override string GetFileName()
         {
-            if(CreateTime == default)
-            {
-                throw new Exception("Create time is invalid.");
-            }
-
-            return $"{CreateTime:yyyy}{Constants.Misc.JsonFileExt}";
+            return CreateTime == default ? throw new Exception("Create time is invalid.") : $"{CreateTime:yyyy}{Constants.Misc.JsonFileExt}";
         }
     }
 }

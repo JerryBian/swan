@@ -1,5 +1,4 @@
-﻿using Swan.Core.Extension;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace Swan.Core.Model.Object
 {
@@ -19,7 +18,7 @@ namespace Swan.Core.Model.Object
 
         public override string GetFileName()
         {
-            return $"{Timestamp.ToDate()}{Constants.Misc.LogFileExt}";
+            return Constants.Asset.LogFile;
         }
     }
 }

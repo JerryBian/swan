@@ -1,5 +1,4 @@
 ﻿using Swan.Core.Helper;
-using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Swan.Core.Extension
 {
@@ -7,7 +6,7 @@ namespace Swan.Core.Extension
     {
         public static T DeepClone<T>(this T a)
         {
-            var text = JsonHelper.Serialize(a);
+            string text = JsonHelper.Serialize(a);
             return JsonHelper.Deserialize<T>(text);
         }
     }

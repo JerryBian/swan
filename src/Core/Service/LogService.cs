@@ -1,5 +1,4 @@
-﻿using Swan.Core.Model;
-using Swan.Core.Model.Object;
+﻿using Swan.Core.Model.Object;
 using Swan.Core.Store;
 
 namespace Swan.Core.Service
@@ -15,53 +14,41 @@ namespace Swan.Core.Service
             _semaphoreSlim = new SemaphoreSlim(1, 1);
         }
 
-        public async Task<List<SwanLog>> GetAllLogsAsync()
+        public async Task<List<LogObject>> GetAllLogsAsync()
         {
             await _semaphoreSlim.WaitAsync();
             try
             {
-                var logs = await _store.GetAllAsync();
-                var result = new List<SwanLog>();
-                foreach (var log in logs.OrderByDescending(x => x.Timestamp))
+                IEnumerable<LogObject> logs = await _store.GetAllAsync();
+                List<LogObject> result = new();
+                foreach (LogObject log in logs.OrderByDescending(x => x.Timestamp))
                 {
-                    result.Add(new SwanLog(log));
+                    result.Add(log);
                 }
 
                 return result;
             }
             finally
             {
-                _semaphoreSlim.Release();
+                _ = _semaphoreSlim.Release();
             }
         }
 
-        public async Task AddLogAsync(SwanLog log)
+        public async Task AddLogAsync(LogObject log)
         {
             await _semaphoreSlim.WaitAsync();
             try
             {
-                await _store.AddAsync(log.Raw);
-            }
-            finally
-            {
-                _semaphoreSlim.Release();
-            }
-        }
-
-        public async Task CleanupAsync()
-        {
-            await _semaphoreSlim.WaitAsync();
-            try
-            {
-                var logs = await _store.GetAllAsync();
-                foreach (var log in logs.Where(x => x.Timestamp < DateTime.Now.AddDays(-30)))
+                _ = await _store.AddAsync(log);
+                IEnumerable<LogObject> logs = await _store.GetAllAsync();
+                foreach (LogObject item in logs.Where(x => x.Timestamp < DateTime.Now.AddDays(-30)))
                 {
-                    await _store.DeleteAsync(log.Id);
+                    await _store.DeleteAsync(item.Id);
                 }
             }
             finally
             {
-                _semaphoreSlim.Release();
+                _ = _semaphoreSlim.Release();
             }
         }
     }

@@ -76,7 +76,8 @@
     </div>
     <div class="small text-muted mb-2 mt-4">
 
-        <i class="bi bi-calendar-minus"></i> @Model.Object.PublishTime.ToCnDate()
+        <i class="bi bi-calendar-minus"></i> @Model.Object.PublishTime.ToCnDate() &middot;
+        <i class="bi bi-eye"></i> @Model.Object.AccessCount 次访问
         @if (Context.IsAuthorized())
         {
             <span> &middot; </span>

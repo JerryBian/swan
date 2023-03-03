@@ -1,13 +1,11 @@
-﻿using Swan.Core.Model;
+﻿using Swan.Core.Model.Object;
 
 namespace Swan.Core.Service
 {
     public interface ILogService
     {
-        Task AddLogAsync(SwanLog log);
+        Task AddLogAsync(LogObject log);
 
-        Task CleanupAsync();
-
-        Task<List<SwanLog>> GetAllLogsAsync();
+        Task<List<LogObject>> GetAllLogsAsync();
     }
 }

@@ -23,14 +23,14 @@ namespace Swan.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var reads = await _readService.GetAllAsync(Request.HttpContext.IsAuthorized());
+            List<ReadModel> reads = await _readService.GetAllAsync(Request.HttpContext.IsAuthorized());
             return View(reads);
         }
 
         [Authorize]
         public async Task<IActionResult> Add()
         {
-            var posts = await _blogService.GetAllPostsAsync(true);
+            List<BlogPost> posts = await _blogService.GetAllPostsAsync(true);
             return View(posts);
         }
 
@@ -43,7 +43,7 @@ namespace Swan.Controllers
             {
                 _ = item.Posts.Remove(string.Empty);
                 item.IsPublic = Request.Form["isPublic"] == "on";
-                await _readService.AddAsync(item);
+                _ = await _readService.AddAsync(item);
                 res.RedirectTo = "/read";
             }
             catch (Exception ex)
@@ -60,7 +60,7 @@ namespace Swan.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit([FromRoute] string id)
         {
-            var item = await _readService.GetAsync(id);
+            ReadModel item = await _readService.GetAsync(id);
             if (item == null)
             {
                 return NotFound();
@@ -80,7 +80,7 @@ namespace Swan.Controllers
             {
                 _ = item.Posts.Remove(string.Empty);
                 item.IsPublic = Request.Form["isPublic"] == "on";
-                await _readService.UpdateAsync(item);
+                _ = await _readService.UpdateAsync(item);
                 res.RedirectTo = "/read";
             }
             catch (Exception ex)

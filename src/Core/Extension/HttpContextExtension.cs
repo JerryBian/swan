@@ -6,5 +6,10 @@
         {
             return context?.User?.Identity?.IsAuthenticated == true;
         }
+
+        public static string GetIpAddress(this HttpContext context)
+        {
+            return context?.Connection.RemoteIpAddress?.ToString() ?? string.Empty;
+        }
     }
 }

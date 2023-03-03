@@ -11,19 +11,29 @@
 
         public class Asset
         {
-            public const string BasePath = "asset";
+            public const string BaseDir = "asset";
 
-            public const string BlogPostPath = "blog/post";
+            public const string BlogPostDir = "blog/post";
 
-            public const string ReadPath = "read";
+            public const string ReadDir = "read";
 
-            public const string BlogTagPath = "blog";
+            public const string BlogTagDir = "blog";
 
-            public const string BlogSeriesPath = "series";
+            public const string BlogTagFile = "tag.json";
 
-            public const string LogPath = "temp/log";
+            public const string BlogSeriesDir = "blog";
 
-            public const string FilePath = "file";
+            public const string BlogSeriesFile = "series.json";
+
+            public const string LogDir = "";
+
+            public const string LogFile = "log.json";
+
+            public const string FileDir = "file";
+
+            public const string BlogPostAccessDir = "blog";
+
+            public const string BlogPostAccessFile = "post_access.json";
         }
 
         public class Misc
@@ -39,10 +49,6 @@
             public const string JsonFileFilter = "*.json";
 
             public const string JsonFileExt = ".json";
-
-            public const string LogFileFilter = "*.log";
-
-            public const string LogFileExt = ".log";
         }
     }
 }

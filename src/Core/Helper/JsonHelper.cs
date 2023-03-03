@@ -17,7 +17,7 @@ namespace Swan.Core.Helper
 
             if (converters != null)
             {
-                converters.ForEach(x => option.Converters.Add(x));
+                converters.ForEach(option.Converters.Add);
             }
             else
             {

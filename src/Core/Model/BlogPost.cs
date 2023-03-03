@@ -39,12 +39,12 @@ namespace Swan.Core.Model
 
         public List<BlogTag> GetTags(bool isAdmin)
         {
-            if(isAdmin)
+            if (isAdmin)
             {
                 return BlogTags;
             }
 
-            var tags = BlogTags.Where(x => x.Posts.Any(x => x.IsPublished())).ToList();
+            List<BlogTag> tags = BlogTags.Where(x => x.Posts.Any(x => x.IsPublished())).ToList();
             return tags;
         }
     }

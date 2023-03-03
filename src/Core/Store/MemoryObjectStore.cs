@@ -35,7 +35,7 @@ namespace Swan.Core.Store
 
         public async Task<List<BlogPost>> GetBlogPostsAsync(bool isAdmin)
         {
-            var obj = await GetMemoryObjectAsync(isAdmin);
+            MemoryObject obj = await GetMemoryObjectAsync(isAdmin);
             return obj.BlogPosts;
         }
 
@@ -45,15 +45,15 @@ namespace Swan.Core.Store
 
             try
             {
-                var result = await _blogPostObjectStore.AddAsync(obj);
+                BlogPostObject result = await _blogPostObjectStore.AddAsync(obj);
                 ClearCache();
 
-                var posts = await GetBlogPostsAsync(true);
+                List<BlogPost> posts = await GetBlogPostsAsync(true);
                 return posts.First(x => x.Object.Id == result.Id);
             }
             finally
             {
-                _semaphoreSlim.Release();
+                _ = _semaphoreSlim.Release();
             }
         }
 
@@ -63,15 +63,15 @@ namespace Swan.Core.Store
 
             try
             {
-                var result = await _blogPostObjectStore.UpdateAsync(obj);
+                BlogPostObject result = await _blogPostObjectStore.UpdateAsync(obj);
                 ClearCache();
 
-                var posts = await GetBlogPostsAsync(true);
+                List<BlogPost> posts = await GetBlogPostsAsync(true);
                 return posts.First(x => x.Object.Id == result.Id);
             }
             finally
             {
-                _semaphoreSlim.Release();
+                _ = _semaphoreSlim.Release();
             }
         }
 
@@ -81,7 +81,7 @@ namespace Swan.Core.Store
 
         public async Task<List<BlogTag>> GetBlogTagsAsync(bool isAdmin)
         {
-            var obj = await GetMemoryObjectAsync(isAdmin);
+            MemoryObject obj = await GetMemoryObjectAsync(isAdmin);
             return obj.BlogTags;
         }
 
@@ -91,15 +91,15 @@ namespace Swan.Core.Store
 
             try
             {
-                var result = await _blogTagObjectStore.AddAsync(obj);
+                BlogTagObject result = await _blogTagObjectStore.AddAsync(obj);
                 ClearCache();
 
-                var tags = await GetBlogTagsAsync(true);
+                List<BlogTag> tags = await GetBlogTagsAsync(true);
                 return tags.First(x => x.Object.Id == result.Id);
             }
             finally
             {
-                _semaphoreSlim.Release();
+                _ = _semaphoreSlim.Release();
             }
         }
 
@@ -109,15 +109,15 @@ namespace Swan.Core.Store
 
             try
             {
-                var result = await _blogTagObjectStore.UpdateAsync(obj);
+                BlogTagObject result = await _blogTagObjectStore.UpdateAsync(obj);
                 ClearCache();
 
-                var tags = await GetBlogTagsAsync(true);
+                List<BlogTag> tags = await GetBlogTagsAsync(true);
                 return tags.First(x => x.Object.Id == result.Id);
             }
             finally
             {
-                _semaphoreSlim.Release();
+                _ = _semaphoreSlim.Release();
             }
         }
 
@@ -127,17 +127,17 @@ namespace Swan.Core.Store
 
             try
             {
-                var tags = await GetBlogTagsAsync(true);
-                var tag = tags.FirstOrDefault(x => x.Object.Id == id);
+                List<BlogTag> tags = await GetBlogTagsAsync(true);
+                BlogTag tag = tags.FirstOrDefault(x => x.Object.Id == id);
                 if (tag == null)
                 {
                     return;
                 }
 
-                foreach (var post in tag.Posts)
+                foreach (BlogPost post in tag.Posts)
                 {
-                    post.Object.Tags.Remove(id);
-                    await _blogPostObjectStore.UpdateAsync(post.Object);
+                    _ = post.Object.Tags.Remove(id);
+                    _ = await _blogPostObjectStore.UpdateAsync(post.Object);
                 }
 
                 await _blogTagObjectStore.DeleteAsync(id);
@@ -145,7 +145,7 @@ namespace Swan.Core.Store
             }
             finally
             {
-                _semaphoreSlim.Release();
+                _ = _semaphoreSlim.Release();
             }
         }
 
@@ -155,7 +155,7 @@ namespace Swan.Core.Store
 
         public async Task<List<BlogSeries>> GetBlogSeriesAsync(bool isAdmin)
         {
-            var obj = await GetMemoryObjectAsync(isAdmin);
+            MemoryObject obj = await GetMemoryObjectAsync(isAdmin);
             return obj.BlogSeries;
         }
 
@@ -165,15 +165,15 @@ namespace Swan.Core.Store
 
             try
             {
-                var result = await _blogSeriesObjectStore.AddAsync(obj);
+                BlogSeriesObject result = await _blogSeriesObjectStore.AddAsync(obj);
                 ClearCache();
 
-                var series = await GetBlogSeriesAsync(true);
+                List<BlogSeries> series = await GetBlogSeriesAsync(true);
                 return series.First(x => x.Object.Id == result.Id);
             }
             finally
             {
-                _semaphoreSlim.Release();
+                _ = _semaphoreSlim.Release();
             }
         }
 
@@ -183,15 +183,15 @@ namespace Swan.Core.Store
 
             try
             {
-                var result = await _blogSeriesObjectStore.UpdateAsync(obj);
+                BlogSeriesObject result = await _blogSeriesObjectStore.UpdateAsync(obj);
                 ClearCache();
 
-                var series = await GetBlogSeriesAsync(true);
+                List<BlogSeries> series = await GetBlogSeriesAsync(true);
                 return series.First(x => x.Object.Id == result.Id);
             }
             finally
             {
-                _semaphoreSlim.Release();
+                _ = _semaphoreSlim.Release();
             }
         }
 
@@ -201,17 +201,17 @@ namespace Swan.Core.Store
 
             try
             {
-                var series = await GetBlogSeriesAsync(true);
-                var seriesObj = series.FirstOrDefault(x => x.Object.Id == id);
+                List<BlogSeries> series = await GetBlogSeriesAsync(true);
+                BlogSeries seriesObj = series.FirstOrDefault(x => x.Object.Id == id);
                 if (seriesObj == null)
                 {
                     return;
                 }
 
-                foreach (var post in seriesObj.Posts)
+                foreach (BlogPost post in seriesObj.Posts)
                 {
-                    post.Object.Tags.Remove(id);
-                    await _blogPostObjectStore.UpdateAsync(post.Object);
+                    _ = post.Object.Tags.Remove(id);
+                    _ = await _blogPostObjectStore.UpdateAsync(post.Object);
                 }
 
                 await _blogSeriesObjectStore.DeleteAsync(id);
@@ -219,7 +219,7 @@ namespace Swan.Core.Store
             }
             finally
             {
-                _semaphoreSlim.Release();
+                _ = _semaphoreSlim.Release();
             }
         }
 
@@ -229,7 +229,7 @@ namespace Swan.Core.Store
 
         public async Task<List<ReadModel>> GetReadModelsAsync(bool isAdmin)
         {
-            var obj = await GetMemoryObjectAsync(isAdmin);
+            MemoryObject obj = await GetMemoryObjectAsync(isAdmin);
             return obj.ReadModels;
         }
 
@@ -239,15 +239,15 @@ namespace Swan.Core.Store
 
             try
             {
-                var result = await _readObjectStore.AddAsync(obj);
+                ReadObject result = await _readObjectStore.AddAsync(obj);
                 ClearCache();
 
-                var readModel = await GetReadModelsAsync(true);
+                List<ReadModel> readModel = await GetReadModelsAsync(true);
                 return readModel.First(x => x.Object.Id == result.Id);
             }
             finally
             {
-                _semaphoreSlim.Release();
+                _ = _semaphoreSlim.Release();
             }
         }
 
@@ -257,15 +257,15 @@ namespace Swan.Core.Store
 
             try
             {
-                var result = await _readObjectStore.UpdateAsync(obj);
+                ReadObject result = await _readObjectStore.UpdateAsync(obj);
                 ClearCache();
 
-                var readModel = await GetReadModelsAsync(true);
+                List<ReadModel> readModel = await GetReadModelsAsync(true);
                 return readModel.First(x => x.Object.Id == result.Id);
             }
             finally
             {
-                _semaphoreSlim.Release();
+                _ = _semaphoreSlim.Release();
             }
         }
 
@@ -275,8 +275,8 @@ namespace Swan.Core.Store
 
             try
             {
-                var readModels = await GetReadModelsAsync(true);
-                var readModel = readModels.FirstOrDefault(x => x.Object.Id == id);
+                List<ReadModel> readModels = await GetReadModelsAsync(true);
+                ReadModel readModel = readModels.FirstOrDefault(x => x.Object.Id == id);
                 if (readModel == null)
                 {
                     return;
@@ -287,7 +287,7 @@ namespace Swan.Core.Store
             }
             finally
             {
-                _semaphoreSlim.Release();
+                _ = _semaphoreSlim.Release();
             }
         }
 
@@ -300,7 +300,7 @@ namespace Swan.Core.Store
 
         private async Task<MemoryObject> GetMemoryObjectAsync(bool isAdmin)
         {
-            var cacheKey = isAdmin ? Constants.CacheKey.MemoryObjectsAdmin : Constants.CacheKey.MemoryObjects;
+            string cacheKey = isAdmin ? Constants.CacheKey.MemoryObjectsAdmin : Constants.CacheKey.MemoryObjects;
             return await _cacheManager.GetOrCreateAsync(cacheKey, async () =>
             {
                 return await GetMemoryObjectFromStoreAsync(isAdmin);
@@ -309,65 +309,67 @@ namespace Swan.Core.Store
 
         private async Task<MemoryObject> GetMemoryObjectFromStoreAsync(bool isAdmin)
         {
-            var blogPostObjs = await _blogPostObjectStore.GetAllAsync();
-            var blogTagObjs = await _blogTagObjectStore.GetAllAsync();
-            var blogSeriesObjs = await _blogSeriesObjectStore.GetAllAsync();
-            var readModelObjs = await _readObjectStore.GetAllAsync();
+            IEnumerable<BlogPostObject> blogPostObjs = await _blogPostObjectStore.GetAllAsync();
+            IEnumerable<BlogTagObject> blogTagObjs = await _blogTagObjectStore.GetAllAsync();
+            IEnumerable<BlogSeriesObject> blogSeriesObjs = await _blogSeriesObjectStore.GetAllAsync();
+            IEnumerable<ReadObject> readModelObjs = await _readObjectStore.GetAllAsync();
 
-            var blogPosts = new List<BlogPost>();
-            foreach (var obj in blogPostObjs)
+            List<BlogPost> blogPosts = new();
+            foreach (BlogPostObject obj in blogPostObjs)
             {
-                var post = new BlogPost(obj);
-                if(isAdmin || post.IsPublished())
+                BlogPost post = new(obj);
+                if (isAdmin || post.IsPublished())
                 {
-                    var htmlDoc = GetPostHtmlDoc(obj.MdContent);
+                    HtmlDocument htmlDoc = GetPostHtmlDoc(obj.MdContent);
                     post.HtmlContent = htmlDoc.DocumentNode.OuterHtml;
                     blogPosts.Add(post);
                 }
             }
 
-            var blogTags = new List<BlogTag>();
-            foreach (var obj in blogTagObjs)
+            List<BlogTag> blogTags = new();
+            foreach (BlogTagObject obj in blogTagObjs)
             {
-                var tag = new BlogTag(obj);
+                BlogTag tag = new(obj);
                 tag.Posts.AddRange(blogPosts.Where(x => x.Object.Tags.Contains(obj.Id)));
                 blogTags.Add(tag);
             }
 
-            var blogSereis = new List<BlogSeries>();
-            foreach (var obj in blogSeriesObjs)
+            List<BlogSeries> blogSereis = new();
+            foreach (BlogSeriesObject obj in blogSeriesObjs)
             {
-                var series = new BlogSeries(obj);
+                BlogSeries series = new(obj);
                 series.Posts.AddRange(blogPosts.Where(x => x.Object.Series == obj.Id));
                 blogSereis.Add(series);
             }
 
-            var readModels = new List<ReadModel>();
-            foreach (var obj in readModelObjs)
+            List<ReadModel> readModels = new();
+            foreach (ReadObject obj in readModelObjs)
             {
-                if(isAdmin || obj.IsPublic)
+                if (isAdmin || obj.IsPublic)
                 {
-                    var readModel = new ReadModel(obj);
-                    readModel.Metadata = GetReadMetadata(obj);
-                    readModel.CommentHtml = MarkdownHelper.ToHtml(obj.Comment);
+                    ReadModel readModel = new(obj)
+                    {
+                        Metadata = GetReadMetadata(obj),
+                        CommentHtml = MarkdownHelper.ToHtml(obj.Comment)
+                    };
                     readModel.BlogPosts.AddRange(blogPosts.Where(x => obj.Posts.Contains(x.Object.Id)));
                     readModels.Add(readModel);
-                } 
+                }
             }
 
-            foreach (var post in blogPosts)
+            foreach (BlogPost post in blogPosts)
             {
                 post.BlogTags.AddRange(blogTags.Where(x => x.Posts.Contains(post)));
                 post.BlogSeries = blogSereis.FirstOrDefault(x => x.Posts.Contains(post));
             }
 
-            if(!isAdmin)
+            if (!isAdmin)
             {
-                blogTags.RemoveAll(x => !x.Posts.Any());
-                blogSereis.RemoveAll(x => !x.Posts.Any());
+                _ = blogTags.RemoveAll(x => !x.Posts.Any());
+                _ = blogSereis.RemoveAll(x => !x.Posts.Any());
             }
 
-            var memoryObj = new MemoryObject();
+            MemoryObject memoryObj = new();
             memoryObj.BlogPosts.AddRange(blogPosts);
             memoryObj.BlogSeries.AddRange(blogSereis);
             memoryObj.BlogTags.AddRange(blogTags);
@@ -442,7 +444,7 @@ namespace Swan.Core.Store
             foreach (HtmlNode h4Node in h4)
             {
                 h4Node.Id = h4Node.InnerText;
-                h4Node.InnerHtml = $"<i class=\"bi bi-caret-right small text-muted pe-1\"></i> {h4Node.InnerHtml} <i class=\"bi bi-dash small text-secondary\"></i>";
+                h4Node.InnerHtml = $"<i class=\"bi bi-square-fill small text-muted pe-1\"></i> {h4Node.InnerHtml} <i class=\"bi bi-dash small text-secondary\"></i>";
             }
 
             return htmlDoc;

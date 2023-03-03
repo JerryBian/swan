@@ -36,12 +36,7 @@ namespace Swan.Core.Model.Object
 
         public override string GetFileName()
         {
-            if(string.IsNullOrEmpty(Id))
-            {
-                throw new Exception("Is is invalid.");
-            }
-
-            return $"{Id}{Constants.Misc.JsonFileExt}";
+            return string.IsNullOrEmpty(Id) ? throw new Exception("Is is invalid.") : $"{Id}{Constants.Misc.JsonFileExt}";
         }
     }
 }
