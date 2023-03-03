@@ -8,7 +8,7 @@
             {
                 ApplicationTitleColor = "#2d89ef",
                 Description = ViewData[Constants.ViewData.Description]?.ToString(),
-                RobotsEnabled = bool.TryParse(ViewData[Constants.ViewData.RobotsEnabled]?.ToString(), out var result) ? result : _env.IsProduction() && Context.IsAuthorized(),
+                RobotsEnabled = bool.TryParse(ViewData[Constants.ViewData.RobotsEnabled]?.ToString(), out var result) ? result : _env.IsProduction() && !Context.IsAuthorized(),
                 SafariPinnedTabColor = "#5bbad5",
                 ThemeColor = "#ffffff",
                 Title = ViewData[Constants.ViewData.Title]?.ToString(),
@@ -62,17 +62,5 @@
     }
 
     @await RenderSectionAsync("Script", false)
-
-    @if (_env.IsProduction() && Context.Request.HttpContext.User?.Identity?.IsAuthenticated != true)
-    {
-        <script>
-            galite('create', 'UA-241002412-1', 'auto');
-            galite('send', 'pageview');
-            var terminationEvent = 'onpagehide' in window ? 'pagehide' : 'unload';
-            window.addEventListener(terminationEvent, function () {
-                galite('send', 'timing', 'JS Dependencies', 'unload')
-            })
-        </script>
-    }
 </body>
 </html>
