@@ -5,10 +5,6 @@ namespace Swan.Core.Model
 {
     public class BlogPost
     {
-        public BlogPost()
-        {
-        }
-
         public BlogPost(BlogPostObject obj)
         {
             Object = obj;
@@ -35,17 +31,6 @@ namespace Swan.Core.Model
         public bool IsPublished()
         {
             return Object.IsPublic && Object.PublishTime <= DateTime.Now;
-        }
-
-        public List<BlogTag> GetTags(bool isAdmin)
-        {
-            if (isAdmin)
-            {
-                return BlogTags;
-            }
-
-            List<BlogTag> tags = BlogTags.Where(x => x.Posts.Any(x => x.IsPublished())).ToList();
-            return tags;
         }
     }
 }

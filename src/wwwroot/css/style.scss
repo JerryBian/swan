@@ -3,7 +3,7 @@ $pagination-color: inherit;
 $pagination-active-bg: gray;
 
 @import "_shared";
-@import "../../../node_modules/@highlightjs/cdn-assets/styles/kimbie-light.min";
+@import "../../../node_modules/@highlightjs/cdn-assets/styles/rainbow.min";
 
 .wrapper {
     width: 100%;
@@ -21,16 +21,15 @@ $pagination-active-bg: gray;
 
 .post {
     font-weight: normal;
-    line-height: 1.6em;
+    line-height: 1.7em;
 
     & > p {
-        margin-bottom: 1.1rem;
+        margin-bottom: 1.2rem;
     }
 
     a {
         padding-left: 1px;
         padding-right: 1px;
-        //color: $color-1;
 
         &:hover, &:focus, &:visited {
             color: #1e3799;

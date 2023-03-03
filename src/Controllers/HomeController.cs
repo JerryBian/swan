@@ -38,6 +38,8 @@ namespace Swan.Controllers
                 $"<url><loc>{_option.BaseUrl}</loc><lastmod>{DateTime.Now.ToDate()}</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>");
             _ = sb.AppendLine(
                 $"<url><loc>{_option.BaseUrl}/read</loc><lastmod>{DateTime.Now.ToDate()}</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>");
+            _ = sb.AppendLine(
+                $"<url><loc>{_option.BaseUrl}/blog</loc><lastmod>{DateTime.Now.ToDate()}</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>");
 
             List<Core.Model.BlogPost> posts = await _blogService.GetAllPostsAsync(false);
             foreach (Core.Model.BlogPost post in posts)

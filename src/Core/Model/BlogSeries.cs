@@ -5,8 +5,6 @@ namespace Swan.Core.Model
 {
     public class BlogSeries
     {
-        public BlogSeries() { }
-
         public BlogSeries(BlogSeriesObject obj)
         {
             Object = obj;

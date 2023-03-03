@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
@@ -18,6 +19,7 @@ using Swan.HostedServices;
 using Swan.Middlewares;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
+using static System.Net.Mime.MediaTypeNames;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables("ENV_");
@@ -117,18 +119,37 @@ WebApplication app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    _ = app.UseExceptionHandler("/Error");
+    _ = app.UseExceptionHandler(exceptionHandlerApp =>
+    {
+        exceptionHandlerApp.Run(async context =>
+        {
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            context.Response.ContentType = Text.Plain;
+
+            IExceptionHandlerPathFeature exceptionHandlerPathFeature =
+               context.Features.Get<IExceptionHandlerPathFeature>();
+            if (exceptionHandlerPathFeature != null)
+            {
+                ILogger<Program> logger = context.RequestServices.GetService<ILogger<Program>>();
+                logger.LogError($"Access URL {exceptionHandlerPathFeature.Path} has error.");
+            }
+
+            await context.Response.WriteAsync("An exception was thrown.");
+        });
+    });
 }
+
 app.UseStatusCodePages();
 app.UseMiddleware<BlacklistMiddleware>();
 
 FileExtensionContentTypeProvider fileContentTypeProvider = new()
 {
     Mappings =
-            {
-                [".webmanifest"] = "application/manifest+json"
-            }
+    {
+        [".webmanifest"] = "application/manifest+json"
+    }
 };
+
 app.UseStaticFiles(new StaticFileOptions { ContentTypeProvider = fileContentTypeProvider });
 SwanOption option = app.Services.GetService<IOptions<SwanOption>>().Value;
 string dir = Path.Combine(option.AssetLocation, Constants.Asset.BaseDir, Constants.Asset.FileDir);

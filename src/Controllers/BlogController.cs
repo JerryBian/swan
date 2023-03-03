@@ -22,7 +22,11 @@ namespace Swan.Controllers
         private readonly SwanOption _option;
         private readonly IBlogPostAccessService _blogPostAccessService;
 
-        public BlogController(IBlogService blogService, ILogger<BlogController> logger, IOptions<SwanOption> option, IBlogPostAccessService blogPostAccessService)
+        public BlogController(
+            IBlogService blogService,
+            ILogger<BlogController> logger,
+            IOptions<SwanOption> option,
+            IBlogPostAccessService blogPostAccessService)
         {
             _logger = logger;
             _option = option.Value;
@@ -30,7 +34,10 @@ namespace Swan.Controllers
             _blogPostAccessService = blogPostAccessService;
         }
 
+        #region Posts
+
         [HttpGet]
+        [ResponseCache(CacheProfileName = Constants.Misc.CacheProfileClientShort)]
         public async Task<IActionResult> Index()
         {
             List<BlogPost> posts = await _blogService.GetAllPostsAsync(Request.HttpContext.IsAuthorized());
@@ -44,6 +51,7 @@ namespace Swan.Controllers
         }
 
         [HttpGet("post")]
+        [ResponseCache(CacheProfileName = Constants.Misc.CacheProfileClientShort)]
         public async Task<IActionResult> GetPosts()
         {
             List<BlogPost> posts = await _blogService.GetAllPostsAsync(Request.HttpContext.IsAuthorized());
@@ -55,9 +63,8 @@ namespace Swan.Controllers
             return View("AllPosts", posts);
         }
 
-        #region Posts
-
         [HttpGet("post/{link}.html")]
+        [ResponseCache(CacheProfileName = Constants.Misc.CacheProfileClientShort)]
         public async Task<IActionResult> GetPost([FromRoute] string link)
         {
             BlogPost post = await _blogService.GetPostByLinkAsync(link, Request.HttpContext.IsAuthorized());
@@ -174,6 +181,7 @@ namespace Swan.Controllers
         #region Tags
 
         [HttpGet("tag")]
+        [ResponseCache(CacheProfileName = Constants.Misc.CacheProfileClientShort)]
         public async Task<IActionResult> GetTags()
         {
             List<BlogTag> tags = await _blogService.GetAllTagsAsync(Request.HttpContext.IsAuthorized());
@@ -186,6 +194,7 @@ namespace Swan.Controllers
         }
 
         [HttpGet("tag/{url}")]
+        [ResponseCache(CacheProfileName = Constants.Misc.CacheProfileClientShort)]
         public async Task<IActionResult> GetTag([FromRoute] string url)
         {
             BlogTag tag = await _blogService.GetTagByUrlAsync(url, Request.HttpContext.IsAuthorized());
@@ -257,6 +266,7 @@ namespace Swan.Controllers
         #region Series
 
         [HttpGet("series")]
+        [ResponseCache(CacheProfileName = Constants.Misc.CacheProfileClientShort)]
         public async Task<IActionResult> GetSeries()
         {
             List<BlogSeries> series = await _blogService.GetAllSeriesAsync(Request.HttpContext.IsAuthorized());
@@ -269,6 +279,7 @@ namespace Swan.Controllers
         }
 
         [HttpGet("series/{url}")]
+        [ResponseCache(CacheProfileName = Constants.Misc.CacheProfileClientShort)]
         public async Task<IActionResult> GetSeries([FromRoute] string url)
         {
             BlogSeries series = await _blogService.GetSeriesByUrlAsync(url, Request.HttpContext.IsAuthorized());
@@ -339,7 +350,7 @@ namespace Swan.Controllers
 
         [Route("rss")]
         [Route("feed")]
-        //[ResponseCache(CacheProfileName = Constants.CacheProfileServerShort)]
+        [ResponseCache(CacheProfileName = Constants.Misc.CacheProfileServerShort)]
         public async Task<IActionResult> Rss()
         {
             SyndicationFeed feed = new(_option.Title, _option.Description,

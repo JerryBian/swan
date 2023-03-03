@@ -3,7 +3,8 @@
 <div>
     @foreach (var item in Model)
     {
-        <div class="d-flex position-relative post-item py-2">
+        var rowCls = item.IsPublished() ? "" : "text-muted";
+        <div class="d-flex position-relative post-item py-2 @rowCls">
             <div class="text-truncate">
                 <i class="bi bi-signpost small text-muted pe-1"></i>
                 <span class="fs-5">@item.Object.Title </span>

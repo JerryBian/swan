@@ -26,7 +26,7 @@ function showMessageModal(title, bodyHtml, footerHtml) {
     let messageModalFooter = document.querySelector("#modalDialogFooter");
     if (messageModalFooter) {
         footerHtml = footerHtml ?? "";
-        footerHtml += "<button type=\"button\" class=\"btn btn-secondary\" data-bs-dismiss=\"modal\"><i class=\"bi bi-x-square\"></i> 关闭</button>";
+        footerHtml += "<button type=\"button\" class=\"btn btn-light\" data-bs-dismiss=\"modal\"><i class=\"bi bi-x\"></i> 关闭</button>";
         messageModalFooter.innerHTML = footerHtml;
     }
 }

@@ -5,8 +5,6 @@ namespace Swan.Core.Model
 {
     public class ReadModel
     {
-        public ReadModel() { }
-
         public ReadModel(ReadObject obj)
         {
             Object = obj;

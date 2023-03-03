@@ -12,7 +12,8 @@
     </h3>
     @foreach (var item2 in item.OrderByDescending(x => x.Object.PublishTime))
     {
-        <div class="d-flex position-relative post-item py-2">
+        var rowCls = item2.IsPublished() ? "" : "text-muted";
+        <div class="d-flex position-relative post-item py-2 @rowCls">
             <div class="text-truncate">
                 <i class="bi bi-signpost small text-muted pe-1"></i>
                 <span class="fs-5">@item2.Object.Title </span>

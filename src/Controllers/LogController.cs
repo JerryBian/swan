@@ -15,6 +15,7 @@ namespace Swan.Controllers
             _logService = logService;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             List<Core.Model.Object.LogObject> logs = await _logService.GetAllLogsAsync();

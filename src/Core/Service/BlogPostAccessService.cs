@@ -46,7 +46,7 @@ namespace Swan.Core.Service
                 post.Object.AccessCount += 1;
                 _ = await _blogService.UpdatePostAsync(post.Object);
 
-                foreach (BlogPostAccessObject obj in objs.Where(x => DateTime.Now - x.Timestamp > TimeSpan.FromDays(3)))
+                foreach (BlogPostAccessObject obj in objs.ToList().Where(x => DateTime.Now - x.Timestamp > TimeSpan.FromDays(3)))
                 {
                     await _store.DeleteAsync(obj.Id);
                 }

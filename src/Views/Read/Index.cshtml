@@ -8,20 +8,13 @@
     </h3>
     @foreach (var r in item.OrderByDescending(x => x.Object.CreateTime))
     {
-        var c = "text-muted";
-        var d = "bi bi-hash small";
-        if (!r.Object.IsPublic)
-        {
-            c = "text-warning";
-            d = "bi bi-file-lock small";
-        }
-
-        <div class="py-1 read-item fs-5" onclick="showInfo(this)">
+        var rowCls = r.Object.IsPublic ? "" : "text-muted";
+        <div class="py-1 read-item fs-5 @rowCls" onclick="showInfo(this)">
             <div class="py-1 read-item-item">
                 <div class="d-flex ps-2 pe-1">
                     <div class="text-truncate">
                         <span>
-                            <i class="@d @c"></i> @r.Object.BookName
+                            <i class="bi bi-hash small"></i> @r.Object.BookName
                         </span>
                         @if (r.Object.Grade == 2)
                         {
@@ -33,13 +26,13 @@
                             <i class="bi bi-hand-thumbs-down text-danger text-decoration-none small"></i>
                         }
                     </div>
-                    <div class="@c text-nowrap ms-auto small pt-1 fst-italic ps-1">
+                    <div class="text-nowrap ms-auto small pt-1 fst-italic ps-1">
                         <span>- @r.Object.CreateTime.ToCnDate(true)</span>
                     </div>
                 </div>
 
                 <div class="d-none">
-                    <div class="read-item-modal-header"><div><i class="@d"></i> @r.Object.BookName</div></div>
+                    <div class="read-item-modal-header"><div><i class="bi bi-hash"></i> @r.Object.BookName</div></div>
                     <div class="read-item-modal-body">
                         <small class="text-muted fst-italic d-none d-lg-inline-block py-1 mb-1"><i class="bi bi-info"></i> @r.Metadata</small>
                         @if (r.BlogPosts.Any())
@@ -67,7 +60,7 @@
                     <div class="read-item-modal-footer">
                         @if (Context.IsAuthorized())
                         {
-                            <a class="btn btn-success" href="/read/edit/@r.Object.Id"><i class="bi bi-pencil-square"></i> 编辑</a>
+                            <a class="btn btn-info" href="/read/edit/@r.Object.Id"><i class="bi bi-pencil-square"></i> 编辑</a>
                         }
                     </div>
                 </div>

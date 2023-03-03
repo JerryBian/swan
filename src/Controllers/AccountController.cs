@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
+using Swan.Core;
 using Swan.Core.Extension;
 using Swan.Core.Option;
 using Swan.Core.Store;
@@ -18,23 +19,25 @@ public class AccountController : Controller
     private readonly IBlacklistStore _blacklistStore;
     private readonly ILogger<AccountController> _logger;
 
-    public AccountController(ILogger<AccountController> logger, IOptions<SwanOption> options, IBlacklistStore blacklistStore)
+    public AccountController(
+        ILogger<AccountController> logger,
+        IOptions<SwanOption> options,
+        IBlacklistStore blacklistStore)
     {
         _logger = logger;
         _option = options.Value;
         _blacklistStore = blacklistStore;
     }
 
-    [HttpGet]
-    [Route("/login")]
+    [HttpGet("/login")]
+    [ResponseCache(CacheProfileName = Constants.Misc.CacheProfileServerLong)]
     public IActionResult Login([FromQuery] string returnUrl)
     {
         ViewData["ReturnUrl"] = returnUrl;
         return View();
     }
 
-    [HttpPost]
-    [Route("/login")]
+    [HttpPost("/login")]
     public async Task<IActionResult> Login([FromForm] string userName, [FromForm] string password,
         [FromQuery] string returnUrl = null)
     {
@@ -79,8 +82,8 @@ public class AccountController : Controller
         return Redirect("/");
     }
 
-    [Route("/logout")]
     [Authorize]
+    [HttpGet("/logout")]
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);

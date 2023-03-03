@@ -18,7 +18,11 @@ namespace Swan.Controllers
         private readonly IBlogService _blogService;
         private readonly ILogger<ReadController> _logger;
 
-        public ReadController(IOptions<SwanOption> option, IReadService readService, IBlogService blogService, ILogger<ReadController> logger)
+        public ReadController(
+            IOptions<SwanOption> option,
+            IReadService readService,
+            IBlogService blogService,
+            ILogger<ReadController> logger)
         {
             _logger = logger;
             _option = option.Value;
@@ -26,6 +30,8 @@ namespace Swan.Controllers
             _blogService = blogService;
         }
 
+        [HttpGet]
+        [ResponseCache(CacheProfileName = Constants.Misc.CacheProfileServerShort)]
         public async Task<IActionResult> Index()
         {
             List<ReadModel> reads = await _readService.GetAllAsync(Request.HttpContext.IsAuthorized());
@@ -38,6 +44,7 @@ namespace Swan.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> Add()
         {
             List<BlogPost> posts = await _blogService.GetAllPostsAsync(true);
