@@ -1,0 +1,44 @@
+﻿
+<div class="container">
+    <fieldset>
+        <legend>添加新的系列</legend>
+        <form class="needs-validation" novalidate>
+            <div class="mb-3">
+                <label for="name" class="form-label">系列名称</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="系列名称" autocomplete="off" autofocus required>
+                <div class="invalid-feedback">
+                    必填
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="url" class="form-label">系列地址</label>
+                <input type="text" class="form-control" id="url" name="url" placeholder="系列地址" autocomplete="off" required>
+                <div class="invalid-feedback">
+                    必填
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">简介</label>
+                <textarea id="description" class="form-control" rows="3"></textarea>
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary btn-lg">提交</button>
+            </div>
+        </form>
+    </fieldset>
+</div>
+
+@section Script {
+    <script>
+        activeNavItem("#nav_admin");
+        const form = document.querySelector("form");
+        form.addEventListener('submit',
+            function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+                var formData = new FormData(form);
+                formData.append("description", document.querySelector("#description").value);
+                submitRequest("/blog/series/add", { form: form, method: "PUT", body: new URLSearchParams(formData), contentType: "application/x-www-form-urlencoded" });
+            });
+    </script>
+}

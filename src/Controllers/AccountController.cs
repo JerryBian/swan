@@ -4,9 +4,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
-using Swan.Lib.Option;
-using Swan.Lib.Service;
-using System.Collections.Concurrent;
+using Swan.Core;
+using Swan.Core.Extension;
+using Swan.Core.Option;
+using Swan.Core.Store;
 using System.Security.Claims;
 
 namespace Swan.Controllers;
@@ -14,35 +15,35 @@ namespace Swan.Controllers;
 [AllowAnonymous]
 public class AccountController : Controller
 {
-    private static readonly ConcurrentDictionary<string, int> _failures = new();
-
     private readonly SwanOption _option;
-    private readonly IBlacklistService _blacklistService;
+    private readonly IBlacklistStore _blacklistStore;
     private readonly ILogger<AccountController> _logger;
 
-    public AccountController(ILogger<AccountController> logger, IOptions<SwanOption> options, IBlacklistService blacklistService)
+    public AccountController(
+        ILogger<AccountController> logger,
+        IOptions<SwanOption> options,
+        IBlacklistStore blacklistStore)
     {
         _logger = logger;
         _option = options.Value;
-        _blacklistService = blacklistService;
+        _blacklistStore = blacklistStore;
     }
 
-    [HttpGet]
-    [Route("/login")]
+    [HttpGet("/login")]
+    [ResponseCache(CacheProfileName = Constants.Misc.CacheProfileServerLong)]
     public IActionResult Login([FromQuery] string returnUrl)
     {
         ViewData["ReturnUrl"] = returnUrl;
         return View();
     }
 
-    [HttpPost]
-    [Route("/login")]
+    [HttpPost("/login")]
     public async Task<IActionResult> Login([FromForm] string userName, [FromForm] string password,
         [FromQuery] string returnUrl = null)
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-        string ip = HttpContext.Connection.RemoteIpAddress.ToString();
+        string ip = HttpContext.GetIpAddress();
         if (userName == _option.AdminUserName && password == _option.AdminPassword)
         {
             List<Claim> claims = new()
@@ -63,7 +64,7 @@ public class AccountController : Controller
 
             if (string.IsNullOrEmpty(returnUrl))
             {
-                returnUrl = "/admin";
+                returnUrl = "/";
             }
             else if (!Url.IsLocalUrl(returnUrl))
             {
@@ -71,34 +72,18 @@ public class AccountController : Controller
                 returnUrl = "/";
             }
 
-            _ = _failures.TryRemove(ip, out _);
             _logger.LogInformation($"Login successfully, user={userName}.");
             return Redirect(returnUrl);
         }
 
-        int val = _failures.AddOrUpdate(ip, 1, (k, v) =>
-        {
-            _ = Interlocked.Increment(ref v);
-            return v;
-        });
         _logger.LogWarning(
-            $"Login failed. User Name = {userName}, Password = {password}. IP: {ip}(Times={val}), User Agent: {Request.Headers[HeaderNames.UserAgent]}");
-        if (val >= 3)
-        {
-            await _blacklistService.UdpateAsync(new Lib.Model.BlacklistItem
-            {
-                Ip = ip,
-                InvalidTo = DateTime.Now.AddHours(1),
-                Reason = "Automatically added to blacklist by system, due to this IP address had tried to login 3 times, and yet failed."
-            });
-
-            _ = _failures.TryRemove(ip, out _);
-        }
+            $"Login failed. User Name = {userName}, Password = {password}. IP: {ip}, User Agent: {Request.Headers[HeaderNames.UserAgent]}");
+        _blacklistStore.Add(ip, TimeSpan.FromMinutes(1));
         return Redirect("/");
     }
 
-    [Route("/logout")]
     [Authorize]
+    [HttpGet("/logout")]
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);

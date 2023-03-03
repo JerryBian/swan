@@ -1,0 +1,23 @@
+﻿@model List<BlogTag>
+
+@foreach (var item in Model)
+{
+    <div class="d-flex position-relative post-item py-2">
+        <div class="text-truncate">
+            <i class="bi bi-signpost small text-muted pe-1"></i>
+            <span class="fs-5">@item.Object.Name </span>
+        </div>
+        <div class="text-muted text-nowrap ms-auto small pt-1 fst-italic ps-1">- @item.Posts.Count 篇文章</div>
+        <a href="@item.GetUrl()" class="top-0 bottom-0 start-0 end-0 position-absolute"></a>
+    </div>
+}
+
+@section Script {
+    <script>
+        activeNavItem("#nav_blog");
+    </script>
+}
+
+@section Header {
+    <h2 class="text-info"><i class="bi bi-hash small text-muted"></i> 所有标签 <i class="bi bi-hash small text-muted"></i></h2>
+}

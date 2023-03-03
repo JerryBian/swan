@@ -1,0 +1,69 @@
+$pagination-hover-color: inherit;
+$pagination-color: inherit;
+$pagination-active-bg: gray;
+
+@import "_shared";
+@import "../../../node_modules/@highlightjs/cdn-assets/styles/rainbow.min";
+
+.wrapper {
+    width: 100%;
+    max-width: 21cm;
+}
+
+.read-item-item {
+    cursor:pointer;
+}
+
+.post-item + .post-item,
+.read-item + .read-item {
+    border-top: 0.15rem solid var(--bs-gray-100);
+}
+
+.post {
+    font-weight: normal;
+    line-height: 1.7em;
+
+    & > p {
+        margin-bottom: 1.2rem;
+    }
+
+    a {
+        padding-left: 1px;
+        padding-right: 1px;
+
+        &:hover, &:focus, &:visited {
+            color: #1e3799;
+        }
+    }
+
+    *:not(pre) > code {
+        padding-left: 4px;
+        padding-right: 4px;
+        font-size: $font-size-base * 0.9;
+    }
+
+    pre {
+        font-size: 92%;
+        max-height: 600px;
+        width: auto;
+        line-height: 17px;
+    }
+
+    img {
+        transition: 0.3s;
+        max-width: 100%;
+    }
+
+    li {
+        margin-bottom: .7rem;
+
+        p {
+            margin-bottom: 0;
+        }
+    }
+
+    h3, h4 {
+        margin-top: 1.8rem;
+        margin-bottom: 0.8rem;
+    }
+}

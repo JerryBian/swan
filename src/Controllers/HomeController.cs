@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Swan.Lib;
-using Swan.Lib.Extension;
-using Swan.Lib.Option;
-using Swan.Lib.Service;
+using Swan.Core;
+using Swan.Core.Extension;
+using Swan.Core.Option;
+using Swan.Core.Service;
 using System.Text;
 
 namespace Swan.Controllers
@@ -19,15 +19,16 @@ namespace Swan.Controllers
             _blogService = blogService;
         }
 
-        [ResponseCache(CacheProfileName = Constants.CacheProfileServerLong)]
+        [ResponseCache(CacheProfileName = Constants.Misc.CacheProfileServerLong)]
         public IActionResult Index()
         {
+            ViewData[Constants.ViewData.Description] = $"{_option.Description}";
             return View();
         }
 
         [Route("/sitemap")]
         [Route("/sitemap.xml")]
-        [ResponseCache(CacheProfileName = Constants.CacheProfileServerLong)]
+        [ResponseCache(CacheProfileName = Constants.Misc.CacheProfileServerLong)]
         public async Task<IActionResult> Sitemap()
         {
             StringBuilder sb = new();
@@ -37,12 +38,14 @@ namespace Swan.Controllers
                 $"<url><loc>{_option.BaseUrl}</loc><lastmod>{DateTime.Now.ToDate()}</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>");
             _ = sb.AppendLine(
                 $"<url><loc>{_option.BaseUrl}/read</loc><lastmod>{DateTime.Now.ToDate()}</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>");
+            _ = sb.AppendLine(
+                $"<url><loc>{_option.BaseUrl}/blog</loc><lastmod>{DateTime.Now.ToDate()}</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>");
 
-            List<Lib.Model.BlogPostView> posts = await _blogService.GetAllPostsAsync();
-            foreach (Lib.Model.BlogPostView post in posts.Where(x => x.IsPublishedNow))
+            List<Core.Model.BlogPost> posts = await _blogService.GetAllPostsAsync(false);
+            foreach (Core.Model.BlogPost post in posts)
             {
                 _ = sb.AppendLine(
-                    $"<url><loc>{_option.BaseUrl}{post.FullLink}</loc><lastmod>{post.Raw.LastUpdateTime.ToDate()}</lastmod><changefreq>daily</changefreq><priority>0.6</priority></url>");
+                    $"<url><loc>{_option.BaseUrl}{post.GetUrl()}</loc><lastmod>{post.Object.LastUpdateTime.ToDate()}</lastmod><changefreq>daily</changefreq><priority>0.6</priority></url>");
             }
 
             _ = sb.AppendLine("</urlset>");

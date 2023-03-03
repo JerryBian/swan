@@ -1,0 +1,39 @@
+﻿@model BlogTag
+
+<div>
+    @foreach (var item in Model.Posts)
+    {
+        <div class="d-flex position-relative post-item py-2">
+            <div class="text-truncate">
+                <i class="bi bi-signpost small text-muted pe-1"></i>
+                <span class="fs-5">@item.Object.Title </span>
+            </div>
+            <div class="text-muted text-nowrap ms-auto small pt-1 fst-italic ps-1">- @item.Object.PublishTime.ToCnDate()</div>
+            <a href="@item.GetUrl()" class="top-0 bottom-0 start-0 end-0 position-absolute" title="最后修改于：@item.Object.LastUpdateTime.ToCnDateTime()"></a>
+        </div>
+    }
+</div>
+
+@section Header {
+    <h2 class="text-info">
+        <i class="bi bi-hash small text-muted"></i> 
+        @Model.Object.Name 
+        
+        <i class="bi bi-hash small text-muted"></i>
+    </h2>
+    <div class="small text-success">
+        @if (Context.IsAuthorized())
+        {
+            <a href="/blog/tag/@Model.Object.Id/edit"><i class="bi bi-pencil-square"></i> 编辑</a>
+        }
+    </div>
+    <div class="mt-2 mb-4 small text-muted">
+        @Model.Object.Description
+    </div>
+}
+
+@section Script {
+    <script>
+        activeNavItem("#nav_blog");
+    </script>
+}

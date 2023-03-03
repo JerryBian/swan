@@ -1,0 +1,85 @@
+﻿@model List<BlogPost>
+
+<div class="container">
+    <fieldset>        
+        <legend>添加新的阅读</legend>
+        <form class="needs-validation" novalidate>
+            <div class="mb-3">
+                <label for="bookName" class="form-label">书籍名称</label>
+                <input type="text" class="form-control" id="bookName" name="bookName" placeholder="书籍名称" autocomplete="off" autofocus required>
+                <div class="invalid-feedback">
+                    必填
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="author" class="form-label">作者</label>
+                <input type="text" class="form-control" id="author" name="author" placeholder="作者" autocomplete="off">
+            </div>
+            <div class="mb-3">
+                <label for="authorCountry" class="form-label">作者国籍</label>
+                <input type="text" class="form-control" id="authorCountry" name="authorCountry" placeholder="作者国籍" autocomplete="off">
+            </div>
+            <div class="mb-3">
+                <label for="translator" class="form-label">译者</label>
+                <input type="text" class="form-control" id="translator" name="translator" placeholder="译者" autocomplete="off">
+            </div>
+            <div class="mb-3">
+                <label for="publisherName" class="form-label">出版社</label>
+                <input type="text" class="form-control" id="publisherName" name="publisherName" placeholder="出版社" autocomplete="off">
+            </div>
+            <div class="mb-3">
+                <label for="publishDate" class="form-label">出版时间</label>
+                <input type="date" class="form-control" id="publishDate" name="publishDate" autocomplete="off">
+            </div>
+            <div class="mb-3">
+                <label for="startTime" class="form-label">创建时间</label>
+                <input type="datetime-local" class="form-control" id="createTime" name="createTime" value="@DateTime.Now.ToFullDateTime()" autocomplete="off">
+                <div class="invalid-feedback">
+                    必填
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="posts" class="form-label">文章链接</label>
+                <select class="form-select font-monospace" id="posts" name="posts" multiple size="10">
+                    <option selected value="" class="small">-- 选择博客文章（支持多选） --</option>
+                    @foreach(var p in Model)
+                    {
+                        <option value="@p.Object.Id" class="my-1 ps-1">@p.Object.Title</option>
+                    }
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="comment" class="form-label">短评</label>
+                <textarea id="comment"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="grade" class="form-label">评分</label>
+                <input type="number" class="form-control" id="grade" name="grade" value="1" min="0" max="2" step="1" autocomplete="off" aria-describedby="gradeHelp">
+                <div id="gradeHelp" class="form-text">0：差评；1：一般般；2：好评</div>
+            </div>
+            <div class="form-check form-switch mb-3">
+                <input class="form-check-input" type="checkbox" id="isPublic" name="isPublic">
+                <label class="form-check-label" for="isPublic">公开发布</label>
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary btn-lg">提交</button>
+            </div>
+        </form>
+    </fieldset>
+</div>
+
+@section Script {
+    <script>
+        activeNavItem("#nav_admin");
+        let editor = createEditor(document.querySelector("#comment"), "new_read");
+        const form = document.querySelector("form");
+        form.addEventListener('submit',
+            function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                var formData = new FormData(form);
+                formData.append("comment", editor.value());
+                submitRequest("/read/add", { form: form, body: new URLSearchParams(formData), contentType: "application/x-www-form-urlencoded" });
+            });
+    </script>
+}

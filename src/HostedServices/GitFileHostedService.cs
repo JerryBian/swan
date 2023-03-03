@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
-using Swan.Lib.Command;
-using Swan.Lib.Extension;
-using Swan.Lib.Option;
+using Swan.Core.Command;
+using Swan.Core.Extension;
+using Swan.Core.Option;
 
 namespace Swan.HostedServices
 {

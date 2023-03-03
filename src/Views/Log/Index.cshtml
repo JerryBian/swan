@@ -1,0 +1,48 @@
+﻿@model List<LogObject>
+
+@foreach (var item in Model.GroupBy(x => x.Timestamp.ToCnDate()).OrderByDescending(x => x))
+{
+    <section class="mb-4">
+        <h3>@item.Key (@item.Count())</h3>
+        <div class="small border p-3 bg-light">
+            @foreach (var log in item.OrderByDescending(x => x.Timestamp))
+            {
+                <div class="row">
+                    <div class="col-md-2 mb-1">
+                        <span class="text-muted" title="@log.Timestamp.ToFullDateTime()">[@log.Timestamp.ToFullTime()]</span>
+                    </div>
+
+                    @{
+                        var color = "";
+                        if (log.Level >= LogLevel.Error)
+                        {
+                            color = "text-danger";
+                        }
+                        else if (log.Level >= LogLevel.Warning)
+                        {
+                            color = "text-warning";
+                        }
+                    }
+
+                    <div class="col-md-10 font-monospace @color">
+                        <div>@log.Message</div>
+                        @if (!string.IsNullOrEmpty(log.Exception))
+                        {
+                            <pre class="my-2">@log.Exception</pre>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+}
+
+@section Header {
+    <h2 class="text-info"><i class="bi bi-hash small text-muted"></i> 最近的日志 (@Model.Count()) <i class="bi bi-hash small text-muted"></i></h2>
+}
+
+@section Script {
+    <script>
+        activeNavItem("#nav_admin");
+    </script>
+}
