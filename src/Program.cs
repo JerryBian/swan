@@ -15,6 +15,7 @@ using Swan.Core.Option;
 using Swan.Core.Service;
 using Swan.Core.Store;
 using Swan.HostedServices;
+using Swan.Middlewares;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 
@@ -48,9 +49,10 @@ builder.Services.AddSingleton<ICacheClient, MemoryCacheClient>();
 builder.Services.AddSingleton<ICommandClient, CommandClient>();
 builder.Services.AddSingleton<IFileLoggerProcessor, FileLoggerProcessor>();
 builder.Services.AddSingleton<IMemoryObjectStore, MemoryObjectStore>();
+builder.Services.AddSingleton<IBlacklistStore, BlacklistStore>();
 
 builder.Services.AddSingleton<IBlogService, BlogService>();
-builder.Services.AddSingleton<Swan.Core.Service.IReadService, Swan.Core.Service.ReadService>();
+builder.Services.AddSingleton<IReadService, ReadService>();
 builder.Services.AddSingleton<ILogService, LogService>();
 builder.Services.AddSingleton<IBlogPostAccessService, BlogPostAccessService>();
 
@@ -118,6 +120,7 @@ if (!app.Environment.IsDevelopment())
     _ = app.UseExceptionHandler("/Error");
 }
 app.UseStatusCodePages();
+app.UseMiddleware<BlacklistMiddleware>();
 
 FileExtensionContentTypeProvider fileContentTypeProvider = new()
 {

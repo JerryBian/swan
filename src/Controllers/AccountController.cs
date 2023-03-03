@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
+using Swan.Core.Extension;
 using Swan.Core.Option;
+using Swan.Core.Store;
 using System.Collections.Concurrent;
 using System.Security.Claims;
 
@@ -13,15 +15,15 @@ namespace Swan.Controllers;
 [AllowAnonymous]
 public class AccountController : Controller
 {
-    private static readonly ConcurrentDictionary<string, int> _failures = new();
-
     private readonly SwanOption _option;
+    private readonly IBlacklistStore _blacklistStore;
     private readonly ILogger<AccountController> _logger;
 
-    public AccountController(ILogger<AccountController> logger, IOptions<SwanOption> options)
+    public AccountController(ILogger<AccountController> logger, IOptions<SwanOption> options, IBlacklistStore blacklistStore)
     {
         _logger = logger;
         _option = options.Value;
+        _blacklistStore = blacklistStore;
     }
 
     [HttpGet]
@@ -39,7 +41,7 @@ public class AccountController : Controller
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-        string ip = HttpContext.Connection.RemoteIpAddress.ToString();
+        string ip = HttpContext.GetIpAddress();
         if (userName == _option.AdminUserName && password == _option.AdminPassword)
         {
             List<Claim> claims = new()
@@ -68,13 +70,13 @@ public class AccountController : Controller
                 returnUrl = "/";
             }
 
-            _ = _failures.TryRemove(ip, out _);
             _logger.LogInformation($"Login successfully, user={userName}.");
             return Redirect(returnUrl);
         }
 
         _logger.LogWarning(
             $"Login failed. User Name = {userName}, Password = {password}. IP: {ip}, User Agent: {Request.Headers[HeaderNames.UserAgent]}");
+        _blacklistStore.Add(ip, TimeSpan.FromMinutes(1));
         return Redirect("/");
     }
 

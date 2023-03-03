@@ -26,6 +26,16 @@ namespace Swan.Core.Cache
             });
         }
 
+        public bool TryGet<T>(string key, out T val)
+        {
+            return _memoryCache.TryGetValue(key, out val);
+        }
+
+        public void Set<T>(string key, T val, TimeSpan? expireAfter = null)
+        {
+            _memoryCache.Set(key, val, expireAfter ?? TimeSpan.MaxValue);
+        }
+
         public void TryRemove(string key)
         {
             _memoryCache.Remove(key);

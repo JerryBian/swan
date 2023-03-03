@@ -444,7 +444,7 @@ namespace Swan.Core.Store
             foreach (HtmlNode h4Node in h4)
             {
                 h4Node.Id = h4Node.InnerText;
-                h4Node.InnerHtml = $"<i class=\"bi bi-square-fill small text-muted pe-1\"></i> {h4Node.InnerHtml} <i class=\"bi bi-dash small text-secondary\"></i>";
+                h4Node.InnerHtml = $"<span class=\"d-inline-block bg-success p-1 align-middle\"></span> {h4Node.InnerHtml} <i class=\"bi bi-dash small text-secondary\"></i>";
             }
 
             return htmlDoc;
