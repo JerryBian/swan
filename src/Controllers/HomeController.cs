@@ -22,6 +22,7 @@ namespace Swan.Controllers
         [ResponseCache(CacheProfileName = Constants.Misc.CacheProfileServerLong)]
         public IActionResult Index()
         {
+            ViewData[Constants.ViewData.Description] = $"{_option.Description}";
             return View();
         }
 

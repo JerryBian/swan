@@ -7,7 +7,6 @@ using Microsoft.Net.Http.Headers;
 using Swan.Core.Extension;
 using Swan.Core.Option;
 using Swan.Core.Store;
-using System.Collections.Concurrent;
 using System.Security.Claims;
 
 namespace Swan.Controllers;

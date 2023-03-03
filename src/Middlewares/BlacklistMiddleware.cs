@@ -19,7 +19,7 @@ namespace Swan.Middlewares
 
         public async Task Invoke(HttpContext context)
         {
-            var remoteIp = context.GetIpAddress();
+            string remoteIp = context.GetIpAddress();
             _logger.LogDebug($"Request from remote ip: {remoteIp}");
 
             if (_blacklistStore.Has(remoteIp))

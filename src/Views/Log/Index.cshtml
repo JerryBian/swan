@@ -20,7 +20,7 @@
                         }
                         else if (log.Level >= LogLevel.Warning)
                         {
-                            color = "text-warn";
+                            color = "text-warning";
                         }
                     }
 
@@ -39,4 +39,10 @@
 
 @section Header {
     <h2 class="text-info"><i class="bi bi-hash small text-muted"></i> 最近的日志 (@Model.Count()) <i class="bi bi-hash small text-muted"></i></h2>
+}
+
+@section Script {
+    <script>
+        activeNavItem("#nav_admin");
+    </script>
 }

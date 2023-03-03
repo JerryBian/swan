@@ -50,5 +50,20 @@
 
             public const string JsonFileExt = ".json";
         }
+
+        public class ViewData
+        {
+            public const string Title = "Title";
+
+            public const string Description = "Description";
+
+            public const string RobotsEnabled = "RobotsEnabled";
+
+            public const string Image = "Image";
+
+            public const string DatePublished = "DatePublished";
+
+            public const string DateModified = "DateModified";
+        }
     }
 }

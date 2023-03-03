@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swan.Core;
 using Swan.Core.Service;
 
 namespace Swan.Controllers
@@ -17,6 +18,8 @@ namespace Swan.Controllers
         public async Task<IActionResult> Index()
         {
             List<Core.Model.Object.LogObject> logs = await _logService.GetAllLogsAsync();
+
+            ViewData[Constants.ViewData.Title] = "查看日志";
             return View(logs);
         }
     }

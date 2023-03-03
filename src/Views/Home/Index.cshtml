@@ -1,24 +1,32 @@
 ﻿@inject IOptions<SwanOption> _option
+@inject IHostEnvironment _env
 @{
     Layout = null;
-    ViewData["BrandName"] = $"{_option.Value.Title}";
-    ViewData["BrandLink"] = "/";
-    ViewData["Description"] = $"{_option.Value.Title}";
 }
 
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@_option.Value.Title</title>
-    <meta name="msapplication-TileColor" content="#da532c">
-    <meta name="theme-color" content="#ffffff">
-    <link rel="apple-touch-icon" sizes="180x180" href="/file/icon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/file/icon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/file/icon/favicon-16x16.png">
-    <link rel="manifest" href="/file/icon/site.webmanifest">
-    <link rel="mask-icon" href="/file/icon/safari-pinned-tab.svg" color="#5bbad5">
+    @{
+        var buildOption = new HtmlHeadBuildOption
+            {
+                ApplicationTitleColor = "#2d89ef",
+                Description = ViewData[Constants.ViewData.Description]?.ToString(),
+                RobotsEnabled = bool.TryParse(ViewData[Constants.ViewData.RobotsEnabled]?.ToString(), out var result) ? result : _env.IsProduction() && Context.User.Identity?.IsAuthenticated != true,
+                SafariPinnedTabColor = "#5bbad5",
+                ThemeColor = "#ffffff",
+                Title = ViewData[Constants.ViewData.Title]?.ToString(),
+                BaseTitle = _option.Value.Title,
+                BaseImage = $"{_option.Value.BaseUrl}/file/icon/android-chrome-512x512.png",
+                Image = ViewData[Constants.ViewData.Image]?.ToString(),
+                DatePublished = ViewData[Constants.ViewData.DatePublished] == null ? DateTime.Now : Convert.ToDateTime(ViewData[Constants.ViewData.DatePublished]),
+                DateModified = ViewData[Constants.ViewData.DateModified] == null ? DateTime.Now : Convert.ToDateTime(Constants.ViewData.DateModified)
+            };
+
+        var headerBuilder = new HtmlHeadBuilder(_option.Value, buildOption);
+        @Html.Raw(headerBuilder.Build())
+    }
+
     <link href="~/style.min.css" rel="stylesheet" asp-append-version="true" />
 </head>
 <body class="bg-light p-2">
@@ -39,4 +47,3 @@
     </div>
 </body>
 </html>
-

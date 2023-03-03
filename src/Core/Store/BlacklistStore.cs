@@ -5,7 +5,7 @@ namespace Swan.Core.Store
     public class BlacklistStore : IBlacklistStore
     {
         private readonly ICacheClient _cacheClient;
-        private ILogger<BlacklistStore> _logger;
+        private readonly ILogger<BlacklistStore> _logger;
 
         public BlacklistStore(ICacheClient cacheClient, ILogger<BlacklistStore> logger)
         {

@@ -42,7 +42,7 @@ public class HtmlHeadBuilder
         string title = _buildOption.BaseTitle;
         if (!string.IsNullOrEmpty(_buildOption.Title))
         {
-            title = $"{_buildOption.Title} · " + title;
+            title = $"{_buildOption.Title} &middot " + title;
         }
 
         _ = sb.AppendLine($"<title>{title}</title>");

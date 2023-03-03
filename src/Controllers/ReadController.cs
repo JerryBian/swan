@@ -1,22 +1,27 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using Swan.Core;
 using Swan.Core.Extension;
 using Swan.Core.Helper;
 using Swan.Core.Model;
 using Swan.Core.Model.Object;
+using Swan.Core.Option;
 using Swan.Core.Service;
 
 namespace Swan.Controllers
 {
     public class ReadController : Controller
     {
+        private readonly SwanOption _option;
         private readonly IReadService _readService;
         private readonly IBlogService _blogService;
         private readonly ILogger<ReadController> _logger;
 
-        public ReadController(IReadService readService, IBlogService blogService, ILogger<ReadController> logger)
+        public ReadController(IOptions<SwanOption> option, IReadService readService, IBlogService blogService, ILogger<ReadController> logger)
         {
             _logger = logger;
+            _option = option.Value;
             _readService = readService;
             _blogService = blogService;
         }
@@ -24,6 +29,11 @@ namespace Swan.Controllers
         public async Task<IActionResult> Index()
         {
             List<ReadModel> reads = await _readService.GetAllAsync(Request.HttpContext.IsAuthorized());
+
+            ViewData[Constants.ViewData.Title] = "阅读";
+            ViewData[Constants.ViewData.DatePublished] = reads.Min(x => x.Object.CreateTime);
+            ViewData[Constants.ViewData.DateModified] = reads.Max(x => x.Object.CreateTime);
+            ViewData[Constants.ViewData.Description] = $"{_option.AdminUserFullName}的阅读";
             return View(reads);
         }
 
@@ -31,6 +41,8 @@ namespace Swan.Controllers
         public async Task<IActionResult> Add()
         {
             List<BlogPost> posts = await _blogService.GetAllPostsAsync(true);
+
+            ViewData[Constants.ViewData.Title] = "添加新的阅读 &ndash; Admin";
             return View(posts);
         }
 
@@ -67,7 +79,7 @@ namespace Swan.Controllers
             }
 
             ViewBag.Posts = await _blogService.GetAllPostsAsync(true);
-            ViewData["Title"] = $"编辑阅读: {item.Object.BookName}";
+            ViewData["Title"] = $"编辑阅读: {item.Object.BookName} &ndash; Admin";
             return View(item);
         }
 

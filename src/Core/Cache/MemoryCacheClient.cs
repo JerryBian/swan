@@ -33,7 +33,7 @@ namespace Swan.Core.Cache
 
         public void Set<T>(string key, T val, TimeSpan? expireAfter = null)
         {
-            _memoryCache.Set(key, val, expireAfter ?? TimeSpan.MaxValue);
+            _ = _memoryCache.Set(key, val, expireAfter ?? TimeSpan.MaxValue);
         }
 
         public void TryRemove(string key)
