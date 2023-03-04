@@ -1,6 +1,6 @@
 ﻿@model List<LogObject>
 
-@foreach (var item in Model.GroupBy(x => x.Timestamp.ToCnDate()).OrderByDescending(x => x))
+@foreach (var item in Model.GroupBy(x => x.Timestamp.ToCnDate()).OrderByDescending(x => x.Key))
 {
     <section class="mb-4">
         <h3>@item.Key (@item.Count())</h3>
