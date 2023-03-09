@@ -4,6 +4,8 @@ using Swan.Core.Extension;
 using Swan.Core.Helper;
 using Swan.Core.Model;
 using Swan.Core.Model.Object;
+using System.Collections.Concurrent;
+using System.Diagnostics;
 
 namespace Swan.Core.Store
 {
@@ -11,6 +13,7 @@ namespace Swan.Core.Store
     {
         private readonly SemaphoreSlim _semaphoreSlim;
         private readonly ICacheClient _cacheManager;
+        ILogger<MemoryObjectStore> _logger;
         private readonly IFileObjectStore<ReadObject> _readObjectStore;
         private readonly IFileObjectStore<BlogTagObject> _blogTagObjectStore;
         private readonly IFileObjectStore<BlogSeriesObject> _blogSeriesObjectStore;
@@ -18,11 +21,13 @@ namespace Swan.Core.Store
 
         public MemoryObjectStore(
             ICacheClient cacheManager,
+            ILogger<MemoryObjectStore> logger,
             IFileObjectStore<ReadObject> readObjectStore,
             IFileObjectStore<BlogTagObject> blogTagObjectStore,
             IFileObjectStore<BlogSeriesObject> blogSeriesObjectStore,
             IFileObjectStore<BlogPostObject> blogPostObjectStore)
         {
+            _logger = logger;
             _semaphoreSlim = new SemaphoreSlim(1, 1);
             _cacheManager = cacheManager;
             _readObjectStore = readObjectStore;
@@ -46,7 +51,6 @@ namespace Swan.Core.Store
             try
             {
                 BlogPostObject result = await _blogPostObjectStore.AddAsync(obj);
-                ClearCache();
 
                 List<BlogPost> posts = await GetBlogPostsAsync(true);
                 return posts.First(x => x.Object.Id == result.Id);
@@ -64,7 +68,6 @@ namespace Swan.Core.Store
             try
             {
                 BlogPostObject result = await _blogPostObjectStore.UpdateAsync(obj);
-                ClearCache();
 
                 List<BlogPost> posts = await GetBlogPostsAsync(true);
                 return posts.First(x => x.Object.Id == result.Id);
@@ -92,7 +95,6 @@ namespace Swan.Core.Store
             try
             {
                 BlogTagObject result = await _blogTagObjectStore.AddAsync(obj);
-                ClearCache();
 
                 List<BlogTag> tags = await GetBlogTagsAsync(true);
                 return tags.First(x => x.Object.Id == result.Id);
@@ -110,7 +112,6 @@ namespace Swan.Core.Store
             try
             {
                 BlogTagObject result = await _blogTagObjectStore.UpdateAsync(obj);
-                ClearCache();
 
                 List<BlogTag> tags = await GetBlogTagsAsync(true);
                 return tags.First(x => x.Object.Id == result.Id);
@@ -140,8 +141,7 @@ namespace Swan.Core.Store
                     _ = await _blogPostObjectStore.UpdateAsync(post.Object);
                 }
 
-                await _blogTagObjectStore.DeleteAsync(id);
-                ClearCache();
+                await _blogTagObjectStore.DeleteAsync(x => x.Id == id);
             }
             finally
             {
@@ -166,7 +166,6 @@ namespace Swan.Core.Store
             try
             {
                 BlogSeriesObject result = await _blogSeriesObjectStore.AddAsync(obj);
-                ClearCache();
 
                 List<BlogSeries> series = await GetBlogSeriesAsync(true);
                 return series.First(x => x.Object.Id == result.Id);
@@ -184,7 +183,6 @@ namespace Swan.Core.Store
             try
             {
                 BlogSeriesObject result = await _blogSeriesObjectStore.UpdateAsync(obj);
-                ClearCache();
 
                 List<BlogSeries> series = await GetBlogSeriesAsync(true);
                 return series.First(x => x.Object.Id == result.Id);
@@ -214,8 +212,7 @@ namespace Swan.Core.Store
                     _ = await _blogPostObjectStore.UpdateAsync(post.Object);
                 }
 
-                await _blogSeriesObjectStore.DeleteAsync(id);
-                ClearCache();
+                await _blogSeriesObjectStore.DeleteAsync(x => x.Id == id);
             }
             finally
             {
@@ -240,7 +237,6 @@ namespace Swan.Core.Store
             try
             {
                 ReadObject result = await _readObjectStore.AddAsync(obj);
-                ClearCache();
 
                 List<ReadModel> readModel = await GetReadModelsAsync(true);
                 return readModel.First(x => x.Object.Id == result.Id);
@@ -258,7 +254,6 @@ namespace Swan.Core.Store
             try
             {
                 ReadObject result = await _readObjectStore.UpdateAsync(obj);
-                ClearCache();
 
                 List<ReadModel> readModel = await GetReadModelsAsync(true);
                 return readModel.First(x => x.Object.Id == result.Id);
@@ -282,8 +277,7 @@ namespace Swan.Core.Store
                     return;
                 }
 
-                await _readObjectStore.DeleteAsync(id);
-                ClearCache();
+                await _readObjectStore.DeleteAsync(x => x.Id == id);
             }
             finally
             {
@@ -293,29 +287,31 @@ namespace Swan.Core.Store
 
         #endregion
 
-        private void ClearCache()
-        {
-            _cacheManager.TryRemove(Constants.CacheKey.MemoryObjectsAdmin);
-        }
-
         private async Task<MemoryObject> GetMemoryObjectAsync(bool isAdmin)
         {
-            string cacheKey = isAdmin ? Constants.CacheKey.MemoryObjectsAdmin : Constants.CacheKey.MemoryObjects;
-            return await _cacheManager.GetOrCreateAsync(cacheKey, async () =>
+            if (isAdmin)
+            {
+                return await GetMemoryObjectFromStoreAsync(true);
+            }
+
+            return await _cacheManager.GetOrCreateAsync(Constants.CacheKey.MemoryObjects, async () =>
             {
                 return await GetMemoryObjectFromStoreAsync(isAdmin);
-            }, isAdmin ? null : TimeSpan.FromHours(2));
+            }, TimeSpan.FromHours(2));
         }
 
         private async Task<MemoryObject> GetMemoryObjectFromStoreAsync(bool isAdmin)
         {
-            IEnumerable<BlogPostObject> blogPostObjs = await _blogPostObjectStore.GetAllAsync();
-            IEnumerable<BlogTagObject> blogTagObjs = await _blogTagObjectStore.GetAllAsync();
-            IEnumerable<BlogSeriesObject> blogSeriesObjs = await _blogSeriesObjectStore.GetAllAsync();
-            IEnumerable<ReadObject> readModelObjs = await _readObjectStore.GetAllAsync();
+            var stopwatch = Stopwatch.StartNew();
+            var blogPostObjsTask = _blogPostObjectStore.GetAllAsync();
+            var blogTagObjsTask = _blogTagObjectStore.GetAllAsync();
+            var blogSeriesObjsTask = _blogSeriesObjectStore.GetAllAsync();
+            var readModelObjsTask = _readObjectStore.GetAllAsync();
 
-            List<BlogPost> blogPosts = new();
-            foreach (BlogPostObject obj in blogPostObjs)
+            await Task.WhenAll(blogPostObjsTask, blogTagObjsTask, blogSeriesObjsTask, readModelObjsTask);
+
+            ConcurrentBag<BlogPost> blogPosts = new();
+            Parallel.ForEach(blogPostObjsTask.Result, obj =>
             {
                 BlogPost post = new(obj);
                 if (isAdmin || post.IsPublished())
@@ -324,10 +320,11 @@ namespace Swan.Core.Store
                     post.HtmlContent = htmlDoc.DocumentNode.OuterHtml;
                     blogPosts.Add(post);
                 }
-            }
+            });
+
 
             List<BlogTag> blogTags = new();
-            foreach (BlogTagObject obj in blogTagObjs)
+            foreach (BlogTagObject obj in blogTagObjsTask.Result)
             {
                 BlogTag tag = new(obj);
                 tag.Posts.AddRange(blogPosts.Where(x => x.Object.Tags.Contains(obj.Id)));
@@ -335,15 +332,15 @@ namespace Swan.Core.Store
             }
 
             List<BlogSeries> blogSereis = new();
-            foreach (BlogSeriesObject obj in blogSeriesObjs)
+            foreach (BlogSeriesObject obj in blogSeriesObjsTask.Result)
             {
                 BlogSeries series = new(obj);
                 series.Posts.AddRange(blogPosts.Where(x => x.Object.Series == obj.Id));
                 blogSereis.Add(series);
             }
 
-            List<ReadModel> readModels = new();
-            foreach (ReadObject obj in readModelObjs)
+            ConcurrentBag<ReadModel> readModels = new();
+            Parallel.ForEach(readModelObjsTask.Result, obj =>
             {
                 if (isAdmin || obj.IsPublic)
                 {
@@ -355,13 +352,13 @@ namespace Swan.Core.Store
                     readModel.BlogPosts.AddRange(blogPosts.Where(x => obj.Posts.Contains(x.Object.Id)));
                     readModels.Add(readModel);
                 }
-            }
+            });
 
-            foreach (BlogPost post in blogPosts)
+            Parallel.ForEach(blogPosts, post =>
             {
                 post.BlogTags.AddRange(blogTags.Where(x => x.Posts.Contains(post)));
                 post.BlogSeries = blogSereis.FirstOrDefault(x => x.Posts.Contains(post));
-            }
+            });
 
             if (!isAdmin)
             {
@@ -370,10 +367,14 @@ namespace Swan.Core.Store
             }
 
             MemoryObject memoryObj = new();
-            memoryObj.BlogPosts.AddRange(blogPosts);
-            memoryObj.BlogSeries.AddRange(blogSereis);
-            memoryObj.BlogTags.AddRange(blogTags);
-            memoryObj.ReadModels.AddRange(readModels);
+            Parallel.Invoke(
+                () => memoryObj.BlogPosts.AddRange(blogPosts),
+                () => memoryObj.BlogSeries.AddRange(blogSereis),
+                () => memoryObj.BlogTags.AddRange(blogTags),
+                () => memoryObj.ReadModels.AddRange(readModels));
+
+            stopwatch.Stop();
+            _logger.LogInformation($"Load memory object in {stopwatch.ElapsedMilliseconds}ms, isAdmin: {isAdmin}");
             return memoryObj;
         }
 

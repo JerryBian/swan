@@ -40,11 +40,7 @@ namespace Swan.Core.Service
             try
             {
                 _ = await _store.AddAsync(log);
-                IEnumerable<LogObject> logs = await _store.GetAllAsync();
-                foreach (LogObject item in logs.Where(x => x.Timestamp < DateTime.Now.AddDays(-15)))
-                {
-                    await _store.DeleteAsync(item.Id);
-                }
+                await _store.DeleteAsync(x => x.Timestamp < DateTime.Now.AddDays(-15));
             }
             finally
             {

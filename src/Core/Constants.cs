@@ -5,8 +5,6 @@
         public class CacheKey
         {
             public const string MemoryObjects = "_memory_objects_";
-
-            public const string MemoryObjectsAdmin = "_memory_objects_admin";
         }
 
         public class Asset

@@ -48,7 +48,7 @@ namespace Swan.Core.Service
 
                 foreach (BlogPostAccessObject obj in objs.ToList().Where(x => DateTime.Now - x.Timestamp > TimeSpan.FromDays(3)))
                 {
-                    await _store.DeleteAsync(obj.Id);
+                    await _store.DeleteAsync(x => x.Id == obj.Id);
                 }
             }
             finally
