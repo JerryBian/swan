@@ -2,20 +2,27 @@
 using Swan.Core.Command;
 using Swan.Core.Extension;
 using Swan.Core.Option;
+using Swan.Core.Service;
 
 namespace Swan.HostedServices
 {
     public class GitFileHostedService : BackgroundService
     {
         private readonly SwanOption _option;
+        private readonly ILogService _logService;
         private readonly ICommandClient _commandClient;
         private readonly ILogger<GitFileHostedService> _logger;
 
-        public GitFileHostedService(ICommandClient commandClient, IOptions<SwanOption> option, ILogger<GitFileHostedService> logger)
+        public GitFileHostedService(
+            ICommandClient commandClient, 
+            IOptions<SwanOption> option, 
+            ILogService logService,
+            ILogger<GitFileHostedService> logger)
         {
             _commandClient = commandClient;
             _option = option.Value;
             _logger = logger;
+            _logService = logService;
         }
 
         public override async Task StartAsync(CancellationToken cancellationToken)
@@ -60,6 +67,7 @@ namespace Swan.HostedServices
 
             }
 
+            _logService.Start();
             await base.StartAsync(cancellationToken);
         }
 

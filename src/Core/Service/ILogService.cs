@@ -7,5 +7,9 @@ namespace Swan.Core.Service
         Task AddLogAsync(LogObject log);
 
         Task<List<LogObject>> GetAllLogsAsync();
+
+        void Start();
+
+        bool HasStarted();
     }
 }

@@ -296,7 +296,7 @@ namespace Swan.Core.Store
 
             return await _cacheManager.GetOrCreateAsync(Constants.CacheKey.MemoryObjects, async () =>
             {
-                return await GetMemoryObjectFromStoreAsync(isAdmin);
+                return await GetMemoryObjectFromStoreAsync(false);
             }, TimeSpan.FromHours(2));
         }
 
