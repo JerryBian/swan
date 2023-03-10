@@ -127,7 +127,9 @@
     <script>
         activeNavItem("#nav_admin");
         let editor = createEditor(document.querySelector("#mdContent"), "edit_post_@Model.Object.Id");
-        editor.value("@Model.Object.MdContent");
+        let txt = document.createElement("textarea");
+        txt.innerHTML = "@Model.Object.MdContent";
+        editor.value(txt.value);
         const form = document.querySelector("form");
         form.addEventListener('submit',
             function (event) {

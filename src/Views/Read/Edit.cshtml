@@ -93,7 +93,9 @@
     <script>
         activeNavItem("#nav_admin");
         let editor = createEditor(document.querySelector("#comment"), "edit_read_@Model.Object.Id");
-        editor.value("@Model.Object.Comment");
+        let txt = document.createElement("textarea");
+        txt.innerHTML = "@Model.Object.Comment";
+        editor.value(txt.value);
         const form = document.querySelector("form");
         form.addEventListener('submit',
             function (event) {
