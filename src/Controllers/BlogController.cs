@@ -8,6 +8,7 @@ using Swan.Core.Model;
 using Swan.Core.Model.Object;
 using Swan.Core.Option;
 using Swan.Core.Service;
+using Swan.Core.Store;
 using System.ServiceModel.Syndication;
 using System.Text;
 using System.Xml;
@@ -20,18 +21,18 @@ namespace Swan.Controllers
         private readonly ILogger<BlogController> _logger;
         private readonly IBlogService _blogService;
         private readonly SwanOption _option;
-        private readonly IBlogPostAccessService _blogPostAccessService;
+        private readonly IBlogPostAccessStore _blogPostAccessStore;
 
         public BlogController(
             IBlogService blogService,
             ILogger<BlogController> logger,
             IOptions<SwanOption> option,
-            IBlogPostAccessService blogPostAccessService)
+            IBlogPostAccessStore blogPostAccessStore)
         {
             _logger = logger;
             _option = option.Value;
             _blogService = blogService;
-            _blogPostAccessService = blogPostAccessService;
+            _blogPostAccessStore = blogPostAccessStore;
         }
 
         #region Posts
@@ -43,7 +44,7 @@ namespace Swan.Controllers
             List<BlogPost> posts = await _blogService.GetAllPostsAsync(Request.HttpContext.IsAuthorized());
             List<BlogPost> model = posts.Take(_option.ItemsPerPage).ToList();
 
-            if(model.Any())
+            if (model.Any())
             {
                 ViewData[Constants.ViewData.DatePublished] = model.Min(x => x.Object.CreateTime);
                 ViewData[Constants.ViewData.DateModified] = model.Max(x => x.Object.CreateTime);
@@ -60,7 +61,7 @@ namespace Swan.Controllers
         {
             List<BlogPost> posts = await _blogService.GetAllPostsAsync(Request.HttpContext.IsAuthorized());
 
-            if(posts.Any())
+            if (posts.Any())
             {
                 ViewData[Constants.ViewData.DatePublished] = posts.Min(x => x.Object.CreateTime);
                 ViewData[Constants.ViewData.DateModified] = posts.Max(x => x.Object.CreateTime);
@@ -85,7 +86,7 @@ namespace Swan.Controllers
             ViewData[Constants.ViewData.DatePublished] = post.Object.CreateTime;
             ViewData[Constants.ViewData.DateModified] = post.Object.LastUpdateTime;
 
-            _ = _blogPostAccessService.AddAsync(post.Object.Id, Request.HttpContext.GetIpAddress());
+            _blogPostAccessStore.Ingest(post.Object.Id, Request.HttpContext.GetIpAddress());
             return View("Post", post);
         }
 
@@ -175,7 +176,7 @@ namespace Swan.Controllers
                 obj.IsPublic = Request.Form["isPublic"] == "on";
                 obj.IsTopping = Request.Form["isTopping"] == "on";
                 obj.ContainsMath = Request.Form["containsMath"] == "on";
-                BlogPost post = await _blogService.UpdatePostAsync(obj);
+                BlogPost post = await _blogService.UpdatePostAsync(obj, true);
                 res.RedirectTo = post.GetUrl();
             }
             catch (Exception ex)
@@ -198,7 +199,7 @@ namespace Swan.Controllers
         {
             List<BlogTag> tags = await _blogService.GetAllTagsAsync(Request.HttpContext.IsAuthorized());
 
-            if(tags.Any())
+            if (tags.Any())
             {
                 ViewData[Constants.ViewData.DatePublished] = tags.Min(x => x.Object.CreateTime);
                 ViewData[Constants.ViewData.DateModified] = tags.Max(x => x.Object.CreateTime);
@@ -214,7 +215,7 @@ namespace Swan.Controllers
         public async Task<IActionResult> GetTag([FromRoute] string url)
         {
             BlogTag tag = await _blogService.GetTagByUrlAsync(url, Request.HttpContext.IsAuthorized());
-            if(tag == null)
+            if (tag == null)
             {
                 return NotFound();
             }
@@ -256,7 +257,7 @@ namespace Swan.Controllers
         public async Task<IActionResult> EditTag([FromRoute] string id)
         {
             BlogTag item = await _blogService.GetTagAsync(id);
-            if(item == null)
+            if (item == null)
             {
                 return NotFound();
             }
@@ -295,7 +296,7 @@ namespace Swan.Controllers
         {
             List<BlogSeries> series = await _blogService.GetAllSeriesAsync(Request.HttpContext.IsAuthorized());
 
-            if(series.Any())
+            if (series.Any())
             {
                 ViewData[Constants.ViewData.DatePublished] = series.Min(x => x.Object.CreateTime);
                 ViewData[Constants.ViewData.DateModified] = series.Max(x => x.Object.CreateTime);
@@ -311,7 +312,7 @@ namespace Swan.Controllers
         public async Task<IActionResult> GetSeries([FromRoute] string url)
         {
             BlogSeries series = await _blogService.GetSeriesByUrlAsync(url, Request.HttpContext.IsAuthorized());
-            if(series == null)
+            if (series == null)
             {
                 return NotFound();
             }
@@ -353,7 +354,7 @@ namespace Swan.Controllers
         public async Task<IActionResult> EditSeries([FromRoute] string id)
         {
             BlogSeries item = await _blogService.GetSeriesAsync(id);
-            if(item == null)
+            if (item == null)
             {
                 return NotFound();
             }

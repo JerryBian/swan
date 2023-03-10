@@ -13,7 +13,7 @@ namespace Swan.Core.Store
     {
         private readonly SemaphoreSlim _semaphoreSlim;
         private readonly ICacheClient _cacheManager;
-        ILogger<MemoryObjectStore> _logger;
+        private readonly ILogger<MemoryObjectStore> _logger;
         private readonly IFileObjectStore<ReadObject> _readObjectStore;
         private readonly IFileObjectStore<BlogTagObject> _blogTagObjectStore;
         private readonly IFileObjectStore<BlogSeriesObject> _blogSeriesObjectStore;
@@ -61,13 +61,13 @@ namespace Swan.Core.Store
             }
         }
 
-        public async Task<BlogPost> UpdatePostAsync(BlogPostObject obj)
+        public async Task<BlogPost> UpdatePostAsync(BlogPostObject obj, bool coreUpdate)
         {
             await _semaphoreSlim.WaitAsync();
 
             try
             {
-                BlogPostObject result = await _blogPostObjectStore.UpdateAsync(obj);
+                BlogPostObject result = await _blogPostObjectStore.UpdateAsync(obj, coreUpdate);
 
                 List<BlogPost> posts = await GetBlogPostsAsync(true);
                 return posts.First(x => x.Object.Id == result.Id);
@@ -289,12 +289,9 @@ namespace Swan.Core.Store
 
         private async Task<MemoryObject> GetMemoryObjectAsync(bool isAdmin)
         {
-            if (isAdmin)
-            {
-                return await GetMemoryObjectFromStoreAsync(true);
-            }
-
-            return await _cacheManager.GetOrCreateAsync(Constants.CacheKey.MemoryObjects, async () =>
+            return isAdmin
+                ? await GetMemoryObjectFromStoreAsync(true)
+                : await _cacheManager.GetOrCreateAsync(Constants.CacheKey.MemoryObjects, async () =>
             {
                 return await GetMemoryObjectFromStoreAsync(false);
             }, TimeSpan.FromHours(2));
@@ -302,16 +299,16 @@ namespace Swan.Core.Store
 
         private async Task<MemoryObject> GetMemoryObjectFromStoreAsync(bool isAdmin)
         {
-            var stopwatch = Stopwatch.StartNew();
-            var blogPostObjsTask = _blogPostObjectStore.GetAllAsync();
-            var blogTagObjsTask = _blogTagObjectStore.GetAllAsync();
-            var blogSeriesObjsTask = _blogSeriesObjectStore.GetAllAsync();
-            var readModelObjsTask = _readObjectStore.GetAllAsync();
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            Task<IEnumerable<BlogPostObject>> blogPostObjsTask = _blogPostObjectStore.GetAllAsync();
+            Task<IEnumerable<BlogTagObject>> blogTagObjsTask = _blogTagObjectStore.GetAllAsync();
+            Task<IEnumerable<BlogSeriesObject>> blogSeriesObjsTask = _blogSeriesObjectStore.GetAllAsync();
+            Task<IEnumerable<ReadObject>> readModelObjsTask = _readObjectStore.GetAllAsync();
 
             await Task.WhenAll(blogPostObjsTask, blogTagObjsTask, blogSeriesObjsTask, readModelObjsTask);
 
             ConcurrentBag<BlogPost> blogPosts = new();
-            Parallel.ForEach(blogPostObjsTask.Result, obj =>
+            _ = Parallel.ForEach(blogPostObjsTask.Result, obj =>
             {
                 BlogPost post = new(obj);
                 if (isAdmin || post.IsPublished())
@@ -340,7 +337,7 @@ namespace Swan.Core.Store
             }
 
             ConcurrentBag<ReadModel> readModels = new();
-            Parallel.ForEach(readModelObjsTask.Result, obj =>
+            _ = Parallel.ForEach(readModelObjsTask.Result, obj =>
             {
                 if (isAdmin || obj.IsPublic)
                 {
@@ -354,7 +351,7 @@ namespace Swan.Core.Store
                 }
             });
 
-            Parallel.ForEach(blogPosts, post =>
+            _ = Parallel.ForEach(blogPosts, post =>
             {
                 post.BlogTags.AddRange(blogTags.Where(x => x.Posts.Contains(post)));
                 post.BlogSeries = blogSereis.FirstOrDefault(x => x.Posts.Contains(post));

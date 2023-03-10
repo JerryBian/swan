@@ -2,8 +2,6 @@
 using Swan.Core.Helper;
 using Swan.Core.Model.Object;
 using Swan.Core.Option;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
 using System.Text;
 
 namespace Swan.Core.Store
@@ -181,11 +179,11 @@ namespace Swan.Core.Store
                 List<List<T>> objs = await ReadAllAsync();
                 foreach (List<T> item in objs)
                 {
-                    var fileName = item.First().GetFileName();
-                    var path = Path.Combine(_dir, fileName);
-                    var targetObjs = item.Where(x => filter(x)).ToList();
-                    var remainingObjs = targetObjs.Except(targetObjs);
-                    if(!remainingObjs.Any())
+                    string fileName = item.First().GetFileName();
+                    string path = Path.Combine(_dir, fileName);
+                    List<T> targetObjs = item.Where(x => filter(x)).ToList();
+                    IEnumerable<T> remainingObjs = targetObjs.Except(targetObjs);
+                    if (!remainingObjs.Any())
                     {
                         // No Element: Delete file
                         File.Delete(fileName);
@@ -196,7 +194,7 @@ namespace Swan.Core.Store
                     {
                         await WriteAsync(path, remainingObjs.OrderByDescending(x => x.CreateTime));
                     }
-                    
+
                 }
             }
             finally
@@ -207,7 +205,7 @@ namespace Swan.Core.Store
 
         private async Task<List<List<T>>> ReadAllAsync()
         {
-            var result = new List<List<T>>();
+            List<List<T>> result = new();
             foreach (string file in Directory.EnumerateFiles(_dir, _filter, SearchOption.TopDirectoryOnly))
             {
                 string content = await File.ReadAllTextAsync(file, Encoding.UTF8);

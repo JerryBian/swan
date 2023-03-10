@@ -14,8 +14,8 @@ namespace Swan.HostedServices
         private readonly ILogger<GitFileHostedService> _logger;
 
         public GitFileHostedService(
-            ICommandClient commandClient, 
-            IOptions<SwanOption> option, 
+            ICommandClient commandClient,
+            IOptions<SwanOption> option,
             ILogService logService,
             ILogger<GitFileHostedService> logger)
         {
