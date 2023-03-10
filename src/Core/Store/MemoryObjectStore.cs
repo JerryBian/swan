@@ -435,6 +435,7 @@ namespace Swan.Core.Store
                 h3Node.Id = h3Node.InnerText;
                 h3Node.RemoveClass();
                 h3Node.AddClass("mb-3 mt-4 border-bottom border-2 border-info px-1 py-2");
+                h3Node.Attributes.Add("style", "--bs-border-opacity: .1;");
                 h3Node.InnerHtml = $"<i class=\"bi bi-slash small text-muted pe-1\"></i> {h3Node.InnerHtml}";
             }
 
@@ -442,7 +443,7 @@ namespace Swan.Core.Store
             foreach (HtmlNode h4Node in h4)
             {
                 h4Node.Id = h4Node.InnerText;
-                h4Node.InnerHtml = $"<span class=\"d-inline-block bg-success p-1 align-middle\"></span> {h4Node.InnerHtml} <i class=\"bi bi-dash small text-secondary\"></i>";
+                h4Node.InnerHtml = $"<span class=\"d-inline-block bg-success p-1 me-2 align-middle\"></span> {h4Node.InnerHtml}";
             }
 
             return htmlDoc;

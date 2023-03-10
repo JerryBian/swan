@@ -4,32 +4,34 @@
     var i = 0;
 }
 
-@foreach (var item in Model.GroupBy(x => x.Object.PublishTime.Year))
-{
-    <h3 class="mb-3 mt-4 border-bottom border-2 border-info px-1 py-2" style="--bs-border-opacity: .5;" id="year-@item.Key">
-        <i class="bi bi-slash small text-muted pe-1"></i>
-        @item.Key (@item.Count())
-    </h3>
-    @foreach (var item2 in item.OrderByDescending(x => x.Object.PublishTime))
+<div class="mb-5">
+    @foreach (var item in Model.GroupBy(x => x.Object.PublishTime.Year))
     {
-        var rowCls = item2.IsPublished() ? "" : "text-muted";
-        <div class="d-flex position-relative post-item py-2 @rowCls">
-            <div class="text-truncate">
-                <i class="bi bi-signpost small text-muted pe-1"></i>
-                <span class="fs-5">@item2.Object.Title </span>
-            </div>
-            <div class="text-muted text-nowrap ms-auto small pt-1 fst-italic ps-1">- @item2.Object.PublishTime.ToCnDate(true)</div>
-            <a href="@item2.GetUrl()" class="top-0 bottom-0 start-0 end-0 position-absolute" title="最后修改于：@item2.Object.LastUpdateTime.ToCnDateTime()"></a>
-        </div>
-
-        if(i == _options.Value.ItemsPerPage)
+        <h3 class="mb-3 mt-4 border-bottom border-2 border-info px-1 py-2" style="--bs-border-opacity: .1;" id="year-@item.Key">
+            <i class="bi bi-slash small text-muted pe-1"></i>
+            @item.Key (@item.Count())
+        </h3>
+        @foreach (var item2 in item.OrderByDescending(x => x.Object.PublishTime))
         {
-            <div id="from-index"></div>
-        }
+            var rowCls = item2.IsPublished() ? "" : "text-muted";
+            <div class="position-relative post-item py-2 @rowCls">
+                <div class="text-truncate">
+                    <i class="bi bi-signpost small text-muted pe-1"></i>
+                    <span class="fs-5">@item2.Object.Title </span>
+                </div>
+                <div class="text-muted text-nowrap ms-auto small pt-1 fst-italic ps-4">- @item2.Object.PublishTime.ToCnDate(true)</div>
+                <a href="@item2.GetUrl()" class="top-0 bottom-0 start-0 end-0 position-absolute" title="最后修改于：@item2.Object.LastUpdateTime.ToCnDateTime()"></a>
+            </div>
 
-        i++;
+            i++;
+
+            if (i == _options.Value.ItemsPerPage)
+            {
+                <div id="from-index"></div>
+            }
+        }
     }
-}
+</div>
 
 @section Script {
     <script>
@@ -48,5 +50,5 @@
 }
 
 @section Header {
-    <h2 class="text-info"><i class="bi bi-hash small text-muted"></i> 所有文章 (@Model.Count()) <i class="bi bi-hash small text-muted"></i></h2>
+    <h2 class="text-primary"><i class="bi bi-hash small text-muted"></i> 所有文章 (@Model.Count()) <i class="bi bi-hash small text-muted"></i></h2>
 }
