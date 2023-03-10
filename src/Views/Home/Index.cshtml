@@ -45,5 +45,18 @@
             </div>
         </div>
     </div>
+
+    @if (_env.IsProduction())
+    {
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-SBZLD4LKPB"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() { dataLayer.push(arguments); }
+            gtag('js', new Date());
+
+            gtag('config', 'G-SBZLD4LKPB');
+        </script>
+    }
 </body>
 </html>
