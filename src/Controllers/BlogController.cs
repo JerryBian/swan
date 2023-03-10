@@ -8,6 +8,7 @@ using Swan.Core.Model;
 using Swan.Core.Model.Object;
 using Swan.Core.Option;
 using Swan.Core.Service;
+using Swan.Core.Store;
 using System.ServiceModel.Syndication;
 using System.Text;
 using System.Xml;
@@ -20,18 +21,18 @@ namespace Swan.Controllers
         private readonly ILogger<BlogController> _logger;
         private readonly IBlogService _blogService;
         private readonly SwanOption _option;
-        private readonly IBlogPostAccessService _blogPostAccessService;
+        private readonly IBlogPostAccessStore _blogPostAccessStore;
 
         public BlogController(
             IBlogService blogService,
             ILogger<BlogController> logger,
             IOptions<SwanOption> option,
-            IBlogPostAccessService blogPostAccessService)
+            IBlogPostAccessStore blogPostAccessStore)
         {
             _logger = logger;
             _option = option.Value;
             _blogService = blogService;
-            _blogPostAccessService = blogPostAccessService;
+            _blogPostAccessStore = blogPostAccessStore;
         }
 
         #region Posts
@@ -43,9 +44,13 @@ namespace Swan.Controllers
             List<BlogPost> posts = await _blogService.GetAllPostsAsync(Request.HttpContext.IsAuthorized());
             List<BlogPost> model = posts.Take(_option.ItemsPerPage).ToList();
 
+            if (model.Any())
+            {
+                ViewData[Constants.ViewData.DatePublished] = model.Min(x => x.Object.CreateTime);
+                ViewData[Constants.ViewData.DateModified] = model.Max(x => x.Object.CreateTime);
+            }
+
             ViewData[Constants.ViewData.Title] = "博客";
-            ViewData[Constants.ViewData.DatePublished] = model.Min(x => x.Object.CreateTime);
-            ViewData[Constants.ViewData.DateModified] = model.Max(x => x.Object.CreateTime);
             ViewData[Constants.ViewData.Description] = $"{_option.AdminUserFullName}的博客";
             return View(model);
         }
@@ -56,9 +61,13 @@ namespace Swan.Controllers
         {
             List<BlogPost> posts = await _blogService.GetAllPostsAsync(Request.HttpContext.IsAuthorized());
 
+            if (posts.Any())
+            {
+                ViewData[Constants.ViewData.DatePublished] = posts.Min(x => x.Object.CreateTime);
+                ViewData[Constants.ViewData.DateModified] = posts.Max(x => x.Object.CreateTime);
+            }
+
             ViewData[Constants.ViewData.Title] = "所有文章 &ndash; 博客";
-            ViewData[Constants.ViewData.DatePublished] = posts.Min(x => x.Object.CreateTime);
-            ViewData[Constants.ViewData.DateModified] = posts.Max(x => x.Object.CreateTime);
             ViewData[Constants.ViewData.Description] = $"{_option.AdminUserFullName}的博客文章汇总";
             return View("AllPosts", posts);
         }
@@ -77,7 +86,7 @@ namespace Swan.Controllers
             ViewData[Constants.ViewData.DatePublished] = post.Object.CreateTime;
             ViewData[Constants.ViewData.DateModified] = post.Object.LastUpdateTime;
 
-            _ = _blogPostAccessService.AddAsync(post.Object.Id, Request.HttpContext.GetIpAddress());
+            _blogPostAccessStore.Ingest(post.Object.Id, Request.HttpContext.GetIpAddress());
             return View("Post", post);
         }
 
@@ -86,6 +95,10 @@ namespace Swan.Controllers
         public async Task<IActionResult> GetPostById([FromRoute] string id)
         {
             BlogPost post = await _blogService.GetPostAsync(id);
+            if (post == null)
+            {
+                return NotFound();
+            }
 
             ViewData[Constants.ViewData.Title] = $"{post.Object.Title} &ndash; Admin";
             ViewData[Constants.ViewData.DatePublished] = post.Object.CreateTime;
@@ -163,7 +176,7 @@ namespace Swan.Controllers
                 obj.IsPublic = Request.Form["isPublic"] == "on";
                 obj.IsTopping = Request.Form["isTopping"] == "on";
                 obj.ContainsMath = Request.Form["containsMath"] == "on";
-                BlogPost post = await _blogService.UpdatePostAsync(obj);
+                BlogPost post = await _blogService.UpdatePostAsync(obj, true);
                 res.RedirectTo = post.GetUrl();
             }
             catch (Exception ex)
@@ -186,9 +199,13 @@ namespace Swan.Controllers
         {
             List<BlogTag> tags = await _blogService.GetAllTagsAsync(Request.HttpContext.IsAuthorized());
 
+            if (tags.Any())
+            {
+                ViewData[Constants.ViewData.DatePublished] = tags.Min(x => x.Object.CreateTime);
+                ViewData[Constants.ViewData.DateModified] = tags.Max(x => x.Object.CreateTime);
+            }
+
             ViewData[Constants.ViewData.Title] = "所有标签 &ndash; 博客";
-            ViewData[Constants.ViewData.DatePublished] = tags.Min(x => x.Object.CreateTime);
-            ViewData[Constants.ViewData.DateModified] = tags.Max(x => x.Object.CreateTime);
             ViewData[Constants.ViewData.Description] = $"{_option.AdminUserFullName}的博客标签汇总";
             return View("AllTags", tags);
         }
@@ -198,9 +215,13 @@ namespace Swan.Controllers
         public async Task<IActionResult> GetTag([FromRoute] string url)
         {
             BlogTag tag = await _blogService.GetTagByUrlAsync(url, Request.HttpContext.IsAuthorized());
+            if (tag == null)
+            {
+                return NotFound();
+            }
 
             ViewData[Constants.ViewData.Title] = $"标签：{tag.Object.Name} &ndash; 博客";
-            return tag == null ? NotFound() : View("Tag", tag);
+            return View("Tag", tag);
         }
 
         [Authorize]
@@ -236,9 +257,13 @@ namespace Swan.Controllers
         public async Task<IActionResult> EditTag([FromRoute] string id)
         {
             BlogTag item = await _blogService.GetTagAsync(id);
+            if (item == null)
+            {
+                return NotFound();
+            }
 
             ViewData[Constants.ViewData.Title] = $"编辑博客标签：{item.Object.Name} &ndash; Admin";
-            return item == null ? NotFound() : View("EditTag", item);
+            return View("EditTag", item);
         }
 
         [Authorize]
@@ -271,9 +296,13 @@ namespace Swan.Controllers
         {
             List<BlogSeries> series = await _blogService.GetAllSeriesAsync(Request.HttpContext.IsAuthorized());
 
+            if (series.Any())
+            {
+                ViewData[Constants.ViewData.DatePublished] = series.Min(x => x.Object.CreateTime);
+                ViewData[Constants.ViewData.DateModified] = series.Max(x => x.Object.CreateTime);
+            }
+
             ViewData[Constants.ViewData.Title] = "所有系列 &ndash; 博客";
-            ViewData[Constants.ViewData.DatePublished] = series.Min(x => x.Object.CreateTime);
-            ViewData[Constants.ViewData.DateModified] = series.Max(x => x.Object.CreateTime);
             ViewData[Constants.ViewData.Description] = $"{_option.AdminUserFullName}的博客系列汇总";
             return View("AllSeries", series);
         }
@@ -283,9 +312,13 @@ namespace Swan.Controllers
         public async Task<IActionResult> GetSeries([FromRoute] string url)
         {
             BlogSeries series = await _blogService.GetSeriesByUrlAsync(url, Request.HttpContext.IsAuthorized());
+            if (series == null)
+            {
+                return NotFound();
+            }
 
             ViewData[Constants.ViewData.Title] = $"系列：{series.Object.Name} &ndash; 博客";
-            return series == null ? NotFound() : View("series", series);
+            return View("series", series);
         }
 
         [Authorize]
@@ -321,9 +354,13 @@ namespace Swan.Controllers
         public async Task<IActionResult> EditSeries([FromRoute] string id)
         {
             BlogSeries item = await _blogService.GetSeriesAsync(id);
+            if (item == null)
+            {
+                return NotFound();
+            }
 
             ViewData[Constants.ViewData.Title] = $"编辑博客系列：{item.Object.Name} &ndash; Admin";
-            return item == null ? NotFound() : View("EditSeries", item);
+            return View("EditSeries", item);
         }
 
         [Authorize]

@@ -8,10 +8,22 @@ namespace Swan.Core.Service
         private readonly SemaphoreSlim _semaphoreSlim;
         private readonly IFileObjectStore<LogObject> _store;
 
+        private bool _started;
+
         public LogService(IFileObjectStore<LogObject> store)
         {
             _store = store;
             _semaphoreSlim = new SemaphoreSlim(1, 1);
+        }
+
+        public void Start()
+        {
+            _started = true;
+        }
+
+        public bool HasStarted()
+        {
+            return _started;
         }
 
         public async Task<List<LogObject>> GetAllLogsAsync()
@@ -40,11 +52,7 @@ namespace Swan.Core.Service
             try
             {
                 _ = await _store.AddAsync(log);
-                IEnumerable<LogObject> logs = await _store.GetAllAsync();
-                foreach (LogObject item in logs.Where(x => x.Timestamp < DateTime.Now.AddDays(-15)))
-                {
-                    await _store.DeleteAsync(item.Id);
-                }
+                await _store.DeleteAsync(x => x.Timestamp < DateTime.Now.AddDays(-15));
             }
             finally
             {

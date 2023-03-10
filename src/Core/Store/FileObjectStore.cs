@@ -11,7 +11,6 @@ namespace Swan.Core.Store
         private readonly string _dir;
         private readonly string _filter;
         private readonly SemaphoreSlim _semaphoreSlim;
-        private readonly List<List<T>> _cachedObjects;
 
         public FileObjectStore(IOptions<SwanOption> option, string path, string filter)
         {
@@ -20,7 +19,6 @@ namespace Swan.Core.Store
 
             _filter = filter;
             _semaphoreSlim = new SemaphoreSlim(1, 1);
-            _cachedObjects = new List<List<T>>();
         }
 
         public async Task<IEnumerable<T>> GetAllAsync()
@@ -96,7 +94,6 @@ namespace Swan.Core.Store
                         throw new Exception($"File already exists: {path}");
                     }
 
-                    _cachedObjects.Add(new List<T> { obj });
                     await WriteAsync(path, obj);
                 }
 
@@ -108,7 +105,7 @@ namespace Swan.Core.Store
             }
         }
 
-        public async Task<T> UpdateAsync(T obj)
+        public async Task<T> UpdateAsync(T obj, bool coreUpdate = true)
         {
             await _semaphoreSlim.WaitAsync();
             try
@@ -148,7 +145,7 @@ namespace Swan.Core.Store
                     if (oldObj != null)
                     {
                         obj.CreateTime = oldObj.CreateTime;
-                        obj.LastUpdateTime = DateTime.Now;
+                        obj.LastUpdateTime = coreUpdate ? DateTime.Now : oldObj.LastUpdateTime;
 
                         if (IsStoredAsArray())
                         {
@@ -174,54 +171,30 @@ namespace Swan.Core.Store
             }
         }
 
-        public async Task DeleteAsync(string id)
+        public async Task DeleteAsync(Predicate<T> filter)
         {
             await _semaphoreSlim.WaitAsync();
             try
             {
                 List<List<T>> objs = await ReadAllAsync();
-                bool deleted = false;
                 foreach (List<T> item in objs)
                 {
-                    T obj = null;
-                    foreach (T item2 in item)
+                    string fileName = item.First().GetFileName();
+                    string path = Path.Combine(_dir, fileName);
+                    List<T> targetObjs = item.Where(x => filter(x)).ToList();
+                    IEnumerable<T> remainingObjs = targetObjs.Except(targetObjs);
+                    if (!remainingObjs.Any())
                     {
-                        if (item2.Id == id)
-                        {
-                            obj = item2;
-                            break;
-                        }
+                        // No Element: Delete file
+                        File.Delete(fileName);
+                        continue;
                     }
 
-                    if (obj != null)
+                    if (IsStoredAsArray())
                     {
-                        string file = obj.GetFileName();
-                        string path = Path.Combine(_dir, file);
-                        if (IsStoredAsArray())
-                        {
-                            _ = item.Remove(obj);
-                            if (item.Any())
-                            {
-                                await WriteAsync(path, item.OrderByDescending(x => x.CreateTime));
-                            }
-                            else
-                            {
-                                File.Delete(path);
-                            }
-                        }
-                        else
-                        {
-                            File.Delete(path);
-                        }
-
-                        deleted = true;
-                        break;
+                        await WriteAsync(path, remainingObjs.OrderByDescending(x => x.CreateTime));
                     }
-                }
 
-                if (!deleted)
-                {
-                    throw new Exception($"Id not found: {id}");
                 }
             }
             finally
@@ -232,17 +205,14 @@ namespace Swan.Core.Store
 
         private async Task<List<List<T>>> ReadAllAsync()
         {
-            if (!_cachedObjects.Any())
+            List<List<T>> result = new();
+            foreach (string file in Directory.EnumerateFiles(_dir, _filter, SearchOption.TopDirectoryOnly))
             {
-                foreach (string file in Directory.EnumerateFiles(_dir, _filter, SearchOption.TopDirectoryOnly))
-                {
-                    string content = await File.ReadAllTextAsync(file, Encoding.UTF8);
-                    List<T> obj = !IsStoredAsArray() ? new List<T> { JsonHelper.Deserialize<T>(content) } : JsonHelper.Deserialize<List<T>>(content);
-                    _cachedObjects.Add(obj);
-                }
+                string content = await File.ReadAllTextAsync(file, Encoding.UTF8);
+                result.Add(!IsStoredAsArray() ? new List<T> { JsonHelper.Deserialize<T>(content) } : JsonHelper.Deserialize<List<T>>(content));
             }
 
-            return _cachedObjects;
+            return result;
         }
 
         private async Task WriteAsync(string file, object obj)

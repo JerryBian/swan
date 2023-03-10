@@ -27,7 +27,7 @@ namespace Swan.Core.Store
 
         Task<List<ReadModel>> GetReadModelsAsync(bool isAdmin);
 
-        Task<BlogPost> UpdatePostAsync(BlogPostObject obj);
+        Task<BlogPost> UpdatePostAsync(BlogPostObject obj, bool coreUpdate);
 
         Task<ReadModel> UpdateReadAsync(ReadObject obj);
 

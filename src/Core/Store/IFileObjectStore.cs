@@ -8,8 +8,8 @@ namespace Swan.Core.Store
 
         Task<T> AddAsync(T obj);
 
-        Task<T> UpdateAsync(T obj);
+        Task<T> UpdateAsync(T obj, bool coreUpdate = true);
 
-        Task DeleteAsync(string id);
+        Task DeleteAsync(Predicate<T> filter);
     }
 }

@@ -52,11 +52,11 @@ builder.Services.AddSingleton<ICommandClient, CommandClient>();
 builder.Services.AddSingleton<IFileLoggerProcessor, FileLoggerProcessor>();
 builder.Services.AddSingleton<IMemoryObjectStore, MemoryObjectStore>();
 builder.Services.AddSingleton<IBlacklistStore, BlacklistStore>();
+builder.Services.AddSingleton<IBlogPostAccessStore, BlogPostAccessStore>();
 
 builder.Services.AddSingleton<IBlogService, BlogService>();
 builder.Services.AddSingleton<IReadService, ReadService>();
 builder.Services.AddSingleton<ILogService, LogService>();
-builder.Services.AddSingleton<IBlogPostAccessService, BlogPostAccessService>();
 
 builder.Services.AddSingleton<IFileObjectStore<BlogPostObject>>
     (x => new FileObjectStore<BlogPostObject>(x.GetRequiredService<IOptions<SwanOption>>(), Constants.Asset.BlogPostDir, Constants.Misc.JsonFileFilter));
@@ -75,6 +75,8 @@ builder.Services.AddSingleton<IFileObjectStore<BlogPostAccessObject>>
 builder.Services.AddMemoryCache();
 builder.Services.AddHostedService<GitFileHostedService>();
 builder.Services.AddHostedService<NonProdHostedService>();
+builder.Services.AddHostedService<BlogPostHostedService>();
+
 builder.Services.AddControllersWithViews(option =>
 {
     option.CacheProfiles.Add(Constants.Misc.CacheProfileClientShort, new CacheProfile

@@ -33,7 +33,7 @@ namespace Swan.Core.Service
 
         Task<BlogTag> GetTagByUrlAsync(string url, bool isAdmin);
 
-        Task<BlogPost> UpdatePostAsync(BlogPostObject obj);
+        Task<BlogPost> UpdatePostAsync(BlogPostObject obj, bool coreUpdate);
 
         Task<BlogSeries> UpdateSeriesAsync(BlogSeriesObject obj);
 

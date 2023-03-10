@@ -41,7 +41,7 @@ namespace Swan.Core.Log
             while (!_isAddingCompleted)
             {
                 bool hasItems = false;
-                while (_messageQueue.TryDequeue(out LogObject item))
+                while (_logService.HasStarted() && _messageQueue.TryDequeue(out LogObject item))
                 {
                     hasItems = true;
                     await WriteAsync(item);

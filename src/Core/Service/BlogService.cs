@@ -40,9 +40,9 @@ namespace Swan.Core.Service
             return result;
         }
 
-        public async Task<BlogPost> UpdatePostAsync(BlogPostObject obj)
+        public async Task<BlogPost> UpdatePostAsync(BlogPostObject obj, bool coreUpdate)
         {
-            BlogPost result = await _store.UpdatePostAsync(obj);
+            BlogPost result = await _store.UpdatePostAsync(obj, coreUpdate);
             return result;
         }
 
