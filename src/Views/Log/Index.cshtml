@@ -7,7 +7,7 @@
         <div class="small border p-3 bg-light">
             @foreach (var log in item.OrderByDescending(x => x.Timestamp))
             {
-                <div class="row">
+                <div class="row mb-1">
                     <div class="col-md-2 mb-1">
                         <span class="text-muted" title="@log.Timestamp.ToFullDateTime()">[@log.Timestamp.ToFullTime()]</span>
                     </div>
@@ -24,7 +24,7 @@
                         }
                     }
 
-                    <div class="col-md-10 font-monospace @color">
+                    <div class="col-md-10 font-monospace small @color">
                         <div>@log.Message</div>
                         @if (!string.IsNullOrEmpty(log.Exception))
                         {
@@ -38,7 +38,7 @@
 }
 
 @section Header {
-    <h2 class="text-info"><i class="bi bi-hash small text-muted"></i> 最近的日志 (@Model.Count()) <i class="bi bi-hash small text-muted"></i></h2>
+    <h2 class="text-primary"><i class="bi bi-hash small text-muted"></i> 最近的日志 (@Model.Count()) <i class="bi bi-hash small text-muted"></i></h2>
 }
 
 @section Script {
