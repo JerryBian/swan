@@ -1,6 +1,6 @@
 {
   "name": "swan",
-  "version": "9.0.0",
+  "version": "9.1.0",
   "description": "![master](https://github.com/JerryBian/swan/workflows/master/badge.svg)",
   "main": "index.js",
   "directories": {
