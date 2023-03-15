@@ -69,6 +69,7 @@ namespace Swan.Controllers
 
             ViewData[Constants.ViewData.Title] = "所有文章 &ndash; 博客";
             ViewData[Constants.ViewData.Description] = $"{_option.AdminUserFullName}的博客文章汇总";
+            ViewData[Constants.ViewData.RobotsEnabled] = bool.FalseString;
             return View("AllPosts", posts);
         }
 
@@ -207,6 +208,7 @@ namespace Swan.Controllers
 
             ViewData[Constants.ViewData.Title] = "所有标签 &ndash; 博客";
             ViewData[Constants.ViewData.Description] = $"{_option.AdminUserFullName}的博客标签汇总";
+            ViewData[Constants.ViewData.RobotsEnabled] = bool.FalseString;
             return View("AllTags", tags);
         }
 
@@ -221,6 +223,7 @@ namespace Swan.Controllers
             }
 
             ViewData[Constants.ViewData.Title] = $"标签：{tag.Object.Name} &ndash; 博客";
+            ViewData[Constants.ViewData.RobotsEnabled] = bool.FalseString;
             return View("Tag", tag);
         }
 
@@ -304,6 +307,7 @@ namespace Swan.Controllers
 
             ViewData[Constants.ViewData.Title] = "所有系列 &ndash; 博客";
             ViewData[Constants.ViewData.Description] = $"{_option.AdminUserFullName}的博客系列汇总";
+            ViewData[Constants.ViewData.RobotsEnabled] = bool.FalseString;
             return View("AllSeries", series);
         }
 
@@ -318,6 +322,7 @@ namespace Swan.Controllers
             }
 
             ViewData[Constants.ViewData.Title] = $"系列：{series.Object.Name} &ndash; 博客";
+            ViewData[Constants.ViewData.RobotsEnabled] = bool.FalseString;
             return View("series", series);
         }
 
