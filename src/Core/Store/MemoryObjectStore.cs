@@ -371,7 +371,7 @@ namespace Swan.Core.Store
                 () => memoryObj.ReadModels.AddRange(readModels));
 
             stopwatch.Stop();
-            _logger.LogInformation($"Load memory object in {stopwatch.ElapsedMilliseconds}ms, isAdmin: {isAdmin}");
+            _logger.LogDebug($"Load memory object in {stopwatch.ElapsedMilliseconds}ms, isAdmin: {isAdmin}");
             return memoryObj;
         }
 
