@@ -8,7 +8,7 @@
                 <i class="bi bi-signpost small text-muted pe-1"></i>
                 <span class="fs-5">@item.Object.Title </span>
             </div>
-            <div class="text-muted text-nowrap ms-auto small pt-1 fst-italic ps-4">- @item.Object.PublishTime.ToCnDate()</div>
+            <div class="text-muted text-nowrap ms-auto small pt-1 fst-italic ps-4">- @item.Object.PublishTime.ToCnDate() &middot; @item.Object.AccessCount 次访问</div>
             <a href="@item.GetUrl()" class="top-0 bottom-0 start-0 end-0 position-absolute" title="最后修改于：@item.Object.LastUpdateTime.ToCnDateTime()"></a>
         </div>
     }

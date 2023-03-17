@@ -52,7 +52,7 @@ namespace Swan.Core.Service
             try
             {
                 _ = await _store.AddAsync(log);
-                await _store.DeleteAsync(x => x.Timestamp < DateTime.Now.AddDays(-15));
+                await _store.DeleteAsync(x => x.Timestamp < DateTime.Now.AddDays(-30));
             }
             finally
             {

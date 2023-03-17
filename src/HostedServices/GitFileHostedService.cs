@@ -118,7 +118,7 @@ namespace Swan.HostedServices
             string command =
                 $"{string.Join(" && ", commands)}";
             string output = await _commandClient.RunAsync(command);
-            _logger.LogInformation($"Git push finished: {output}");
+            _logger.LogDebug($"Git push finished: {output}");
         }
 
         private string GetBaseDir()
