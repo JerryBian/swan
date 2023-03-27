@@ -28,44 +28,55 @@ namespace Swan.HostedServices
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                await Task.Delay(TimeSpan.FromHours(6), stoppingToken).OkForCancel();
-
-                List<BlogPostAccessObject> items = _blogPostAccessStore.DequeueAll();
-                if (!items.Any())
+                try
                 {
-                    continue;
-                }
+                    await Task.Delay(TimeSpan.FromMinutes(30), stoppingToken).OkForCancel();
 
-                IEnumerable<BlogPostAccessObject> objs = await _store.GetAllAsync();
-                Dictionary<string, List<BlogPostAccessObject>> bufferedItems = new();
-                foreach (IGrouping<string, BlogPostAccessObject> item in items.GroupBy(x => x.PostId))
-                {
-                    Core.Model.BlogPost post = await _blogService.GetPostAsync(item.Key);
-                    if (post == null)
+                    List<BlogPostAccessObject> items = _blogPostAccessStore.DequeueAll();
+                    if (!items.Any())
                     {
                         continue;
                     }
 
-                    List<BlogPostAccessObject> removedItems = new();
-                    IEnumerable<BlogPostAccessObject> allItems = item.Concat(objs.Where(x => x.Id == item.Key));
-                    foreach (BlogPostAccessObject item1 in item)
+                    await _store.DeleteAsync(x => DateTime.Now - x.CreateTime > TimeSpan.FromDays(15));
+
+                    IEnumerable<BlogPostAccessObject> objs = await _store.GetAllAsync();
+                    Dictionary<string, List<BlogPostAccessObject>> bufferedItems = new();
+                    foreach (IGrouping<string, BlogPostAccessObject> item in items.GroupBy(x => x.PostId))
                     {
-                        if (removedItems.Contains(item1))
+                        Core.Model.BlogPost post = await _blogService.GetPostAsync(item.Key);
+                        if (post == null)
                         {
                             continue;
                         }
 
-                        if (allItems.Any(x => x.CreateTime - item1.CreateTime < TimeSpan.FromMinutes(1)))
+                        var hasStoredItem = false;
+                        var candidateItems = new List<BlogPostAccessObject>(item);
+                        var latestStoredItem = objs.Where(x => x.Id == item.Key).OrderByDescending(x => x.Timestamp).FirstOrDefault();
+                        if (latestStoredItem != null)
                         {
-                            removedItems.Add(item1);
+                            hasStoredItem = true;
+                            candidateItems.Add(latestStoredItem);
                         }
+
+                        var validItems = new List<BlogPostAccessObject>();
+                        foreach (var item1 in candidateItems.OrderBy(x => x.Timestamp))
+                        {
+                            var lastValidItem = validItems.LastOrDefault();
+                            if(lastValidItem == null || item1.Timestamp - lastValidItem.Timestamp > TimeSpan.FromMinutes(1))
+                            {
+                                validItems.Add(item1);
+                            }
+                        }
+
+                        post.Object.AccessCount += hasStoredItem ? validItems.Count - 1 : validItems.Count;
+                        _ = await _blogService.UpdatePostAsync(post.Object, false);
                     }
-
-                    post.Object.AccessCount += items.Except(removedItems).Count();
-                    _ = await _blogService.UpdatePostAsync(post.Object, false);
                 }
-
-                await _store.DeleteAsync(x => DateTime.Now - x.CreateTime > TimeSpan.FromDays(15));
+                catch(Exception ex)
+                {
+                    _logger.LogError(ex, $"Blog post hosted service exection has error.");
+                }
             }
         }
     }
