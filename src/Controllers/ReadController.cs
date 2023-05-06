@@ -54,7 +54,7 @@ namespace Swan.Controllers
         }
 
         [Authorize]
-        [HttpPost]
+        [HttpPut]
         public async Task<IActionResult> Add([FromForm] ReadObject item)
         {
             ApiResponse<object> res = new();
@@ -91,7 +91,7 @@ namespace Swan.Controllers
         }
 
         [Authorize]
-        [HttpPut]
+        [HttpPost]
         public async Task<IActionResult> Edit([FromForm] ReadObject item)
         {
             ApiResponse<object> res = new();

@@ -147,6 +147,9 @@ namespace Swan.Core.Store
                         obj.CreateTime = oldObj.CreateTime;
                         obj.LastUpdateTime = coreUpdate ? DateTime.Now : oldObj.LastUpdateTime;
 
+                        _ = item.Remove(oldObj);
+                        item.Add(obj);
+
                         if (IsStoredAsArray())
                         {
                             await WriteAsync(path, item.OrderByDescending(x => x.CreateTime));
@@ -156,8 +159,6 @@ namespace Swan.Core.Store
                             await WriteAsync(path, obj);
                         }
 
-                        _ = item.Remove(oldObj);
-                        item.Add(obj);
                         found = true;
                         break;
                     }
