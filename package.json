@@ -1,13 +1,13 @@
 {
   "name": "swan",
-  "version": "9.2.0",
+  "version": "10.0.0",
   "description": "![master](https://github.com/JerryBian/swan/workflows/master/badge.svg)",
   "main": "index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "build": "pwsh ./script/build-css-js.ps1"
+    "build": "pwsh ./build.ps1"
   },
   "repository": {
     "type": "git",
@@ -20,13 +20,13 @@
   },
   "homepage": "https://github.com/JerryBian/swan#readme",
   "devDependencies": {
-    "@highlightjs/cdn-assets": "^11.7.0",
+    "@highlightjs/cdn-assets": "^11.9.0",
     "easymde": "^2.18.0",
     "anchor-js": "^5.0.0",
-    "bootstrap": "^5.2.3",
-    "bootstrap-icons": "^1.10.3",
-    "npm-check-updates": "^16.7.12",
-    "sass": "^1.59.3",
+    "bootstrap": "^5.3.2",
+    "bootstrap-icons": "^1.11.1",
+    "npm-check-updates": "^16.14.6",
+    "sass": "^1.69.3",
     "uglify-js": "^3.17.4",
     "uglifycss": "^0.0.29"
   }

@@ -1,24 +1,29 @@
-﻿using Swan.Core.Model.Object;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace Swan.Core.Model
 {
-    public class BlogSeries
+    public class BlogSeries : SwanObject
     {
-        public BlogSeries(BlogSeriesObject obj)
-        {
-            Object = obj;
-        }
+        public const string GitStorePath = "obj/blog/series.json";
 
-        [JsonPropertyName("o")]
-        public BlogSeriesObject Object { get; init; }
+        #region Raw
 
-        [JsonPropertyName("p")]
-        public List<BlogPost> Posts { get; } = new();
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
 
-        public string GetUrl()
-        {
-            return $"/blog/series/{Object.Url}";
-        }
+        [JsonPropertyName("link")]
+        public string Link { get; set; }
+
+        [JsonPropertyName("description")]
+        public string Descprition { get; set; }
+
+        #endregion
+
+        #region Extension
+
+        [JsonIgnore]
+        public List<BlogPost> BlogPosts { get; } = new();
+
+        #endregion
     }
 }

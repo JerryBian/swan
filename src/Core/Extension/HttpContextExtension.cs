@@ -1,4 +1,6 @@
-﻿namespace Swan.Core.Extension
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Swan.Core.Extension
 {
     public static class HttpContextExtension
     {

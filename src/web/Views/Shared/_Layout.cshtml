@@ -1,0 +1,15 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Swan</title>
+    
+    @await RenderSectionAsync("Style", false)
+</head>
+<body class="d-flex min-vh-100 w-100 flex-column">
+    @RenderBody()
+
+    @await RenderSectionAsync("Script", false)
+</body>
+</html>

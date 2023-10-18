@@ -7,7 +7,7 @@ namespace Swan.Core.Helper
 {
     public static class JsonHelper
     {
-        public static string Serialize<T>(T obj, bool writeIndented = true, List<JsonConverter> converters = null)
+        public static string Serialize<T>(T obj, bool writeIndented = false, List<JsonConverter> converters = null)
         {
             JsonSerializerOptions option = new()
             {
@@ -22,6 +22,7 @@ namespace Swan.Core.Helper
             else
             {
                 option.Converters.Add(new IsoDateTimeConverter());
+                option.Converters.Add(new JsonStringEnumConverter());
             }
 
             return JsonSerializer.Serialize(obj, option);
@@ -29,6 +30,11 @@ namespace Swan.Core.Helper
 
         public static T Deserialize<T>(string json)
         {
+            if(string.IsNullOrEmpty(json))
+            {
+                return default;
+            }
+
             return JsonSerializer.Deserialize<T>(json);
         }
     }

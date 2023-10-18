@@ -1,0 +1,35 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-3"></div>
+        <div class="col-8">
+            <fieldset class="mx-1 my-3">
+                <legend class="text-center">@await RenderSectionAsync("AdminLegend", false)</legend>
+                <form id="adminForm" class="needs-validation container-fluid" novalidate>
+                    @RenderBody()
+                    <div class="row">@await RenderSectionAsync("AdminFormFooter", false)</div>
+                </form>
+
+            </fieldset>
+        </div>
+    </div>
+</div>
+
+
+
+<footer class="text-center py-3 small mt-auto">
+    &copy; @DateTime.Now.Year
+</footer>
+
+@section Style {
+    <link href="~/admin.min.css" rel="stylesheet" asp-append-version="true" />
+}
+
+@section Script {
+    <script src="~/admin.min.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Script", false)
+}

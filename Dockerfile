@@ -10,12 +10,11 @@ RUN dotnet publish \
     -o /publish \
     -v normal \
     /property:Version=${ver} \
-    ./Swan.csproj
+    ./web/Swan.csproj
 
 FROM mcr.microsoft.com/dotnet/aspnet:7.0
 WORKDIR /app
 COPY --from=build /publish ./
-RUN apt update -y && apt install git -y --no-install-recommends && rm -rf /var/lib/apt/lists/*
 
 ENV TZ=Asia/Shanghai
 

@@ -1,36 +1,55 @@
-﻿using Swan.Core.Model.Object;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace Swan.Core.Model
 {
-    public class BlogPost
+    public class BlogPost : SwanObject
     {
-        public BlogPost(BlogPostObject obj)
-        {
-            Object = obj;
-            BlogTags = new List<BlogTag>();
-        }
+        public const string GitStorePath = "obj/blog/post.json";
 
-        [JsonPropertyName("o")]
-        public BlogPostObject Object { get; init; }
+        #region Raw
 
-        [JsonPropertyName("t")]
-        public List<BlogTag> BlogTags { get; init; }
+        [JsonPropertyName("title")]
+        public string Title { get; set; }
 
-        [JsonPropertyName("s")]
-        public BlogSeries BlogSeries { get; set; }
+        [JsonPropertyName("link")]
+        public string Link { get; set; }
 
-        [JsonPropertyName("h")]
+        [JsonPropertyName("excerpt")]
+        public string Excerpt { get; set; }
+
+        [JsonPropertyName("content")]
+        public string Content { get; set; }
+
+        [JsonPropertyName("series")]
+        public string Series { get; set; }
+
+        [JsonPropertyName("tags")]
+        public List<string> Tags { get; set; } = new();
+
+        [JsonPropertyName("publishDate")]
+        public DateTime PublishDate { get; set; }
+
+        #endregion
+
+        #region Extension
+
+        [JsonIgnore]
         public string HtmlContent { get; set; }
 
-        public string GetUrl()
-        {
-            return $"/blog/post/{Object.Link}.html";
-        }
+        [JsonIgnore]
+        public BlogSeries BlogSeries { get; set; }
 
-        public bool IsPublished()
+        [JsonIgnore]
+        public List<BlogTag> BlogTags { get; } = new();
+
+        [JsonIgnore]
+        public PageStat PageStat { get; set; }
+
+        #endregion
+
+        public string GetFullLink()
         {
-            return Object.IsPublic && Object.PublishTime <= DateTime.Now;
+            return $"/blog/post/{Link}.html";
         }
     }
 }
