@@ -58,10 +58,42 @@ namespace Swan.Web.Controllers
             return Json(res);
         }
 
-        [HttpGet("/admin/post/edit/{id}")]
-        public async Task<IActionResult> EditPost(string id)
+        [HttpGet("/admin/post-edit/{id}")]
+        public async Task<IActionResult> EditPost([FromRoute]string id)
         {
-            throw new NotImplementedException();
+            var allPosts = await _swanService.GetBlogPostsAsync();
+            var post = allPosts.Find(x => StringHelper.EqualsIgoreCase(id, x.Id));
+            if(post == null)
+            {
+                return NotFound();
+            }
+
+            return View("EditPost", post);
+        }
+
+        [HttpPost("/admin/post-edit/{id}")]
+        public async Task<IActionResult> EditPost([FromForm] BlogPost post)
+        {
+            ApiResponse<object> res = new();
+
+            try
+            {
+                post.Tags.Remove(string.Empty);
+                post.Tags.Remove(null);
+                post.IsPublic = Request.Form["isPublic"] == "on";
+                post.IsDeleted = Request.Form["isDeleted"] == "on";
+
+                await _swanService.UpdateBlogPostAsync(post);
+                res.RedirectTo = post.GetFullLink();
+            }
+            catch (Exception ex)
+            {
+                res.IsOk = false;
+                res.Message = ex.Message;
+                _logger.LogError(ex, $"Edit read item failed => {JsonHelper.Serialize(post)}");
+            }
+
+            return Json(res);
         }
     }
 }

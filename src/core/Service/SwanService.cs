@@ -70,6 +70,27 @@ namespace Swan.Core.Service
 
             try
             {
+                var obj = await _swanStore.GetAsync();
+                var oldPost = obj.BlogPosts.FirstOrDefault(x => StringHelper.EqualsIgoreCase(x.Id, blogPost.Id));
+                if (oldPost == null)
+                {
+                    throw new Exception($"Blog post with id {blogPost.Id} not exists.");
+                }
+
+                var allPosts = new List<BlogPost>(obj.BlogPosts);
+                allPosts.Remove(oldPost);
+
+                if (allPosts.Find(x => StringHelper.EqualsIgoreCase(x.Link, blogPost.Link)) != null)
+                {
+                    throw new Exception($"Blog post with link {blogPost.Link} already exists.");
+                }
+
+                blogPost.CreatedAt = oldPost.CreatedAt;
+                blogPost.LastUpdatedAt = DateTime.Now;
+                allPosts.Add(blogPost);
+                var content = JsonHelper.Serialize(allPosts.OrderByDescending(x => x.CreatedAt));
+                await _gitStore.InsertOrUpdateAsync(BlogPost.GitStorePath, content, true);
+
                 _swanStore.Clear();
             }
             finally

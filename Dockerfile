@@ -5,7 +5,7 @@ ARG ver=1.0
 
 COPY ./src ./
 
-RUN ls -l ./ && dotnet publish \
+RUN dotnet publish \
     -c Release \
     -o /publish \
     -v normal \
