@@ -9,5 +9,7 @@ namespace Swan.Core.Store
         public List<BlogTag> BlogTags { get; set; }
 
         public List<BlogSeries> BlogSeries { get; set; }
+
+        public List<ReadItem> ReadItems { get; set; }
     }
 }

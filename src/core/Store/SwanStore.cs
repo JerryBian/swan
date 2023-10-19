@@ -31,6 +31,7 @@ namespace Swan.Core.Store
                     obj.BlogPosts = JsonHelper.Deserialize<List<BlogPost>>(await _gitStore.GetTextAsync(BlogPost.GitStorePath, true));
                     obj.BlogSeries = JsonHelper.Deserialize<List<BlogSeries>>(await _gitStore.GetTextAsync(BlogSeries.GitStorePath, true));
                     obj.BlogTags = JsonHelper.Deserialize<List<BlogTag>>(await _gitStore.GetTextAsync(BlogTag.GitStorePath, true));
+                    obj.ReadItems = JsonHelper.Deserialize<List<ReadItem>>(await _gitStore.GetTextAsync(ReadItem.GitStorePath, true));
 
                     PostExtend(obj);
                 }
@@ -52,6 +53,7 @@ namespace Swan.Core.Store
             obj.BlogPosts ??= new List<BlogPost>();
             obj.BlogSeries ??= new List<BlogSeries>();
             obj.BlogTags ??= new List<BlogTag>();
+            obj.ReadItems ??= new List<ReadItem>();
         }
     }
 }

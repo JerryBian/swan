@@ -300,5 +300,97 @@ namespace Swan.Core.Service
                 _asyncReaderWriterLock.Release();
             }
         }
+
+        public async Task<List<ReadItem>> GetReadItemsAsync()
+        {
+            await _asyncReaderWriterLock.EnterReadLockAsync();
+
+            try
+            {
+                StoreObject obj = await _swanStore.GetAsync();
+                return obj.ReadItems;
+            }
+            finally
+            {
+                _asyncReaderWriterLock.Release();
+            }
+        }
+
+        public async Task AddReadItemAsync(ReadItem readItem)
+        {
+            await _asyncReaderWriterLock.EnterWriteLockAsync();
+
+            try
+            {
+                StoreObject obj = await _swanStore.GetAsync();
+                readItem.Id = StringHelper.Random();
+                readItem.CreatedAt = readItem.LastUpdatedAt = DateTime.Now;
+                List<ReadItem> readItems = new List<ReadItem>(obj.ReadItems) { readItem };
+                string content = JsonHelper.Serialize(readItems.OrderByDescending(x => x.CreatedAt));
+                await _gitStore.InsertOrUpdateAsync(ReadItem.GitStorePath, content, true);
+
+                _swanStore.Clear();
+            }
+            finally
+            {
+                _asyncReaderWriterLock.Release();
+            }
+        }
+
+        public async Task UpdateReadItemAsync(ReadItem readItem)
+        {
+            await _asyncReaderWriterLock.EnterWriteLockAsync();
+
+            try
+            {
+                StoreObject obj = await _swanStore.GetAsync();
+                ReadItem oldReadItem = obj.ReadItems.FirstOrDefault(x => StringHelper.EqualsIgoreCase(x.Id, readItem.Id));
+                if (oldReadItem == null)
+                {
+                    throw new Exception($"Read item with id {readItem.Id} not exists.");
+                }
+
+                List<ReadItem> readItems = new List<ReadItem>(obj.ReadItems);
+                readItems.Remove(oldReadItem);
+
+                readItem.CreatedAt = oldReadItem.CreatedAt;
+                readItem.LastUpdatedAt = DateTime.Now;
+                readItems.Add(readItem);
+                string content = JsonHelper.Serialize(readItems.OrderByDescending(x => x.CreatedAt));
+                await _gitStore.InsertOrUpdateAsync(ReadItem.GitStorePath, content, true);
+
+                _swanStore.Clear();
+            }
+            finally
+            {
+                _asyncReaderWriterLock.Release();
+            }
+        }
+
+        public async Task DeleteReadItemAsync(string id)
+        {
+            await _asyncReaderWriterLock.EnterWriteLockAsync();
+
+            try
+            {
+                StoreObject obj = await _swanStore.GetAsync();
+                ReadItem tag = obj.ReadItems.FirstOrDefault(x => StringHelper.EqualsIgoreCase(x.Id, id));
+                if (tag == null)
+                {
+                    return;
+                }
+
+                var readItems = new List<ReadItem>(obj.ReadItems);
+                readItems.Remove(tag);
+                string content = JsonHelper.Serialize(readItems.OrderByDescending(x => x.CreatedAt));
+                await _gitStore.InsertOrUpdateAsync(ReadItem.GitStorePath, content, true);
+
+                _swanStore.Clear();
+            }
+            finally
+            {
+                _asyncReaderWriterLock.Release();
+            }
+        }
     }
 }

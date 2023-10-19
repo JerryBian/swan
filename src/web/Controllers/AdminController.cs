@@ -258,5 +258,89 @@ namespace Swan.Web.Controllers
 
             return Json(res);
         }
+
+        [HttpGet("/admin/read-list")]
+        public IActionResult GetAllReadItems()
+        {
+            return View("ListRead");
+        }
+
+        [HttpGet("/admin/read-add")]
+        public IActionResult AddReadItem()
+        {
+            return View("AddRead");
+        }
+
+        [HttpPut("/admin/read-add")]
+        public async Task<IActionResult> AddRead([FromForm] ReadItem readItem)
+        {
+            ApiResponse<object> res = new();
+
+            try
+            {
+                readItem.IsPublic = Request.Form["isPublic"] == "on";
+
+                await _swanService.AddReadItemAsync(readItem);
+                res.RedirectTo = readItem.GetFullLink();
+            }
+            catch (Exception ex)
+            {
+                res.IsOk = false;
+                res.Message = ex.Message;
+                _logger.LogError(ex, $"Add new read item failed => {JsonHelper.Serialize(readItem)}");
+            }
+
+            return Json(res);
+        }
+
+        [HttpGet("/admin/read-edit/{id}")]
+        public async Task<IActionResult> EditReadItem([FromRoute] string id)
+        {
+            var allReadItems = await _swanService.GetReadItemsAsync();
+            var readItem = allReadItems.Find(x => StringHelper.EqualsIgoreCase(id, x.Id));
+            return readItem == null ? NotFound() : View("EditRead", readItem);
+        }
+
+        [HttpPost("/admin/read-edit")]
+        public async Task<IActionResult> EditRead([FromForm] ReadItem readItem)
+        {
+            ApiResponse<object> res = new();
+
+            try
+            {
+                readItem.IsPublic = Request.Form["isPublic"] == "on";
+
+                await _swanService.UpdateReadItemAsync(readItem);
+                res.RedirectTo = readItem.GetFullLink();
+            }
+            catch (Exception ex)
+            {
+                res.IsOk = false;
+                res.Message = ex.Message;
+                _logger.LogError(ex, $"Edit read item failed => {JsonHelper.Serialize(readItem)}");
+            }
+
+            return Json(res);
+        }
+
+        [HttpDelete("/admin/read-delete/{id}")]
+        public async Task<IActionResult> DeleteReadItem([FromRoute] string id)
+        {
+            ApiResponse<object> res = new();
+
+            try
+            {
+                await _swanService.DeleteReadItemAsync(id);
+                res.RedirectTo = "/admin/read-list";
+            }
+            catch (Exception ex)
+            {
+                res.IsOk = false;
+                res.Message = ex.Message;
+                _logger.LogError(ex, $"Delete read item failed => {id}");
+            }
+
+            return Json(res);
+        }
     }
 }
