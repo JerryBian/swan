@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
 namespace Swan.Core.Model
 {
@@ -12,7 +7,7 @@ namespace Swan.Core.Model
         public const string GitFilePath = "obj/stat/page.json";
 
         [JsonPropertyName("hit")]
-        public long Hit { get;set; }
+        public long Hit { get; set; }
 
         [JsonPropertyName("type")]
         public PageType PageType { get; set; }

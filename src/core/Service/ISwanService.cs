@@ -10,8 +10,6 @@ namespace Swan.Core.Service
 
         Task AddBlogTagAsync(BlogTag blogTag);
 
-        Task DeleteBlogPostAsync(string id);
-
         Task DeleteBlogSeriesAsync(string id);
 
         Task DeleteBlogTagAsync(string id);

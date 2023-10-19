@@ -26,8 +26,8 @@ namespace Swan.Core.Extension
         public static IApplicationBuilder UseSwanService(this IApplicationBuilder builder)
         {
             // Options post setup
-            var generalOption = builder.ApplicationServices.GetRequiredService<IOptions<GeneralOption>>();
-            var gitStoreOption = builder.ApplicationServices.GetRequiredService<IOptions<GitStoreOption>>();
+            IOptions<GeneralOption> generalOption = builder.ApplicationServices.GetRequiredService<IOptions<GeneralOption>>();
+            IOptions<GitStoreOption> gitStoreOption = builder.ApplicationServices.GetRequiredService<IOptions<GitStoreOption>>();
             gitStoreOption.Value.LocalDirectory = Path.Combine(Path.GetFullPath(generalOption.Value.AssetLocation), "data");
 
             return builder;

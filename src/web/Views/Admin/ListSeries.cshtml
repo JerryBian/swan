@@ -1,0 +1,14 @@
+﻿@inject ISwanService _service
+@{
+    Layout = "_LayoutAdmin";
+}
+
+<div>
+    @foreach (var item in await _service.GetBlogSeriesAsync())
+    {
+        <div>
+            <a href="@item.GetFullLink()">@item.Name</a>
+            <a href="/admin/series-edit/@item.Id">Edit</a>
+        </div>
+    }
+</div>

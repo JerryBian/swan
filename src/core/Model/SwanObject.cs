@@ -17,10 +17,6 @@ namespace Swan.Core.Model
         [JsonPropertyName("lastUpdatedAt")]
         public DateTime LastUpdatedAt { get; set; } = DateTime.Now;
 
-        [JsonPropertyOrder(102)]
-        [JsonPropertyName("isDeleted")]
-        public bool IsDeleted { get; set; } = false;
-
         [JsonPropertyOrder(103)]
         [JsonPropertyName("isPublic")]
         public bool IsPublic { get; set; } = false;

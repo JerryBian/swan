@@ -29,6 +29,9 @@ namespace Swan.Core.Model
         [JsonPropertyName("publishDate")]
         public DateTime PublishDate { get; set; }
 
+        [JsonPropertyName("isDeleted")]
+        public bool IsDeleted { get; set; } = false;
+
         #endregion
 
         #region Extension

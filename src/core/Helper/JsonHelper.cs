@@ -30,12 +30,7 @@ namespace Swan.Core.Helper
 
         public static T Deserialize<T>(string json)
         {
-            if(string.IsNullOrEmpty(json))
-            {
-                return default;
-            }
-
-            return JsonSerializer.Deserialize<T>(json);
+            return string.IsNullOrEmpty(json) ? default : JsonSerializer.Deserialize<T>(json);
         }
     }
 }

@@ -58,7 +58,7 @@ FileExtensionContentTypeProvider fileContentTypeProvider = new()
 };
 
 app.UseStaticFiles(new StaticFileOptions { ContentTypeProvider = fileContentTypeProvider });
-var option = app.Services.GetService<IOptions<GitStoreOption>>().Value;
+GitStoreOption option = app.Services.GetService<IOptions<GitStoreOption>>().Value;
 string dir = Path.Combine(option.LocalDirectory, Constants.DataStatic);
 Directory.CreateDirectory(dir);
 app.UseStaticFiles(new StaticFileOptions
@@ -69,7 +69,7 @@ app.UseStaticFiles(new StaticFileOptions
     {
         if (!app.Environment.IsDevelopment())
         {
-            var headers = context.Context.Response.GetTypedHeaders();
+            Microsoft.AspNetCore.Http.Headers.ResponseHeaders headers = context.Context.Response.GetTypedHeaders();
             headers.CacheControl = new CacheControlHeaderValue
             {
                 Public = true,

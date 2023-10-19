@@ -3,7 +3,7 @@
 namespace Swan.Core.Model
 {
     public class BlogTag : SwanObject
-    { 
+    {
         public const string GitStorePath = "obj/blog/tag.json";
 
         #region Raw
@@ -15,7 +15,7 @@ namespace Swan.Core.Model
         public string Link { get; set; }
 
         [JsonPropertyName("description")]
-        public string Descprition { get; set; }
+        public string Description { get; set; }
 
         #endregion
 
@@ -25,5 +25,7 @@ namespace Swan.Core.Model
         public List<BlogPost> BlogPosts { get; } = new();
 
         #endregion
+
+        public string GetFullLink() => $"/tag/{Link}";
     }
 }
