@@ -4,8 +4,55 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-3"></div>
-        <div class="col-8">
+        <div class="col-2 px-2 position-sticky vh-100 top-0 start-0 overflow-y-auto" id="navbar">
+            <div class="fs-5 my-4 text-white text-center text-truncate">
+                <a href="/admin" class="text-reset text-decoration-none">Admin Zone</a>
+            </div>
+            <section class="ps-2">
+                <div class="navHeading text-white mb-2 fw-semibold text-truncate"><i class="bi bi-arrow-down-right-circle-fill me-1"></i> Objects</div>
+                <div class="mb-2 p-1 text-truncate" id="navHeading_posts">
+                    <a href="/admin/post-list" class="text-reset text-decoration-none d-block">
+                        <i class="bi bi-file-text me-1"></i> Manage Posts
+                    </a>
+                </div>
+                <div class="mb-2 p-1 text-truncate" id="navHeading_tags">
+                    <a href="/admin/tag-list" class="text-reset text-decoration-none d-block">
+                        <i class="bi bi-tags me-1"></i> Manage Tags
+                    </a>
+                </div>
+                <div class="mb-2 p-1 text-truncate" id="navHeading_series">
+                    <a href="/admin/series-list" class="text-reset text-decoration-none d-block">
+                        <i class="bi bi-bookmarks me-1"></i> Manage Series
+                    </a>
+                </div>
+                <div class="mb-2 p-1 text-truncate" id="navHeading_reads">
+                    <a href="/admin/read-list" class="text-reset text-decoration-none d-block">
+                        <i class="bi bi-book me-1"></i> Manage Reads
+                    </a>
+                </div>
+            </section>
+            <hr />
+            <section class="ps-2">
+                <div class="navHeading text-white mb-2 fw-semibold text-truncate"><i class="bi bi-arrow-down-right-circle-fill me-1"></i> Eye Monitor</div>
+                <div class="mb-2 p-1 text-truncate" id="navHeading_logs">
+                    <a href="/admin/log" class="text-reset text-decoration-none d-block">
+                        <i class="bi bi-journals me-1"></i> View Logs
+                    </a>
+                </div>
+                <div class="mb-2 p-1 text-truncate" id="navHeading_pageStats">
+                    <a href="/admin/page-stat" class="text-reset text-decoration-none d-block">
+                        <i class="bi bi-soundwave me-1"></i> View Page Stats
+                    </a>
+                </div>
+            </section>
+            <hr />
+            <section class="ps-2">
+                <div class="d-grid text-truncate">
+                    <a class="btn btn-info btn-sm text-truncate" href="/admin/logout"><i class="bi bi-box-arrow-right me-1"></i> Logout</a>
+                </div>
+            </section>
+        </div>
+        <div class="col-10 px-2 bg-secondary">
             <fieldset class="mx-1 my-3">
                 <legend class="text-center">@await RenderSectionAsync("AdminLegend", false)</legend>
                 <form id="adminForm" class="needs-validation container-fluid" novalidate>
@@ -17,12 +64,6 @@
         </div>
     </div>
 </div>
-
-
-
-<footer class="text-center py-3 small mt-auto">
-    &copy; @DateTime.Now.Year
-</footer>
 
 @section Style {
     <link href="~/admin.min.css" rel="stylesheet" asp-append-version="true" />
