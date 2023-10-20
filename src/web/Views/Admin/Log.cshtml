@@ -1,0 +1,44 @@
+﻿@inject ISwanLogService _swanLogService
+@{
+    Layout = "_LayoutAdmin";
+}
+
+@foreach (var item in (await _swanLogService.GetAsync()).GroupBy(x => x.CreatedAt.Date).OrderByDescending(x => x.Key))
+{
+    <div class="m-4 p-3 rounded-1 shadow-sm bg-white">
+        <h4>@item.Key.ToCnDate()</h4>
+        <div class="small text-muted">
+            Information: @item.Count(x => x.Level == LogLevel.Information.ToString()) &middot;
+            Warning: @item.Count(x => x.Level == LogLevel.Warning.ToString()) &middot;
+            Error: @item.Count(x => x.Level == LogLevel.Error.ToString())
+        </div>
+        <hr />
+
+        @foreach (var log in item.OrderByDescending(x => x.CreatedAt))
+        {
+            <div class="container-fluid border-bottom py-2">
+                <div class="row small text-muted my-2">
+                    <div class="col-10 text-truncate">
+                        @log.CreatedAt
+                    </div>
+                    <div class="col-2 text-truncate">
+                        @log.Level
+                    </div>
+                </div>
+                <div class="my-1">
+                    @log.Message
+                </div>
+                @if (!string.IsNullOrEmpty(log.Error))
+                {
+                    <div class="text-danger font-monospace small">@log.Error</div>
+                }
+            </div>
+        }
+    </div>
+}
+
+@section Script{
+    <script>
+        setActive(document.querySelector("#navHeading_logs"));
+    </script>
+}

@@ -342,5 +342,11 @@ namespace Swan.Web.Controllers
 
             return Json(res);
         }
+
+        [HttpGet("/admin/log")]
+        public IActionResult GetLogs()
+        {
+            return View("Log");
+        }
     }
 }

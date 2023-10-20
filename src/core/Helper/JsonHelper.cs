@@ -22,7 +22,6 @@ namespace Swan.Core.Helper
             else
             {
                 option.Converters.Add(new IsoDateTimeConverter());
-                option.Converters.Add(new JsonStringEnumConverter());
             }
 
             return JsonSerializer.Serialize(obj, option);

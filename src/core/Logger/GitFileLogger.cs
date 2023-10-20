@@ -35,7 +35,7 @@ namespace Swan.Core.Logger
             {
                 Message = formatter(state, exception),
                 Error = exception?.ToString(),
-                Level = logLevel
+                Level = logLevel.ToString()
             };
             _processor.Ingest(log);
         }

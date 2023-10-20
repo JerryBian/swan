@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace Swan.Core.Model
 {
@@ -14,6 +13,6 @@ namespace Swan.Core.Model
         public string Error { get; set; }
 
         [JsonPropertyName("level")]
-        public LogLevel Level { get; set; }
+        public string Level { get; set; }
     }
 }
