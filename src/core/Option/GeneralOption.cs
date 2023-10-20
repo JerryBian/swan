@@ -5,6 +5,8 @@
         public GeneralOption()
         {
             SkipGitOperation = true;
+            AdminUserName = "test";
+            AdminPassword = "test";
             AssetLocation = Path.Combine(Path.GetTempPath(), "swan");
         }
 
@@ -15,5 +17,9 @@
         public string Title { get; set; }
 
         public string Description { get; set; }
+
+        public string AdminUserName { get; set; }
+
+        public string AdminPassword { get; set; }
     }
 }

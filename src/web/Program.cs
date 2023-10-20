@@ -1,4 +1,5 @@
 using GitStoreDotnet;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
@@ -36,6 +37,17 @@ builder.Services.AddMemoryCache();
 builder.Services.AddSwanService();
 
 builder.Services.AddHostedService<GitFileHostedService>();
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+            {
+                options.Cookie.Name = $".APP.{builder.Environment.EnvironmentName}";
+                options.ExpireTimeSpan = TimeSpan.FromDays(7);
+                options.Cookie.HttpOnly = true;
+                options.ReturnUrlParameter = "returnUrl";
+                options.LoginPath = new PathString("/login");
+                options.LogoutPath = new PathString("/logout");
+            });
 
 builder.Services.AddControllersWithViews().AddJsonOptions(config =>
 {
@@ -86,7 +98,7 @@ app.UseStaticFiles(new StaticFileOptions
 });
 
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
