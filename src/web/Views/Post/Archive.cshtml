@@ -1,0 +1,28 @@
+﻿@inject ISwanService _swanService
+@model List<BlogPost>
+@{
+    Layout = "_LayoutPublic";
+}
+
+@foreach(var item in Model)
+{
+    <h3>@item.Title</h3>
+    <p>@item.PublishDate.ToCnDate()</p>
+
+}
+
+@section Aside{
+    <div class="card">
+        <div class="card-header">
+            Archive Index
+        </div>
+        <ul class="list-group list-group-flush">
+            @foreach (var item in (await _swanService.GetBlogPostsAsync()).GroupBy(x => x.PublishDate.Year))
+            {
+                <li class="list-group-item list-group-action">
+                    <a href="/post/@item.Key">@item.Key</a>
+                </li>
+            }
+        </ul>
+    </div>
+}

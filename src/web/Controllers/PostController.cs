@@ -30,5 +30,13 @@ namespace Swan.Web.Controllers
 
             return View("Detail", post);
         }
+
+        [HttpGet("/post/{year}")]
+        public async Task<IActionResult> GetPosts([FromRoute] int year)
+        {
+            var posts = await _swanService.GetBlogPostsAsync();
+            posts = posts.Where(x => x.PublishDate.Year == year).ToList();
+            return View("Archive", posts);
+        }
     }
 }

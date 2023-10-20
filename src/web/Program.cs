@@ -70,7 +70,7 @@ Directory.CreateDirectory(dir);
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(Path.GetFullPath(dir)),
-    RequestPath = $"/{Constants.FileRouter}",
+    RequestPath = $"/{Constants.DataStatic}",
     OnPrepareResponse = context =>
     {
         if (!app.Environment.IsDevelopment())
