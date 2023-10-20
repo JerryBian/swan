@@ -4,22 +4,23 @@
     Layout = "_LayoutAdmin";
 }
 
-<div class="mb-3">
-    <label for="bookName" class="form-label">Book Name</label>
-    <input type="text" class="form-control" id="bookName" name="bookName" placeholder="" autocomplete="off" value="@Model.BookName" autofocus required>
-    <div class="invalid-feedback">
-        Required
+<div class="m-4 p-3 rounded-1 shadow-sm bg-white">
+    <div class="mb-3">
+        <label for="bookName" class="form-label">Book Name</label>
+        <input type="text" class="form-control" id="bookName" name="bookName" placeholder="" autocomplete="off" value="@Model.BookName" autofocus required>
+        <div class="invalid-feedback">
+            Required
+        </div>
+    </div>
+    <div class="mb-3">
+        <label for="author" class="form-label">Author</label>
+        <input type="text" class="form-control" id="author" name="author" placeholder="" autocomplete="off" value="@Model.Author" required>
+        <div class="invalid-feedback">
+            Required
+        </div>
     </div>
 </div>
-<div class="mb-3">
-    <label for="author" class="form-label">Author</label>
-    <input type="text" class="form-control" id="author" name="author" placeholder="" autocomplete="off" value="@Model.Author" required>
-    <div class="invalid-feedback">
-        Required
-    </div>
-</div>
-
-<div class="accordion accordion-flush bg-secondary">
+<div class="accordion m-4 p-3 rounded-1 shadow-sm bg-white">
     <div class="accordion-item">
         <h2 class="accordion-header" id="headingOne">
             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
@@ -43,7 +44,7 @@
                 <div class="mb-3">
                     <label for="posts" class="form-label">Linked Posts</label>
                     <select class="form-select font-monospace" id="posts" name="posts" multiple size="5">
-                        @if(Model.Posts?.Any() == true)
+                        @if (Model.Posts?.Any() == true)
                         {
                             <option value="" class="small">-- 选择博客文章（支持多选） --</option>
                         }
@@ -54,7 +55,7 @@
 
                         @foreach (var p in await _swanService.GetBlogPostsAsync())
                         {
-                            if(Model.Posts.Contains(p.Id))
+                            if (Model.Posts.Contains(p.Id))
                             {
                                 <option selected value="@p.Id" class="my-1 ps-1">@p.Title</option>
                             }
@@ -62,7 +63,7 @@
                             {
                                 <option value="@p.Id" class="my-1 ps-1">@p.Title</option>
                             }
-                            
+
                         }
                     </select>
                 </div>
@@ -72,7 +73,7 @@
                     <div id="gradeHelp" class="form-text"> Less than 0：差评；=0：一般般；Greter than 0：好评</div>
                 </div>
                 <div class="form-check form-switch mb-3">
-                    @if(Model.IsPublic)
+                    @if (Model.IsPublic)
                     {
                         <input checked class="form-check-input" type="checkbox" id="isPublic" name="isPublic">
                     }
@@ -80,7 +81,7 @@
                     {
                         <input class="form-check-input" type="checkbox" id="isPublic" name="isPublic">
                     }
-                    
+
                     <label class="form-check-label" for="isPublic">Public to Everyone</label>
                 </div>
             </div>
@@ -91,12 +92,13 @@
 <input type="hidden" name="id" value="@Model.Id" />
 
 @section AdminLegend {
-    <text>添加新的标签</text>
-}
-
-@section AdminFormFooter {
-    <div class="d-grid mt-3">
-        <button type="submit" class="btn btn-primary">SUBMIT</button>
+    <div class="row">
+        <div class="col-3 text-truncate">
+            <span><i class="bi bi-pencil-square"></i> Edit read</span>
+        </div>
+        <div class="col-9 text-end">
+            <button type="submit" class="btn btn-success"><i class="bi bi-floppy mx-1"></i> Save Changes</button>
+        </div>
     </div>
 }
 
@@ -118,5 +120,7 @@
             formData.append("comment", editor.value());
             submitRequest("/admin/read-edit", { form: form, method: "POST", body: new URLSearchParams(formData), contentType: "application/x-www-form-urlencoded" });
         });
+
+        setActive(document.querySelector("#navHeading_reads"));
     </script>
 }

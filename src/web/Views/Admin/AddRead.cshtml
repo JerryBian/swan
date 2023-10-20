@@ -3,22 +3,23 @@
     Layout = "_LayoutAdmin";
 }
 
-<div class="mb-3">
-    <label for="bookName" class="form-label">Book Name</label>
-    <input type="text" class="form-control" id="bookName" name="bookName" placeholder="" autocomplete="off" autofocus required>
-    <div class="invalid-feedback">
-        Required
+<div class="m-4 p-3 rounded-1 shadow-sm bg-white">
+    <div class="mb-3">
+        <label for="bookName" class="form-label">Book Name</label>
+        <input type="text" class="form-control" id="bookName" name="bookName" placeholder="" autocomplete="off" autofocus required>
+        <div class="invalid-feedback">
+            Required
+        </div>
+    </div>
+    <div class="mb-3">
+        <label for="author" class="form-label">Author</label>
+        <input type="text" class="form-control" id="author" name="author" placeholder="" autocomplete="off" required>
+        <div class="invalid-feedback">
+            Required
+        </div>
     </div>
 </div>
-<div class="mb-3">
-    <label for="author" class="form-label">Author</label>
-    <input type="text" class="form-control" id="author" name="author" placeholder="" autocomplete="off" required>
-    <div class="invalid-feedback">
-        Required
-    </div>
-</div>
-
-<div class="accordion accordion-flush bg-secondary">
+<div class="accordion m-4 p-3 rounded-1 shadow-sm bg-white">
     <div class="accordion-item">
         <h2 class="accordion-header" id="headingOne">
             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
@@ -64,15 +65,15 @@
 </div>
 
 @section AdminLegend {
-    <text>添加新的标签</text>
-}
-
-@section AdminFormFooter {
-    <div class="d-grid mt-3">
-        <button type="submit" class="btn btn-primary">SUBMIT</button>
+    <div class="row">
+        <div class="col-3 text-truncate">
+            <span><i class="bi bi-plus-circle"></i> New read</span>
+        </div>
+        <div class="col-9 text-end">
+            <button type="submit" class="btn btn-success"><i class="bi bi-floppy mx-1"></i> Save Changes</button>
+        </div>
     </div>
 }
-
 @section Script {
     <script>
         const form = document.querySelector("#adminForm");
@@ -87,5 +88,7 @@
             formData.append("comment", editor.value());
             submitRequest("/admin/read-add", { form: form, method: "PUT", body: new URLSearchParams(formData), contentType: "application/x-www-form-urlencoded" });
         });
+
+        setActive(document.querySelector("#navHeading_reads"));
     </script>
 }

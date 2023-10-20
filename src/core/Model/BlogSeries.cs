@@ -24,6 +24,9 @@ namespace Swan.Core.Model
         [JsonIgnore]
         public List<BlogPost> BlogPosts { get; } = new();
 
+        [JsonIgnore]
+        public bool IsPublicToEveryOne => IsPublic && BlogPosts.Any();
+
         #endregion
 
         public string GetFullLink() => $"/series/{Link}";

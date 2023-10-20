@@ -1,24 +1,31 @@
-﻿@model BlogSeries
+﻿@inject ISwanService _service
+@model BlogSeries
 @{
     Layout = "_LayoutAdmin";
 }
-
-<div class="mb-3">
-    <label for="name" class="form-label">Display Name</label>
-    <input type="text" class="form-control" id="name" name="name" placeholder="" autocomplete="off" value="@Model.Name" autofocus required>
-    <div class="invalid-feedback">
-        Required
+<div class="m-4 p-3 rounded-1 shadow-sm bg-white">
+    <div class="form-text mb-2">
+        <span class="text-danger">*</span>
+        Below fields are all required.
+    </div>
+    <div class="mb-3">
+        <label for="name" class="form-label">Display Name</label>
+        <input type="text" class="form-control" id="name" name="name" placeholder="" autocomplete="off" value="@Model.Name" autofocus required>
+        <div class="invalid-feedback">
+            Required
+        </div>
+    </div>
+    <div class="mb-3">
+        <label for="link" class="form-label">Link</label>
+        <input type="text" class="form-control" id="link" name="link" placeholder="" autocomplete="off" value="@Model.Link" required>
+        <div class="invalid-feedback">
+            Required
+        </div>
     </div>
 </div>
-<div class="mb-3">
-    <label for="link" class="form-label">Link</label>
-    <input type="text" class="form-control" id="link" name="link" placeholder="" autocomplete="off" value="@Model.Link" required>
-    <div class="invalid-feedback">
-        Required
-    </div>
-</div>
 
-<div class="accordion accordion-flush bg-secondary">
+
+<div class="accordion m-4 p-3 rounded-1 shadow-sm bg-white">
     <div class="accordion-item">
         <h2 class="accordion-header" id="headingOne">
             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
@@ -32,7 +39,7 @@
                     <textarea id="description" class="form-control" name="description">@Model.Description</textarea>
                 </div>
                 <div class="form-check form-switch mb-3">
-                    @if(Model.IsPublic)
+                    @if (Model.IsPublic)
                     {
                         <input checked class="form-check-input" type="checkbox" id="isPublic" name="isPublic">
                     }
@@ -40,7 +47,7 @@
                     {
                         <input class="form-check-input" type="checkbox" id="isPublic" name="isPublic">
                     }
-                    
+
                     <label class="form-check-label" for="isPublic">Public to Everyone</label>
                 </div>
             </div>
@@ -48,15 +55,16 @@
     </div>
 </div>
 
-<input type="hidden" value="@Model.Id" name="id"/>
+<input type="hidden" value="@Model.Id" name="id" />
 
 @section AdminLegend {
-    <text>Edit Blog Series</text>
-}
-
-@section AdminFormFooter {
-    <div class="d-grid mt-3">
-        <button type="submit" class="btn btn-primary">SUBMIT</button>
+    <div class="row">
+        <div class="col-3 text-truncate">
+            <span><i class="bi bi-pencil-square"></i> Edit series</span>
+        </div>
+        <div class="col-9 text-end">
+            <button type="submit" class="btn btn-success"><i class="bi bi-floppy mx-1"></i> Save Changes</button>
+        </div>
     </div>
 }
 
@@ -71,5 +79,7 @@
             let formData = new FormData(form);
             submitRequest("/admin/series-edit", { form: form, method: "POST", body: new URLSearchParams(formData), contentType: "application/x-www-form-urlencoded" });
         });
+
+        setActive(document.querySelector("#navHeading_series"));
     </script>
 }
