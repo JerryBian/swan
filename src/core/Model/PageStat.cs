@@ -4,7 +4,7 @@ namespace Swan.Core.Model
 {
     public class PageStat : SwanObject
     {
-        public const string GitFilePath = "obj/stat/page.json";
+        public const string GitFilePath = "obj/_page.json";
 
         [JsonPropertyName("hit")]
         public long Hit { get; set; }

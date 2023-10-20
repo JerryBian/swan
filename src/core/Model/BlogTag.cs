@@ -4,7 +4,7 @@ namespace Swan.Core.Model
 {
     public class BlogTag : SwanObject
     {
-        public const string GitStorePath = "obj/blog/tag.json";
+        public const string GitStorePath = "obj/tag.json";
 
         #region Raw
 

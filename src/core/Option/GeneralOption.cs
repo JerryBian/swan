@@ -4,6 +4,7 @@
     {
         public GeneralOption()
         {
+            SkipGitOperation = true;
             AssetLocation = Path.Combine(Path.GetTempPath(), "swan");
         }
 

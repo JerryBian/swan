@@ -5,7 +5,7 @@ namespace Swan.Core.Model
 {
     public class SwanLog : SwanObject
     {
-        public const string GitStorePath = "obj/log/log.json";
+        public const string GitStorePath = "obj/_log.json";
 
         [JsonPropertyName("message")]
         public string Message { get; set; }

@@ -1,0 +1,28 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+<div class="container">
+    <div class="row">
+        <main class="col-8">@RenderBody()</main>
+        <aside class="col-3">
+            @await RenderSectionAsync("Aside", false)
+        </aside>
+    </div>
+</div>
+
+
+
+<footer class="text-center py-3 small mt-auto">
+    &copy; @DateTime.Now.Year
+</footer>
+
+@section Style {
+    <link href="~/style.min.css" rel="stylesheet" asp-append-version="true" />
+}
+
+@section Script {
+    <script src="~/style.min.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Script", false)
+}

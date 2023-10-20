@@ -1,0 +1,35 @@
+﻿@inject ISwanService _swanService
+@{
+    Layout = "_LayoutPublic";
+}
+
+<div>
+    @foreach(var item in await _swanService.GetBlogPostsAsync())
+    {
+        <div>
+            <a href="@item.GetFullLink()">@item.Title</a>
+        </div>
+        <div>
+            @Html.Raw(item.Excerpt)
+        </div>
+        <div>
+            Tags: Series:
+        </div>
+    }
+</div>
+
+@section Aside{
+    <div class="card" style="width: 18rem;">
+        <div class="card-header">
+            Top Readings
+        </div>
+        <ul class="list-group list-group-flush">
+            @foreach(var item in (await _swanService.GetBlogPostsAsync()).OrderByDescending(x => x.PageStat.Hit).Take(8))
+            {
+                <li class="list-group-item list-group-action">
+                    <a href="@item.GetFullLink()">@item.Title</a>
+                </li>
+            }
+        </ul>
+    </div>
+}

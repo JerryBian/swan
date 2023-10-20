@@ -4,7 +4,7 @@ namespace Swan.Core.Model
 {
     public class BlogPost : SwanObject
     {
-        public const string GitStorePath = "obj/blog/post.json";
+        public const string GitStorePath = "obj/post.json";
 
         #region Raw
 
@@ -46,7 +46,7 @@ namespace Swan.Core.Model
         public List<BlogTag> BlogTags { get; } = new();
 
         [JsonIgnore]
-        public PageStat PageStat { get; set; }
+        public PageStat PageStat { get; set; } = new();
 
         #endregion
 

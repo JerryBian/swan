@@ -8,8 +8,12 @@ using Swan.Core.Converter;
 using Swan.Core.Extension;
 using Swan.Core.Logger;
 using Swan.Core.Option;
+using Swan.Web.HostedServices;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
+
+//await DataHelper.RunAsync();
+//return;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables("ENV_");
@@ -30,6 +34,8 @@ builder.Services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.BasicLatin, Unico
 
 builder.Services.AddMemoryCache();
 builder.Services.AddSwanService();
+
+builder.Services.AddHostedService<GitFileHostedService>();
 
 builder.Services.AddControllersWithViews().AddJsonOptions(config =>
 {
