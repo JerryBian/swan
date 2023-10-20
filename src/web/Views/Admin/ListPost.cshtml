@@ -1,17 +1,54 @@
 ﻿@inject ISwanService _service
 @{
     Layout = "_LayoutAdmin";
+
+    var allPosts = await _service.GetBlogPostsAsync();
 }
 
-<div>
-    @foreach(var item in await _service.GetBlogPostsAsync())
-    {
-        <div>
-            <a href="@item.GetFullLink()">@item.Title</a> 
-            <a href="/admin/post-edit/@item.Id">Edit</a>
-        </div>
-    }
+<div class="m-4 p-3 rounded-1 shadow-sm bg-white">
+    <div class="list-group list-group-flush">
+        @foreach (var item in allPosts)
+        {
+            <div class="list-group-item container-fluid">
+                <div class="row">
+                    <div class="col-9 text-truncate">
+                        <a href="@item.GetFullLink()" class="text-secondary-emphasis">
+                            <i class="bi bi-file-text mx-1"></i> @item.Title
+                        </a>
+                    </div>
+                    <div class="col-2 text-truncate small">
+                        <i class="bi bi-calendar-date mx-1"></i> @item.PublishDate.ToCnDate()
+                    </div>
+                    <div class="col-1 text-truncate small">
+                        <i class="bi bi-bar-chart-line"></i> @item.PageStat.Hit
+                    </div>
+                </div>
+                <div>
+                    @Html.Raw(item.GetTagsAndSeriesHtml())
+                </div>
+                <div class="mt-3">
+                    <a class="btn btn-success btn-sm px-4" href="/admin/post-edit/@item.Id">
+                        <i class="bi bi-pencil-square mx-1"></i> Edit this post
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
 </div>
+
+@section AdminLegend {
+    <div class="row">
+        <div class="col-3 text-truncate">
+            <span><i class="bi bi-list"></i> List of Posts</span>
+        </div>
+        <div class="col-9 text-end">
+            <a class="btn btn-info" href="/admin/post-add"><i class="bi bi-plus mx-1"></i> Add New Post</a>
+        </div>
+    </div>
+    <div class="small text-muted">
+        @allPosts.Count in total, @allPosts.Count(x => x.IsPublicToEveryOne) of them are public to everyone.
+    </div>
+}
 
 @section Script{
     <script>

@@ -60,11 +60,47 @@ namespace Swan.Core.Model
         [JsonIgnore]
         public List<BlogPost> RecommendPostsBySeries { get; } = new();
 
+        [JsonIgnore]
+        public bool IsPublicToEveryOne => !IsDeleted && IsPublic && DateTime.Now >= PublishDate;
+
         #endregion
 
         public string GetFullLink()
         {
             return $"/post/{PublishDate.Year}/{Link}";
+        }
+
+        public string GetTagsHtml()
+        {
+            if(BlogTags == null || !BlogTags.Any())
+            {
+                return string.Empty;
+            }
+
+            return $"<i class=\"bi bi-tag\"></i> {string.Join(" ", BlogTags.Select(x => $"<a href=\"{x.GetFullLink()}\" class=\"text-reset text-decoration-none\">{x.Name}</a>"))}";
+        }
+
+        public string GetSeriesHtml()
+        {
+            if(BlogSeries == null)
+            {
+                return string.Empty;
+            }
+
+            return $"<i class=\"bi bi-bookmark\"></i> <a href=\"{BlogSeries.GetFullLink()}\" class=\"text-reset text-decoration-none\">{BlogSeries.Name}</a>";
+        }
+
+        public string GetTagsAndSeriesHtml()
+        {
+            var tagsHtml = GetTagsHtml();
+            var seriesHtml = GetSeriesHtml();
+
+            if(string.IsNullOrEmpty(tagsHtml) && string.IsNullOrEmpty(seriesHtml))
+            {
+                return string.Empty;
+            }
+
+            return $"<span class=\"my-3 mx-2 small\">{tagsHtml} {seriesHtml}</span>";
         }
     }
 }

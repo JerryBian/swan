@@ -53,14 +53,14 @@
             </section>
         </div>
         <div class="col-10">
-            <fieldset>
-                <legend class="p-3 position-sticky top-0 bg-light container-fluid" style="z-index:5;">@await RenderSectionAsync("AdminLegend", false)</legend>
-                <form id="adminForm" class="needs-validation" novalidate>
+            <form id="adminForm" class="needs-validation" novalidate>
+                <fieldset>
+                    <legend class="p-3 position-sticky top-0 bg-light container-fluid" style="z-index:5;">@await RenderSectionAsync("AdminLegend", false)</legend>
                     @RenderBody()
                     <div class="row">@await RenderSectionAsync("AdminFormFooter", false)</div>
-                </form>
+                </fieldset>
+            </form>
 
-            </fieldset>
         </div>
     </div>
 </div>
