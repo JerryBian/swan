@@ -1,4 +1,5 @@
 ﻿using GitStoreDotnet;
+using HtmlAgilityPack;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Swan.Core.Helper;
@@ -48,12 +49,65 @@ namespace Swan.Core.Store
         {
             _memoryCache.Remove(CacheKey);
         }
+
         private void PostExtend(StoreObject obj)
         {
             obj.BlogPosts ??= new List<BlogPost>();
             obj.BlogSeries ??= new List<BlogSeries>();
             obj.BlogTags ??= new List<BlogTag>();
             obj.ReadItems ??= new List<ReadItem>();
+
+            foreach(var post in obj.BlogPosts)
+            {
+                var postHtml = MarkdownHelper.ToHtml(post.Content);
+                var htmlDoc = new HtmlDocument();
+
+                post.HtmlContent = postHtml;
+
+                foreach(var item in post.Tags)
+                {
+                    var tag = obj.BlogTags.FirstOrDefault(x => StringHelper.EqualsIgoreCase(x.Id, item));
+                    if(tag != null)
+                    {
+                        post.BlogTags.Add(tag);
+                        tag.BlogPosts.Add(post);
+                    }
+                }
+
+                if(post.Series != null)
+                {
+                    var series = obj.BlogSeries.FirstOrDefault(x => StringHelper.EqualsIgoreCase(x.Id, post.Series));
+                    if(series != null)
+                    {
+                        post.BlogSeries = series;
+                        series.BlogPosts.Add(post);
+                    }
+                }
+
+                post.PreviousPost = obj.BlogPosts.OrderBy(x => x.PublishDate).LastOrDefault(x => x.PublishDate < post.PublishDate);
+                post.NextPost = obj.BlogPosts.OrderBy(x => x.PublishDate).FirstOrDefault(x => x.PublishDate > post.PublishDate);
+            }
+
+            // random posts recommend
+            // TODO: use .NET 8 Random functions
+            foreach(var post in obj.BlogPosts)
+            {
+                if(post.Tags.Any())
+                {
+                    var similarPosts = new List<BlogPost>();
+                    foreach(var item in post.BlogTags)
+                    {
+                        similarPosts.AddRange(item.BlogPosts);
+                    }
+
+                    post.RecommendPostsByTag.AddRange(similarPosts.Distinct().Take(8));
+                }
+
+                if(post.Series != null)
+                {
+                    post.RecommendPostsBySeries.AddRange(post.BlogSeries.BlogPosts.Take(8));
+                }
+            }
         }
     }
 }

@@ -48,11 +48,23 @@ namespace Swan.Core.Model
         [JsonIgnore]
         public PageStat PageStat { get; set; } = new();
 
+        [JsonIgnore]
+        public BlogPost PreviousPost { get; set; }
+
+        [JsonIgnore]
+        public BlogPost NextPost { get; set; }
+
+        [JsonIgnore]
+        public List<BlogPost> RecommendPostsByTag { get; } = new();
+
+        [JsonIgnore]
+        public List<BlogPost> RecommendPostsBySeries { get; } = new();
+
         #endregion
 
         public string GetFullLink()
         {
-            return $"/blog/post/{Link}.html";
+            return $"/post/{PublishDate.Year}/{Link}";
         }
     }
 }

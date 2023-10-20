@@ -1,0 +1,68 @@
+﻿@inject ISwanService _swanService
+@model BlogPost
+@{
+    Layout = "_LayoutPublic";
+}
+
+<h3>@Model.Title</h3>
+<p>@Model.PublishDate.ToCnDate()</p>
+
+<article>
+    @Html.Raw(Model.HtmlContent)
+</article>
+
+@section Aside{
+    @if(Model.PreviousPost != null || Model.NextPost != null)
+    {
+        <div class="card">
+            <div class="card-header">
+                Featured
+            </div>
+            <div class="card-body">
+                @if(Model.PreviousPost != null)
+                {
+                    <p class="card-text">前一篇：<a href="@Model.PreviousPost.GetFullLink()">@Model.PreviousPost.Title</a></p>
+                }
+
+                @if (Model.NextPost != null)
+                {
+                    <p class="card-text">后一篇：<a href="@Model.NextPost.GetFullLink()">@Model.NextPost.Title</a></p>
+                }
+            </div>
+        </div>
+    }
+
+    @if(Model.RecommendPostsByTag.Any())
+    {
+        <div class="card">
+            <div class="card-header">
+                文章推荐
+            </div>
+            <ul class="list-group list-group-flush">
+                @foreach (var item in Model.RecommendPostsByTag)
+                {
+                    <li class="list-group-item list-group-action">
+                        <a href="@item.GetFullLink()">@item.Title</a>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+
+    @if (Model.RecommendPostsBySeries.Any())
+    {
+        <div class="card">
+            <div class="card-header">
+                文章推荐
+            </div>
+            <ul class="list-group list-group-flush">
+                @foreach (var item in Model.RecommendPostsBySeries)
+                {
+                    <li class="list-group-item list-group-action">
+                        <a href="@item.GetFullLink()">@item.Title</a>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+}
