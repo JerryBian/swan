@@ -1,13 +1,14 @@
 @import "_shared";
 
-@import "../../../../node_modules/bootswatch/dist/cyborg/variables";
+/*@import "../../../../node_modules/bootswatch/dist/cyborg/variables";*/
 @import "../../../../node_modules/bootstrap/scss/bootstrap";
-@import "../../../../node_modules/bootswatch/dist/cyborg/bootswatch";
+/*@import "../../../../node_modules/bootswatch/dist/cyborg/bootswatch";*/
 
 #navbar {
     .active {
-        background-color: var(--bs-light);
-        color: var(--bs-light-bg-subtle)
+        background-color: $white;
+        color: $primary-text-emphasis;
+        font-weight: 500;
     }
 }
 

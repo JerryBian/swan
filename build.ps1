@@ -30,6 +30,7 @@ $(Join-Path $WWWRootLoc admin.css)
 Write-Output "[admin]: CSS completed"
 
 uglifyjs --compress -o $(Join-Path $WWWRootLoc admin.min.js) `
+$(Join-Path $NodeModulesLoc bootstrap dist js bootstrap.bundle.js) `
 $(Join-Path $WWWRootLoc js _shared.js) `
 $(Join-Path $NodeModulesLoc easymde dist easymde.min.js) `
 $(Join-Path $WWWRootLoc js admin.js)
