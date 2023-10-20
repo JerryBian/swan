@@ -1,0 +1,25 @@
+﻿@inject ISwanService _swanService
+@model ReadItem
+@{
+    Layout = "_LayoutPublic";
+}
+
+<h3>@Model.BookName</h3>
+<p>@Model.CreatedAt.ToCnDate()</p>
+
+
+@section Aside{
+    <div class="card">
+        <div class="card-header">
+            Other readings in this year
+        </div>
+        <ul class="list-group list-group-flush">
+            @foreach (var item in (await _swanService.GetReadItemsAsync()).Where(x => x.CreatedAt.Year == Model.CreatedAt.Year))
+            {
+                <li class="list-group-item list-group-action">
+                    <a href="@item.GetFullLink()">@item.BookName</a>
+                </li>
+            }
+        </ul>
+    </div>
+}
