@@ -61,8 +61,18 @@ namespace Swan.Core.Store
             {
                 var postHtml = MarkdownHelper.ToHtml(post.Content);
                 var htmlDoc = new HtmlDocument();
+                htmlDoc.LoadHtml(postHtml);
+                List<HtmlNode> imageNodes = htmlDoc.DocumentNode.Descendants("img").ToList();
+                foreach (HtmlNode imageNode in imageNodes)
+                {
+                    if (imageNode.Attributes.Contains("src"))
+                    {
+                        imageNode.AddClass("img-thumbnail mx-auto d-block");
+                        imageNode.Attributes.Add("loading", "lazy");
+                    }
+                }
 
-                post.HtmlContent = postHtml;
+                post.HtmlContent = htmlDoc.DocumentNode.OuterHtml;
 
                 foreach(var item in post.Tags)
                 {

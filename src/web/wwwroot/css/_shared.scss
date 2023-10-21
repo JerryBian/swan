@@ -3,7 +3,71 @@
 @import "../../../../node_modules/bootstrap-icons/font/bootstrap-icons";
 
 $enable-cssgrid: true;
+$white: #fff !default;
+$gray-100: #f8f9fa !default;
+$gray-200: #ecf0f1 !default;
+$gray-300: #dee2e6 !default;
+$gray-400: #ced4da !default;
+$gray-500: #b4bcc2 !default;
+$gray-600: #95a5a6 !default;
+$gray-700: #7b8a8b !default;
+$gray-800: #343a40 !default;
+$gray-900: #212529 !default;
+$black: #000 !default;
+
+$secondary: $gray-600 !default;
+
+$min-contrast-ratio: 2.05 !default;
+$font-size-base: 1rem;
 
 a{
      text-underline-offset: 4px;
+}
+
+.post {
+    line-height: 1.6em;
+
+    & > p {
+        margin-bottom: 1.2rem;
+    }
+
+    a {
+        padding-left: 1px;
+        padding-right: 1px;
+
+        &:hover, &:focus, &:visited {
+            color: #1e3799;
+        }
+    }
+
+    *:not(pre) > code {
+        padding-left: 4px;
+        padding-right: 4px;
+        font-size: $font-size-base * 0.9;
+    }
+
+    pre {
+        font-size: 92%;
+        max-height: 600px;
+        width: auto;
+        line-height: 17px;
+    }
+
+    img {
+        transition: 0.3s;
+        max-width: 100%;
+    }
+
+    li {
+        margin-bottom: .7rem;
+
+        p {
+            margin-bottom: 0;
+        }
+    }
+
+    h4, h5 {
+        margin-top: 1.8rem;
+        margin-bottom: 0.8rem;
+    }
 }

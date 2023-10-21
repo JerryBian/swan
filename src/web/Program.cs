@@ -23,7 +23,6 @@ builder.WebHost.UseShutdownTimeout(TimeSpan.FromMinutes(5));
 
 // Add services to the container.
 builder.Services.AddOptions<GeneralOption>().BindConfiguration("General");
-builder.Services.AddOptions<BlogOption>().BindConfiguration("Blog");
 builder.Services.AddOptions<ReadOption>().BindConfiguration("Read");
 
 builder.Logging.SetMinimumLevel(LogLevel.Debug);

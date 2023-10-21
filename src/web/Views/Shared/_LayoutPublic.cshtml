@@ -1,19 +1,39 @@
-﻿@{
+﻿@inject IOptions<GeneralOption> _option
+@{
     Layout = "_Layout";
 }
 
-<div class="container">
-    <div class="row">
-        <main class="col-8">@RenderBody()</main>
-        <aside class="col-3">
-            @await RenderSectionAsync("Aside", false)
-        </aside>
+<nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom">
+    <div class="container">
+        <a class="navbar-brand" href="/">@_option.Value.Title</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="/post"><i class="bi bi-file-text"></i> 文章</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/read"><i class="bi bi-book"></i> 阅读</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="bg-body-tertiary py-3">
+    <div class="container">
+        <div class="row">
+            <main class="col-9 bg-white px-3 py-4 rounded shadow-sm">@RenderBody()</main>
+            <aside class="col-3 small" id="aside">
+                @await RenderSectionAsync("Aside", false)
+            </aside>
+        </div>
     </div>
 </div>
 
-
-
-<footer class="text-center py-3 small mt-auto">
+<footer class="text-center py-3 small mt-auto bg-body-tertiary">
     &copy; @DateTime.Now.Year
 </footer>
 

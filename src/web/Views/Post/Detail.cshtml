@@ -4,39 +4,22 @@
     Layout = "_LayoutPublic";
 }
 
-<h3>@Model.Title</h3>
-<p>@Model.PublishDate.ToCnDate()</p>
 
-<article>
+<h3 class="mb-2 large-title">@Model.Title</h3>
+<div class="small text-muted">
+    <i class="bi bi-calendar-check"></i> @Model.PublishDate.ToCnDate()
+</div>
+
+<article class="mt-4 mb-2 post">
     @Html.Raw(Model.HtmlContent)
 </article>
 
 @section Aside{
-    @if(Model.PreviousPost != null || Model.NextPost != null)
-    {
-        <div class="card">
-            <div class="card-header">
-                Featured
-            </div>
-            <div class="card-body">
-                @if(Model.PreviousPost != null)
-                {
-                    <p class="card-text">前一篇：<a href="@Model.PreviousPost.GetFullLink()">@Model.PreviousPost.Title</a></p>
-                }
-
-                @if (Model.NextPost != null)
-                {
-                    <p class="card-text">后一篇：<a href="@Model.NextPost.GetFullLink()">@Model.NextPost.Title</a></p>
-                }
-            </div>
-        </div>
-    }
-
     @if(Model.RecommendPostsByTag.Any())
     {
-        <div class="card">
+        <div class="card mb-4">
             <div class="card-header">
-                文章推荐
+                <i class="bi bi-tags-fill"></i> 推荐文章
             </div>
             <ul class="list-group list-group-flush">
                 @foreach (var item in Model.RecommendPostsByTag)
@@ -51,9 +34,9 @@
 
     @if (Model.RecommendPostsBySeries.Any())
     {
-        <div class="card">
+        <div class="card mb-4">
             <div class="card-header">
-                文章推荐
+                <i class="bi bi-bookmarks-fill"></i> 系列文章
             </div>
             <ul class="list-group list-group-flush">
                 @foreach (var item in Model.RecommendPostsBySeries)
@@ -65,4 +48,23 @@
             </ul>
         </div>
     }
+
+    <div class="card">
+        <div class="card-header">
+            <i class="bi bi-info-circle-fill"></i> 文章信息
+        </div>
+        <div class="list-group list-group-flush">
+            @if (Model.PreviousPost != null)
+            {
+                <a href="@Model.PreviousPost.GetFullLink()" class="list-group-item list-group-action">前一篇： @Model.PreviousPost.Title</a>
+            }
+
+            @if (Model.NextPost != null)
+            {
+                <a href="@Model.NextPost.GetFullLink()" class="list-group-item list-group-action">后一篇： @Model.NextPost.Title</a>
+            }
+
+            <div class="list-group-item ">最后修改于：@Model.LastUpdatedAt</div>
+        </div>
+    </div>
 }

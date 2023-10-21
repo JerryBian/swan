@@ -7,6 +7,8 @@
             SkipGitOperation = true;
             AdminUserName = "test";
             AdminPassword = "test";
+            Title = "Swan";
+            Description = "A blog engine";
             AssetLocation = Path.Combine(Path.GetTempPath(), "swan");
         }
 
