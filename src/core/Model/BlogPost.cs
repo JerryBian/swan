@@ -37,6 +37,9 @@ namespace Swan.Core.Model
         #region Extension
 
         [JsonIgnore]
+        public string HtmlExcerpt { get; set; }
+
+        [JsonIgnore]
         public string HtmlContent { get; set; }
 
         [JsonIgnore]

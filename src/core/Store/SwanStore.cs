@@ -72,6 +72,19 @@ namespace Swan.Core.Store
                     }
                 }
 
+                if(string.IsNullOrEmpty(post.Excerpt))
+                {
+                    var p = htmlDoc.DocumentNode.Descendants("p").FirstOrDefault(x => !string.IsNullOrEmpty(x.InnerText));
+                    if(p != null)
+                    {
+                        post.HtmlExcerpt = MarkdownHelper.ToHtml(p.InnerText);
+                    }
+                }
+                else
+                {
+                    post.HtmlExcerpt = MarkdownHelper.ToHtml(post.Excerpt);
+                }
+
                 post.HtmlContent = htmlDoc.DocumentNode.OuterHtml;
 
                 foreach(var item in post.Tags)

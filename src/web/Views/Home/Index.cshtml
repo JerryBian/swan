@@ -1,8 +1,13 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿
+<div>
+    <a href="/post" class="btn btn-info">All Posts</a>
+    <a href="/read" class="btn btn-success">All Reads</a>
+</div>
+
+@section Style {
+    <link href="~/style.min.css" rel="stylesheet" asp-append-version="true" />
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@section Script {
+    <script src="~/script.min.js" asp-append-version="true"></script>
+}

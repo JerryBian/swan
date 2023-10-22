@@ -4,16 +4,18 @@
 }
 
 <div>
-    @foreach(var item in await _swanService.GetBlogPostsAsync())
+    @foreach(var item in (await _swanService.GetBlogPostsAsync()).OrderByDescending(x => x.PublishDate).Take(8))
     {
-        <div>
-            <a href="@item.GetFullLink()">@item.Title</a>
-        </div>
-        <div>
-            @Html.Raw(item.Excerpt)
-        </div>
-        <div>
-            Tags: Series:
+        <div class="mb-3">
+            <h5 class="large-title">
+                <a href="@item.GetFullLink()" class="text-decoration-none">@item.Title</a>
+            </h5>
+            <div>
+                @Html.Raw(item.HtmlExcerpt)
+            </div>
+            <div>
+                Tags: Series:
+            </div>
         </div>
     }
 </div>
@@ -21,7 +23,7 @@
 @section Aside{
     <div class="card">
         <div class="card-header">
-            Top Readings
+            最热文章
         </div>
         <ul class="list-group list-group-flush">
             @foreach(var item in (await _swanService.GetBlogPostsAsync()).OrderByDescending(x => x.PageStat.Hit).Take(8))
