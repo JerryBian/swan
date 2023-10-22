@@ -25,8 +25,8 @@
 <div class="bg-body-tertiary py-3">
     <div class="container">
         <div class="row">
-            <main class="col-9 bg-white px-3 py-4 rounded shadow-sm">@RenderBody()</main>
-            <aside class="col-3 small" id="aside">
+            <main class="col-md-9 bg-white px-3 py-4 rounded shadow-sm">@RenderBody()</main>
+            <aside class="col-3 small d-none d-md-block" id="aside">
                 @await RenderSectionAsync("Aside", false)
             </aside>
         </div>
