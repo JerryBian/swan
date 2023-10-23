@@ -44,7 +44,7 @@
                     <label for="posts" class="form-label">Linked Posts</label>
                     <select class="form-select font-monospace" id="posts" name="posts" multiple size="5">
                         <option selected value="" class="small">-- 选择博客文章（支持多选） --</option>
-                        @foreach (var p in await _swanService.GetBlogPostsAsync())
+                        @foreach (var p in await _swanService.FindAsync<SwanPost>())
                         {
                             <option value="@p.Id" class="my-1 ps-1">@p.Title</option>
                         }

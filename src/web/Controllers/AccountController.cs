@@ -1,23 +1,22 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
-using System.Security.Claims;
-using Swan.Core.Option;
 using Swan.Core.Extension;
+using Swan.Core.Option;
+using System.Security.Claims;
 
 namespace Swan.Web.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly GeneralOption _option;
+        private readonly SwanOption _option;
         private readonly ILogger<AccountController> _logger;
 
         public AccountController(
         ILogger<AccountController> logger,
-        IOptions<GeneralOption> options)
+        IOptions<SwanOption> options)
         {
             _logger = logger;
             _option = options.Value;

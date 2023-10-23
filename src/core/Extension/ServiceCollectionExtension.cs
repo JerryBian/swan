@@ -5,7 +5,6 @@ using Microsoft.Extensions.Options;
 using Swan.Core.Logger;
 using Swan.Core.Option;
 using Swan.Core.Service;
-using Swan.Core.Store;
 
 namespace Swan.Core.Extension
 {
@@ -15,7 +14,6 @@ namespace Swan.Core.Extension
         {
             services.AddGitStore();
 
-            services.AddSingleton<ISwanStore, SwanStore>();
             services.AddSingleton<ISwanService, SwanService>();
             services.AddSingleton<ISwanLogService, SwanLogService>();
             services.AddSingleton<IGitFileLoggerProcessor, GitFileLoggerProcessor>();
@@ -26,8 +24,8 @@ namespace Swan.Core.Extension
         public static IApplicationBuilder UseSwanService(this IApplicationBuilder builder)
         {
             // Options post setup
-            IOptions<GeneralOption> generalOption = builder.ApplicationServices.GetRequiredService<IOptions<GeneralOption>>();
-            IOptions<GitStoreOption> gitStoreOption = builder.ApplicationServices.GetRequiredService<IOptions<GitStoreOption>>();
+            var generalOption = builder.ApplicationServices.GetRequiredService<IOptions<SwanOption>>();
+            var gitStoreOption = builder.ApplicationServices.GetRequiredService<IOptions<GitStoreOption>>();
             gitStoreOption.Value.LocalDirectory = Path.Combine(Path.GetFullPath(generalOption.Value.AssetLocation), "data");
 
             return builder;

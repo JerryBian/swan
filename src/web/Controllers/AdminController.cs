@@ -37,7 +37,7 @@ namespace Swan.Web.Controllers
         }
 
         [HttpPut("/admin/post-add")]
-        public async Task<IActionResult> AddPost([FromForm] BlogPost post)
+        public async Task<IActionResult> AddPost([FromForm] SwanPost post)
         {
             ApiResponse<object> res = new();
 
@@ -47,7 +47,7 @@ namespace Swan.Web.Controllers
                 post.Tags.Remove(null);
                 post.IsPublic = Request.Form["isPublic"] == "on";
 
-                await _swanService.AddBlogPostAsync(post);
+                await _swanService.AddAsync(post);
                 res.RedirectTo = post.GetFullLink();
             }
             catch (Exception ex)
@@ -63,13 +63,13 @@ namespace Swan.Web.Controllers
         [HttpGet("/admin/post-edit/{id}")]
         public async Task<IActionResult> EditPost([FromRoute] string id)
         {
-            List<BlogPost> allPosts = await _swanService.GetBlogPostsAsync();
-            BlogPost post = allPosts.Find(x => StringHelper.EqualsIgoreCase(id, x.Id));
+            List<SwanPost> allPosts = await _swanService.FindAsync<SwanPost>();
+            SwanPost post = allPosts.Find(x => StringHelper.EqualsIgoreCase(id, x.Id));
             return post == null ? NotFound() : View("EditPost", post);
         }
 
         [HttpPost("/admin/post-edit")]
-        public async Task<IActionResult> EditPost([FromForm] BlogPost post)
+        public async Task<IActionResult> EditPost([FromForm] SwanPost post)
         {
             ApiResponse<object> res = new();
 
@@ -80,7 +80,7 @@ namespace Swan.Web.Controllers
                 post.IsPublic = Request.Form["isPublic"] == "on";
                 post.IsDeleted = Request.Form["isDeleted"] == "on";
 
-                await _swanService.UpdateBlogPostAsync(post);
+                await _swanService.UpdateAsync(post);
                 res.RedirectTo = post.GetFullLink();
             }
             catch (Exception ex)
@@ -106,7 +106,7 @@ namespace Swan.Web.Controllers
         }
 
         [HttpPut("/admin/tag-add")]
-        public async Task<IActionResult> AddTag([FromForm] BlogTag tag)
+        public async Task<IActionResult> AddTag([FromForm] SwanTag tag)
         {
             ApiResponse<object> res = new();
 
@@ -114,7 +114,7 @@ namespace Swan.Web.Controllers
             {
                 tag.IsPublic = Request.Form["isPublic"] == "on";
 
-                await _swanService.AddBlogTagAsync(tag);
+                await _swanService.AddAsync(tag);
                 res.RedirectTo = tag.GetFullLink();
             }
             catch (Exception ex)
@@ -130,13 +130,13 @@ namespace Swan.Web.Controllers
         [HttpGet("/admin/tag-edit/{id}")]
         public async Task<IActionResult> EditTag([FromRoute] string id)
         {
-            var allTags = await _swanService.GetBlogTagsAsync();
+            var allTags = await _swanService.FindAsync<SwanTag>();
             var tag = allTags.Find(x => StringHelper.EqualsIgoreCase(id, x.Id));
             return tag == null ? NotFound() : View("EditTag", tag);
         }
 
         [HttpPost("/admin/tag-edit")]
-        public async Task<IActionResult> EditTag([FromForm] BlogTag tag)
+        public async Task<IActionResult> EditTag([FromForm] SwanTag tag)
         {
             ApiResponse<object> res = new();
 
@@ -144,7 +144,7 @@ namespace Swan.Web.Controllers
             {
                 tag.IsPublic = Request.Form["isPublic"] == "on";
 
-                await _swanService.UpdateBlogTagAsync(tag);
+                await _swanService.UpdateAsync(tag);
                 res.RedirectTo = tag.GetFullLink();
             }
             catch (Exception ex)
@@ -164,7 +164,7 @@ namespace Swan.Web.Controllers
 
             try
             {
-                await _swanService.DeleteBlogTagAsync(id);
+                await _swanService.DeleteAsync<SwanTag>(id);
                 res.RedirectTo = "/admin/tag-list";
             }
             catch (Exception ex)
@@ -190,7 +190,7 @@ namespace Swan.Web.Controllers
         }
 
         [HttpPut("/admin/series-add")]
-        public async Task<IActionResult> AddSeries([FromForm] BlogSeries series)
+        public async Task<IActionResult> AddSeries([FromForm] SwanSeries series)
         {
             ApiResponse<object> res = new();
 
@@ -198,7 +198,7 @@ namespace Swan.Web.Controllers
             {
                 series.IsPublic = Request.Form["isPublic"] == "on";
 
-                await _swanService.AddBlogSeriesAsync(series);
+                await _swanService.AddAsync(series);
                 res.RedirectTo = series.GetFullLink();
             }
             catch (Exception ex)
@@ -214,13 +214,12 @@ namespace Swan.Web.Controllers
         [HttpGet("/admin/series-edit/{id}")]
         public async Task<IActionResult> EditSeries([FromRoute] string id)
         {
-            var allSeries = await _swanService.GetBlogSeriesAsync();
-            var tag = allSeries.Find(x => StringHelper.EqualsIgoreCase(id, x.Id));
-            return tag == null ? NotFound() : View("EditSeries", tag);
+            var series = await _swanService.FindAsync<SwanSeries>(id);
+            return series == null ? NotFound() : View("EditSeries", series);
         }
 
         [HttpPost("/admin/series-edit")]
-        public async Task<IActionResult> EditSeries([FromForm] BlogSeries series)
+        public async Task<IActionResult> EditSeries([FromForm] SwanSeries series)
         {
             ApiResponse<object> res = new();
 
@@ -228,7 +227,7 @@ namespace Swan.Web.Controllers
             {
                 series.IsPublic = Request.Form["isPublic"] == "on";
 
-                await _swanService.UpdateBlogSeriesAsync(series);
+                await _swanService.UpdateAsync(series);
                 res.RedirectTo = series.GetFullLink();
             }
             catch (Exception ex)
@@ -248,7 +247,7 @@ namespace Swan.Web.Controllers
 
             try
             {
-                await _swanService.DeleteBlogSeriesAsync(id);
+                await _swanService.DeleteAsync<SwanSeries>(id);
                 res.RedirectTo = "/admin/series-list";
             }
             catch (Exception ex)
@@ -274,7 +273,7 @@ namespace Swan.Web.Controllers
         }
 
         [HttpPut("/admin/read-add")]
-        public async Task<IActionResult> AddRead([FromForm] ReadItem readItem)
+        public async Task<IActionResult> AddRead([FromForm] SwanRead readItem)
         {
             ApiResponse<object> res = new();
 
@@ -282,7 +281,7 @@ namespace Swan.Web.Controllers
             {
                 readItem.IsPublic = Request.Form["isPublic"] == "on";
 
-                await _swanService.AddReadItemAsync(readItem);
+                await _swanService.AddAsync(readItem);
                 res.RedirectTo = readItem.GetFullLink();
             }
             catch (Exception ex)
@@ -298,13 +297,12 @@ namespace Swan.Web.Controllers
         [HttpGet("/admin/read-edit/{id}")]
         public async Task<IActionResult> EditReadItem([FromRoute] string id)
         {
-            var allReadItems = await _swanService.GetReadItemsAsync();
-            var readItem = allReadItems.Find(x => StringHelper.EqualsIgoreCase(id, x.Id));
+            var readItem = await _swanService.FindAsync<SwanRead>(id);
             return readItem == null ? NotFound() : View("EditRead", readItem);
         }
 
         [HttpPost("/admin/read-edit")]
-        public async Task<IActionResult> EditRead([FromForm] ReadItem readItem)
+        public async Task<IActionResult> EditRead([FromForm] SwanRead readItem)
         {
             ApiResponse<object> res = new();
 
@@ -312,7 +310,7 @@ namespace Swan.Web.Controllers
             {
                 readItem.IsPublic = Request.Form["isPublic"] == "on";
 
-                await _swanService.UpdateReadItemAsync(readItem);
+                await _swanService.UpdateAsync(readItem);
                 res.RedirectTo = readItem.GetFullLink();
             }
             catch (Exception ex)
@@ -332,7 +330,7 @@ namespace Swan.Web.Controllers
 
             try
             {
-                await _swanService.DeleteReadItemAsync(id);
+                await _swanService.DeleteAsync<SwanRead>(id);
                 res.RedirectTo = "/admin/read-list";
             }
             catch (Exception ex)

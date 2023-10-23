@@ -1,8 +1,8 @@
 ﻿namespace Swan.Core.Option
 {
-    public class GeneralOption
+    public class SwanOption
     {
-        public GeneralOption()
+        public SwanOption()
         {
             SkipGitOperation = true;
             AdminUserName = "test";

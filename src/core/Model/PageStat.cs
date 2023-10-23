@@ -11,5 +11,10 @@ namespace Swan.Core.Model
 
         [JsonPropertyName("type")]
         public PageType PageType { get; set; }
+
+        public override string GetGitStorePath()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

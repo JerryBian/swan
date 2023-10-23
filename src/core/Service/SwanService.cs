@@ -1,32 +1,43 @@
 ﻿using DotNext.Threading;
 using GitStoreDotnet;
+using Microsoft.Extensions.Caching.Memory;
 using Swan.Core.Helper;
 using Swan.Core.Model;
-using Swan.Core.Store;
+using System.Collections.Concurrent;
+using System.Reflection;
+using System.Text.Json.Serialization;
 
 namespace Swan.Core.Service
 {
     internal class SwanService : ISwanService
     {
         private readonly IGitStore _gitStore;
-        private readonly ISwanStore _swanStore;
+        private readonly IMemoryCache _memoryCache;
         private readonly AsyncReaderWriterLock _asyncReaderWriterLock;
+        private readonly ConcurrentDictionary<string, object> _cacheKeys;
 
-        public SwanService(IGitStore gitStore, ISwanStore swanStore)
+        public SwanService(IGitStore gitStore, IMemoryCache memoryCache)
         {
             _gitStore = gitStore;
-            _swanStore = swanStore;
+            _memoryCache = memoryCache;
             _asyncReaderWriterLock = new AsyncReaderWriterLock();
+            _cacheKeys = new ConcurrentDictionary<string, object>();
         }
 
-        public async Task<List<BlogPost>> GetBlogPostsAsync()
+        public async Task<List<T>> FindAsync<T>(Predicate<T> predicate = null) where T : SwanObject
         {
             await _asyncReaderWriterLock.EnterReadLockAsync();
 
             try
             {
-                StoreObject obj = await _swanStore.GetAsync();
-                return obj.BlogPosts;
+                var storeObject = await GetStoreObjectAsync();
+                var result = storeObject.Get<T>();
+                if (predicate != null)
+                {
+                    result = result.Where(x => predicate(x)).ToList();
+                }
+
+                return result;
             }
             finally
             {
@@ -34,29 +45,31 @@ namespace Swan.Core.Service
             }
         }
 
-        public async Task AddBlogPostAsync(BlogPost blogPost)
+        public async Task<T> FindAsync<T>(string id) where T : SwanObject
+        {
+            return await FindFirstOrDefaultAsync<T>(x => StringHelper.EqualsIgoreCase(x.Id, id));
+        }
+
+        public async Task<T> FindFirstOrDefaultAsync<T>(Predicate<T> predicate) where T : SwanObject
+        {
+            var items = await FindAsync<T>(x => predicate(x));
+            return items.FirstOrDefault();
+        }
+
+        public async Task AddAsync<T>(T item) where T : SwanObject
         {
             await _asyncReaderWriterLock.EnterWriteLockAsync();
 
             try
             {
-                StoreObject obj = await _swanStore.GetAsync();
-                if (obj.BlogPosts.Find(x => StringHelper.EqualsIgoreCase(x.Id, blogPost.Id)) != null)
-                {
-                    throw new Exception($"Blog post with id {blogPost.Id} already exists.");
-                }
+                var obj = await GetStoreObjectAsync();
+                var items = obj.Get<T>();
 
-                if (obj.BlogPosts.Find(x => StringHelper.EqualsIgoreCase(x.Link, blogPost.Link)) != null)
-                {
-                    throw new Exception($"Blog post with link {blogPost.Link} already exists.");
-                }
-
-                blogPost.CreatedAt = blogPost.LastUpdatedAt = DateTime.Now;
-                List<BlogPost> posts = new List<BlogPost>(obj.BlogPosts) { blogPost };
-                string content = JsonHelper.Serialize(posts.OrderByDescending(x => x.CreatedAt));
-                await _gitStore.InsertOrUpdateAsync(BlogPost.GitStorePath, content, true);
-
-                _swanStore.Clear();
+                item.CreatedAt = item.LastUpdatedAt = DateTime.Now;
+                Add(items, item);
+                var content = JsonHelper.Serialize(items.OrderByDescending(x => x.CreatedAt));
+                await _gitStore.InsertOrUpdateAsync(item.GetGitStorePath(), content);
+                ExpireCache();
             }
             finally
             {
@@ -64,34 +77,27 @@ namespace Swan.Core.Service
             }
         }
 
-        public async Task UpdateBlogPostAsync(BlogPost blogPost)
+        public async Task UpdateAsync<T>(T item) where T : SwanObject
         {
             await _asyncReaderWriterLock.EnterWriteLockAsync();
 
             try
             {
-                StoreObject obj = await _swanStore.GetAsync();
-                BlogPost oldPost = obj.BlogPosts.FirstOrDefault(x => StringHelper.EqualsIgoreCase(x.Id, blogPost.Id));
-                if (oldPost == null)
+                var obj = await GetStoreObjectAsync();
+                var items = obj.Get<T>();
+                var oldObj = items.FirstOrDefault(x => StringHelper.EqualsIgoreCase(x.Id, item.Id));
+                if (oldObj == null)
                 {
-                    throw new Exception($"Blog post with id {blogPost.Id} not exists.");
+                    throw new Exception($"{typeof(T).Name} with id {item.Id} not exists.");
                 }
 
-                List<BlogPost> allPosts = new List<BlogPost>(obj.BlogPosts);
-                allPosts.Remove(oldPost);
-
-                if (allPosts.Find(x => StringHelper.EqualsIgoreCase(x.Link, blogPost.Link)) != null)
-                {
-                    throw new Exception($"Blog post with link {blogPost.Link} already exists.");
-                }
-
-                blogPost.CreatedAt = oldPost.CreatedAt;
-                blogPost.LastUpdatedAt = DateTime.Now;
-                allPosts.Add(blogPost);
-                string content = JsonHelper.Serialize(allPosts.OrderByDescending(x => x.CreatedAt));
-                await _gitStore.InsertOrUpdateAsync(BlogPost.GitStorePath, content, true);
-
-                _swanStore.Clear();
+                var newItems = new List<T>(items);
+                newItems.Remove(oldObj);
+                item.CreatedAt = oldObj.CreatedAt;
+                Add(newItems, item);
+                var content = JsonHelper.Serialize(newItems.OrderByDescending(x => x.CreatedAt));
+                await _gitStore.InsertOrUpdateAsync(item.GetGitStorePath(), content);
+                ExpireCache();
             }
             finally
             {
@@ -99,100 +105,26 @@ namespace Swan.Core.Service
             }
         }
 
-        public async Task<List<BlogTag>> GetBlogTagsAsync()
-        {
-            await _asyncReaderWriterLock.EnterReadLockAsync();
-
-            try
-            {
-                StoreObject obj = await _swanStore.GetAsync();
-                return obj.BlogTags;
-            }
-            finally
-            {
-                _asyncReaderWriterLock.Release();
-            }
-        }
-
-        public async Task AddBlogTagAsync(BlogTag blogTag)
+        public async Task DeleteAsync<T>(string id) where T : SwanObject
         {
             await _asyncReaderWriterLock.EnterWriteLockAsync();
 
             try
             {
-                StoreObject obj = await _swanStore.GetAsync();
-                if (obj.BlogTags.Find(x => StringHelper.EqualsIgoreCase(x.Link, blogTag.Link)) != null)
-                {
-                    throw new Exception($"Blog tag with link {blogTag.Link} already exists.");
-                }
-
-                blogTag.Id = StringHelper.Random();
-                blogTag.CreatedAt = blogTag.LastUpdatedAt = DateTime.Now;
-                List<BlogTag> tags = new List<BlogTag>(obj.BlogTags) { blogTag };
-                string content = JsonHelper.Serialize(tags.OrderByDescending(x => x.CreatedAt));
-                await _gitStore.InsertOrUpdateAsync(BlogTag.GitStorePath, content, true);
-
-                _swanStore.Clear();
-            }
-            finally
-            {
-                _asyncReaderWriterLock.Release();
-            }
-        }
-
-        public async Task UpdateBlogTagAsync(BlogTag blogTag)
-        {
-            await _asyncReaderWriterLock.EnterWriteLockAsync();
-
-            try
-            {
-                StoreObject obj = await _swanStore.GetAsync();
-                BlogTag oldTag = obj.BlogTags.FirstOrDefault(x => StringHelper.EqualsIgoreCase(x.Id, blogTag.Id));
-                if (oldTag == null)
-                {
-                    throw new Exception($"Blog tag with id {blogTag.Id} not exists.");
-                }
-
-                List<BlogTag> tags = new List<BlogTag>(obj.BlogTags);
-                tags.Remove(oldTag);
-                if (tags.Find(x => StringHelper.EqualsIgoreCase(x.Link, blogTag.Link)) != null)
-                {
-                    throw new Exception($"Blog tag with link {blogTag.Link} already exists.");
-                }
-
-                blogTag.CreatedAt = oldTag.CreatedAt;
-                blogTag.LastUpdatedAt = DateTime.Now;
-                tags.Add(blogTag);
-                string content = JsonHelper.Serialize(tags.OrderByDescending(x => x.CreatedAt));
-                await _gitStore.InsertOrUpdateAsync(BlogTag.GitStorePath, content, true);
-
-                _swanStore.Clear();
-            }
-            finally
-            {
-                _asyncReaderWriterLock.Release();
-            }
-        }
-
-        public async Task DeleteBlogTagAsync(string id)
-        {
-            await _asyncReaderWriterLock.EnterWriteLockAsync();
-
-            try
-            {
-                StoreObject obj = await _swanStore.GetAsync();
-                BlogTag tag = obj.BlogTags.FirstOrDefault(x => StringHelper.EqualsIgoreCase(x.Id, id));
-                if (tag == null)
+                var obj = await GetStoreObjectAsync();
+                var items = obj.Get<T>();
+                var oldObj = items.FirstOrDefault(x => StringHelper.EqualsIgoreCase(x.Id, id));
+                if (oldObj == null)
                 {
                     return;
                 }
 
-                List<BlogTag> tags = new List<BlogTag>(obj.BlogTags);
-                tags.Remove(tag);
-                string content = JsonHelper.Serialize(tags.OrderByDescending(x => x.CreatedAt));
-                await _gitStore.InsertOrUpdateAsync(BlogTag.GitStorePath, content, true);
+                var newItems = new List<T>(items);
+                newItems.Remove(oldObj);
 
-                _swanStore.Clear();
+                var content = JsonHelper.Serialize(newItems.OrderByDescending(x => x.CreatedAt));
+                await _gitStore.InsertOrUpdateAsync(oldObj.GetGitStorePath(), content);
+                ExpireCache();
             }
             finally
             {
@@ -200,196 +132,49 @@ namespace Swan.Core.Service
             }
         }
 
-        public async Task<List<BlogSeries>> GetBlogSeriesAsync()
+        private void Add<T>(List<T> values, T value)
         {
-            await _asyncReaderWriterLock.EnterReadLockAsync();
-
-            try
+            foreach (var prop in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
-                StoreObject obj = await _swanStore.GetAsync();
-                return obj.BlogSeries;
-            }
-            finally
-            {
-                _asyncReaderWriterLock.Release();
-            }
-        }
-
-        public async Task AddBlogSeriesAsync(BlogSeries blogSeries)
-        {
-            await _asyncReaderWriterLock.EnterWriteLockAsync();
-
-            try
-            {
-                StoreObject obj = await _swanStore.GetAsync();
-                if (obj.BlogSeries.Find(x => StringHelper.EqualsIgoreCase(x.Link, blogSeries.Link)) != null)
+                if (prop.GetCustomAttribute<JsonPropertyNameAttribute>() == null ||
+                    prop.GetCustomAttribute<StoreUniqueAttribute>() == null)
                 {
-                    throw new Exception($"Blog tag with link {blogSeries.Link} already exists.");
+                    continue;
                 }
 
-                blogSeries.Id = StringHelper.Random();
-                blogSeries.CreatedAt = blogSeries.LastUpdatedAt = DateTime.Now;
-                List<BlogSeries> tags = new List<BlogSeries>(obj.BlogSeries) { blogSeries };
-                string content = JsonHelper.Serialize(tags.OrderByDescending(x => x.CreatedAt));
-                await _gitStore.InsertOrUpdateAsync(BlogSeries.GitStorePath, content, true);
-
-                _swanStore.Clear();
-            }
-            finally
-            {
-                _asyncReaderWriterLock.Release();
-            }
-        }
-
-        public async Task UpdateBlogSeriesAsync(BlogSeries blogSeries)
-        {
-            await _asyncReaderWriterLock.EnterWriteLockAsync();
-
-            try
-            {
-                StoreObject obj = await _swanStore.GetAsync();
-                BlogSeries oldSeries = obj.BlogSeries.FirstOrDefault(x => StringHelper.EqualsIgoreCase(x.Id, blogSeries.Id));
-                if (oldSeries == null)
+                var val1 = prop.GetValue(value);
+                if (values.FirstOrDefault(x => prop.GetValue(x) == val1) != null)
                 {
-                    throw new Exception($"Blog series with id {blogSeries.Id} not exists.");
+                    throw new Exception($"{prop.Name} with value {val1} already exists in {typeof(T).Name} list.");
                 }
-
-                List<BlogSeries> allSeries = new List<BlogSeries>(obj.BlogSeries);
-                allSeries.Remove(oldSeries);
-                if (allSeries.Find(x => StringHelper.EqualsIgoreCase(x.Link, blogSeries.Link)) != null)
-                {
-                    throw new Exception($"Blog series with link {blogSeries.Link} already exists.");
-                }
-
-                blogSeries.CreatedAt = oldSeries.CreatedAt;
-                blogSeries.LastUpdatedAt = DateTime.Now;
-                allSeries.Add(blogSeries);
-                string content = JsonHelper.Serialize(allSeries.OrderByDescending(x => x.CreatedAt));
-                await _gitStore.InsertOrUpdateAsync(BlogSeries.GitStorePath, content, true);
-
-                _swanStore.Clear();
-            }
-            finally
-            {
-                _asyncReaderWriterLock.Release();
             }
         }
 
-        public async Task DeleteBlogSeriesAsync(string id)
+        private async Task<StoreObject> GetStoreObjectAsync()
         {
-            await _asyncReaderWriterLock.EnterWriteLockAsync();
-
-            try
+            var storeObject = await _memoryCache.GetOrCreateAsync(GetCacheKey<StoreObject>("storeobj"), async _ =>
             {
-                StoreObject obj = await _swanStore.GetAsync();
-                BlogSeries series = obj.BlogSeries.FirstOrDefault(x => StringHelper.EqualsIgoreCase(x.Id, id));
-                if (series == null)
-                {
-                    return;
-                }
+                var obj = new StoreObject();
+                await obj.PopulateDataAsync(_gitStore);
 
-                List<BlogSeries> allSeries = new List<BlogSeries>(obj.BlogSeries);
-                allSeries.Remove(series);
-                string content = JsonHelper.Serialize(allSeries.OrderByDescending(x => x.CreatedAt));
-                await _gitStore.InsertOrUpdateAsync(BlogSeries.GitStorePath, content, true);
+                return obj;
+            });
 
-                _swanStore.Clear();
-            }
-            finally
-            {
-                _asyncReaderWriterLock.Release();
-            }
+            return storeObject;
         }
 
-        public async Task<List<ReadItem>> GetReadItemsAsync()
+        private string GetCacheKey<T>(params string[] keys)
         {
-            await _asyncReaderWriterLock.EnterReadLockAsync();
-
-            try
-            {
-                StoreObject obj = await _swanStore.GetAsync();
-                return obj.ReadItems;
-            }
-            finally
-            {
-                _asyncReaderWriterLock.Release();
-            }
+            var key = $"core.ss.{string.Join(".", keys)}";
+            _cacheKeys.TryAdd(key, new object());
+            return key;
         }
 
-        public async Task AddReadItemAsync(ReadItem readItem)
+        private void ExpireCache()
         {
-            await _asyncReaderWriterLock.EnterWriteLockAsync();
-
-            try
+            foreach (var item in _cacheKeys.Keys)
             {
-                StoreObject obj = await _swanStore.GetAsync();
-                readItem.Id = StringHelper.Random();
-                readItem.CreatedAt = readItem.LastUpdatedAt = DateTime.Now;
-                List<ReadItem> readItems = new List<ReadItem>(obj.ReadItems) { readItem };
-                string content = JsonHelper.Serialize(readItems.OrderByDescending(x => x.CreatedAt));
-                await _gitStore.InsertOrUpdateAsync(ReadItem.GitStorePath, content, true);
-
-                _swanStore.Clear();
-            }
-            finally
-            {
-                _asyncReaderWriterLock.Release();
-            }
-        }
-
-        public async Task UpdateReadItemAsync(ReadItem readItem)
-        {
-            await _asyncReaderWriterLock.EnterWriteLockAsync();
-
-            try
-            {
-                StoreObject obj = await _swanStore.GetAsync();
-                ReadItem oldReadItem = obj.ReadItems.FirstOrDefault(x => StringHelper.EqualsIgoreCase(x.Id, readItem.Id));
-                if (oldReadItem == null)
-                {
-                    throw new Exception($"Read item with id {readItem.Id} not exists.");
-                }
-
-                List<ReadItem> readItems = new List<ReadItem>(obj.ReadItems);
-                readItems.Remove(oldReadItem);
-
-                readItem.CreatedAt = oldReadItem.CreatedAt;
-                readItem.LastUpdatedAt = DateTime.Now;
-                readItems.Add(readItem);
-                string content = JsonHelper.Serialize(readItems.OrderByDescending(x => x.CreatedAt));
-                await _gitStore.InsertOrUpdateAsync(ReadItem.GitStorePath, content, true);
-
-                _swanStore.Clear();
-            }
-            finally
-            {
-                _asyncReaderWriterLock.Release();
-            }
-        }
-
-        public async Task DeleteReadItemAsync(string id)
-        {
-            await _asyncReaderWriterLock.EnterWriteLockAsync();
-
-            try
-            {
-                StoreObject obj = await _swanStore.GetAsync();
-                ReadItem tag = obj.ReadItems.FirstOrDefault(x => StringHelper.EqualsIgoreCase(x.Id, id));
-                if (tag == null)
-                {
-                    return;
-                }
-
-                var readItems = new List<ReadItem>(obj.ReadItems);
-                readItems.Remove(tag);
-                string content = JsonHelper.Serialize(readItems.OrderByDescending(x => x.CreatedAt));
-                await _gitStore.InsertOrUpdateAsync(ReadItem.GitStorePath, content, true);
-
-                _swanStore.Clear();
-            }
-            finally
-            {
-                _asyncReaderWriterLock.Release();
+                _memoryCache.Remove(item);
             }
         }
     }

@@ -1,10 +1,12 @@
-﻿using Swan.Core.Helper;
+﻿using HtmlAgilityPack;
+using Swan.Core.Helper;
 using System.Text.Json.Serialization;
 
 namespace Swan.Core.Model
 {
     public abstract class SwanObject
     {
+        [StoreUnique]
         [JsonPropertyName("id")]
         [JsonPropertyOrder(-100)]
         public string Id { get; set; } = StringHelper.Random();
@@ -21,9 +23,10 @@ namespace Swan.Core.Model
         [JsonPropertyName("isPublic")]
         public bool IsPublic { get; set; } = false;
 
-        public virtual string GetObjectIdentity()
-        {
-            return null;
-        }
+        public abstract string GetGitStorePath();
+
+        public virtual bool IsPublicToEveryOne() => IsPublic;
+
+        public virtual string GetFullLink() => string.Empty;
     }
 }

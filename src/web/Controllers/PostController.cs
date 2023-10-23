@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Swan.Core.Helper;
+using Swan.Core.Model;
 using Swan.Core.Service;
 
 namespace Swan.Web.Controllers
@@ -21,21 +22,14 @@ namespace Swan.Web.Controllers
         [HttpGet("/post/{year}/{link}")]
         public async Task<IActionResult> GetPost([FromRoute] int year, [FromRoute] string link)
         {
-            var posts = await _swanService.GetBlogPostsAsync();
-            var post = posts.FirstOrDefault(x => StringHelper.EqualsIgoreCase(link, x.Link));
-            if (post == null || post.PublishDate.Year != year)
-            {
-                return NotFound();
-            }
-
-            return View("Detail", post);
+            var post = await _swanService.FindFirstOrDefaultAsync<SwanPost>(x => StringHelper.EqualsIgoreCase(link, x.Link) && x.PublishDate.Year == year);
+            return post == null ? NotFound() : View("Detail", post);
         }
 
         [HttpGet("/post/{year}")]
         public async Task<IActionResult> GetPosts([FromRoute] int year)
         {
-            var posts = await _swanService.GetBlogPostsAsync();
-            posts = posts.Where(x => x.PublishDate.Year == year).ToList();
+            var posts = await _swanService.FindAsync<SwanPost>(x => x.PublishDate.Year == year);
             return View("Archive", posts);
         }
     }

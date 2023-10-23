@@ -2,15 +2,15 @@
 
 namespace Swan.Core.Model
 {
-    public class BlogSeries : SwanObject
+    public class SwanTag : SwanObject
     {
-        public const string GitStorePath = "obj/series.json";
-
         #region Raw
 
+        [StoreUnique]
         [JsonPropertyName("name")]
         public string Name { get; set; }
 
+        [StoreUnique]
         [JsonPropertyName("link")]
         public string Link { get; set; }
 
@@ -22,13 +22,14 @@ namespace Swan.Core.Model
         #region Extension
 
         [JsonIgnore]
-        public List<BlogPost> BlogPosts { get; } = new();
-
-        [JsonIgnore]
-        public bool IsPublicToEveryOne => IsPublic && BlogPosts.Any();
+        public List<SwanPost> BlogPosts { get; } = new();
 
         #endregion
 
-        public string GetFullLink() => $"/series/{Link}";
+        public override string GetFullLink() => $"/tag/{Link}";
+
+        public override string GetGitStorePath() => "obj/tag.json";
+
+        public override bool IsPublicToEveryOne() => base.IsPublicToEveryOne() && BlogPosts.Any();
     }
 }

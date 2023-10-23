@@ -9,9 +9,9 @@ namespace Swan.Web.HostedServices
     {
         private readonly ILogger<GitFileHostedService> _logger;
         private readonly IGitStore _gitStore;
-        private readonly GeneralOption _option;
+        private readonly SwanOption _option;
 
-        public GitFileHostedService(ILogger<GitFileHostedService> logger, IGitStore gitStore, IOptions<GeneralOption> option)
+        public GitFileHostedService(ILogger<GitFileHostedService> logger, IGitStore gitStore, IOptions<SwanOption> option)
         {
             _logger = logger;
             _gitStore = gitStore;
@@ -20,7 +20,7 @@ namespace Swan.Web.HostedServices
 
         public override async Task StartAsync(CancellationToken cancellationToken)
         {
-            if(!_option.SkipGitOperation)
+            if (!_option.SkipGitOperation)
             {
                 await _gitStore.PullFromRemoteAsync(cancellationToken);
             }
@@ -31,17 +31,17 @@ namespace Swan.Web.HostedServices
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             var lastTimestamp = DateTime.Now;
-            while(!stoppingToken.IsCancellationRequested)
+            while (!stoppingToken.IsCancellationRequested)
             {
                 await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken).OkForCancel();
 
-                if(!_option.SkipGitOperation && DateTime.Now - lastTimestamp > TimeSpan.FromHours(1))
+                if (!_option.SkipGitOperation && DateTime.Now - lastTimestamp > TimeSpan.FromHours(1))
                 {
                     try
                     {
                         await _gitStore.PushToRemoteAsync("Schedule push");
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         _logger.LogError(ex, $"Failed to execute {nameof(GitFileHostedService)}.");
                     }
@@ -55,7 +55,7 @@ namespace Swan.Web.HostedServices
 
         public override async Task StopAsync(CancellationToken cancellationToken)
         {
-            if(!_option.SkipGitOperation)
+            if (!_option.SkipGitOperation)
             {
                 try
                 {
@@ -66,7 +66,7 @@ namespace Swan.Web.HostedServices
                     _logger.LogError(ex, "Failed to push during stopping.");
                 }
             }
-            
+
             await base.StopAsync(cancellationToken);
         }
     }

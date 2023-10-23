@@ -47,7 +47,7 @@ namespace Swan.Core.Logger
 
         private void Process()
         {
-            foreach (SwanLog log in _logs.GetConsumingEnumerable())
+            foreach (var log in _logs.GetConsumingEnumerable())
             {
                 _swanLogService.AddAsync(log).Wait();
             }

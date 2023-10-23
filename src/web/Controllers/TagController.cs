@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Swan.Core.Helper;
+using Swan.Core.Model;
 using Swan.Core.Service;
 
 namespace Swan.Web.Controllers
@@ -21,14 +22,8 @@ namespace Swan.Web.Controllers
         [HttpGet("/tag/{link}")]
         public async Task<IActionResult> Get([FromRoute] string link)
         {
-            var allTags = await _swanService.GetBlogTagsAsync();
-            var tag = allTags.FirstOrDefault(x => StringHelper.EqualsIgoreCase(x.Link, link));
-            if(tag == null)
-            {
-                return NotFound();
-            }
-
-            return View("Detail", tag);
+            var tag = await _swanService.FindAsync<SwanTag>(x => StringHelper.EqualsIgoreCase(x.Link, link));
+            return tag == null ? NotFound() : View("Detail", tag);
         }
     }
 }

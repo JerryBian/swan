@@ -4,7 +4,7 @@
 }
 
 <div>
-    @foreach(var item in await _swanService.GetBlogSeriesAsync())
+    @foreach(var item in await _swanService.FindAsync<SwanSeries>())
     {
         <a href="@item.GetFullLink()" class="btn btn-info">@item.Name</a>
     }

@@ -1,5 +1,5 @@
 ﻿@inject ISwanService _service
-@model BlogPost
+@model SwanPost
 @{
     Layout = "_LayoutAdmin";
 }
@@ -57,7 +57,7 @@
                             <option selected value="" class="small">-- Select Post Series --</option>
                         }
 
-                        @foreach (var item in await _service.GetBlogSeriesAsync())
+                        @foreach (var item in await _service.FindAsync<SwanSeries>())
                         {
                             if(Model.Series == item.Id)
                             {
@@ -82,7 +82,7 @@
                             <option selected value="" class="small">-- Select Post Tags(Multiple) --</option>
                         }
 
-                        @foreach (var item in await _service.GetBlogTagsAsync())
+                        @foreach (var item in await _service.FindAsync<SwanTag>())
                         {
                             if(Model.Tags.Contains(item.Id))
                             {

@@ -12,13 +12,13 @@ namespace Swan.Web
             const string srcDir = @"C:\Source\swan-data";
             const string destDir = @"C:\Users\jerry\AppData\Local\Temp\swan\data";
 
-            var readItems = new List<BlogPost>();
-            foreach(var item in Directory.EnumerateFiles(Path.Combine(srcDir, "blog", "post")))
+            var readItems = new List<SwanPost>();
+            foreach (var item in Directory.EnumerateFiles(Path.Combine(srcDir, "blog", "post")))
             {
                 var json = await File.ReadAllTextAsync(item);
                 var obj = JsonHelper.Deserialize<BlogPostObject>(json);
 
-                readItems.Add(new BlogPost
+                readItems.Add(new SwanPost
                 {
                     CreatedAt = obj.CreateTime,
                     IsPublic = true,

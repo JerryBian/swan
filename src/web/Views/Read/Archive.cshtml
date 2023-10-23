@@ -1,5 +1,5 @@
 ﻿@inject ISwanService _swanService
-@model List<ReadItem>
+@model List<SwanRead>
 @{
     Layout = "_LayoutPublic";
 }
@@ -17,7 +17,7 @@
             Archive Index
         </div>
         <ul class="list-group list-group-flush">
-            @foreach (var item in (await _swanService.GetReadItemsAsync()).GroupBy(x => x.CreatedAt.Year))
+            @foreach (var item in (await _swanService.FindAsync<SwanRead>()).GroupBy(x => x.CreatedAt.Year))
             {
                 <li class="list-group-item list-group-action">
                     <a href="/read/@item.Key">@item.Key</a>

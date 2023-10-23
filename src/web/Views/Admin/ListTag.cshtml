@@ -2,7 +2,7 @@
 @{
     Layout = "_LayoutAdmin";
 
-    var allTags = await _service.GetBlogTagsAsync();
+    var allTags = await _service.FindAsync<SwanTag>();
 }
 
 <div class="m-4 p-3 rounded-1 shadow-sm bg-white">
@@ -41,7 +41,7 @@
         </div>
     </div>
     <div class="small text-muted">
-        @allTags.Count in total, @allTags.Count(x => x.IsPublicToEveryOne) of them are public to everyone.
+        @allTags.Count in total, @allTags.Count(x => x.IsPublicToEveryOne()) of them are public to everyone.
     </div>
 }
 

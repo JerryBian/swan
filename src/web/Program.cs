@@ -22,8 +22,7 @@ builder.WebHost.CaptureStartupErrors(true);
 builder.WebHost.UseShutdownTimeout(TimeSpan.FromMinutes(5));
 
 // Add services to the container.
-builder.Services.AddOptions<GeneralOption>().BindConfiguration("General");
-builder.Services.AddOptions<ReadOption>().BindConfiguration("Read");
+builder.Services.AddOptions<SwanOption>().BindConfiguration("swan");
 
 builder.Logging.SetMinimumLevel(LogLevel.Debug);
 builder.Logging.ClearProviders();
@@ -76,12 +75,12 @@ FileExtensionContentTypeProvider fileContentTypeProvider = new()
 
 app.UseStaticFiles(new StaticFileOptions { ContentTypeProvider = fileContentTypeProvider });
 GitStoreOption option = app.Services.GetService<IOptions<GitStoreOption>>().Value;
-string dir = Path.Combine(option.LocalDirectory, Constants.DataStatic);
+string dir = Path.Combine(option.LocalDirectory, "static");
 Directory.CreateDirectory(dir);
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(Path.GetFullPath(dir)),
-    RequestPath = $"/{Constants.DataStatic}",
+    RequestPath = $"/static",
     OnPrepareResponse = context =>
     {
         if (!app.Environment.IsDevelopment())

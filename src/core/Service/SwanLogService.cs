@@ -21,12 +21,12 @@ namespace Swan.Core.Service
 
             try
             {
-                List<SwanLog> logs = JsonHelper.Deserialize<List<SwanLog>>(await _gitStore.GetTextAsync(SwanLog.GitStorePath, true));
+                var logs = JsonHelper.Deserialize<List<SwanLog>>(await _gitStore.GetTextAsync(log.GetGitStorePath()));
                 logs ??= new List<SwanLog>();
                 logs.Add(log);
 
                 logs.RemoveAll(x => DateTime.Now.Date - x.CreatedAt.Date > TimeSpan.FromDays(30));
-                await _gitStore.InsertOrUpdateAsync(SwanLog.GitStorePath, JsonHelper.Serialize(logs), true);
+                await _gitStore.InsertOrUpdateAsync(log.GetGitStorePath(), JsonHelper.Serialize(logs));
             }
             catch { }
             finally
@@ -41,7 +41,7 @@ namespace Swan.Core.Service
 
             try
             {
-                return JsonHelper.Deserialize<List<SwanLog>>(await _gitStore.GetTextAsync(SwanLog.GitStorePath, true, cancellationToken: cancellationToken));
+                return JsonHelper.Deserialize<List<SwanLog>>(await _gitStore.GetTextAsync(new SwanLog().GetGitStorePath(), cancellationToken: cancellationToken));
             }
             finally
             {

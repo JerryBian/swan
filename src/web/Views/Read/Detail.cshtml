@@ -1,5 +1,5 @@
 ﻿@inject ISwanService _swanService
-@model ReadItem
+@model SwanRead
 @{
     Layout = "_LayoutPublic";
 }
@@ -14,7 +14,7 @@
             Other readings in this year
         </div>
         <ul class="list-group list-group-flush">
-            @foreach (var item in (await _swanService.GetReadItemsAsync()).Where(x => x.CreatedAt.Year == Model.CreatedAt.Year))
+            @foreach (var item in (await _swanService.FindAsync<SwanRead>()).Where(x => x.CreatedAt.Year == Model.CreatedAt.Year))
             {
                 <li class="list-group-item list-group-action">
                     <a href="@item.GetFullLink()">@item.BookName</a>

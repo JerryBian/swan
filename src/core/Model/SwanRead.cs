@@ -2,10 +2,8 @@
 
 namespace Swan.Core.Model
 {
-    public class ReadItem : SwanObject
+    public class SwanRead : SwanObject
     {
-        public const string GitStorePath = "obj/read.json";
-
         #region Raw
 
         [JsonPropertyName("bookName")]
@@ -27,17 +25,19 @@ namespace Swan.Core.Model
         public string Comment { get; set; }
 
         [JsonPropertyName("posts")]
-        public List<string> Posts { get; init; } = new();
+        public List<string> Posts { get; set; } = new();
 
         #endregion
 
         #region Extension
 
         [JsonIgnore]
-        public List<BlogPost> BlogPosts { get; } = new();
+        public List<SwanPost> BlogPosts { get; } = new();
 
         #endregion
 
-        public string GetFullLink() => $"/read/{CreatedAt.Year}/{Id}";
+        public override string GetFullLink() => $"/read/{CreatedAt.Year}/{Id}";
+
+        public override string GetGitStorePath() => "obj/read.json";
     }
 }

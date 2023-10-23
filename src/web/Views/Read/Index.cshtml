@@ -4,7 +4,7 @@
 }
 
 <div>
-    @foreach(var item in (await _swanService.GetReadItemsAsync()).Where(x => DateTime.Now.Year - x.CreatedAt.Year <= 1 ))
+    @foreach(var item in (await _swanService.FindAsync<SwanRead>()).Where(x => DateTime.Now.Year - x.CreatedAt.Year <= 1 ))
     {
         <div>
             <a href="@item.GetFullLink()">@item.BookName</a>
@@ -19,7 +19,7 @@
             Top Readings
         </div>
         <ul class="list-group list-group-flush">
-            @foreach(var item in (await _swanService.GetReadItemsAsync()).GroupBy(x => x.CreatedAt.Year).Where(x => DateTime.Now.Year - x.Key > 1))
+            @foreach(var item in (await _swanService.FindAsync<SwanRead>()).GroupBy(x => x.CreatedAt.Year).Where(x => DateTime.Now.Year - x.Key > 1))
             {
                 <li class="list-group-item list-group-action">
                     <a href="/read/@item.Key">@item.Key</a>
