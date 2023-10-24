@@ -1,8 +1,11 @@
 ﻿using DotNext.Threading;
 using GitStoreDotnet;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
+using Swan.Core.Extension;
 using Swan.Core.Helper;
 using Swan.Core.Model;
+using System;
 using System.Collections.Concurrent;
 using System.Reflection;
 using System.Text.Json.Serialization;
@@ -24,7 +27,7 @@ namespace Swan.Core.Service
             _cacheKeys = new ConcurrentDictionary<string, object>();
         }
 
-        public async Task<List<T>> FindAsync<T>(Predicate<T> predicate = null) where T : SwanObject
+        public async Task<List<T>> FindAsync<T>(Predicate<T> wherePredicate = null) where T : SwanObject
         {
             await _asyncReaderWriterLock.EnterReadLockAsync();
 
@@ -32,17 +35,32 @@ namespace Swan.Core.Service
             {
                 var storeObject = await GetStoreObjectAsync();
                 var result = storeObject.Get<T>();
-                if (predicate != null)
-                {
-                    result = result.Where(x => predicate(x)).ToList();
-                }
-
+                result = result.
+                    Where(x => wherePredicate == null || wherePredicate(x)).
+                    ToList();
                 return result;
             }
             finally
             {
                 _asyncReaderWriterLock.Release();
             }
+        }
+
+        public async Task<List<T>> FindAsync<T>(HttpContext httpContext, Predicate<T> wherePredicate = null) where T : SwanObject
+        {
+            if (httpContext.IsAuthorized())
+            {
+                return await FindAsync(wherePredicate);
+            }
+            else
+            {
+                return await FindPublicAsync(wherePredicate);
+            }
+        }
+
+        public async Task<List<T>> FindPublicAsync<T>(Predicate<T> wherePredicate = null) where T : SwanObject
+        {
+            return await FindAsync<T>(x => x.IsPublicToEveryOne() && (wherePredicate == null || wherePredicate(x)));
         }
 
         public async Task<T> FindAsync<T>(string id) where T : SwanObject

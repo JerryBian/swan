@@ -4,7 +4,7 @@
 }
 
 <div>
-    @foreach(var item in (await _swanService.FindAsync<SwanPost>()).OrderByDescending(x => x.PublishDate).Take(8))
+    @foreach(var item in (await _swanService.FindAsync<SwanPost>(Context)).OrderByDescending(x => x.PublishDate).Take(8))
     {
         <div class="mb-3 border-bottom pb-2">
             <h5 class="large-title">
@@ -45,7 +45,7 @@
             </span>
         </div>
         <div class="list-group">
-            @foreach(var item in (await _swanService.FindAsync<SwanPost>()).OrderByDescending(x => x.PageStat.Hit).Take(8))
+            @foreach(var item in (await _swanService.FindAsync<SwanPost>(Context)).OrderByDescending(x => x.PageStat.Hit).Take(8))
             {
                 <a href="@item.GetFullLink()" class="list-group-item list-group-action text-muted">
                     <i class="bi bi-hash"></i>@item.Title

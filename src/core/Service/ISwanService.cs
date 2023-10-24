@@ -1,4 +1,5 @@
-﻿using Swan.Core.Model;
+﻿using Microsoft.AspNetCore.Http;
+using Swan.Core.Model;
 
 namespace Swan.Core.Service
 {
@@ -8,7 +9,11 @@ namespace Swan.Core.Service
 
         Task DeleteAsync<T>(string id) where T : SwanObject;
 
-        Task<List<T>> FindAsync<T>(Predicate<T> predicate = null) where T : SwanObject;
+        Task<List<T>> FindPublicAsync<T>(Predicate<T> wherePredicate = null) where T : SwanObject;
+
+        Task<List<T>> FindAsync<T>(Predicate<T> wherePredicate = null) where T : SwanObject;
+
+        Task<List<T>> FindAsync<T>(HttpContext httpContext, Predicate<T> wherePredicate = null) where T : SwanObject;
 
         Task<T> FindAsync<T>(string id) where T : SwanObject;
 
