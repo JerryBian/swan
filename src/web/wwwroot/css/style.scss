@@ -4,6 +4,9 @@
 @import "../../../../node_modules/bootstrap/scss/bootstrap";
 /*@import "../../../../node_modules/bootswatch/dist/zephyr/bootswatch";*/
 
+:root {
+    --bs-primary-text-emphasis: #392e4a;
+}
 
 .card {
     border: none;
@@ -42,4 +45,5 @@
 
 .large-title {
     font-family: "Trebuchet MS";
+    color: var(--bs-primary-text-emphasis);
 }

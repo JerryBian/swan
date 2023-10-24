@@ -8289,7 +8289,7 @@ code.hljs {
 }
 
 .navbar-brand {
-  letter-spacing: 0.03em;
+  letter-spacing: 0.02em;
   color: #2e3131;
 }
 
@@ -20625,6 +20625,10 @@ textarea.form-control-lg {
   }
 }
 /*@import "../../../../node_modules/bootswatch/dist/zephyr/bootswatch";*/
+:root {
+  --bs-primary-text-emphasis: #392e4a;
+}
+
 .card {
   border: none;
   background-color: transparent !important;
@@ -20657,6 +20661,7 @@ textarea.form-control-lg {
 
 .large-title {
   font-family: "Trebuchet MS";
+  color: var(--bs-primary-text-emphasis);
 }
 
 /*# sourceMappingURL=style.css.map */
