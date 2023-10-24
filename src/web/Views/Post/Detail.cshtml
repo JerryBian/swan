@@ -4,10 +4,23 @@
     Layout = "_LayoutPublic";
 }
 
-
 <h3 class="mb-2 large-title">@Model.Title</h3>
-<div class="small text-muted">
-    <i class="bi bi-calendar-check"></i> @Model.PublishDate.ToCnDate()
+<div class="small text-muted text-truncate">
+    <a href="/post/@Model.PublishDate.Year" class="text-reset text-decoration-none">
+        <i class="bi bi-calendar-check"></i>
+        @Model.PublishDate.ToCnDate()
+    </a>
+    @if (!string.IsNullOrEmpty(Model.HtmlTag))
+    {
+        <span>&middot;</span>
+        @Html.Raw(Model.HtmlTag)
+    }
+
+    @if (Model.Series != null)
+    {
+        <span>&middot;</span>
+        <a href="@Model.BlogSeries.GetFullLink()" class="text-reset text-decoration-none"><i class="bi bi-bookmark"></i> @Model.BlogSeries.Name</a>
+    }
 </div>
 
 <article class="mt-4 mb-2 post">
@@ -69,8 +82,8 @@
     </div>
 }
 
-                @section Script{
-                    <script>
-                        setActive(document.querySelector("#navbarPost"));
-                    </script>
-                }
+@section Script{
+    <script>
+        setActive(document.querySelector("#navbarPost"));
+    </script>
+}

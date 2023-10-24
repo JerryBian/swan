@@ -4,6 +4,7 @@
 @import "../../../../node_modules/bootstrap/scss/bootstrap";
 /*@import "../../../../node_modules/bootswatch/dist/zephyr/bootswatch";*/
 
+
 .card {
     border: none;
     background-color: transparent !important;
@@ -21,6 +22,12 @@
         &:hover {
             filter: brightness(1.8);
         }
+    }
+
+    .list-group-item{
+        padding-top: 0.5rem;
+        padding-bottom: 0;
+        margin-bottom: 0.25rem;
     }
 }
 

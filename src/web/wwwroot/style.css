@@ -8289,7 +8289,8 @@ code.hljs {
 }
 
 .navbar-brand {
-  letter-spacing: 0.03em; /* Adjust as needed */
+  letter-spacing: 0.03em;
+  color: #2e3131;
 }
 
 a {
@@ -20638,6 +20639,11 @@ textarea.form-control-lg {
 }
 .card a:hover {
   filter: brightness(1.8);
+}
+.card .list-group-item {
+  padding-top: 0.5rem;
+  padding-bottom: 0;
+  margin-bottom: 0.25rem;
 }
 
 #aside {

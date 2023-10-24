@@ -6,15 +6,32 @@
 <div>
     @foreach(var item in (await _swanService.FindAsync<SwanPost>()).OrderByDescending(x => x.PublishDate).Take(8))
     {
-        <div class="mb-3">
+        <div class="mb-3 border-bottom pb-2">
             <h5 class="large-title">
-                <a href="@item.GetFullLink()" class="text-decoration-none">@item.Title</a>
+                <a href="@item.GetFullLink()" class="text-decoration-none text-primary-emphasis">@item.Title</a>
             </h5>
-            <div>
+            <div class="small text-muted text-truncate">
+                <a href="/post/@item.PublishDate.Year" class="text-reset text-decoration-none">
+                    <i class="bi bi-calendar-check"></i>
+                    @item.PublishDate.ToCnDate()
+                </a>
+                @if (!string.IsNullOrEmpty(item.HtmlTag))
+                {
+                    <span>&middot;</span>
+                    @Html.Raw(item.HtmlTag)
+                }
+
+                @if (item.Series != null)
+                {
+                    <span>&middot;</span>
+                    <a href="@item.BlogSeries.GetFullLink()" class="text-reset text-decoration-none"><i class="bi bi-bookmark"></i> @item.BlogSeries.Name</a>
+                }
+            </div>
+            <div class="mt-2">
                 @Html.Raw(item.HtmlExcerpt)
             </div>
-            <div>
-                Tags: Series:
+            <div class="small">
+                <a href="@item.GetFullLink()" class="text-reset text-decoration-none btn btn-light btn-sm">继续阅读 <i class="bi bi-arrow-right-short"></i></a>
             </div>
         </div>
     }
@@ -23,15 +40,23 @@
 @section Aside{
     <div class="card">
         <div class="card-header">
-            最热文章
+            <span class="pb-1 border-bottom border-dark pe-2 text-truncate">
+                <i class="bi bi-fire"></i> 最热文章
+            </span>
         </div>
-        <ul class="list-group list-group-flush">
+        <div class="list-group">
             @foreach(var item in (await _swanService.FindAsync<SwanPost>()).OrderByDescending(x => x.PageStat.Hit).Take(8))
             {
-                <li class="list-group-item list-group-action">
-                    <a href="@item.GetFullLink()">@item.Title</a>
-                </li>
+                <a href="@item.GetFullLink()" class="list-group-item list-group-action text-muted">
+                    <i class="bi bi-hash"></i>@item.Title
+                </a>
             }
-        </ul>
+        </div>
     </div>
+}
+
+@section Script{
+    <script>
+        setActive(document.querySelector("#navbarPost"));
+    </script>
 }

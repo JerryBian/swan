@@ -95,7 +95,7 @@ namespace Swan.Core.Service
                     {
                         post.BlogTags.Add(tag);
                         tag.BlogPosts.Add(post);
-                        tagSnippets.Add($"<span><a href=\"{tag.GetFullLink()}\">{tag.Name}</a></span>");
+                        tagSnippets.Add($"<span><a href=\"{tag.GetFullLink()}\" class=\"text-reset text-decoration-none\">#{tag.Name}</a></span>");
                     }
                 }
 
@@ -113,9 +113,10 @@ namespace Swan.Core.Service
 
                 post.PreviousPost = Posts.OrderBy(x => x.PublishDate).LastOrDefault(x => x.PublishDate < post.PublishDate);
                 post.NextPost = Posts.OrderBy(x => x.PublishDate).FirstOrDefault(x => x.PublishDate > post.PublishDate);
-                post.HtmlMetadata = $"<span><i class=\"bi bi-calendar2-week\"></i> <a href=\"/post/{post.PublishDate.Year}\" class=\"text-reset text-decoration-none\">{post.PublishDate.ToCnDate()}</a></span> " +
-                    $"{string.Join(" ", seriesSnippets)} " +
-                    $"{string.Join(", ", tagSnippets)}";
+                if(tagSnippets.Any())
+                {
+                    post.HtmlTag = string.Join(", ", tagSnippets);
+                }
             }
 
             // random posts recommend

@@ -64,7 +64,10 @@ namespace Swan.Core.Model
         public List<SwanPost> RecommendPostsBySeries { get; } = new();
 
         [JsonIgnore]
-        public string HtmlMetadata { get; set; }
+        public string HtmlTag { get; set; }
+
+        [JsonIgnore]
+        public string HtmlSeries { get; set; }
 
         #endregion
 
