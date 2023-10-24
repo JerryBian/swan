@@ -1,25 +1,22 @@
 @import "_shared";
 
+/*@import "../../../../node_modules/bootswatch/dist/zephyr/variables";*/
 @import "../../../../node_modules/bootstrap/scss/bootstrap";
+/*@import "../../../../node_modules/bootswatch/dist/zephyr/bootswatch";*/
 
 .card {
     border: none;
     background-color: transparent !important;
 
-    .list-group-item {
+    * {
+        border: none;
         background-color: transparent !important;
     }
 
-    * {
-        color: rgba(0,0,0,0.65) !important;
-    }
-
-    .card-header {
-        color: rgba(0,0,0,0.75) !important;
-    }
 
     a {
         text-decoration-line: none;
+        color: inherit;
     }
 }
 

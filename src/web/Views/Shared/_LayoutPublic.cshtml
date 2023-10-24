@@ -3,7 +3,7 @@
     Layout = "_Layout";
 }
 
-<nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom">
+<nav class="navbar navbar-expand-lg bg-light">
     <div class="container">
         <a class="navbar-brand" href="/">@_option.Value.Title</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -22,18 +22,18 @@
     </div>
 </nav>
 
-<div class="bg-body-tertiary py-3">
+<div class="bg-light py-3">
     <div class="container">
         <div class="row">
-            <main class="col-md-9 bg-white px-3 py-4 rounded shadow-sm">@RenderBody()</main>
-            <aside class="col-3 small d-none d-md-block" id="aside">
+            <main class="col-md-9 bg-white px-3 py-4 rounded shadow">@RenderBody()</main>
+            <aside class="col-3 small d-none d-md-block text-muted" id="aside">
                 @await RenderSectionAsync("Aside", false)
             </aside>
         </div>
     </div>
 </div>
 
-<footer class="text-center py-3 small mt-auto bg-body-tertiary">
+<footer class="text-center py-3 small mt-auto bg-light">
     &copy; @DateTime.Now.Year
 </footer>
 

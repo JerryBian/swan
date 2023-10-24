@@ -8331,6 +8331,7 @@ a {
   margin-bottom: 0.8rem;
 }
 
+/*@import "../../../../node_modules/bootswatch/dist/zephyr/variables";*/
 /*!
  * Bootstrap  v5.3.2 (https://getbootstrap.com/)
  * Copyright 2011-2023 The Bootstrap Authors
@@ -20618,21 +20619,18 @@ textarea.form-control-lg {
     display: none !important;
   }
 }
+/*@import "../../../../node_modules/bootswatch/dist/zephyr/bootswatch";*/
 .card {
   border: none;
   background-color: transparent !important;
 }
-.card .list-group-item {
-  background-color: transparent !important;
-}
 .card * {
-  color: rgba(0, 0, 0, 0.65) !important;
-}
-.card .card-header {
-  color: rgba(0, 0, 0, 0.75) !important;
+  border: none;
+  background-color: transparent !important;
 }
 .card a {
   text-decoration-line: none;
+  color: inherit;
 }
 
 #aside {
