@@ -19,7 +19,7 @@
     {
         <div class="card mb-4">
             <div class="card-header">
-                <span class="border-bottom border-info"><i class="bi bi-tags-fill"></i> 推荐文章</span>
+                <span class="pb-1 border-bottom border-dark pe-2 text-truncate"><i class="bi bi-tags-fill"></i> 推荐文章</span>
             </div>
             <div class="list-group">
                 @foreach (var item in Model.RecommendPostsByTag)
@@ -36,7 +36,7 @@
     {
         <div class="card mb-4">
             <div class="card-header">
-                <i class="bi bi-bookmarks-fill"></i> 系列文章
+                <span class="pb-1 border-bottom border-dark pe-2 text-truncate"><i class="bi bi-bookmarks-fill"></i> 系列文章</span>
             </div>
             <div class="list-group">
                 @foreach (var item in Model.RecommendPostsBySeries)
@@ -51,20 +51,20 @@
 
     <div class="card">
         <div class="card-header">
-            <i class="bi bi-info-circle-fill"></i> 文章信息
+            <span class="pb-1 border-bottom border-dark pe-2 text-truncate"><i class="bi bi-info-circle-fill"></i> 文章信息</span>
         </div>
         <div class="list-group">
             @if (Model.PreviousPost != null)
             {
-                <a href="@Model.PreviousPost.GetFullLink()" class="list-group-item list-group-action text-muted">前一篇： @Model.PreviousPost.Title</a>
+                <a href="@Model.PreviousPost.GetFullLink()" class="list-group-item list-group-action text-muted"><i class="bi bi-dot"></i> 前一篇： @Model.PreviousPost.Title</a>
             }
 
             @if (Model.NextPost != null)
             {
-                <a href="@Model.NextPost.GetFullLink()" class="list-group-item list-group-action text-muted">后一篇： @Model.NextPost.Title</a>
+                <a href="@Model.NextPost.GetFullLink()" class="list-group-item list-group-action text-muted"><i class="bi bi-dot"></i> 后一篇： @Model.NextPost.Title</a>
             }
 
-            <div class="list-group-item ">最后修改于：@Model.LastUpdatedAt</div>
+            <div class="list-group-item text-muted"><i class="bi bi-dot"></i> 最后修改于：@Model.LastUpdatedAt</div>
         </div>
     </div>
 }
