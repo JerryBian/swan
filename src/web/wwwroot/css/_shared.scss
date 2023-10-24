@@ -20,6 +20,11 @@ $secondary: $gray-600 !default;
 $min-contrast-ratio: 2.05 !default;
 $font-size-base: 1rem;
 
+
+.navbar-brand {
+    letter-spacing: .03em; /* Adjust as needed */
+}
+
 a{
      text-underline-offset: 4px;
 }

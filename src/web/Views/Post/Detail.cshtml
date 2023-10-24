@@ -56,15 +56,21 @@
         <div class="list-group">
             @if (Model.PreviousPost != null)
             {
-                <a href="@Model.PreviousPost.GetFullLink()" class="list-group-item list-group-action text-muted"><i class="bi bi-dot"></i> 前一篇： @Model.PreviousPost.Title</a>
+                <a href="@Model.PreviousPost.GetFullLink()" class="list-group-item list-group-action text-muted"><i class="bi bi-slash"></i> 前一篇： @Model.PreviousPost.Title</a>
             }
 
             @if (Model.NextPost != null)
             {
-                <a href="@Model.NextPost.GetFullLink()" class="list-group-item list-group-action text-muted"><i class="bi bi-dot"></i> 后一篇： @Model.NextPost.Title</a>
+                <a href="@Model.NextPost.GetFullLink()" class="list-group-item list-group-action text-muted"><i class="bi bi-slash"></i> 后一篇： @Model.NextPost.Title</a>
             }
 
-            <div class="list-group-item text-muted"><i class="bi bi-dot"></i> 最后修改于：@Model.LastUpdatedAt</div>
+            <div class="list-group-item text-muted"><i class="bi bi-slash"></i> 最后修改于：@Model.LastUpdatedAt</div>
         </div>
     </div>
 }
+
+                @section Script{
+                    <script>
+                        setActive(document.querySelector("#navbarPost"));
+                    </script>
+                }

@@ -17,6 +17,10 @@
     a {
         text-decoration-line: none;
         color: inherit;
+
+        &:hover {
+            filter: brightness(1.8);
+        }
     }
 }
 
