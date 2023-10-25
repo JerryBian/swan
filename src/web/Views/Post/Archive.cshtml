@@ -24,7 +24,7 @@
             </span>
         </div>
         <div class="list-group">
-            @foreach (var item in (await _swanService.FindAsync<SwanPost>()).GroupBy(x => x.PublishDate.Year).OrderByDescending(x => x.Key))
+            @foreach (var item in (await _swanService.FindAsync<SwanPost>(Context)).GroupBy(x => x.PublishDate.Year).OrderByDescending(x => x.Key))
             {
                 if(item.Key == year)
                 {
