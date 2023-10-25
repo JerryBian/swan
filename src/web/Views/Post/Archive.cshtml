@@ -2,27 +2,50 @@
 @model List<SwanPost>
 @{
     Layout = "_LayoutPublic";
+    var year = Model.First().PublishDate.Year;
 }
 
-@foreach(var item in Model)
+<h5 class="border-start border-secondary border-3 ps-2 mb-3">@year 年文章存档</h5>
+@foreach (var item in Model)
 {
-    <h3>@item.Title</h3>
-    <p>@item.PublishDate.ToCnDate()</p>
-
+    <div class="mb-3 ps-2 pe-1">
+        <span class="small text-muted me-2">@item.PublishDate.ToCnDate()</span>
+        <a href="@item.GetFullLink()" class="large-title">
+            <i class="bi bi-hash small text-muted"></i>@item.Title
+        </a>
+    </div>
 }
 
 @section Aside{
     <div class="card">
         <div class="card-header">
-            Archive Index
+            <span class="pb-1 border-bottom border-dark pe-2 text-truncate">
+                <i class="bi bi-archive-fill"></i> 存档索引
+            </span>
         </div>
-        <ul class="list-group list-group-flush">
-            @foreach (var item in (await _swanService.FindAsync<SwanPost>()).GroupBy(x => x.PublishDate.Year))
+        <div class="list-group">
+            @foreach (var item in (await _swanService.FindAsync<SwanPost>()).GroupBy(x => x.PublishDate.Year).OrderByDescending(x => x.Key))
             {
-                <li class="list-group-item list-group-action">
-                    <a href="/post/@item.Key">@item.Key</a>
-                </li>
+                if(item.Key == year)
+                {
+                    <div class="list-group-item text-muted">
+                        <i class="bi bi-folder2-open"></i> @item.Key 年文章
+                    </div>
+                }
+                else
+                {
+                    <div class="list-group-item list-group-action text-muted">
+                        <a href="/post/@item.Key"><i class="bi bi-folder2"></i> @item.Key 年文章</a>
+                    </div>
+                }
+                
             }
-        </ul>
+        </div>
     </div>
+}
+
+@section Script{
+    <script>
+        setActive(document.querySelector("#navbarPost"));
+    </script>
 }

@@ -30,6 +30,12 @@ namespace Swan.Web.Controllers
         public async Task<IActionResult> GetPosts([FromRoute] int year)
         {
             var posts = await _swanService.FindAsync<SwanPost>(x => x.PublishDate.Year == year);
+            
+            if(!posts.Any())
+            {
+                return NotFound();
+            }
+
             return View("Archive", posts);
         }
     }
