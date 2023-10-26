@@ -6,7 +6,7 @@
 
 <h3 class="mb-2 large-title">@Model.Title</h3>
 <div class="small text-muted text-truncate">
-    <a href="/post/@Model.PublishDate.Year" class="text-reset text-decoration-none">
+    <a href="/post/archive#year-@Model.PublishDate.Year" class="text-reset text-decoration-none">
         <i class="bi bi-calendar-check"></i>
         @Model.PublishDate.ToCnDate()
     </a>

@@ -1,30 +1,48 @@
 ﻿@inject ISwanService _swanService
+@model IEnumerable<IGrouping<int, SwanRead>>
 @{
     Layout = "_LayoutPublic";
 }
 
-<div>
-    @foreach(var item in (await _swanService.FindAsync<SwanRead>()).Where(x => DateTime.Now.Year - x.CreatedAt.Year <= 1 ))
+<div data-bs-spy="scroll" data-bs-target="#archiveIndex" data-bs-smooth-scroll="true">
+    @foreach (var item in Model)
     {
-        <div>
-            <a href="@item.GetFullLink()">@item.BookName</a>
+        <div class="pb-2 mb-2 pt-3 border-bottom">
+            <h5 class="ps-2 mb-3" id="year-@item.Key"><i class="bi bi-book"></i> @item.Key 年阅读</h5>
+            @foreach (var item2 in item)
+            {
+                <div class="mb-3 ps-2 pe-1">
+                    <span class="small text-muted me-2"><i class="bi bi-caret-right"></i> @item2.CreatedAt.ToCnDate(true)</span>
+                    <a href="@item2.GetFullLink()" class="large-title">
+                        <i class="bi bi-hash small text-muted"></i>@item2.BookName
+                    </a>
+                </div>
+            }
         </div>
-        
     }
 </div>
 
+
 @section Aside{
-    <div class="card">
+    <div class="card" id="archiveIndex">
         <div class="card-header">
-            Top Readings
+            <span class="pb-1 border-bottom border-dark pe-2 text-truncate">
+                <i class="bi bi-book-half"></i> 阅读索引
+            </span>
         </div>
-        <ul class="list-group list-group-flush">
-            @foreach(var item in (await _swanService.FindAsync<SwanRead>()).GroupBy(x => x.CreatedAt.Year).Where(x => DateTime.Now.Year - x.Key > 1))
+        <div class="list-group">
+            @foreach (var item in Model)
             {
-                <li class="list-group-item list-group-action">
-                    <a href="/read/@item.Key">@item.Key</a>
-                </li>
+                <div class="list-group-item list-group-action text-muted">
+                    <a href="#year-@item.Key"><i class="bi bi-book"></i> @item.Key 年阅读</a>
+                </div>
             }
-        </ul>
+        </div>
     </div>
+}
+
+@section Script{
+    <script>
+        setActive(document.querySelector("#navbarRead"));
+    </script>
 }

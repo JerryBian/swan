@@ -57,7 +57,7 @@
                             <option selected value="" class="small">-- Select Post Series --</option>
                         }
 
-                        @foreach (var item in await _service.FindAsync<SwanSeries>())
+                        @foreach (var item in await _service.FindAsync<PostSeries>())
                         {
                             if(Model.Series == item.Id)
                             {
@@ -82,7 +82,7 @@
                             <option selected value="" class="small">-- Select Post Tags(Multiple) --</option>
                         }
 
-                        @foreach (var item in await _service.FindAsync<SwanTag>())
+                        @foreach (var item in await _service.FindAsync<PostTag>())
                         {
                             if(Model.Tags.Contains(item.Id))
                             {

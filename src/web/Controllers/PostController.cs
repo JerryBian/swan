@@ -19,24 +19,38 @@ namespace Swan.Web.Controllers
             return View();
         }
 
-        [HttpGet("/post/{year}/{link}")]
-        public async Task<IActionResult> GetPost([FromRoute] int year, [FromRoute] string link)
+        [HttpGet("/post/{link}.html")]
+        public async Task<IActionResult> GetPost([FromRoute] string link)
         {
-            var post = await _swanService.FindFirstOrDefaultAsync<SwanPost>(x => StringHelper.EqualsIgoreCase(link, x.Link) && x.PublishDate.Year == year);
+            var post = await _swanService.FindFirstOrDefaultAsync<SwanPost>(x => StringHelper.EqualsIgoreCase(link, x.Link));
             return post == null ? NotFound() : View("Detail", post);
         }
 
-        [HttpGet("/post/{year}")]
-        public async Task<IActionResult> GetPosts([FromRoute] int year)
+        [HttpGet("/post/archive")]
+        public async Task<IActionResult> GetPosts()
         {
-            var posts = await _swanService.FindAsync<SwanPost>(Request.HttpContext, x => x.PublishDate.Year == year);
+            var posts = await _swanService.FindAsync<SwanPost>(Request.HttpContext);
             
             if(!posts.Any())
             {
                 return NotFound();
             }
 
-            return View("Archive", posts);
+            return View("Archive", posts.GroupBy(x => x.PublishDate.Year).OrderByDescending(x => x.Key));
+        }
+
+        [HttpGet("/post/series")]
+        public async Task<IActionResult> Series()
+        {
+            var tags = await _swanService.FindAsync<PostSeries>(Request.HttpContext);
+            return View(tags.OrderBy(x => x.BlogPosts.Count));
+        }
+
+        [HttpGet("/post/tag")]
+        public async Task<IActionResult> Tag()
+        {
+            var tags = await _swanService.FindAsync<PostTag>(Request.HttpContext);
+            return View(tags.OrderBy(x => x.BlogPosts.Count));
         }
     }
 }

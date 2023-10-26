@@ -2,7 +2,7 @@
 
 namespace Swan.Core.Model
 {
-    public class SwanTag : SwanObject
+    public class PostTag : SwanObject
     {
         #region Raw
 
@@ -26,10 +26,10 @@ namespace Swan.Core.Model
 
         #endregion
 
-        public override string GetFullLink() => $"/tag/{Link}";
+        public override string GetFullLink() => $"/post/tag#link-{Link}";
 
         public override string GetGitStorePath() => "obj/tag.json";
 
-        public override bool IsPublicToEveryOne() => base.IsPublicToEveryOne() && BlogPosts.Any();
+        public override bool IsPublicToEveryOne() => base.IsPublicToEveryOne() && BlogPosts.Any(x => x.IsPublicToEveryOne());
     }
 }

@@ -2,9 +2,9 @@
 {
     public static class DateTimeExtension
     {
-        public static string ToCnDate(this DateTime time)
+        public static string ToCnDate(this DateTime time, bool noYear = false)
         {
-            return time.ToString("yyyy年MM月dd日");
+            return noYear ? time.ToString("MM月dd日") : time.ToString("yyyy年MM月dd日");
         }
 
         public static string ToDate(this DateTime time)

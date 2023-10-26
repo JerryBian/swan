@@ -16,17 +16,17 @@ namespace Swan.Core.Service
             _typedObjects = new Dictionary<Type, object>
             {
                 { typeof(SwanPost), Posts },
-                { typeof(SwanTag), Tags },
-                { typeof(SwanSeries), Series },
+                { typeof(PostTag), Tags },
+                { typeof(PostSeries), Series },
                 { typeof(SwanRead), ReadItems }
             };
         }
 
         public List<SwanPost> Posts { get; } = new();
 
-        public List<SwanTag> Tags { get; } = new();
+        public List<PostTag> Tags { get; } = new();
 
-        public List<SwanSeries> Series { get; } = new();
+        public List<PostSeries> Series { get; } = new();
 
         public List<SwanRead> ReadItems { get; } = new();
 
@@ -40,8 +40,8 @@ namespace Swan.Core.Service
             Reset();
 
             Posts.AddRange(JsonHelper.Deserialize<List<SwanPost>>(await gitStore.GetTextAsync(new SwanPost().GetGitStorePath())));
-            Series.AddRange(JsonHelper.Deserialize<List<SwanSeries>>(await gitStore.GetTextAsync(new SwanSeries().GetGitStorePath())));
-            Tags.AddRange(JsonHelper.Deserialize<List<SwanTag>>(await gitStore.GetTextAsync(new SwanTag().GetGitStorePath())));
+            Series.AddRange(JsonHelper.Deserialize<List<PostSeries>>(await gitStore.GetTextAsync(new PostSeries().GetGitStorePath())));
+            Tags.AddRange(JsonHelper.Deserialize<List<PostTag>>(await gitStore.GetTextAsync(new PostTag().GetGitStorePath())));
             ReadItems.AddRange(JsonHelper.Deserialize<List<SwanRead>>(await gitStore.GetTextAsync(new SwanRead().GetGitStorePath())));
 
             PostExtend();

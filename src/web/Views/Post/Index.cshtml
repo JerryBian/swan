@@ -11,7 +11,7 @@
                 <a href="@item.GetFullLink()" class="text-decoration-none text-reset">@item.Title</a>
             </h5>
             <div class="small text-muted text-truncate">
-                <a href="/post/@item.PublishDate.Year" class="text-reset text-decoration-none">
+                <a href="/post/archive#year-@item.PublishDate.Year" class="text-reset text-decoration-none">
                     <i class="bi bi-calendar-check"></i>
                     @item.PublishDate.ToCnDate()
                 </a>

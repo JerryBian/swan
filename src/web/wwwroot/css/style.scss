@@ -25,9 +25,14 @@
         &:hover {
             filter: brightness(1.8);
         }
+
+        &.active {
+            border-bottom: 1px dashed var(--bs-primary-text-emphasis);
+            padding-bottom: 0.25rem;
+        }
     }
 
-    .list-group-item{
+    .list-group-item {
         padding-top: 0.5rem;
         padding-bottom: 0;
         margin-bottom: 0.25rem;

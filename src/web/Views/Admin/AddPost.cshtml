@@ -48,7 +48,7 @@
                     <label for="series" class="form-label">Series</label>
                     <select class="form-select font-monospace" id="series" name="series">
                         <option selected value="" class="small">-- Select Post Series --</option>
-                        @foreach (var item in await _service.FindAsync<SwanSeries>())
+                        @foreach (var item in await _service.FindAsync<PostSeries>())
                         {
                             <option value="@item.Id" class="my-1 ps-1">@item.Name</option>
                         }
@@ -58,7 +58,7 @@
                     <label for="tags" class="form-label">Tags</label>
                     <select class="form-select font-monospace" id="tags" name="tags" multiple size="5">
                         <option selected value="" class="small">-- Select Post Tags(Multiple) --</option>
-                        @foreach (var item in await _service.FindAsync<SwanTag>())
+                        @foreach (var item in await _service.FindAsync<PostTag>())
                         {
                             <option value="@item.Id" class="my-1 ps-1">@item.Name</option>
                         }

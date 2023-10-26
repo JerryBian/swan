@@ -106,7 +106,7 @@ namespace Swan.Web.Controllers
         }
 
         [HttpPut("/admin/tag-add")]
-        public async Task<IActionResult> AddTag([FromForm] SwanTag tag)
+        public async Task<IActionResult> AddTag([FromForm] PostTag tag)
         {
             ApiResponse<object> res = new();
 
@@ -130,13 +130,13 @@ namespace Swan.Web.Controllers
         [HttpGet("/admin/tag-edit/{id}")]
         public async Task<IActionResult> EditTag([FromRoute] string id)
         {
-            var allTags = await _swanService.FindAsync<SwanTag>();
+            var allTags = await _swanService.FindAsync<PostTag>();
             var tag = allTags.Find(x => StringHelper.EqualsIgoreCase(id, x.Id));
             return tag == null ? NotFound() : View("EditTag", tag);
         }
 
         [HttpPost("/admin/tag-edit")]
-        public async Task<IActionResult> EditTag([FromForm] SwanTag tag)
+        public async Task<IActionResult> EditTag([FromForm] PostTag tag)
         {
             ApiResponse<object> res = new();
 
@@ -164,7 +164,7 @@ namespace Swan.Web.Controllers
 
             try
             {
-                await _swanService.DeleteAsync<SwanTag>(id);
+                await _swanService.DeleteAsync<PostTag>(id);
                 res.RedirectTo = "/admin/tag-list";
             }
             catch (Exception ex)
@@ -190,7 +190,7 @@ namespace Swan.Web.Controllers
         }
 
         [HttpPut("/admin/series-add")]
-        public async Task<IActionResult> AddSeries([FromForm] SwanSeries series)
+        public async Task<IActionResult> AddSeries([FromForm] PostSeries series)
         {
             ApiResponse<object> res = new();
 
@@ -214,12 +214,12 @@ namespace Swan.Web.Controllers
         [HttpGet("/admin/series-edit/{id}")]
         public async Task<IActionResult> EditSeries([FromRoute] string id)
         {
-            var series = await _swanService.FindAsync<SwanSeries>(id);
+            var series = await _swanService.FindAsync<PostSeries>(id);
             return series == null ? NotFound() : View("EditSeries", series);
         }
 
         [HttpPost("/admin/series-edit")]
-        public async Task<IActionResult> EditSeries([FromForm] SwanSeries series)
+        public async Task<IActionResult> EditSeries([FromForm] PostSeries series)
         {
             ApiResponse<object> res = new();
 
@@ -247,7 +247,7 @@ namespace Swan.Web.Controllers
 
             try
             {
-                await _swanService.DeleteAsync<SwanSeries>(id);
+                await _swanService.DeleteAsync<PostSeries>(id);
                 res.RedirectTo = "/admin/series-list";
             }
             catch (Exception ex)

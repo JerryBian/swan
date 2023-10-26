@@ -13,23 +13,16 @@ namespace Swan.Web.Controllers
             _swanService = swanService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
-        }
+            var readItems = await _swanService.FindAsync<SwanRead>(Request.HttpContext);
 
-        [HttpGet("/read/{year}/{id}")]
-        public async Task<IActionResult> GetReadItem([FromRoute] int year, [FromRoute] string id)
-        {
-            var readItem = await _swanService.FindAsync<SwanRead>(id);
-            return readItem == null || readItem.CreatedAt.Year != year ? NotFound() : View("Detail", readItem);
-        }
+            if (!readItems.Any())
+            {
+                return NotFound();
+            }
 
-        [HttpGet("/read/{year}")]
-        public async Task<IActionResult> GetReadItems([FromRoute] int year)
-        {
-            var readItems = await _swanService.FindAsync<SwanRead>(x => x.CreatedAt.Year == year);
-            return View("Archive", readItems);
+            return View(readItems.GroupBy(x => x.CreatedAt.Year).OrderByDescending(x => x.Key));
         }
     }
 }

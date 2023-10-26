@@ -1,7 +1,17 @@
-﻿
-<div>
-    <a href="/post" class="btn btn-info">All Posts</a>
-    <a href="/read" class="btn btn-success">All Reads</a>
+﻿@inject IOptions<SwanOption> _option
+<div class="container my-5">
+    <div class="position-relative p-5 text-center text-muted bg-body border border-dashed rounded-5">
+        <h1 class="text-body-emphasis">@_option.Value.Title</h1>
+        <p class="col-lg-6 mx-auto mb-4">
+            @_option.Value.Description
+        </p>
+        <a class="btn btn-primary px-5 mb-5" href="/post">
+            文章
+        </a>
+        <a class="btn btn-primary px-5 mb-5" href="/read">
+            阅读
+        </a>
+    </div>
 </div>
 
 @section Style {

@@ -2,7 +2,7 @@
 
 namespace Swan.Core.Model
 {
-    public class SwanSeries : SwanObject
+    public class PostSeries : SwanObject
     {
         #region Raw
 
@@ -26,10 +26,10 @@ namespace Swan.Core.Model
 
         #endregion
 
-        public override string GetFullLink() => $"/series/{Link}";
+        public override string GetFullLink() => $"/post/series#link-{Link}";
 
         public override string GetGitStorePath() => "obj/series.json";
 
-        public override bool IsPublicToEveryOne() => base.IsPublicToEveryOne() && BlogPosts.Any();
+        public override bool IsPublicToEveryOne() => base.IsPublicToEveryOne() && BlogPosts.Any(x => x.IsPublicToEveryOne());
     }
 }

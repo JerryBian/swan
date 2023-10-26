@@ -43,10 +43,10 @@ namespace Swan.Core.Model
         public string HtmlContent { get; set; }
 
         [JsonIgnore]
-        public SwanSeries BlogSeries { get; set; }
+        public PostSeries BlogSeries { get; set; }
 
         [JsonIgnore]
-        public List<SwanTag> BlogTags { get; } = new();
+        public List<PostTag> BlogTags { get; } = new();
 
         [JsonIgnore]
         public PageStat PageStat { get; set; } = new();
@@ -75,6 +75,6 @@ namespace Swan.Core.Model
 
         public override bool IsPublicToEveryOne() => base.IsPublicToEveryOne() && !IsDeleted && PublishDate <= DateTime.Now;
 
-        public override string GetFullLink() => $"/post/{PublishDate.Year}/{Link}";
+        public override string GetFullLink() => $"/post/{Link}.html";
     }
 }
