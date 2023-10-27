@@ -63,7 +63,7 @@ namespace Swan.Web.Controllers
         [HttpGet("/admin/post-edit/{id}")]
         public async Task<IActionResult> EditPost([FromRoute] string id)
         {
-            List<SwanPost> allPosts = await _swanService.FindAsync<SwanPost>(adminOnly: true);
+            List<SwanPost> allPosts = await _swanService.FindAsync<SwanPost>(true);
             SwanPost post = allPosts.Find(x => StringHelper.EqualsIgoreCase(id, x.Id));
             return post == null ? NotFound() : View("EditPost", post);
         }
@@ -130,7 +130,7 @@ namespace Swan.Web.Controllers
         [HttpGet("/admin/tag-edit/{id}")]
         public async Task<IActionResult> EditTag([FromRoute] string id)
         {
-            var allTags = await _swanService.FindAsync<PostTag>();
+            var allTags = await _swanService.FindAsync<PostTag>(true);
             var tag = allTags.Find(x => StringHelper.EqualsIgoreCase(id, x.Id));
             return tag == null ? NotFound() : View("EditTag", tag);
         }

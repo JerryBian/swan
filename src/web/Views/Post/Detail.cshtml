@@ -2,15 +2,16 @@
 @model SwanPost
 @{
     Layout = "_LayoutPublic";
+    ViewData["Title"] = Model.Title;
 }
 
 @Html.Raw(Model.HtmlMetadata1)
 <h3 class="mb-2 large-title">@Model.Title</h3>
-@Html.Raw(Model.HtmlMetadata2)
 
-<article class="mt-4 mb-2 post">
+<article class="mt-4 mb-3 post">
     @Html.Raw(Model.HtmlContent)
 </article>
+@Html.Raw(Model.HtmlMetadata2)
 
 @section Aside{
     @if (Model.RecommendPostsByTag.Any())
@@ -39,9 +40,19 @@
             <div class="list-group">
                 @foreach (var item in Model.RecommendPostsBySeries)
                 {
-                    <a href="@item.GetFullLink()" class="list-group-item list-group-action text-muted">
-                        <i class="bi bi-hash"></i>@item.Title
-                    </a>
+                    if(item.Id == Model.Id)
+                    {
+                        <div class="list-group-item text-muted">
+                            <i class="bi bi-hash"></i>@item.Title
+                        </div>
+                    }
+                    else
+                    {
+                        <a href="@item.GetFullLink()" class="list-group-item list-group-action text-muted">
+                            <i class="bi bi-hash"></i>@item.Title
+                        </a>
+                    }
+                    
                 }
             </div>
         </div>
@@ -70,5 +81,16 @@
 @section Script{
     <script>
         setActive(document.querySelector("#navbarPost"));
+        hljs.highlightAll();
+        document.addEventListener('DOMContentLoaded', function (event) {
+            anchors.options = {
+                placement: "right",
+                visible: "hover",
+                icon: "¶",
+                base: "@Model.GetFullLink()",
+                class: "text-reset"
+            };
+            anchors.add("h4, h5");
+        });
     </script>
 }

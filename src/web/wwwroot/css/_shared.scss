@@ -26,12 +26,12 @@ $font-size-base: 1rem;
     color: #2e3131;
 }
 
-a{
-     text-underline-offset: 4px;
+a {
+    text-underline-offset: 4px;
 }
 
 .post {
-    line-height: 1.6em;
+    line-height: 1.7em;
 
     & > p {
         margin-bottom: 1.2rem;
@@ -75,5 +75,13 @@ a{
     h4, h5 {
         margin-top: 1.8rem;
         margin-bottom: 0.8rem;
+    }
+
+    h4 {
+        padding-bottom: .25rem !important;
+        padding-right: .5rem !important;
+        --bs-border-opacity: 1;
+        border-color: rgba(var(--bs-dark-rgb),var(--bs-border-opacity)) !important;
+        border-bottom: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color) !important;
     }
 }

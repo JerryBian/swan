@@ -10,15 +10,13 @@
         <div class="mb-4 border-bottom pb-3">
             @Html.Raw(item.HtmlMetadata1)
             <h5 class="large-title">
-                @item.Title
+                <a href="@item.GetFullLink()" class="text-decoration-none text-reset">@item.Title</a>
             </h5>
-            @Html.Raw(item.HtmlMetadata2)
-            <div class="mt-2">
+
+            <div class="mt-2 mb-1">
                 @Html.Raw(item.HtmlExcerpt)
             </div>
-            <div class="small">
-                <a href="@item.GetFullLink()" class="text-reset text-decoration-none btn btn-light btn-sm">继续阅读 <i class="bi bi-arrow-right-short"></i></a>
-            </div>
+            @Html.Raw(item.HtmlMetadata2)
         </div>
     }
 </div>

@@ -43,7 +43,7 @@ namespace Swan.Web.HostedServices
                 var pages = await _swanStore.GetPageHitsAsync();
                 foreach (var page in pages)
                 {
-                    var stat = await _swanService.FindFirstOrDefaultAsync<SwanPage>(x => StringHelper.EqualsIgoreCase(x.Path, page));
+                    var stat = await _swanService.FindFirstOrDefaultAsync<SwanPage>(true, x => StringHelper.EqualsIgoreCase(x.Path, page));
                     if (stat == null)
                     {
                         await _swanService.AddAsync<SwanPage>(new SwanPage { Path = page, Hit = 1 });

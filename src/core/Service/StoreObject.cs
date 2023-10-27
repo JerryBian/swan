@@ -125,7 +125,7 @@ namespace Swan.Core.Service
                     {
                         post.BlogTags.Add(tag);
                         tag.BlogPosts.Add(post);
-                        tagSnippets.Add($"<span><a href=\"{tag.GetFullLink()}\" class=\"text-reset text-decoration-none\">#{tag.Name}</a></span>");
+                        tagSnippets.Add($"<span><a href=\"{tag.GetFullLink()}\" class=\"btn btn-sm active\"><i class=\"bi bi-tag\"></i> {tag.Name}</a></span>");
                     }
                 }
 
@@ -137,7 +137,7 @@ namespace Swan.Core.Service
                     {
                         post.BlogSeries = series;
                         series.BlogPosts.Add(post);
-                        seriesSnippet = $"<a href=\"{series.GetFullLink()}\" class=\"text-reset text-decoration-none\"><i class=\"bi bi-bookmark\"></i> {series.Name}</a>";
+                        seriesSnippet = $"<a href=\"{series.GetFullLink()}\" class=\"text-reset\"><i class=\"bi bi-bookmark\"></i> {series.Name}</a>";
                     }
                 }
 
@@ -159,12 +159,12 @@ namespace Swan.Core.Service
                     {post.PageStat.Hit} 次访问
                 </span>
             </div>";
-                post.HtmlMetadata2 = $@"<div class=""small text-muted container-fluid px-0"">
+                post.HtmlMetadata2 = $@"<div class=""small text-muted container-fluid"">
                 <div class=""row"">
-                    <div class=""col-md-7 text-truncate"">
-                        {string.Join(", ", tagSnippets)}
+                    <div class=""col-md-7 text-truncate mb-1 px-0"">
+                        {string.Join(" ", tagSnippets)}
                     </div>
-                    <div class=""col-md-5  text-truncate"">
+                    <div class=""col-md-5  text-truncate mb-1 px-0"">
                         {seriesSnippet}
                     </div>
                 </div>

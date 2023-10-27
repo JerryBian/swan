@@ -2,7 +2,7 @@
 @{
     Layout = "_LayoutAdmin";
 
-    var readItems = await _service.FindAsync<SwanRead>();
+    var readItems = await _service.FindAsync<SwanRead>(true);
 }
 
 <div class="m-4 p-3 rounded-1 shadow-sm bg-white">

@@ -53,7 +53,7 @@
                             <option selected value="" class="small">-- 选择博客文章（支持多选） --</option>
                         }
 
-                        @foreach (var p in await _swanService.FindAsync<SwanPost>())
+                        @foreach (var p in await _swanService.FindAsync<SwanPost>(true))
                         {
                             if (Model.Posts.Contains(p.Id))
                             {

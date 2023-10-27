@@ -8298,7 +8298,7 @@ a {
 }
 
 .post {
-  line-height: 1.6em;
+  line-height: 1.7em;
 }
 .post > p {
   margin-bottom: 1.2rem;
@@ -8334,6 +8334,13 @@ a {
 .post h4, .post .h4, .post h5, .post .h5 {
   margin-top: 1.8rem;
   margin-bottom: 0.8rem;
+}
+.post h4, .post .h4 {
+  padding-bottom: 0.25rem !important;
+  padding-right: 0.5rem !important;
+  --bs-border-opacity: 1;
+  border-color: rgba(var(--bs-dark-rgb), var(--bs-border-opacity)) !important;
+  border-bottom: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color) !important;
 }
 
 /*@import "../../../../node_modules/bootswatch/dist/zephyr/variables";*/

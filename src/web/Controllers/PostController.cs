@@ -22,7 +22,7 @@ namespace Swan.Web.Controllers
         [HttpGet("/post/{link}.html")]
         public async Task<IActionResult> GetPost([FromRoute] string link)
         {
-            var post = await _swanService.FindFirstOrDefaultAsync<SwanPost>(x => StringHelper.EqualsIgoreCase(link, x.Link));
+            var post = await _swanService.FindFirstOrDefaultAsync<SwanPost>(Request.HttpContext, x => StringHelper.EqualsIgoreCase(link, x.Link));
             return post == null ? NotFound() : View("Detail", post);
         }
 

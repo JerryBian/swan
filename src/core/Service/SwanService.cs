@@ -26,13 +26,13 @@ namespace Swan.Core.Service
             _cacheKeys = new ConcurrentDictionary<string, object>();
         }
 
-        public async Task<List<T>> FindAsync<T>(Predicate<T> wherePredicate = null, bool adminOnly = false) where T : SwanObject
+        public async Task<List<T>> FindAsync<T>(bool searchAdminStore, Predicate <T> wherePredicate = null) where T : SwanObject
         {
             await _asyncReaderWriterLock.EnterReadLockAsync();
 
             try
             {
-                var storeObject = await GetStoreObjectAsync();
+                var storeObject = await GetStoreObjectAsync(searchAdminStore);
                 var result = storeObject.Get<T>();
                 result = result.
                     Where(x => wherePredicate == null || wherePredicate(x)).
@@ -47,23 +47,24 @@ namespace Swan.Core.Service
 
         public async Task<List<T>> FindAsync<T>(HttpContext httpContext, Predicate<T> wherePredicate = null) where T : SwanObject
         {
-            return httpContext.IsAuthorized() ? await FindAsync(wherePredicate) : await FindPublicAsync(wherePredicate);
-        }
-
-        public async Task<List<T>> FindPublicAsync<T>(Predicate<T> wherePredicate = null) where T : SwanObject
-        {
-            return await FindAsync<T>(x => wherePredicate == null || wherePredicate(x), true);
+            return await FindAsync(httpContext.IsAuthorized(), wherePredicate);
         }
 
         public async Task<T> FindAsync<T>(string id) where T : SwanObject
         {
-            return await FindFirstOrDefaultAsync<T>(x => StringHelper.EqualsIgoreCase(x.Id, id), true);
+            return await FindFirstOrDefaultAsync<T>(true, x => StringHelper.EqualsIgoreCase(x.Id, id));
         }
 
-        public async Task<T> FindFirstOrDefaultAsync<T>(Predicate<T> predicate, bool adminOnly = false) where T : SwanObject
+        public async Task<T> FindFirstOrDefaultAsync<T>(bool searchAdminStore, Predicate<T> predicate = null) where T : SwanObject
         {
-            var items = await FindAsync<T>(x => predicate(x), adminOnly);
+            var items = await FindAsync<T>(searchAdminStore, x => predicate(x));
             return items.FirstOrDefault();
+        }
+
+        public async Task<T> FindFirstOrDefaultAsync<T>(HttpContext context, Predicate<T> predicate = null) where T : SwanObject
+        {
+            var item = await FindFirstOrDefaultAsync<T>(context.IsAuthorized(), x => predicate(x));
+            return item;
         }
 
         public async Task AddAsync<T>(T item) where T : SwanObject

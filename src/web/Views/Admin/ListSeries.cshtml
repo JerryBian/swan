@@ -2,7 +2,7 @@
 @{
     Layout = "_LayoutAdmin";
 
-    var allSeries = await _service.FindAsync<PostSeries>();
+    var allSeries = await _service.FindAsync<PostSeries>(true);
 }
 
 <div class="m-4 p-3 rounded-1 shadow-sm bg-white">
