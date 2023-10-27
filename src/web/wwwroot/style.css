@@ -8344,11 +8344,6 @@ a {
   border-bottom: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color) !important;
 }
 
-:root {
-  --bs-primary-text-emphasis: #392e4a;
-  --bs-code-color: #1B1464;
-}
-
 /*@import "../../../../node_modules/bootswatch/dist/zephyr/variables";*/
 /*!
  * Bootstrap  v5.3.2 (https://getbootstrap.com/)
@@ -20638,6 +20633,11 @@ textarea.form-control-lg {
   }
 }
 /*@import "../../../../node_modules/bootswatch/dist/zephyr/bootswatch";*/
+:root {
+  --bs-primary-text-emphasis: #392e4a;
+  --bs-code-color: #1B1464;
+}
+
 @keyframes blinker {
   50% {
     opacity: 0;
