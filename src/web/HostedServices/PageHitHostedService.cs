@@ -25,7 +25,7 @@ namespace Swan.Web.HostedServices
         {
             while(!stoppingToken.IsCancellationRequested)
             {
-                await Task.Delay(TimeSpan.FromHours(1), stoppingToken).OkForCancel();
+                await Task.Delay(TimeSpan.FromSeconds(30), stoppingToken).OkForCancel();
                 await FlushPageHitsAsync();
             }
         }

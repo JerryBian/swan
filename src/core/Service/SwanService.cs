@@ -166,6 +166,8 @@ namespace Swan.Core.Service
                     throw new Exception($"{prop.Name} with value {val1} already exists in {typeof(T).Name} list.");
                 }
             }
+
+            values.Add(value);
         }
 
         private async Task<StoreObject> GetStoreObjectAsync()

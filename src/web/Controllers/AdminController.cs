@@ -348,5 +348,11 @@ namespace Swan.Web.Controllers
         {
             return View("Log");
         }
+
+        [HttpGet("/admin/stat")]
+        public IActionResult GetStats()
+        {
+            return View("Stat");
+        }
     }
 }
