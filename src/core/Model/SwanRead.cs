@@ -34,9 +34,13 @@ namespace Swan.Core.Model
         [JsonIgnore]
         public List<SwanPost> BlogPosts { get; } = new();
 
-        #endregion
+        [JsonIgnore]
+        public string HtmlMetadata { get; set; }
 
-        public override string GetFullLink() => $"/read/{CreatedAt.Year}/{Id}";
+        [JsonIgnore]
+        public string HtmlComment { get; set; }
+
+        #endregion
 
         public override string GetGitStorePath() => "obj/read.json";
     }

@@ -8304,6 +8304,7 @@ a {
   margin-bottom: 1.2rem;
 }
 .post a {
+  color: inherit;
   padding-left: 1px;
   padding-right: 1px;
 }

@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<PostSeries>
 @{
     Layout = "_LayoutPublic";
+    ViewData["Title"] = "文章系列";
 }
 
 <div data-bs-spy="scroll" data-bs-target="#seriesIndex" data-bs-smooth-scroll="true">
@@ -43,5 +44,15 @@
 @section Script{
     <script>
         setActive(document.querySelector("#navbarPost"));
+        document.addEventListener('DOMContentLoaded', function (event) {
+            anchors.options = {
+                placement: "right",
+                visible: "hover",
+                icon: "¶",
+                base: "/post/series",
+                class: "text-reset"
+            };
+            anchors.add("h4, h5");
+        });
     </script>
 }

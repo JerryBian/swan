@@ -1,17 +1,23 @@
 @import "_shared";
 
+:root {
+    --bs-primary-text-emphasis: #392e4a;
+    --bs-code-color: #1B1464;
+}
+
 /*@import "../../../../node_modules/bootswatch/dist/zephyr/variables";*/
 @import "../../../../node_modules/bootstrap/scss/bootstrap";
 /*@import "../../../../node_modules/bootswatch/dist/zephyr/bootswatch";*/
 
-:root {
-    --bs-primary-text-emphasis: #392e4a;
-}
 
 @keyframes blinker {
     50% {
         opacity: 0;
     }
+}
+
+.popover-header {
+    background-color: transparent;
 }
 
 .blinker {

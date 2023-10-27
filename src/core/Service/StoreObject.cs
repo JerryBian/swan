@@ -191,6 +191,30 @@ namespace Swan.Core.Service
                     post.RecommendPostsBySeries.AddRange(post.BlogSeries.BlogPosts.Take(8));
                 }
             }
+
+            foreach(var read in ReadItems)
+            {
+                var metadatas = new List<string>();
+                if(!string.IsNullOrEmpty(read.Author))
+                {
+                    if(!string.IsNullOrEmpty(read.AuthorCountry))
+                    {
+                        metadatas.Add($"({read.AuthorCountry}){read.Author}");
+                    }
+                    else
+                    {
+                        metadatas.Add(read.Author);
+                    }
+                }
+
+                if(!string.IsNullOrEmpty(read.Translator))
+                {
+                    metadatas.Add($"{read.Translator}(译)");
+                }
+
+                read.HtmlMetadata = string.Join("/", metadatas);
+                read.HtmlComment = MarkdownHelper.ToHtml(read.Comment);
+            }
         }
     }
 }

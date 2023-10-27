@@ -2,13 +2,14 @@
 @model IEnumerable<IGrouping<int, SwanPost>>
 @{
     Layout = "_LayoutPublic";
+    ViewData["Title"] = "文章存档";
 }
 
 <div data-bs-spy="scroll" data-bs-target="#archiveIndex" data-bs-smooth-scroll="true">
     @foreach (var item in Model)
     {
         <div class="pb-2 mb-2 pt-3 border-bottom">
-            <h5 class="ps-2 mb-3" id="year-@item.Key"><i class="bi bi-folder2"></i> @item.Key 年文章存档</h5>
+            <h5 class="ps-2 mb-3" id="year-@item.Key"><i class="bi bi-folder2"></i> @item.Key 年文章</h5>
             @foreach (var item2 in item)
             {
                 <div class="mb-3 ps-2 pe-1">
