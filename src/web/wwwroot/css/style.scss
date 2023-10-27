@@ -8,6 +8,16 @@
     --bs-primary-text-emphasis: #392e4a;
 }
 
+@keyframes blinker {
+    50% {
+        opacity: 0;
+    }
+}
+
+.blinker {
+    animation: blinker 5s linear 3s infinite;
+}
+
 .card {
     border: none;
     background-color: transparent !important;

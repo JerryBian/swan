@@ -26,7 +26,7 @@ namespace Swan.Core.Service
             _cacheKeys = new ConcurrentDictionary<string, object>();
         }
 
-        public async Task<List<T>> FindAsync<T>(Predicate<T> wherePredicate = null) where T : SwanObject
+        public async Task<List<T>> FindAsync<T>(Predicate<T> wherePredicate = null, bool adminOnly = false) where T : SwanObject
         {
             await _asyncReaderWriterLock.EnterReadLockAsync();
 
@@ -52,17 +52,17 @@ namespace Swan.Core.Service
 
         public async Task<List<T>> FindPublicAsync<T>(Predicate<T> wherePredicate = null) where T : SwanObject
         {
-            return await FindAsync<T>(x => x.IsPublicToEveryOne() && (wherePredicate == null || wherePredicate(x)));
+            return await FindAsync<T>(x => wherePredicate == null || wherePredicate(x), true);
         }
 
         public async Task<T> FindAsync<T>(string id) where T : SwanObject
         {
-            return await FindFirstOrDefaultAsync<T>(x => StringHelper.EqualsIgoreCase(x.Id, id));
+            return await FindFirstOrDefaultAsync<T>(x => StringHelper.EqualsIgoreCase(x.Id, id), true);
         }
 
-        public async Task<T> FindFirstOrDefaultAsync<T>(Predicate<T> predicate) where T : SwanObject
+        public async Task<T> FindFirstOrDefaultAsync<T>(Predicate<T> predicate, bool adminOnly = false) where T : SwanObject
         {
-            var items = await FindAsync<T>(x => predicate(x));
+            var items = await FindAsync<T>(x => predicate(x), adminOnly);
             return items.FirstOrDefault();
         }
 
@@ -72,7 +72,7 @@ namespace Swan.Core.Service
 
             try
             {
-                var obj = await GetStoreObjectAsync();
+                var obj = await GetStoreObjectAsync(true);
                 var items = obj.Get<T>();
 
                 item.CreatedAt = item.LastUpdatedAt = DateTime.Now;
@@ -93,7 +93,7 @@ namespace Swan.Core.Service
 
             try
             {
-                var obj = await GetStoreObjectAsync();
+                var obj = await GetStoreObjectAsync(true);
                 var items = obj.Get<T>();
                 var oldObj = items.FirstOrDefault(x => StringHelper.EqualsIgoreCase(x.Id, item.Id));
                 if (oldObj == null)
@@ -121,7 +121,7 @@ namespace Swan.Core.Service
 
             try
             {
-                var obj = await GetStoreObjectAsync();
+                var obj = await GetStoreObjectAsync(true);
                 var items = obj.Get<T>();
                 var oldObj = items.FirstOrDefault(x => StringHelper.EqualsIgoreCase(x.Id, id));
                 if (oldObj == null)
@@ -162,11 +162,11 @@ namespace Swan.Core.Service
             values.Add(value);
         }
 
-        private async Task<StoreObject> GetStoreObjectAsync()
+        private async Task<StoreObject> GetStoreObjectAsync(bool adminOnly = false)
         {
-            var storeObject = await _memoryCache.GetOrCreateAsync(GetCacheKey<StoreObject>("storeobj"), async _ =>
+            var storeObject = await _memoryCache.GetOrCreateAsync(GetCacheKey<StoreObject>("storeobj", adminOnly.ToString()), async _ =>
             {
-                var obj = new StoreObject();
+                var obj = new StoreObject(adminOnly);
                 await obj.PopulateDataAsync(_gitStore);
 
                 return obj;

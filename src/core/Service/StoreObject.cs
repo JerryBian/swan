@@ -7,10 +7,12 @@ namespace Swan.Core.Service
 {
     internal class StoreObject
     {
+        private readonly bool _adminOnly;
         private readonly IDictionary<Type, object> _typedObjects;
 
-        public StoreObject()
+        public StoreObject(bool adminOnly)
         {
+            _adminOnly = adminOnly;
             _typedObjects = new Dictionary<Type, object>
             {
                 { typeof(SwanPost), Posts },
@@ -43,31 +45,31 @@ namespace Swan.Core.Service
             var posts = JsonHelper.Deserialize<List<SwanPost>>(await gitStore.GetTextAsync(new SwanPost().GetGitStorePath()));
             if (posts != null)
             {
-                Posts.AddRange(posts);
+                Posts.AddRange(posts.Where(x => _adminOnly || x.IsPublicToEveryOne()));
             }
 
             var series = JsonHelper.Deserialize<List<PostSeries>>(await gitStore.GetTextAsync(new PostSeries().GetGitStorePath()));
             if (series != null)
             {
-                Series.AddRange(series);
+                Series.AddRange(series.Where(x => _adminOnly || x.IsPublicToEveryOne()));
             }
 
             var tags = JsonHelper.Deserialize<List<PostTag>>(await gitStore.GetTextAsync(new PostTag().GetGitStorePath()));
             if (tags != null)
             {
-                Tags.AddRange(tags);
+                Tags.AddRange(tags.Where(x => _adminOnly || x.IsPublicToEveryOne()));
             }
 
             var readItems = JsonHelper.Deserialize<List<SwanRead>>(await gitStore.GetTextAsync(new SwanRead().GetGitStorePath()));
             if (readItems != null)
             {
-                ReadItems.AddRange(readItems);
+                ReadItems.AddRange(readItems.Where(x => _adminOnly || x.IsPublicToEveryOne()));
             }
 
             var pages = JsonHelper.Deserialize<List<SwanPage>>(await gitStore.GetTextAsync(new SwanPage().GetGitStorePath()));
             if (pages != null)
             {
-                Pages.AddRange(pages);
+                Pages.AddRange(pages.Where(x => _adminOnly || x.IsPublicToEveryOne()));
             }
 
             PostExtend();
@@ -167,7 +169,7 @@ namespace Swan.Core.Service
                     post.RecommendPostsByTag.AddRange(similarPosts.Distinct().Take(8));
                 }
 
-                if (post.Series != null)
+                if (post.BlogSeries != null)
                 {
                     post.RecommendPostsBySeries.AddRange(post.BlogSeries.BlogPosts.Take(8));
                 }

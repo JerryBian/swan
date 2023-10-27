@@ -29,7 +29,5 @@ namespace Swan.Core.Model
         public override string GetFullLink() => $"/post/series#link-{Link}";
 
         public override string GetGitStorePath() => "obj/series.json";
-
-        public override bool IsPublicToEveryOne() => base.IsPublicToEveryOne() && BlogPosts.Any(x => x.IsPublicToEveryOne());
     }
 }
