@@ -30,13 +30,8 @@ namespace Swan.Web.Controllers
         public async Task<IActionResult> GetPosts()
         {
             var posts = await _swanService.FindAsync<SwanPost>(Request.HttpContext);
-            
-            if(!posts.Any())
-            {
-                return NotFound();
-            }
 
-            return View("Archive", posts.GroupBy(x => x.PublishDate.Year).OrderByDescending(x => x.Key));
+            return !posts.Any() ? NotFound() : View("Archive", posts.GroupBy(x => x.PublishDate.Year).OrderByDescending(x => x.Key));
         }
 
         [HttpGet("/post/series")]

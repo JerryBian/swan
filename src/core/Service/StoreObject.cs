@@ -1,7 +1,5 @@
 ﻿using GitStoreDotnet;
 using HtmlAgilityPack;
-using LibGit2Sharp;
-using Swan.Core.Extension;
 using Swan.Core.Helper;
 using Swan.Core.Model;
 
@@ -43,31 +41,31 @@ namespace Swan.Core.Service
             Reset();
 
             var posts = JsonHelper.Deserialize<List<SwanPost>>(await gitStore.GetTextAsync(new SwanPost().GetGitStorePath()));
-            if(posts != null)
+            if (posts != null)
             {
                 Posts.AddRange(posts);
             }
 
             var series = JsonHelper.Deserialize<List<PostSeries>>(await gitStore.GetTextAsync(new PostSeries().GetGitStorePath()));
-            if(series != null)
+            if (series != null)
             {
                 Series.AddRange(series);
             }
 
             var tags = JsonHelper.Deserialize<List<PostTag>>(await gitStore.GetTextAsync(new PostTag().GetGitStorePath()));
-            if(tags != null)
+            if (tags != null)
             {
                 Tags.AddRange(tags);
             }
 
             var readItems = JsonHelper.Deserialize<List<SwanRead>>(await gitStore.GetTextAsync(new SwanRead().GetGitStorePath()));
-            if(readItems !=null)
+            if (readItems != null)
             {
                 ReadItems.AddRange(readItems);
             }
 
             var pages = JsonHelper.Deserialize<List<SwanPage>>(await gitStore.GetTextAsync(new SwanPage().GetGitStorePath()));
-            if(pages != null)
+            if (pages != null)
             {
                 Pages.AddRange(pages);
             }
@@ -142,13 +140,13 @@ namespace Swan.Core.Service
 
                 post.PreviousPost = Posts.OrderBy(x => x.PublishDate).LastOrDefault(x => x.PublishDate < post.PublishDate);
                 post.NextPost = Posts.OrderBy(x => x.PublishDate).FirstOrDefault(x => x.PublishDate > post.PublishDate);
-                if(tagSnippets.Any())
+                if (tagSnippets.Any())
                 {
                     post.HtmlTag = string.Join(", ", tagSnippets);
                 }
 
                 var page = Pages.FirstOrDefault(x => StringHelper.EqualsIgoreCase(x.GetFullLink(), post.GetFullLink()));
-                if(page != null)
+                if (page != null)
                 {
                     post.PageStat = page;
                 }

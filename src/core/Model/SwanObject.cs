@@ -1,5 +1,4 @@
-﻿using HtmlAgilityPack;
-using Swan.Core.Helper;
+﻿using Swan.Core.Helper;
 using System.Text.Json.Serialization;
 
 namespace Swan.Core.Model

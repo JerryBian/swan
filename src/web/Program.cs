@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
-using Swan.Core;
 using Swan.Core.Converter;
 using Swan.Core.Extension;
 using Swan.Core.Logger;

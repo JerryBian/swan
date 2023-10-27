@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Swan.Core.Extension;
+﻿using Swan.Core.Extension;
 using Swan.Core.Helper;
 using Swan.Core.Model;
 using Swan.Core.Service;
@@ -23,7 +22,7 @@ namespace Swan.Web.HostedServices
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            while(!stoppingToken.IsCancellationRequested)
+            while (!stoppingToken.IsCancellationRequested)
             {
                 await Task.Delay(TimeSpan.FromSeconds(30), stoppingToken).OkForCancel();
                 await FlushPageHitsAsync();

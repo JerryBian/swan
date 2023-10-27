@@ -1,10 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Swan.Core.Store
 {
@@ -33,7 +28,7 @@ namespace Swan.Core.Store
         public async Task<List<string>> GetPageHitsAsync()
         {
             var result = new List<string>();
-            while(_pageHitQueue.TryDequeue(out var url))
+            while (_pageHitQueue.TryDequeue(out var url))
             {
                 result.Add(url);
             }

@@ -5,7 +5,6 @@ using Microsoft.Extensions.Caching.Memory;
 using Swan.Core.Extension;
 using Swan.Core.Helper;
 using Swan.Core.Model;
-using System;
 using System.Collections.Concurrent;
 using System.Reflection;
 using System.Text.Json.Serialization;
@@ -48,14 +47,7 @@ namespace Swan.Core.Service
 
         public async Task<List<T>> FindAsync<T>(HttpContext httpContext, Predicate<T> wherePredicate = null) where T : SwanObject
         {
-            if (httpContext.IsAuthorized())
-            {
-                return await FindAsync(wherePredicate);
-            }
-            else
-            {
-                return await FindPublicAsync(wherePredicate);
-            }
+            return httpContext.IsAuthorized() ? await FindAsync(wherePredicate) : await FindPublicAsync(wherePredicate);
         }
 
         public async Task<List<T>> FindPublicAsync<T>(Predicate<T> wherePredicate = null) where T : SwanObject

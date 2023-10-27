@@ -17,12 +17,7 @@ namespace Swan.Web.Controllers
         {
             var readItems = await _swanService.FindAsync<SwanRead>(Request.HttpContext);
 
-            if (!readItems.Any())
-            {
-                return NotFound();
-            }
-
-            return View(readItems.GroupBy(x => x.CreatedAt.Year).OrderByDescending(x => x.Key));
+            return !readItems.Any() ? NotFound() : View(readItems.GroupBy(x => x.CreatedAt.Year).OrderByDescending(x => x.Key));
         }
     }
 }
