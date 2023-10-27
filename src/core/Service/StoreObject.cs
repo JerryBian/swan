@@ -1,5 +1,6 @@
 ﻿using GitStoreDotnet;
 using HtmlAgilityPack;
+using Swan.Core.Extension;
 using Swan.Core.Helper;
 using Swan.Core.Model;
 
@@ -69,7 +70,7 @@ namespace Swan.Core.Service
             var pages = JsonHelper.Deserialize<List<SwanPage>>(await gitStore.GetTextAsync(new SwanPage().GetGitStorePath()));
             if (pages != null)
             {
-                Pages.AddRange(pages.Where(x => _adminOnly || x.IsPublicToEveryOne()));
+                Pages.AddRange(pages);
             }
 
             PostExtend();
@@ -128,7 +129,7 @@ namespace Swan.Core.Service
                     }
                 }
 
-                var seriesSnippets = new List<string>();
+                var seriesSnippet = string.Empty;
                 if (post.Series != null)
                 {
                     var series = Series.FirstOrDefault(x => StringHelper.EqualsIgoreCase(x.Id, post.Series));
@@ -136,22 +137,38 @@ namespace Swan.Core.Service
                     {
                         post.BlogSeries = series;
                         series.BlogPosts.Add(post);
-                        seriesSnippets.Add($"<span><i class=\"bi bi-bookmark\"></i> <a href=\"{series.GetFullLink()}\">{series.Name}</a></span>");
+                        seriesSnippet = $"<a href=\"{series.GetFullLink()}\" class=\"text-reset text-decoration-none\"><i class=\"bi bi-bookmark\"></i> {series.Name}</a>";
                     }
                 }
 
                 post.PreviousPost = Posts.OrderBy(x => x.PublishDate).LastOrDefault(x => x.PublishDate < post.PublishDate);
                 post.NextPost = Posts.OrderBy(x => x.PublishDate).FirstOrDefault(x => x.PublishDate > post.PublishDate);
-                if (tagSnippets.Any())
-                {
-                    post.HtmlTag = string.Join(", ", tagSnippets);
-                }
 
-                var page = Pages.FirstOrDefault(x => StringHelper.EqualsIgoreCase(x.GetFullLink(), post.GetFullLink()));
+                var page = Pages.FirstOrDefault(x => StringHelper.EqualsIgoreCase(x.Path, post.GetFullLink()));
                 if (page != null)
                 {
                     post.PageStat = page;
                 }
+
+                post.HtmlMetadata1 = $@"<div class=""small text-muted text-truncate mb-1"">
+                <a href=""/post/archive#year-{post.PublishDate.Year}"" class=""text-reset text-decoration-none"">
+                    {post.PublishDate.ToCnDate()}
+                </a>
+                <span> &middot; </span>
+                <span>
+                    {post.PageStat.Hit} 次访问
+                </span>
+            </div>";
+                post.HtmlMetadata2 = $@"<div class=""small text-muted container-fluid px-0"">
+                <div class=""row"">
+                    <div class=""col-md-7 text-truncate"">
+                        {string.Join(", ", tagSnippets)}
+                    </div>
+                    <div class=""col-md-5  text-truncate"">
+                        {seriesSnippet}
+                    </div>
+                </div>
+            </div>";
             }
 
             // random posts recommend

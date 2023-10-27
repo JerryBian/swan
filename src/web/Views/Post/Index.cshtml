@@ -1,32 +1,18 @@
 ﻿@inject ISwanService _swanService
 @{
     Layout = "_LayoutPublic";
+    ViewData["Title"] = "文章";
 }
 
 <div>
-    @foreach(var item in (await _swanService.FindAsync<SwanPost>(Context)).OrderByDescending(x => x.PublishDate).Take(8))
+    @foreach (var item in (await _swanService.FindAsync<SwanPost>(Context)).OrderByDescending(x => x.PublishDate).Take(8))
     {
-        <div class="mb-3 border-bottom pb-2">
+        <div class="mb-4 border-bottom pb-3">
+            @Html.Raw(item.HtmlMetadata1)
             <h5 class="large-title">
-                <a href="@item.GetFullLink()" class="text-decoration-none text-reset">@item.Title</a>
+                @item.Title
             </h5>
-            <div class="small text-muted text-truncate">
-                <a href="/post/archive#year-@item.PublishDate.Year" class="text-reset text-decoration-none">
-                    <i class="bi bi-calendar-check"></i>
-                    @item.PublishDate.ToCnDate()
-                </a>
-                @if (!string.IsNullOrEmpty(item.HtmlTag))
-                {
-                    <span>&middot;</span>
-                    @Html.Raw(item.HtmlTag)
-                }
-
-                @if (item.Series != null)
-                {
-                    <span>&middot;</span>
-                    <a href="@item.BlogSeries.GetFullLink()" class="text-reset text-decoration-none"><i class="bi bi-bookmark"></i> @item.BlogSeries.Name</a>
-                }
-            </div>
+            @Html.Raw(item.HtmlMetadata2)
             <div class="mt-2">
                 @Html.Raw(item.HtmlExcerpt)
             </div>
@@ -37,6 +23,12 @@
     }
 </div>
 
+<div class="text-start mb-2 mt-3">
+    <a href="/post/archive" class="font-monospace text-primary-emphasis fst-italic">
+        <i class="bi bi-signpost small"></i>更多文章...
+    </a>
+</div>
+
 @section Aside{
     <div class="card">
         <div class="card-header">
@@ -45,7 +37,7 @@
             </span>
         </div>
         <div class="list-group">
-            @foreach(var item in (await _swanService.FindAsync<SwanPost>(Context)).OrderByDescending(x => x.PageStat.Hit).Take(8))
+            @foreach (var item in (await _swanService.FindAsync<SwanPost>(Context)).OrderByDescending(x => x.PageStat.Hit).Take(8))
             {
                 <a href="@item.GetFullLink()" class="list-group-item list-group-action text-muted">
                     <i class="bi bi-hash"></i>@item.Title

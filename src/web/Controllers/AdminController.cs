@@ -63,7 +63,7 @@ namespace Swan.Web.Controllers
         [HttpGet("/admin/post-edit/{id}")]
         public async Task<IActionResult> EditPost([FromRoute] string id)
         {
-            List<SwanPost> allPosts = await _swanService.FindAsync<SwanPost>();
+            List<SwanPost> allPosts = await _swanService.FindAsync<SwanPost>(adminOnly: true);
             SwanPost post = allPosts.Find(x => StringHelper.EqualsIgoreCase(id, x.Id));
             return post == null ? NotFound() : View("EditPost", post);
         }
