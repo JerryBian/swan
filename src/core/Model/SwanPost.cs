@@ -49,7 +49,7 @@ namespace Swan.Core.Model
         public List<PostTag> BlogTags { get; } = new();
 
         [JsonIgnore]
-        public PageStat PageStat { get; set; } = new();
+        public SwanPage PageStat { get; set; } = new();
 
         [JsonIgnore]
         public SwanPost PreviousPost { get; set; }

@@ -18,7 +18,8 @@ namespace Swan.Core.Service
                 { typeof(SwanPost), Posts },
                 { typeof(PostTag), Tags },
                 { typeof(PostSeries), Series },
-                { typeof(SwanRead), ReadItems }
+                { typeof(SwanRead), ReadItems },
+                { typeof(SwanPage), Pages}
             };
         }
 
@@ -30,6 +31,8 @@ namespace Swan.Core.Service
 
         public List<SwanRead> ReadItems { get; } = new();
 
+        public List<SwanPage> Pages { get; } = new();
+
         public List<T> Get<T>() where T : SwanObject
         {
             return _typedObjects.ContainsKey(typeof(T)) ? _typedObjects[typeof(T)] as List<T> : new List<T>();
@@ -39,10 +42,35 @@ namespace Swan.Core.Service
         {
             Reset();
 
-            Posts.AddRange(JsonHelper.Deserialize<List<SwanPost>>(await gitStore.GetTextAsync(new SwanPost().GetGitStorePath())));
-            Series.AddRange(JsonHelper.Deserialize<List<PostSeries>>(await gitStore.GetTextAsync(new PostSeries().GetGitStorePath())));
-            Tags.AddRange(JsonHelper.Deserialize<List<PostTag>>(await gitStore.GetTextAsync(new PostTag().GetGitStorePath())));
-            ReadItems.AddRange(JsonHelper.Deserialize<List<SwanRead>>(await gitStore.GetTextAsync(new SwanRead().GetGitStorePath())));
+            var posts = JsonHelper.Deserialize<List<SwanPost>>(await gitStore.GetTextAsync(new SwanPost().GetGitStorePath()));
+            if(posts != null)
+            {
+                Posts.AddRange(posts);
+            }
+
+            var series = JsonHelper.Deserialize<List<PostSeries>>(await gitStore.GetTextAsync(new PostSeries().GetGitStorePath()));
+            if(series != null)
+            {
+                Series.AddRange(series);
+            }
+
+            var tags = JsonHelper.Deserialize<List<PostTag>>(await gitStore.GetTextAsync(new PostTag().GetGitStorePath()));
+            if(tags != null)
+            {
+                Tags.AddRange(tags);
+            }
+
+            var readItems = JsonHelper.Deserialize<List<SwanRead>>(await gitStore.GetTextAsync(new SwanRead().GetGitStorePath()));
+            if(readItems !=null)
+            {
+                ReadItems.AddRange(readItems);
+            }
+
+            var pages = JsonHelper.Deserialize<List<SwanPage>>(await gitStore.GetTextAsync(new SwanPage().GetGitStorePath()));
+            if(pages != null)
+            {
+                Pages.AddRange(pages);
+            }
 
             PostExtend();
         }
@@ -53,6 +81,7 @@ namespace Swan.Core.Service
             Tags.Clear();
             Series.Clear();
             ReadItems.Clear();
+            Pages.Clear();
         }
 
         private void PostExtend()
@@ -116,6 +145,12 @@ namespace Swan.Core.Service
                 if(tagSnippets.Any())
                 {
                     post.HtmlTag = string.Join(", ", tagSnippets);
+                }
+
+                var page = Pages.FirstOrDefault(x => StringHelper.EqualsIgoreCase(x.GetFullLink(), post.GetFullLink()));
+                if(page != null)
+                {
+                    post.PageStat = page;
                 }
             }
 

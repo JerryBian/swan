@@ -10,6 +10,7 @@ using Swan.Core.Extension;
 using Swan.Core.Logger;
 using Swan.Core.Option;
 using Swan.Web.HostedServices;
+using Swan.Web.Middlewares;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 
@@ -35,6 +36,7 @@ builder.Services.AddMemoryCache();
 builder.Services.AddSwanService();
 
 builder.Services.AddHostedService<GitFileHostedService>();
+builder.Services.AddHostedService<PageHitHostedService>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
@@ -98,6 +100,8 @@ app.UseStaticFiles(new StaticFileOptions
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<RequestSniffMiddleware>();
 
 app.MapControllerRoute(
     name: "default",
