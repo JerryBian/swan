@@ -1,0 +1,33 @@
+﻿@inject IOptions<SwanOption> _option
+
+<div class="d-flex align-items-center justify-content-center min-vh-100 bg-light">
+    <div class="container">
+        <div class="position-relative p-5 text-center text-muted bg-body border border-dashed rounded-4">
+            <h1 class="text-body-emphasis">@_option.Value.Title</h1>
+            <p class="col-lg-6 mx-auto mb-4">
+                @_option.Value.Description
+            </p>
+            <a class="btn btn-success px-5 mx-2 mb-3" href="/post">
+                <i class="bi bi-file-text"></i> 文章
+            </a>
+            <a class="btn btn-secondary px-5 mx-2 mb-3" href="/read">
+                <i class="bi bi-book"></i> 阅读
+            </a>
+            @if (Context.IsAuthorized())
+            {
+                <a class="btn btn-danger px-5 mx-2 mb-3" href="/admin">
+                    <i class="bi bi-gear"></i> 管理
+                </a>
+            }
+        </div>
+    </div>
+</div>
+
+
+@section Style {
+    <link href="~/style.min.css" rel="stylesheet" asp-append-version="true" />
+}
+
+@section Script {
+    <script src="~/script.min.js" asp-append-version="true"></script>
+}

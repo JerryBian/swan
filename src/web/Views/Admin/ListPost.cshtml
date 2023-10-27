@@ -1,0 +1,58 @@
+﻿@inject ISwanService _service
+@{
+    Layout = "_LayoutAdmin";
+
+    var allPosts = await _service.FindAsync<SwanPost>(true);
+}
+
+<div class="m-4 p-3 rounded-1 shadow-sm bg-white">
+    <div class="list-group list-group-flush">
+        @foreach (var item in allPosts)
+        {
+            <div class="list-group-item">
+                @Html.Raw(item.HtmlMetadata1)
+                <div class="container-fluid px-0">
+                    <div class="row">
+                        <div class="col-md-9 text-truncate ps-1 mb-1">
+                            <a href="@item.GetFullLink()" class="text-secondary-emphasis">
+                                <i class="bi bi-file-text mx-1"></i> @item.Title
+                            </a>
+                        </div>
+                        <div class="col-md-1 text-truncate small mb-1">
+                            <i class="bi bi-bar-chart-line"></i> @item.PageStat.Hit
+                        </div>
+                        <div class="col-md-2 text-truncate small mb-1">
+                            <a class="btn btn-success btn-sm px-4" href="/admin/post-edit/@item.Id">
+                                <i class="bi bi-pencil-square mx-1"></i> Edit this post
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                @Html.Raw(item.HtmlMetadata2)
+                <div class="mt-2">
+                    @Html.Raw(item.HtmlExcerpt)
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section AdminLegend {
+    <div class="row">
+        <div class="col-3 text-truncate">
+            <span><i class="bi bi-list"></i> List of Posts</span>
+        </div>
+        <div class="col-9 text-end">
+            <a class="btn btn-info" href="/admin/post-add"><i class="bi bi-plus mx-1"></i> Add New Post</a>
+        </div>
+    </div>
+    <div class="small text-muted">
+        @allPosts.Count in total, @allPosts.Count(x => x.IsPublicToEveryOne()) of them are public to everyone.
+    </div>
+}
+
+@section Script{
+    <script>
+        setActive(document.querySelector("#navHeading_posts"));
+    </script>
+}

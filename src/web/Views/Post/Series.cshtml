@@ -1,0 +1,58 @@
+﻿@model IEnumerable<PostSeries>
+@{
+    Layout = "_LayoutPublic";
+    ViewData["Title"] = "文章系列";
+}
+
+<div data-bs-spy="scroll" data-bs-target="#seriesIndex" data-bs-smooth-scroll="true">
+    @foreach (var item in Model)
+    {
+        <div class="pb-2 mb-2 pt-3 border-bottom">
+            <h5 class="ps-2 mb-3" id="link-@item.Link"><i class="bi bi-bookmark"></i> @item.Name</h5>
+            @foreach (var item2 in item.BlogPosts.OrderByDescending(x => x.PublishDate))
+            {
+                <div class="mb-3 ps-2 pe-1">
+                    <span class="small text-muted me-2"><i class="bi bi-caret-right"></i> @item2.PublishDate.ToCnDate(true)</span>
+                    <a href="@item2.GetFullLink()" class="large-title">
+                        <i class="bi bi-hash small text-muted"></i>@item2.Title
+                    </a>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+
+@section Aside{
+    <div class="card" id="seriesIndex">
+        <div class="card-header">
+            <span class="pb-1 border-bottom border-dark pe-2 text-truncate">
+                <i class="bi bi-bookmarks"></i> 系列索引
+            </span>
+        </div>
+        <div class="list-group">
+            @foreach (var item in Model)
+            {
+                <div class="list-group-item list-group-action text-muted">
+                    <a href="#link-@item.Link"><i class="bi bi-bookmark"></i> @item.Name</a>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@section Script{
+    <script>
+        setActive(document.querySelector("#navbarPost"));
+        document.addEventListener('DOMContentLoaded', function (event) {
+            anchors.options = {
+                placement: "right",
+                visible: "hover",
+                icon: "¶",
+                base: "/post/series",
+                class: "text-reset"
+            };
+            anchors.add("h4, h5");
+        });
+    </script>
+}

@@ -1,0 +1,52 @@
+﻿@inject ISwanService _swanService
+@{
+    Layout = "_LayoutPublic";
+    ViewData["Title"] = "近期文章";
+}
+
+<div>
+    @foreach (var item in (await _swanService.FindAsync<SwanPost>(Context)).OrderByDescending(x => x.PublishDate).Take(8))
+    {
+        <div class="mb-4 border-bottom pb-3">
+            @Html.Raw(item.HtmlMetadata1)
+            <h5 class="large-title">
+                <a href="@item.GetFullLink()" class="text-decoration-none text-reset">@item.Title</a>
+            </h5>
+
+            <div class="mt-2 mb-1">
+                @Html.Raw(item.HtmlExcerpt)
+            </div>
+            @Html.Raw(item.HtmlMetadata2)
+        </div>
+    }
+</div>
+
+<div class="text-start mb-2 mt-3">
+    <a href="/post/archive" class="font-monospace text-primary-emphasis fst-italic">
+        <i class="bi bi-signpost small"></i>更多文章...
+    </a>
+</div>
+
+@section Aside{
+    <div class="card">
+        <div class="card-header">
+            <span class="pb-1 border-bottom border-dark pe-2 text-truncate">
+                <i class="bi bi-fire"></i> 最热文章
+            </span>
+        </div>
+        <div class="list-group">
+            @foreach (var item in (await _swanService.FindAsync<SwanPost>(Context)).OrderByDescending(x => x.PageStat.Hit).Take(8))
+            {
+                <a href="@item.GetFullLink()" class="list-group-item list-group-action text-muted">
+                    <i class="bi bi-hash"></i>@item.Title
+                </a>
+            }
+        </div>
+    </div>
+}
+
+@section Script{
+    <script>
+        setActive(document.querySelector("#navbarPost"));
+    </script>
+}

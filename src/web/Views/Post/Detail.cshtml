@@ -1,0 +1,96 @@
+﻿@inject ISwanService _swanService
+@model SwanPost
+@{
+    Layout = "_LayoutPublic";
+    ViewData["Title"] = Model.Title;
+}
+
+@Html.Raw(Model.HtmlMetadata1)
+<h3 class="mb-2 large-title">@Model.Title</h3>
+
+<article class="mt-4 mb-3 post">
+    @Html.Raw(Model.HtmlContent)
+</article>
+@Html.Raw(Model.HtmlMetadata2)
+
+@section Aside{
+    @if (Model.RecommendPostsByTag.Any())
+    {
+        <div class="card mb-4">
+            <div class="card-header">
+                <span class="pb-1 border-bottom border-dark pe-2 text-truncate"><i class="bi bi-tags-fill"></i> 推荐文章</span>
+            </div>
+            <div class="list-group">
+                @foreach (var item in Model.RecommendPostsByTag)
+                {
+                    <a href="@item.GetFullLink()" class="list-group-item list-group-action text-muted">
+                        <i class="bi bi-hash"></i>@item.Title
+                    </a>
+                }
+            </div>
+        </div>
+    }
+
+    @if (Model.RecommendPostsBySeries.Any())
+    {
+        <div class="card mb-4">
+            <div class="card-header">
+                <span class="pb-1 border-bottom border-dark pe-2 text-truncate"><i class="bi bi-bookmarks-fill"></i> 系列文章</span>
+            </div>
+            <div class="list-group">
+                @foreach (var item in Model.RecommendPostsBySeries)
+                {
+                    if(item.Id == Model.Id)
+                    {
+                        <div class="list-group-item text-muted">
+                            <i class="bi bi-hash"></i>@item.Title
+                        </div>
+                    }
+                    else
+                    {
+                        <a href="@item.GetFullLink()" class="list-group-item list-group-action text-muted">
+                            <i class="bi bi-hash"></i>@item.Title
+                        </a>
+                    }
+                    
+                }
+            </div>
+        </div>
+    }
+
+    <div class="card">
+        <div class="card-header">
+            <span class="pb-1 border-bottom border-dark pe-2 text-truncate"><i class="bi bi-info-circle-fill"></i> 文章信息</span>
+        </div>
+        <div class="list-group">
+            @if (Model.PreviousPost != null)
+            {
+                <a href="@Model.PreviousPost.GetFullLink()" class="list-group-item list-group-action text-muted"><i class="bi bi-slash"></i> 前一篇： @Model.PreviousPost.Title</a>
+            }
+
+            @if (Model.NextPost != null)
+            {
+                <a href="@Model.NextPost.GetFullLink()" class="list-group-item list-group-action text-muted"><i class="bi bi-slash"></i> 后一篇： @Model.NextPost.Title</a>
+            }
+
+            <div class="list-group-item text-muted"><i class="bi bi-slash"></i> 最后修改于：@Model.LastUpdatedAt</div>
+        </div>
+    </div>
+}
+
+@section Script{
+    <script>
+        setActive(document.querySelector("#navbarPost"));
+        hljs.highlightAll();
+        document.addEventListener('DOMContentLoaded', function (event) {
+            anchors.options = {
+                placement: "right",
+                visible: "hover",
+                icon: "¶",
+                base: "@Model.GetFullLink()",
+                class: "text-reset"
+            };
+            anchors.add("h4, h5");
+        });
+    </script>
+}

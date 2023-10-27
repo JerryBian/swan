@@ -1,0 +1,54 @@
+﻿@inject IOptions<SwanOption> _option
+@{
+    Layout = "_Layout";
+}
+
+<nav class="navbar navbar-expand bg-light border-bottom">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            @_option.Value.Title
+            <span class="text-dark blinker">_</span>
+        </a>
+        <div>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item me-2">
+                    <a class="nav-link" href="/post" id="navbarPost"><i class="bi bi-file-text"></i> 文章</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/read" id="navbarRead"><i class="bi bi-book"></i> 阅读</a>
+                </li>
+                @if(Context.IsAuthorized())
+                {
+                    <li class="nav-item ms-2">
+                        <a class="nav-link px-3 border border-danger text-danger-emphasis" href="/admin"><i class="bi bi-gear"></i> 管理</a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="bg-light py-4">
+    <div class="container">
+        <div class="row">
+            <main class="col-md-9 bg-white px-3 py-4 rounded shadow">@RenderBody()</main>
+            <aside class="col-3 small d-none d-md-block text-muted" id="aside">
+                @await RenderSectionAsync("Aside", false)
+            </aside>
+        </div>
+    </div>
+</div>
+
+<footer class="text-center py-3 small mt-auto bg-light">
+    &copy; @DateTime.Now.Year
+</footer>
+
+@section Style {
+    <link href="~/style.min.css" rel="stylesheet" asp-append-version="true" />
+}
+
+@section Script {
+    <script src="~/script.min.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Script", false)
+}

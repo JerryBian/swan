@@ -1,0 +1,35 @@
+﻿@inject ISwanService _swanService
+@{
+    Layout = "_LayoutAdmin";
+}
+<div class="m-4 p-3 rounded-1 shadow-sm bg-white container">
+    @foreach (var item in (await _swanService.FindAsync<SwanPage>(true)).OrderByDescending(x => x.Hit))
+    {
+        <div class="row mb-2 border-bottom pb-2">
+            <div class="col-9 font-monospace text-truncate">
+                <a href="@item.Path" class="text-reset text-decoration-none"><i class="bi bi-caret-right-fill"></i> @item.Path</a>
+            </div>
+            <div class="col-3">
+                <span class="badge rounded-pill text-bg-info">@item.Hit</span>
+            </div>
+        </div>
+    }
+</div>
+
+
+@section AdminLegend {
+    <div class="row">
+        <div class="col-3 text-truncate">
+            <span><i class="bi bi-list"></i> Page stats</span>
+        </div>
+        <div class="col-9 text-end">
+            
+        </div>
+    </div>
+}
+
+@section Script{
+    <script>
+        setActive(document.querySelector("#navHeading_stats"));
+    </script>
+}

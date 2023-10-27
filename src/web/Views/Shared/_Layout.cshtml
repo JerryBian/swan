@@ -1,0 +1,25 @@
+﻿@inject IOptions<SwanOption> _option
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+        @if(ViewData["Title"] == null)
+        {
+            <text>@_option.Value.Title</text>
+        }
+        else
+        {
+            <text>@ViewData["Title"] - @_option.Value.Title</text>
+        }
+    </title>
+    
+    @await RenderSectionAsync("Style", false)
+</head>
+<body class="d-flex min-vh-100 w-100 flex-column">
+    @RenderBody()
+
+    @await RenderSectionAsync("Script", false)
+</body>
+</html>
