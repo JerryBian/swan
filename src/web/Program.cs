@@ -43,6 +43,7 @@ builder.Services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.BasicLatin, Unico
 builder.Services.AddMemoryCache();
 builder.Services.AddSwanService();
 
+builder.Services.AddHostedService<MonitorHostedService>();
 builder.Services.AddHostedService<GitFileHostedService>();
 builder.Services.AddHostedService<PageHitHostedService>();
 
