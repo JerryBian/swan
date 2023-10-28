@@ -7,7 +7,8 @@
 <div>
     @foreach (var item in (await _swanService.FindAsync<SwanPost>(Context)).OrderByDescending(x => x.PublishDate).Take(8))
     {
-        <div class="mb-4 border-bottom pb-3">
+        var privateStype = item.IsPublicToEveryOne() ? "" : "bg-warning-subtle";
+        <div class="mb-2 border-bottom py-2 px-1 @privateStype">
             @Html.Raw(item.HtmlMetadata1)
             <h5 class="large-title">
                 <a href="@item.GetFullLink()" class="text-decoration-none text-reset">@item.Title</a>

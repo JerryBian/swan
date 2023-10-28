@@ -11,7 +11,8 @@
             <h5 class="ps-2 mb-3" id="link-@item.Link"><i class="bi bi-bookmark"></i> @item.Name</h5>
             @foreach (var item2 in item.BlogPosts.OrderByDescending(x => x.PublishDate))
             {
-                <div class="mb-3 ps-2 pe-1">
+                var privateStype = item.IsPublicToEveryOne() ? "" : "bg-warning-subtle";
+                <div class="mb-3 ps-2 pe-1 @privateStype">
                     <span class="small text-muted me-2"><i class="bi bi-caret-right"></i> @item2.PublishDate.ToCnDate(true)</span>
                     <a href="@item2.GetFullLink()" class="large-title">
                         <i class="bi bi-hash small text-muted"></i>@item2.Title

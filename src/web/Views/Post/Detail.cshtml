@@ -3,10 +3,11 @@
 @{
     Layout = "_LayoutPublic";
     ViewData["Title"] = Model.Title;
+    var privateStype = Model.IsPublicToEveryOne() ? "" : "bg-warning-subtle";
 }
 
 @Html.Raw(Model.HtmlMetadata1)
-<h3 class="mb-2 large-title">@Model.Title</h3>
+<h3 class="mb-2 large-title @privateStype">@Model.Title</h3>
 
 <article class="mt-4 mb-3 post">
     @Html.Raw(Model.HtmlContent)
