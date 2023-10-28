@@ -21,7 +21,7 @@ namespace Swan.Web.Middlewares
         {
             await _next(context);
 
-            if (context.Response.StatusCode == 200)
+            if (context.Response.StatusCode == 200 && !context.Request.Path.StartsWithSegments(new PathString("/admin"), StringComparison.OrdinalIgnoreCase))
             {
                 await _swanStore.AddPageHitAsync(context.Request.Path.Value, context.GetIpAddress());
             }
