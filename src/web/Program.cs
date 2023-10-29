@@ -2,6 +2,7 @@ using GitStoreDotnet;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
@@ -39,9 +40,13 @@ builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddGitFile();
 
+builder.Services.AddHttpLogging(options =>
+{
+    options.LoggingFields = HttpLoggingFields.RequestPropertiesAndHeaders;
+});
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
-    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor;
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
 });
 
 builder.Services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
@@ -74,6 +79,8 @@ builder.Services.AddControllersWithViews().AddJsonOptions(config =>
 WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseForwardedHeaders();
+app.UseHttpLogging();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler(exceptionHandlerApp =>
@@ -96,7 +103,6 @@ if (!app.Environment.IsDevelopment())
     });
 }
 
-app.UseForwardedHeaders();
 app.UseSwanService();
 app.UseStatusCodePages();
 
