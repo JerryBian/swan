@@ -14,6 +14,7 @@ using Swan.Core.Logger;
 using Swan.Core.Option;
 using Swan.Web.HostedServices;
 using Swan.Web.Middlewares;
+using System.Net;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using static System.Net.Mime.MediaTypeNames;
@@ -47,6 +48,7 @@ builder.Services.AddHttpLogging(options =>
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Add(new IPNetwork(IPAddress.Parse("172.17.0.0"), 24));
 });
 
 builder.Services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
