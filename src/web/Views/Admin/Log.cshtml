@@ -5,7 +5,7 @@
 
 @foreach (var item in (await _swanLogService.GetAsync()).GroupBy(x => x.CreatedAt.Date).OrderByDescending(x => x.Key))
 {
-    <div class="m-4 p-3 rounded-1 shadow-sm bg-white">
+    <div class="my-4 p-3 rounded-1 shadow-sm bg-white">
         <h4>@item.Key.ToCnDate()</h4>
         <div class="small text-muted">
             Information: @item.Count(x => x.Level == LogLevel.Information.ToString()) &middot;

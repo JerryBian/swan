@@ -2,7 +2,7 @@
 @{
     Layout = "_LayoutAdmin";
 }
-<div class="m-4 p-3 rounded-1 shadow-sm bg-white container">
+<div class="my-4 p-3 rounded-1 shadow-sm bg-white container">
     @foreach (var item in (await _swanService.FindAsync<SwanPage>(true)).OrderByDescending(x => x.Hit))
     {
         <div class="row mb-2 border-bottom pb-2">

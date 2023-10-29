@@ -3,7 +3,11 @@
     Layout = "_LayoutAdmin";
 }
 
-<div class="m-4 p-3 rounded-1 shadow-sm bg-white">
+<div class="my-4 p-3 rounded-1 shadow-sm bg-white">
+    <div class="form-text mb-2">
+        <span class="text-danger">*</span>
+        Below fields are all required.
+    </div>
     <div class="mb-3">
         <label for="bookName" class="form-label">Book Name</label>
         <input type="text" class="form-control" id="bookName" name="bookName" placeholder="" autocomplete="off" autofocus required>
@@ -19,7 +23,7 @@
         </div>
     </div>
 </div>
-<div class="accordion m-4 p-3 rounded-1 shadow-sm bg-white">
+<div class="accordion my-4 p-3 rounded-1 shadow-sm bg-white">
     <div class="accordion-item">
         <h2 class="accordion-header" id="headingOne">
             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">

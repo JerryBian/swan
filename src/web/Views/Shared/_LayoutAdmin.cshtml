@@ -5,7 +5,7 @@
 <nav class="navbar d-lg-none py-3 bg-light border-bottom">
     <div class="container-fluid">
         <div class="">
-            <a href="javascript:;" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasResponsive"><i class="bi bi-list"></i></a>
+            <a class="text-reset" href="javascript:;" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasResponsive"><i class="bi bi-three-dots"></i></a>
         </div>
         <div class="text-center text-truncate flex-grow-1">
             <a href="/admin" class="text-reset text-decoration-none">Admin Zone</a>
@@ -120,9 +120,11 @@
         <div class="col-lg-10">
             <form id="adminForm" class="needs-validation" novalidate>
                 <fieldset>
-                    <legend class="p-3 position-sticky top-0 bg-light container-fluid" style="z-index:5;">@await RenderSectionAsync("AdminLegend", false)</legend>
-                    @RenderBody()
-                    <div class="row">@await RenderSectionAsync("AdminFormFooter", false)</div>
+                    <legend class="py-2 px-1 position-sticky top-0 bg-light container-fluid" style="z-index:5;">@await RenderSectionAsync("AdminLegend", false)</legend>
+                    <div class="px-1">
+                        @RenderBody()
+                    </div>
+                    
                 </fieldset>
             </form>
 
