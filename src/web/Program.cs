@@ -2,6 +2,7 @@ using GitStoreDotnet;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
@@ -37,6 +38,11 @@ builder.Logging.SetMinimumLevel(LogLevel.Debug);
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddGitFile();
+
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.All;
+});
 
 builder.Services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
 
@@ -90,6 +96,7 @@ if (!app.Environment.IsDevelopment())
     });
 }
 
+app.UseForwardedHeaders();
 app.UseSwanService();
 app.UseStatusCodePages();
 
