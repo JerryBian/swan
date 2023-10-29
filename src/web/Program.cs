@@ -41,10 +41,6 @@ builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddGitFile();
 
-builder.Services.AddHttpLogging(options =>
-{
-    options.LoggingFields = HttpLoggingFields.RequestPropertiesAndHeaders;
-});
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
@@ -82,7 +78,6 @@ WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.UseForwardedHeaders();
-app.UseHttpLogging();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler(exceptionHandlerApp =>
