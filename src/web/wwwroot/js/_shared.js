@@ -1,7 +1,13 @@
 function setActive(ele) {
     if (ele) {
-        if (!ele.classList.contains('active')) {
-            ele.classList.add('active');
+        if (typeof ele.forEach === 'function') {
+            ele.forEach(x => {
+                setActive(x);
+            });
+        } else {
+            if (!ele.classList.contains('active')) {
+                ele.classList.add('active');
+            }
         }
     }
 }

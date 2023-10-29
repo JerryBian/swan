@@ -4,7 +4,7 @@
 @import "../../../../node_modules/bootstrap/scss/bootstrap";
 /*@import "../../../../node_modules/bootswatch/dist/cyborg/bootswatch";*/
 
-#navbar {
+#navbar, .offcanvs-navbar {
     .active {
         background-color: $white;
         color: $primary-text-emphasis;

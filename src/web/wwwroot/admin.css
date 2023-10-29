@@ -20633,7 +20633,7 @@ textarea.form-control-lg {
   }
 }
 /*@import "../../../../node_modules/bootswatch/dist/cyborg/bootswatch";*/
-#navbar .active {
+#navbar .active, .offcanvs-navbar .active {
   background-color: #fff;
   color: #052c65;
   font-weight: 500;
