@@ -33,10 +33,10 @@
 
 @section AdminLegend {
     <div class="row">
-        <div class="col-3 text-truncate">
+        <div class="col-6 text-truncate">
             <span><i class="bi bi-list"></i> List of Tags</span>
         </div>
-        <div class="col-9 text-end">
+        <div class="col-6 text-end">
             <a class="btn btn-info" href="/admin/tag-add"><i class="bi bi-plus mx-1"></i> Add New Tag</a>
         </div>
     </div>
@@ -47,6 +47,6 @@
 
 @section Script{
     <script>
-        setActive(document.querySelector("#navHeading_tags"));
+        setActive(document.querySelectorAll("[data-nav-id=navHeading_tags]"));
     </script>
 }

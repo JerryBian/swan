@@ -144,6 +144,6 @@
             submitRequest("/admin/post-edit", { form: form, method: "POST", body: new URLSearchParams(formData), contentType: "application/x-www-form-urlencoded" });
         });
 
-        setActive(document.querySelector("#navHeading_posts"));
+        setActive(document.querySelectorAll("[data-nav-id=navHeading_posts]"));
     </script>
 }

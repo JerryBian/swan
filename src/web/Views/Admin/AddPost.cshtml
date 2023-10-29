@@ -75,10 +75,10 @@
 
 @section AdminLegend {
     <div class="row">
-        <div class="col-3 text-truncate">
+        <div class="col-6 text-truncate">
             <span><i class="bi bi-plus-circle"></i> New post</span>
         </div>
-        <div class="col-9 text-end">
+        <div class="col-6 text-end">
             <button type="submit" class="btn btn-success"><i class="bi bi-floppy mx-1"></i> Save Changes</button>
         </div>
     </div>
@@ -99,6 +99,6 @@
             submitRequest("/admin/post-add", { form: form, method: "PUT", body: new URLSearchParams(formData), contentType: "application/x-www-form-urlencoded" });
         });
 
-        setActive(document.querySelector("#navHeading_posts"));
+        setActive(document.querySelectorAll("[data-nav-id=navHeading_posts]"));
     </script>
 }

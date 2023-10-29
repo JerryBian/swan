@@ -67,6 +67,6 @@
             submitRequest("/admin/tag-add", { form: form, method: "PUT", body: new URLSearchParams(formData), contentType: "application/x-www-form-urlencoded" });
         });
 
-        setActive(document.querySelector("#navHeading_tags"));
+        setActive(document.querySelectorAll("[data-nav-id=navHeading_tags]"));
     </script>
 }
