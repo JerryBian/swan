@@ -25,12 +25,12 @@
                         @log.Level
                     </div>
                 </div>
-                <div class="my-1">
+                <div class="my-1 text-break">
                     @log.Message
                 </div>
                 @if (!string.IsNullOrEmpty(log.Error))
                 {
-                    <div class="text-danger font-monospace small">@log.Error</div>
+                    <div class="text-danger font-monospace small text-break">@log.Error</div>
                 }
             </div>
         }

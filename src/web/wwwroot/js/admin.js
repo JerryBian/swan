@@ -9,7 +9,7 @@
         lineNumbers: false,
         lineWrapping: true,
         maxHeight: "265px",
-        previewClass: "editor-preview",
+        previewClass: ["editor-preview", "post"],
         promptURLs: true,
         uploadImage: true,
         imageMaxSize: 1024 * 1024 * 20,
@@ -24,7 +24,7 @@
             sbOnUploaded: "成功上传 #image_name#"
         },
         errorCallback: function (err) {
-            showErrorMessageModal(err);
+            showErrorToast(err);
         },
         renderingConfig: {
             codeSyntaxHighlighting: true,
@@ -89,9 +89,10 @@ function submitRequest(url, option) {
             body: body
         }).then(response => response.json()).then(result => {
             if (!result.ok) {
-                //showErrorMessageModal(result.message);
+                showErrorToast(result.message);
                 formPostAction();
             } else {
+                showInfoToast("Submit successfully.");
                 if (result.redirectTo) {
                     window.location.href = result.redirectTo;
                 } else {
@@ -106,7 +107,7 @@ function submitRequest(url, option) {
                 option.postAction();
             }
         }).catch(error => {
-            //showErrorMessageModal(error);
+            showErrorToast(error);
             formPostAction();
         });
 }
