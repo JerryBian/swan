@@ -3,6 +3,9 @@
 @{
     Layout = "_LayoutPublic";
     ViewData["Title"] = "阅读";
+    ViewData["EnableSEO"] = bool.TrueString;
+    ViewData["Url"] = "/read";
+    ViewData["Description"] = "我的阅读";
 }
 
 <div data-bs-spy="scroll" data-bs-target="#archiveIndex" data-bs-smooth-scroll="true">
@@ -12,38 +15,21 @@
             <h5 class="ps-2 mb-3" id="year-@item.Key"><i class="bi bi-book"></i> @item.Key 年阅读</h5>
             @foreach (var item2 in item)
             {
-                <div class="mb-3 ps-2 pe-1 container-fluid">
+                var privateStype = item2.IsPublicToEveryOne() ? "" : "bg-warning-subtle";
+                <div class="mb-3 ps-2 pe-1 container-fluid @privateStype">
                     <div class="row">
                         <div class="col-md-2 text-truncate">
                             <span class="small text-muted"><i class="bi bi-caret-right"></i> @item2.CreatedAt.ToCnDate(true)</span>
                         </div>
-                        <div class="col-md-9 text-truncate">
-                            <i class="bi bi-hash small text-muted"></i>@item2.BookName
-                            @if (item2.Grade > 0)
-                            {
-                                <i class="bi bi-hand-thumbs-up-fill text-success"></i>
-                            }
-
-                            @if (item2.Grade < 0)
-                            {
-                                <i class="bi bi-hand-thumbs-down-fill text-dark"></i>
-                            }
-
-                            <span class="small text-muted fst-italic ms-3">
-                                @Html.Raw(item2.HtmlMetadata)
-                            </span>
-                        </div>
-                        <div class="col-md-1">
+                        <div class="col-md-10 text-truncate">
                             @if (!string.IsNullOrEmpty(item2.HtmlComment) || item2.BlogPosts.Any())
                             {
-                                <a class="text-reset" href="javascript:;" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-container="body" data-bs-placement="top" data-bs-content-id="comment-@item2.Id">
-                                    <i class="bi bi-chat-square-dots"></i></a>
+                                <a class="text-reset" role="button" href="javascript:;" onclick="showCommentModal(this)" data-comment-id="comment-@item2.Id">
+                                    <i class="bi bi-hash small text-muted"></i>@item2.BookName
+                                </a>
                                 <div class="d-none" id="comment-@item2.Id">
-                                    <h3 class="popover-header">
-                                        @item2.BookName
-                                    </h3>
-
-                                    <div class="popover-body">
+                                    <div><i class="bi bi-book"></i> @item2.BookName</div>
+                                    <div>
                                         @if (!string.IsNullOrEmpty(item2.HtmlComment))
                                         {
                                             @Html.Raw(item2.HtmlComment)
@@ -51,23 +37,41 @@
 
                                         @if (item2.BlogPosts.Any())
                                         {
-                                            <ul>
-                                                @foreach (var post in item2.BlogPosts)
-                                                {
-                                                    <li>
-                                                        <a href="@post.GetFullLink()" class="text-reset">@post.Title</a>
-                                                    </li>
-                                                }
-                                            </ul>
+                                            <div class="border border-secondary p-2 small">
+                                                <div class="mb-1">相关文章：</div>
+                                                <ul>
+                                                    @foreach (var post in item2.BlogPosts)
+                                                    {
+                                                        <li>
+                                                            <a href="@post.GetFullLink()" class="text-reset">@post.Title</a>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
                                         }
                                     </div>
                                 </div>
                             }
+                            else
+                            {
+                                <i class="bi bi-hash small text-muted"></i>@item2.BookName
+                            }
 
+                            @if (item2.Grade > 0)
+                            {
+                                <i class="bi bi-hand-thumbs-up text-success"></i>
+                            }
+
+                            @if (item2.Grade < 0)
+                            {
+                                <i class="bi bi-hand-thumbs-down text-dark"></i>
+                            }
+
+                            <span class="small text-muted fst-italic ms-3">
+                                @Html.Raw(item2.HtmlMetadata)
+                            </span>
                         </div>
                     </div>
-
-
                 </div>
             }
         </div>
@@ -85,9 +89,7 @@
         <div class="list-group">
             @foreach (var item in Model)
             {
-                <div class="list-group-item list-group-action text-muted">
-                    <a href="#year-@item.Key"><i class="bi bi-book"></i> @item.Key 年阅读</a>
-                </div>
+                <a href="#year-@item.Key" class="list-group-item list-group-action"><i class="bi bi-book"></i> @item.Key 年阅读</a>
             }
         </div>
     </div>
@@ -105,18 +107,17 @@
                 class: "text-reset"
             };
             anchors.add("h4, h5");
-
-            const list = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
-            list.map((el) => {
-                let opts = {
-                    animation: false,
-                }
-                if (el.hasAttribute('data-bs-content-id')) {
-                    opts.content = document.getElementById(el.getAttribute('data-bs-content-id')).innerHTML;
-                    opts.html = true;
-                }
-                new bootstrap.Popover(el, opts);
-            });
         });
+
+        function showCommentModal(ele) {
+            let commentId = ele.dataset.commentId;
+            let commentDiv = document.querySelector(`#${commentId}`);
+            if (commentDiv) {
+                let titleHtml = commentDiv.querySelector("div:nth-child(1)").innerHTML;
+                let bodyHtml = commentDiv.querySelector("div:nth-child(2)").innerHTML;
+
+                showModalDialog(titleHtml, bodyHtml);
+            }
+        }
     </script>
 }

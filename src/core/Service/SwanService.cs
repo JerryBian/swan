@@ -26,7 +26,7 @@ namespace Swan.Core.Service
             _cacheKeys = new ConcurrentDictionary<string, object>();
         }
 
-        public async Task<List<T>> FindAsync<T>(bool searchAdminStore, Predicate <T> wherePredicate = null) where T : SwanObject
+        public async Task<List<T>> FindAsync<T>(bool searchAdminStore, Predicate<T> wherePredicate = null) where T : SwanObject
         {
             await _asyncReaderWriterLock.EnterReadLockAsync();
 
@@ -154,7 +154,7 @@ namespace Swan.Core.Service
                 }
 
                 var val1 = prop.GetValue(value);
-                if (values.FirstOrDefault(x => prop.GetValue(x) == val1) != null)
+                if (values.FirstOrDefault(x => prop.GetValue(x).Equals(val1)) != null)
                 {
                     throw new Exception($"{prop.Name} with value {val1} already exists in {typeof(T).Name} list.");
                 }

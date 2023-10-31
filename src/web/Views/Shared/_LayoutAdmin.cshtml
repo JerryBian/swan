@@ -2,30 +2,100 @@
     Layout = "_Layout";
 }
 
+<nav class="navbar d-lg-none py-3 bg-light border-bottom">
+    <div class="container-fluid">
+        <div class="">
+            <a class="text-reset" href="javascript:;" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasResponsive"><i class="bi bi-three-dots"></i></a>
+        </div>
+        <div class="text-center text-truncate flex-grow-1">
+            <a href="/admin" class="text-reset text-decoration-none">Admin Zone</a>
+        </div>
+    </div>
+</nav>
+
+<div class="d-lg-none offcanvas-lg offcanvas-start offcanvs-navbar" data-bs-scroll="true" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Admin Zone</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#offcanvasNavbar" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <section class="d-grid mb-3">
+            <a href="/" class="btn btn-outline-dark btn-sm"><i class="bi bi-house-door"></i> Back to Home</a>
+        </section>
+        <section class="ps-2">
+            <div class="navHeading mb-2 fw-semibold text-truncate"><i class="bi bi-arrow-down-right-circle-fill me-1"></i> Objects</div>
+            <div class="mb-2 p-1 text-truncate" data-nav-id="navHeading_posts">
+                <a href="/admin/post-list" class="text-reset text-decoration-none d-block">
+                    <i class="bi bi-file-text mx-1"></i> Manage Posts
+                </a>
+            </div>
+            <div class="mb-2 p-1 text-truncate" data-nav-id="navHeading_tags">
+                <a href="/admin/tag-list" class="text-reset text-decoration-none d-block">
+                    <i class="bi bi-tags mx-1"></i> Manage Tags
+                </a>
+            </div>
+            <div class="mb-2 p-1 text-truncate" data-nav-id="navHeading_series">
+                <a href="/admin/series-list" class="text-reset text-decoration-none d-block">
+                    <i class="bi bi-bookmarks mx-1"></i> Manage Series
+                </a>
+            </div>
+            <div class="mb-2 p-1 text-truncate" data-nav-id="navHeading_reads">
+                <a href="/admin/read-list" class="text-reset text-decoration-none d-block">
+                    <i class="bi bi-book mx-1"></i> Manage Reads
+                </a>
+            </div>
+        </section>
+        <hr />
+        <section class="ps-2">
+            <div class="navHeading mb-2 fw-semibold text-truncate"><i class="bi bi-arrow-down-right-circle-fill me-1"></i> Eye Monitor</div>
+            <div class="mb-2 p-1 text-truncate" data-nav-id="navHeading_logs">
+                <a href="/admin/log" class="text-reset text-decoration-none d-block">
+                    <i class="bi bi-journals mx-1"></i> View Logs
+                </a>
+            </div>
+            <div class="mb-2 p-1 text-truncate" data-nav-id="navHeading_stats">
+                <a href="/admin/stat" class="text-reset text-decoration-none d-block">
+                    <i class="bi bi-soundwave mx-1"></i> View Stats
+                </a>
+            </div>
+        </section>
+        <hr />
+        <section class="ps-2">
+            <div class="d-grid text-truncate">
+                <a class="btn btn-outline-info btn-sm text-truncate" href="/logout"><i class="bi bi-box-arrow-right me-1"></i> Logout</a>
+            </div>
+        </section>
+    </div>
+    
+</div>
+
 <div class="container-fluid bg-light">
     <div class="row">
-        <div class="col-2 px-2 position-sticky vh-100 top-0 start-0 overflow-y-auto border-end" id="navbar">
+        <div class="col-2 d-none d-lg-block px-2 position-sticky vh-100 top-0 start-0 overflow-y-auto border-end" id="navbar">
             <div class="fs-5 my-4 text-center text-truncate">
-                <a href="/admin" class="text-reset text-decoration-none">Admin Zone</a>
+                <a href="/admin" class="text-reset text-decoration-none fw-bold">Admin Zone</a>
             </div>
+            <section class="d-grid mb-3">
+                <a href="/" class="btn btn-outline-dark btn-sm"><i class="bi bi-house-door"></i> Back to Home</a>
+            </section>
             <section class="ps-2">
                 <div class="navHeading mb-2 fw-semibold text-truncate"><i class="bi bi-arrow-down-right-circle-fill me-1"></i> Objects</div>
-                <div class="mb-2 p-1 text-truncate" id="navHeading_posts">
+                <div class="mb-2 p-1 text-truncate" data-nav-id="navHeading_posts">
                     <a href="/admin/post-list" class="text-reset text-decoration-none d-block">
                         <i class="bi bi-file-text mx-1"></i> Manage Posts
                     </a>
                 </div>
-                <div class="mb-2 p-1 text-truncate" id="navHeading_tags">
+                <div class="mb-2 p-1 text-truncate" data-nav-id="navHeading_tags">
                     <a href="/admin/tag-list" class="text-reset text-decoration-none d-block">
                         <i class="bi bi-tags mx-1"></i> Manage Tags
                     </a>
                 </div>
-                <div class="mb-2 p-1 text-truncate" id="navHeading_series">
+                <div class="mb-2 p-1 text-truncate" data-nav-id="navHeading_series">
                     <a href="/admin/series-list" class="text-reset text-decoration-none d-block">
                         <i class="bi bi-bookmarks mx-1"></i> Manage Series
                     </a>
                 </div>
-                <div class="mb-2 p-1 text-truncate" id="navHeading_reads">
+                <div class="mb-2 p-1 text-truncate" data-nav-id="navHeading_reads">
                     <a href="/admin/read-list" class="text-reset text-decoration-none d-block">
                         <i class="bi bi-book mx-1"></i> Manage Reads
                     </a>
@@ -34,12 +104,12 @@
             <hr />
             <section class="ps-2">
                 <div class="navHeading mb-2 fw-semibold text-truncate"><i class="bi bi-arrow-down-right-circle-fill me-1"></i> Eye Monitor</div>
-                <div class="mb-2 p-1 text-truncate" id="navHeading_logs">
+                <div class="mb-2 p-1 text-truncate" data-nav-id="navHeading_logs">
                     <a href="/admin/log" class="text-reset text-decoration-none d-block">
                         <i class="bi bi-journals mx-1"></i> View Logs
                     </a>
                 </div>
-                <div class="mb-2 p-1 text-truncate" id="navHeading_stats">
+                <div class="mb-2 p-1 text-truncate" data-nav-id="navHeading_stats">
                     <a href="/admin/stat" class="text-reset text-decoration-none d-block">
                         <i class="bi bi-soundwave mx-1"></i> View Stats
                     </a>
@@ -48,16 +118,19 @@
             <hr />
             <section class="ps-2">
                 <div class="d-grid text-truncate">
-                    <a class="btn btn-info btn-sm text-truncate" href="/logout"><i class="bi bi-box-arrow-right me-1"></i> Logout</a>
+                    <a class="btn btn-outline-info btn-sm text-truncate" href="/logout"><i class="bi bi-box-arrow-right me-1"></i> Logout</a>
                 </div>
             </section>
         </div>
-        <div class="col-10">
+
+        <div class="col-lg-10">
             <form id="adminForm" class="needs-validation" novalidate>
                 <fieldset>
-                    <legend class="p-3 position-sticky top-0 bg-light container-fluid" style="z-index:5;">@await RenderSectionAsync("AdminLegend", false)</legend>
-                    @RenderBody()
-                    <div class="row">@await RenderSectionAsync("AdminFormFooter", false)</div>
+                    <legend class="py-2 px-1 position-sticky top-0 bg-light container-fluid" style="z-index:5;">@await RenderSectionAsync("AdminLegend", false)</legend>
+                    <div class="px-1">
+                        @RenderBody()
+                    </div>
+                    
                 </fieldset>
             </form>
 

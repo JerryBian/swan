@@ -107,12 +107,12 @@ namespace Swan.Core.Service
                     var p = htmlDoc.DocumentNode.Descendants("p").FirstOrDefault(x => !string.IsNullOrEmpty(x.InnerText));
                     if (p != null)
                     {
-                        post.HtmlExcerpt = MarkdownHelper.ToHtml(p.InnerText);
+                        post.TextExcerpt = p.InnerText;
                     }
                 }
                 else
                 {
-                    post.HtmlExcerpt = MarkdownHelper.ToHtml(post.Excerpt);
+                    post.TextExcerpt = post.Excerpt;
                 }
 
                 post.HtmlContent = htmlDoc.DocumentNode.OuterHtml;
@@ -125,7 +125,7 @@ namespace Swan.Core.Service
                     {
                         post.BlogTags.Add(tag);
                         tag.BlogPosts.Add(post);
-                        tagSnippets.Add($"<span><a href=\"{tag.GetFullLink()}\" class=\"btn btn-sm active\"><i class=\"bi bi-tag\"></i> {tag.Name}</a></span>");
+                        tagSnippets.Add($"<span><a href=\"{tag.GetFullLink()}\" class=\"btn btn-outline-light btn-sm\"><i class=\"bi bi-tag\"></i> {tag.Name}</a></span>");
                     }
                 }
 
@@ -137,7 +137,7 @@ namespace Swan.Core.Service
                     {
                         post.BlogSeries = series;
                         series.BlogPosts.Add(post);
-                        seriesSnippet = $"<a href=\"{series.GetFullLink()}\" class=\"text-reset\"><i class=\"bi bi-bookmark\"></i> {series.Name}</a>";
+                        seriesSnippet = $"<a href=\"{series.GetFullLink()}\" class=\"btn btn-outline-light btn-sm\"><i class=\"bi bi-bookmark\"></i> {series.Name}</a>";
                     }
                 }
 
@@ -192,12 +192,12 @@ namespace Swan.Core.Service
                 }
             }
 
-            foreach(var read in ReadItems)
+            foreach (var read in ReadItems)
             {
                 var metadatas = new List<string>();
-                if(!string.IsNullOrEmpty(read.Author))
+                if (!string.IsNullOrEmpty(read.Author))
                 {
-                    if(!string.IsNullOrEmpty(read.AuthorCountry))
+                    if (!string.IsNullOrEmpty(read.AuthorCountry))
                     {
                         metadatas.Add($"({read.AuthorCountry}){read.Author}");
                     }
@@ -207,13 +207,22 @@ namespace Swan.Core.Service
                     }
                 }
 
-                if(!string.IsNullOrEmpty(read.Translator))
+                if (!string.IsNullOrEmpty(read.Translator))
                 {
                     metadatas.Add($"{read.Translator}(译)");
                 }
 
                 read.HtmlMetadata = string.Join("/", metadatas);
                 read.HtmlComment = MarkdownHelper.ToHtml(read.Comment);
+
+                foreach (var p in read.Posts)
+                {
+                    var post = Posts.FirstOrDefault(x => StringHelper.EqualsIgoreCase(x.Id, p));
+                    if (post != null)
+                    {
+                        read.BlogPosts.Add(post);
+                    }
+                }
             }
         }
     }

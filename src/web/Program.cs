@@ -1,5 +1,8 @@
 using GitStoreDotnet;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
@@ -10,11 +13,10 @@ using Swan.Core.Logger;
 using Swan.Core.Option;
 using Swan.Web.HostedServices;
 using Swan.Web.Middlewares;
+using System.Net;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
-
-//await DataHelper.RunAsync();
-//return;
+using static System.Net.Mime.MediaTypeNames;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables("ENV_");
@@ -24,16 +26,32 @@ builder.WebHost.UseShutdownTimeout(TimeSpan.FromMinutes(5));
 // Add services to the container.
 builder.Services.AddOptions<SwanOption>().BindConfiguration("swan");
 
+var assetLoc = builder.Configuration.GetValue<string>("AssetLocation");
+if (assetLoc != null)
+{
+    var dpFolder = Path.Combine(assetLoc, "dp", builder.Environment.EnvironmentName);
+    Directory.CreateDirectory(dpFolder);
+    builder.Services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(dpFolder))
+        .SetApplicationName($"APP_{builder.Environment.EnvironmentName}");
+}
+
 builder.Logging.SetMinimumLevel(LogLevel.Debug);
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddGitFile();
+
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Add(new IPNetwork(IPAddress.Parse("172.17.0.0"), 24));
+});
 
 builder.Services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
 
 builder.Services.AddMemoryCache();
 builder.Services.AddSwanService();
 
+builder.Services.AddHostedService<MonitorHostedService>();
 builder.Services.AddHostedService<GitFileHostedService>();
 builder.Services.AddHostedService<PageHitHostedService>();
 
@@ -58,9 +76,27 @@ builder.Services.AddControllersWithViews().AddJsonOptions(config =>
 WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseForwardedHeaders();
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler(exceptionHandlerApp =>
+    {
+        exceptionHandlerApp.Run(async context =>
+        {
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            context.Response.ContentType = Text.Plain;
+
+            var exceptionHandlerPathFeature =
+               context.Features.Get<IExceptionHandlerPathFeature>();
+            if (exceptionHandlerPathFeature != null)
+            {
+                var logger = context.RequestServices.GetService<ILogger<Program>>();
+                logger.LogError(exceptionHandlerPathFeature.Error, $"Access URL {exceptionHandlerPathFeature.Path} has error.");
+            }
+
+            await context.Response.WriteAsync("An error was happening.");
+        });
+    });
 }
 
 app.UseSwanService();

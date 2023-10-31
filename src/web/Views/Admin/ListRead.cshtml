@@ -1,32 +1,31 @@
 ﻿@inject ISwanService _service
 @{
     Layout = "_LayoutAdmin";
-
     var readItems = await _service.FindAsync<SwanRead>(true);
+    ViewData["Title"] = "List Reads :: Admin";
 }
 
-<div class="m-4 p-3 rounded-1 shadow-sm bg-white">
+<div class="my-4 py-3 rounded-1 shadow-sm bg-white">
     <div class="list-group list-group-flush">
         @foreach (var item in readItems)
         {
-            <div class="list-group-item container-fluid">
+            var privateStyle = item.IsPublicToEveryOne() ? "" : "bg-warning-subtle";
+            <div class="list-group-item container-fluid @privateStyle">
                 <div class="row">
-                    <div class="col-8 text-truncate">
-                        <a href="@item.GetFullLink()" class="text-secondary-emphasis">
+                    <div class="col-md-10 text-truncate  mb-1 ps-1">
+                        <a href="@item.GetFullLink()" class="text-secondary-emphasis text-decoration-none">
                             <i class="bi bi-book mx-1"></i> @item.BookName
                         </a>
+                        <span class="small text-muted">
+                            <i class="bi bi-calendar-date mx-1"></i> @item.CreatedAt.ToCnDate()
+                            <i class="bi bi-person-fill"></i> @item.Author
+                        </span>
                     </div>
-                    <div class="col-2 text-truncate small">
-                        <i class="bi bi-calendar-date mx-1"></i> @item.CreatedAt.ToCnDate()
+                    <div class="col-md-2 text-truncate small mb-1 d-grid">
+                        <a class="btn btn-outline-dark btn-sm px-4" href="/admin/read-edit/@item.Id">
+                            <i class="bi bi-pencil-square mx-1"></i> Edit this read
+                        </a>
                     </div>
-                    <div class="col-2 text-truncate small">
-                        <i class="bi bi-person-fill"></i> @item.Author
-                    </div>
-                </div>
-                <div class="mt-3">
-                    <a class="btn btn-success btn-sm px-4" href="/admin/read-edit/@item.Id">
-                        <i class="bi bi-pencil-square mx-1"></i> Edit this read
-                    </a>
                 </div>
             </div>
         }
@@ -35,11 +34,11 @@
 
 @section AdminLegend {
     <div class="row">
-        <div class="col-3 text-truncate">
+        <div class="col-6 text-truncate">
             <span><i class="bi bi-list"></i> List of Reads</span>
         </div>
-        <div class="col-9 text-end">
-            <a class="btn btn-info" href="/admin/read-add"><i class="bi bi-plus mx-1"></i> Add New Read</a>
+        <div class="col-6 text-end">
+            <a class="btn btn-success btn-sm" href="/admin/read-add"><i class="bi bi-plus mx-1"></i> Add New Read</a>
         </div>
     </div>
     <div class="small text-muted">
@@ -50,6 +49,6 @@
 
 @section Script{
     <script>
-        setActive(document.querySelector("#navHeading_reads"));
+        setActive(document.querySelectorAll("[data-nav-id=navHeading_reads]"));
     </script>
 }

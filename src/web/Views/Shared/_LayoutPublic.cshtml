@@ -1,9 +1,10 @@
 ﻿@inject IOptions<SwanOption> _option
+@inject IHostEnvironment _env
 @{
     Layout = "_Layout";
 }
 
-<nav class="navbar navbar-expand bg-light border-bottom">
+<nav class="navbar navbar-expand bg-body-tertiary">
     <div class="container">
         <a class="navbar-brand" href="/">
             @_option.Value.Title
@@ -28,10 +29,10 @@
     </div>
 </nav>
 
-<div class="bg-light py-4">
+<div class="bg-light">
     <div class="container">
         <div class="row">
-            <main class="col-md-9 bg-white px-3 py-4 rounded shadow">@RenderBody()</main>
+            <main class="col-md-9 bg-white px-3 py-4 rounded shadow-sm">@RenderBody()</main>
             <aside class="col-3 small d-none d-md-block text-muted" id="aside">
                 @await RenderSectionAsync("Aside", false)
             </aside>
@@ -45,10 +46,26 @@
 
 @section Style {
     <link href="~/style.min.css" rel="stylesheet" asp-append-version="true" />
+    <link rel="alternate" type="application/rss+xml" title="Post RSS" href="/post/rss">
+
+    @await RenderSectionAsync("Style", false)
 }
 
 @section Script {
     <script src="~/script.min.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Script", false)
+
+    @if (_env.IsProduction() && !Context.IsAuthorized())
+    {
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=@_option.Value.GTagId"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() { dataLayer.push(arguments); }
+            gtag('js', new Date());
+
+            gtag('config', '@_option.Value.GTagId');
+        </script>
+    }
 }

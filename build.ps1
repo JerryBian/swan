@@ -6,7 +6,7 @@ ncu -u
 npm install
 
 Copy-Item -Path $(Join-Path $NodeModulesLoc bootstrap-icons font fonts *) `
-    -Destination $(Join-Path $WWWRootLoc fonts)
+    -Destination $(Join-Path $WWWRootLoc fonts) -Force
 Write-Output "[all]: Fonts copied"
 
 npx sass $(Join-Path $WWWRootLoc css style.scss) $(Join-Path $WWWRootLoc style.css)
