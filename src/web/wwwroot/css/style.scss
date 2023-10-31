@@ -49,6 +49,7 @@ $list-group-item-padding-x: 1.0rem;
     a {
         text-decoration-line: none;
         color: inherit;
+        border-left: 0.8px double transparent;
 
         &:hover {
             border-left: 0.8px double var(--bs-primary-text-emphasis);

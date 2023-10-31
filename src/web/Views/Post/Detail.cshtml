@@ -27,7 +27,7 @@
             <div class="list-group">
                 @foreach (var item in Model.RecommendPostsByTag)
                 {
-                    <a href="@item.GetFullLink()" class="list-group-item list-group-action text-muted">
+                    <a href="@item.GetFullLink()" class="list-group-item list-group-action">
                         <i class="bi bi-hash"></i>@item.Title
                     </a>
                 }
@@ -46,13 +46,13 @@
                 {
                     if (item.Id == Model.Id)
                     {
-                        <div class="list-group-item text-muted">
+                        <div class="list-group-item">
                             <i class="bi bi-hash"></i>@item.Title
                         </div>
                     }
                     else
                     {
-                        <a href="@item.GetFullLink()" class="list-group-item list-group-action text-muted">
+                        <a href="@item.GetFullLink()" class="list-group-item list-group-action">
                             <i class="bi bi-hash"></i>@item.Title
                         </a>
                     }
@@ -69,15 +69,15 @@
         <div class="list-group">
             @if (Model.PreviousPost != null)
             {
-                <a href="@Model.PreviousPost.GetFullLink()" class="list-group-item list-group-action text-muted"><i class="bi bi-slash"></i> 前一篇： @Model.PreviousPost.Title</a>
+                <a href="@Model.PreviousPost.GetFullLink()" class="list-group-item list-group-action"><i class="bi bi-arrow-right-short"></i> 前一篇： @Model.PreviousPost.Title</a>
             }
 
             @if (Model.NextPost != null)
             {
-                <a href="@Model.NextPost.GetFullLink()" class="list-group-item list-group-action text-muted"><i class="bi bi-slash"></i> 后一篇： @Model.NextPost.Title</a>
+                <a href="@Model.NextPost.GetFullLink()" class="list-group-item list-group-action"><i class="bi bi-arrow-right-short"></i> 后一篇： @Model.NextPost.Title</a>
             }
 
-            <div class="list-group-item text-muted"><i class="bi bi-slash"></i> 最后修改于：@Model.LastUpdatedAt</div>
+            <div class="list-group-item"><i class="bi bi-arrow-right-short"></i> 最后修改于：@Model.LastUpdatedAt.ToCnDate()</div>
         </div>
     </div>
 }
@@ -109,4 +109,5 @@
             anchors.add("h4, h5");
         });
     </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 }
