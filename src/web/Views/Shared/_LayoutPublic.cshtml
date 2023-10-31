@@ -4,7 +4,7 @@
     Layout = "_Layout";
 }
 
-<nav class="navbar navbar-expand bg-light border-bottom">
+<nav class="navbar navbar-expand bg-body-tertiary">
     <div class="container">
         <a class="navbar-brand" href="/">
             @_option.Value.Title
@@ -32,7 +32,7 @@
 <div class="bg-light py-4">
     <div class="container">
         <div class="row">
-            <main class="col-md-9 bg-white px-3 py-4 rounded shadow">@RenderBody()</main>
+            <main class="col-md-9 bg-white px-3 py-4 rounded shadow-sm">@RenderBody()</main>
             <aside class="col-3 small d-none d-md-block text-muted" id="aside">
                 @await RenderSectionAsync("Aside", false)
             </aside>

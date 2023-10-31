@@ -125,7 +125,7 @@ namespace Swan.Core.Service
                     {
                         post.BlogTags.Add(tag);
                         tag.BlogPosts.Add(post);
-                        tagSnippets.Add($"<span><a href=\"{tag.GetFullLink()}\" class=\"btn btn-sm active\"><i class=\"bi bi-tag\"></i> {tag.Name}</a></span>");
+                        tagSnippets.Add($"<span><a href=\"{tag.GetFullLink()}\" class=\"btn btn-outline-light btn-sm\"><i class=\"bi bi-tag\"></i> {tag.Name}</a></span>");
                     }
                 }
 
@@ -137,7 +137,7 @@ namespace Swan.Core.Service
                     {
                         post.BlogSeries = series;
                         series.BlogPosts.Add(post);
-                        seriesSnippet = $"<a href=\"{series.GetFullLink()}\" class=\"text-reset\"><i class=\"bi bi-bookmark\"></i> {series.Name}</a>";
+                        seriesSnippet = $"<a href=\"{series.GetFullLink()}\" class=\"btn btn-outline-light btn-sm\"><i class=\"bi bi-bookmark\"></i> {series.Name}</a>";
                     }
                 }
 

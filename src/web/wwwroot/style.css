@@ -12660,7 +12660,7 @@ textarea.form-control-lg {
 
 .navbar {
   --bs-navbar-padding-x: 0;
-  --bs-navbar-padding-y: 0.85rem;
+  --bs-navbar-padding-y: 0.65rem;
   --bs-navbar-color: rgba(var(--bs-emphasis-color-rgb), 0.65);
   --bs-navbar-hover-color: rgba(var(--bs-emphasis-color-rgb), 0.8);
   --bs-navbar-disabled-color: rgba(var(--bs-emphasis-color-rgb), 0.3);
@@ -13736,7 +13736,7 @@ textarea.form-control-lg {
   --bs-list-group-border-color: var(--bs-border-color);
   --bs-list-group-border-width: var(--bs-border-width);
   --bs-list-group-border-radius: var(--bs-border-radius);
-  --bs-list-group-item-padding-x: 1.5rem;
+  --bs-list-group-item-padding-x: 1rem;
   --bs-list-group-item-padding-y: 1rem;
   --bs-list-group-action-color: var(--bs-secondary-color);
   --bs-list-group-action-hover-color: var(--bs-emphasis-color);
@@ -20845,6 +20845,14 @@ thead th {
 :root {
   --bs-primary-text-emphasis: #392e4a;
   --bs-code-color: #1B1464;
+  --bs-body-color: black;
+}
+
+.navbar .active {
+  border-bottom-color: #212529;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-radius: 0 !important;
 }
 
 @keyframes blinker {
@@ -20863,21 +20871,25 @@ thead th {
 .card {
   border: none;
   background-color: transparent !important;
+  box-shadow: none !important;
 }
 .card * {
   border: none;
   background-color: transparent !important;
+  box-shadow: none !important;
 }
 .card a {
   text-decoration-line: none;
   color: inherit;
 }
 .card a:hover {
-  filter: brightness(1.8);
+  border-left: 0.8px double var(--bs-primary-text-emphasis);
+  border-radius: 0;
 }
 .card a.active {
-  border-bottom: 1px dashed var(--bs-primary-text-emphasis);
+  border-bottom: 0.8px double var(--bs-primary-text-emphasis);
   padding-bottom: 0.25rem;
+  border-radius: 0;
 }
 .card .list-group-item {
   padding-top: 0.5rem;
