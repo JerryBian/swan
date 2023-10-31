@@ -8,7 +8,7 @@
     @foreach (var item in Model)
     {
         <div class="pb-2 mb-2 pt-3 border-bottom">
-            <h5 class="ps-2 mb-3" id="link-@item.Link"><i class="bi bi-bookmark"></i> @item.Name</h5>
+            <h5 class="ps-2 mb-3" id="link-@item.Link"><span data-bs-toggle="tooltip" data-bs-title="@item.Description"><i class="bi bi-bookmark"></i> @item.Name</span></h5>
             @foreach (var item2 in item.BlogPosts.OrderByDescending(x => x.PublishDate))
             {
                 var privateStype = item.IsPublicToEveryOne() ? "" : "bg-warning-subtle";
@@ -34,9 +34,7 @@
         <div class="list-group">
             @foreach (var item in Model)
             {
-                <div class="list-group-item list-group-action text-muted">
-                    <a href="#link-@item.Link"><i class="bi bi-bookmark"></i> @item.Name</a>
-                </div>
+                <a href="#link-@item.Link" class="list-group-item list-group-action"><i class="bi bi-bookmark"></i> @item.Name</a>
             }
         </div>
     </div>
@@ -55,5 +53,8 @@
             };
             anchors.add("h4, h5");
         });
+
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
     </script>
 }

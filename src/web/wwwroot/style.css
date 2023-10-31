@@ -20874,18 +20874,16 @@ thead th {
   background-color: transparent !important;
   box-shadow: none !important;
 }
+.card .list-group {
+  --bs-list-group-active-color: inherit;
+}
 .card a {
   text-decoration-line: none;
   color: inherit;
   border-left: 0.8px double transparent;
 }
-.card a:hover {
+.card a:hover, .card a.active {
   border-left: 0.8px double var(--bs-primary-text-emphasis);
-  border-radius: 0;
-}
-.card a.active {
-  border-bottom: 0.8px double var(--bs-primary-text-emphasis);
-  padding-bottom: 0.25rem;
   border-radius: 0;
 }
 .card .list-group-item {

@@ -45,20 +45,17 @@ $list-group-item-padding-x: 1.0rem;
         box-shadow: none !important;
     }
 
+    .list-group {
+        --bs-list-group-active-color: inherit;
+    }
 
     a {
         text-decoration-line: none;
         color: inherit;
         border-left: 0.8px double transparent;
 
-        &:hover {
+        &:hover, &.active {
             border-left: 0.8px double var(--bs-primary-text-emphasis);
-            border-radius: 0;
-        }
-
-        &.active {
-            border-bottom: 0.8px double var(--bs-primary-text-emphasis);
-            padding-bottom: 0.25rem;
             border-radius: 0;
         }
     }
