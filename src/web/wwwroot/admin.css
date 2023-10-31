@@ -20637,6 +20637,7 @@ textarea.form-control-lg {
   background-color: #fff;
   color: #052c65;
   font-weight: 500;
+  border-left: 1px solid #3c4242;
 }
 
 .navHeading {

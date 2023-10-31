@@ -43,5 +43,7 @@ namespace Swan.Core.Model
         #endregion
 
         public override string GetGitStorePath() => "obj/read.json";
+
+        public override string GetFullLink() => $"/read#link-{Id}";
     }
 }

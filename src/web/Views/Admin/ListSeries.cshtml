@@ -9,22 +9,20 @@
     <div class="list-group list-group-flush">
         @foreach (var item in allSeries)
         {
-            <div class="list-group-item container-fluid">
+            var privateStyle = item.IsPublicToEveryOne() ? "" : "bg-warning-subtle";
+            <div class="list-group-item container-fluid @privateStyle">
                 <div class="row">
-                    <div class="col-11 text-truncate">
-                        <a href="@item.GetFullLink()" class="text-secondary-emphasis">
+                    <div class="col-md-10 text-truncate mb-1 ps-1">
+                        <a href="@item.GetFullLink()" class="text-secondary-emphasis text-decoration-none">
                             <i class="bi bi-bookmark mx-1"></i> @item.Name
                         </a>
-                        <span class="fst-italic small text-muted ms-2">(@item.BlogPosts.Count posts)</span>
+                        <span class="fst-italic small text-muted ms-2">(@item.BlogPosts.Count posts, @item.BlogPosts.Sum(x => x.PageStat.Hit) hits)</span>
                     </div>
-                    <div class="col-1 text-truncate small">
-                        <i class="bi bi-bar-chart-line"></i> @item.BlogPosts.Sum(x => x.PageStat.Hit)
+                    <div class="col-md-2 text-truncate small mb-1 d-grid">
+                        <a class="btn btn-outline-dark btn-sm px-4" href="/admin/series-edit/@item.Id">
+                            <i class="bi bi-pencil-square mx-1"></i> Edit this series
+                        </a>
                     </div>
-                </div>
-                <div class="mt-3">
-                    <a class="btn btn-success btn-sm px-4" href="/admin/series-edit/@item.Id">
-                        <i class="bi bi-pencil-square mx-1"></i> Edit this series
-                    </a>
                 </div>
             </div>
         }
@@ -33,11 +31,11 @@
 
 @section AdminLegend {
     <div class="row">
-        <div class="col-3 text-truncate">
+        <div class="col-6 text-truncate">
             <span><i class="bi bi-list"></i> List of Series</span>
         </div>
-        <div class="col-9 text-end">
-            <a class="btn btn-info" href="/admin/series-add"><i class="bi bi-plus mx-1"></i> Add New Series</a>
+        <div class="col-6 text-end">
+            <a class="btn btn-success btn-sm" href="/admin/series-add"><i class="bi bi-plus mx-1"></i> Add New Series</a>
         </div>
     </div>
     <div class="small text-muted">

@@ -9,24 +9,23 @@
     <div class="list-group list-group-flush">
         @foreach (var item in readItems)
         {
-            <div class="list-group-item container-fluid">
+            var privateStyle = item.IsPublicToEveryOne() ? "" : "bg-warning-subtle";
+            <div class="list-group-item container-fluid @privateStyle">
                 <div class="row">
-                    <div class="col-8 text-truncate">
-                        <a href="@item.GetFullLink()" class="text-secondary-emphasis">
+                    <div class="col-md-10 text-truncate  mb-1 ps-1">
+                        <a href="@item.GetFullLink()" class="text-secondary-emphasis text-decoration-none">
                             <i class="bi bi-book mx-1"></i> @item.BookName
                         </a>
+                        <span class="small text-muted">
+                            <i class="bi bi-calendar-date mx-1"></i> @item.CreatedAt.ToCnDate()
+                            <i class="bi bi-person-fill"></i> @item.Author
+                        </span>
                     </div>
-                    <div class="col-2 text-truncate small">
-                        <i class="bi bi-calendar-date mx-1"></i> @item.CreatedAt.ToCnDate()
+                    <div class="col-md-2 text-truncate small mb-1 d-grid">
+                        <a class="btn btn-outline-dark btn-sm px-4" href="/admin/read-edit/@item.Id">
+                            <i class="bi bi-pencil-square mx-1"></i> Edit this read
+                        </a>
                     </div>
-                    <div class="col-2 text-truncate small">
-                        <i class="bi bi-person-fill"></i> @item.Author
-                    </div>
-                </div>
-                <div class="mt-3">
-                    <a class="btn btn-success btn-sm px-4" href="/admin/read-edit/@item.Id">
-                        <i class="bi bi-pencil-square mx-1"></i> Edit this read
-                    </a>
                 </div>
             </div>
         }
@@ -39,7 +38,7 @@
             <span><i class="bi bi-list"></i> List of Reads</span>
         </div>
         <div class="col-6 text-end">
-            <a class="btn btn-info" href="/admin/read-add"><i class="bi bi-plus mx-1"></i> Add New Read</a>
+            <a class="btn btn-success btn-sm" href="/admin/read-add"><i class="bi bi-plus mx-1"></i> Add New Read</a>
         </div>
     </div>
     <div class="small text-muted">

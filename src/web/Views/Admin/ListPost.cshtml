@@ -15,7 +15,7 @@
                 <div class="container-fluid px-0">
                     <div class="row">
                         <div class="col-md-10 text-truncate ps-1 mb-1">
-                            <a href="@item.GetFullLink()" class="text-secondary-emphasis">
+                            <a href="@item.GetFullLink()" class="text-secondary-emphasis text-decoration-none">
                                 <i class="bi bi-file-text mx-1"></i> @item.Title
                             </a>
                         </div>
@@ -28,9 +28,6 @@
                     </div>
                 </div>
                 @Html.Raw(item.HtmlMetadata2)
-                <div class="mt-2">
-                    @Html.Raw(item.HtmlExcerpt)
-                </div>
             </div>
         }
     </div>
@@ -42,7 +39,7 @@
             <span><i class="bi bi-list"></i> List of Posts</span>
         </div>
         <div class="col-6 text-end">
-            <a class="btn btn-success" href="/admin/post-add"><i class="bi bi-plus mx-1"></i> Add New Post</a>
+            <a class="btn btn-success btn-sm" href="/admin/post-add"><i class="bi bi-plus mx-1"></i> Add New Post</a>
         </div>
     </div>
     <div class="small text-muted">

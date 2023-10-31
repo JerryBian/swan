@@ -22,7 +22,7 @@ function showInfoToast(message) {
 function showToast(title, headerClass, message) {
     let id = makeId();
     let toast = `<div class="toast-container position-fixed bottom-0 end-0 p-3 ">
-  <div id="${id}" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+  <div id="${id}" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="30000">
     <div class="toast-header ${headerClass}">
       <i class="bi bi-bell me-2"></i>
       <strong class="me-auto">${title}</strong>
