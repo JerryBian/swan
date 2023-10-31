@@ -21,28 +21,13 @@
                         <div class="col-md-2 text-truncate">
                             <span class="small text-muted"><i class="bi bi-caret-right"></i> @item2.CreatedAt.ToCnDate(true)</span>
                         </div>
-                        <div class="col-md-9 text-truncate">
-                            <i class="bi bi-hash small text-muted"></i>@item2.BookName
-                            @if (item2.Grade > 0)
-                            {
-                                <i class="bi bi-hand-thumbs-up-fill text-success"></i>
-                            }
-
-                            @if (item2.Grade < 0)
-                            {
-                                <i class="bi bi-hand-thumbs-down-fill text-dark"></i>
-                            }
-
-                            <span class="small text-muted fst-italic ms-3">
-                                @Html.Raw(item2.HtmlMetadata)
-                            </span>
-                        </div>
-                        <div class="col-md-1">
+                        <div class="col-md-10 text-truncate">
                             @if (!string.IsNullOrEmpty(item2.HtmlComment) || item2.BlogPosts.Any())
                             {
-                                <a class="text-reset" tabindex="0" role="button" href="javascript:;" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-container="body" data-bs-placement="top" data-bs-content-id="comment-@item2.Id">
-                                    <i class="bi bi-chat-square-dots"></i></a>
-                                <div class="d-none" id="comment-@item2.Id">
+                                <a class="text-reset" tabindex="0" role="button" href="javascript:;" data-bs-trigger="focus" data-bs-toggle="popover" data-bs-container="body" data-bs-placement="top" data-bs-content-id="comment-@item2.Id">
+                                    <i class="bi bi-hash small text-muted"></i>@item2.BookName
+                                </a>
+                                <div class="d-none bg-light" id="comment-@item2.Id">
                                     <h3 class="popover-header">
                                         @item2.BookName
                                     </h3>
@@ -67,7 +52,24 @@
                                     </div>
                                 </div>
                             }
+                            else
+                            {
+                                <i class="bi bi-hash small text-muted"></i>@item2.BookName
+                            }
 
+                            @if (item2.Grade > 0)
+                            {
+                                <i class="bi bi-hand-thumbs-up text-success"></i>
+                            }
+
+                            @if (item2.Grade < 0)
+                            {
+                                <i class="bi bi-hand-thumbs-down text-dark"></i>
+                            }
+
+                            <span class="small text-muted fst-italic ms-3">
+                                @Html.Raw(item2.HtmlMetadata)
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -87,9 +89,7 @@
         <div class="list-group">
             @foreach (var item in Model)
             {
-                <div class="list-group-item list-group-action text-muted">
-                    <a href="#year-@item.Key"><i class="bi bi-book"></i> @item.Key 年阅读</a>
-                </div>
+                <a href="#year-@item.Key" class="list-group-item list-group-action"><i class="bi bi-book"></i> @item.Key 年阅读</a>
             }
         </div>
     </div>
@@ -120,5 +120,7 @@
                 new bootstrap.Popover(el, opts);
             });
         });
+
+        showInfoToast("Hello Mobile.");
     </script>
 }

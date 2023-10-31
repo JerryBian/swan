@@ -14576,7 +14576,7 @@ textarea.form-control-lg {
 
 .popover {
   --bs-popover-zindex: 1070;
-  --bs-popover-max-width: 276px;
+  --bs-popover-max-width: 480px;
   --bs-popover-font-size: 0.875rem;
   --bs-popover-bg: var(--bs-body-bg);
   --bs-popover-border-width: var(--bs-border-width);
@@ -20856,6 +20856,10 @@ thead th {
     opacity: 0;
   }
 }
+.popover {
+  overflow: auto;
+}
+
 .popover-header {
   background-color: transparent;
 }

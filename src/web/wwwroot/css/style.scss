@@ -2,6 +2,7 @@
 
 $navbar-padding-y: 0.65rem;
 $list-group-item-padding-x: 1.0rem;
+$popover-max-width: 480px;
 
 @import "../../../../node_modules/bootswatch/dist/zephyr/variables";
 @import "../../../../node_modules/bootstrap/scss/bootstrap";
@@ -24,6 +25,10 @@ $list-group-item-padding-x: 1.0rem;
     50% {
         opacity: 0;
     }
+}
+
+.popover {
+    overflow: auto;
 }
 
 .popover-header {
