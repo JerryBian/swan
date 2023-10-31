@@ -24,15 +24,12 @@
                         <div class="col-md-10 text-truncate">
                             @if (!string.IsNullOrEmpty(item2.HtmlComment) || item2.BlogPosts.Any())
                             {
-                                <a class="text-reset" tabindex="0" role="button" href="javascript:;" data-bs-trigger="focus" data-bs-toggle="popover" data-bs-container="body" data-bs-placement="top" data-bs-content-id="comment-@item2.Id">
+                                <a class="text-reset" role="button" href="javascript:;" onclick="showCommentModal(this)" data-comment-id="comment-@item2.Id">
                                     <i class="bi bi-hash small text-muted"></i>@item2.BookName
                                 </a>
-                                <div class="d-none bg-light" id="comment-@item2.Id">
-                                    <h3 class="popover-header">
-                                        @item2.BookName
-                                    </h3>
-
-                                    <div class="popover-body">
+                                <div class="d-none" id="comment-@item2.Id">
+                                    <div><i class="bi bi-book"></i> @item2.BookName</div>
+                                    <div>
                                         @if (!string.IsNullOrEmpty(item2.HtmlComment))
                                         {
                                             @Html.Raw(item2.HtmlComment)
@@ -40,14 +37,17 @@
 
                                         @if (item2.BlogPosts.Any())
                                         {
-                                            <ul>
-                                                @foreach (var post in item2.BlogPosts)
-                                                {
-                                                    <li>
-                                                        <a href="@post.GetFullLink()" class="text-reset">@post.Title</a>
-                                                    </li>
-                                                }
-                                            </ul>
+                                            <div class="border border-secondary p-2 small">
+                                                <div class="mb-1">相关文章：</div>
+                                                <ul>
+                                                    @foreach (var post in item2.BlogPosts)
+                                                    {
+                                                        <li>
+                                                            <a href="@post.GetFullLink()" class="text-reset">@post.Title</a>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
                                         }
                                     </div>
                                 </div>
@@ -107,20 +107,17 @@
                 class: "text-reset"
             };
             anchors.add("h4, h5");
-
-            const list = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
-            list.map((el) => {
-                let opts = {
-                    animation: false,
-                }
-                if (el.hasAttribute('data-bs-content-id')) {
-                    opts.content = document.getElementById(el.getAttribute('data-bs-content-id')).innerHTML;
-                    opts.html = true;
-                }
-                new bootstrap.Popover(el, opts);
-            });
         });
 
-        showInfoToast("Hello Mobile.");
+        function showCommentModal(ele) {
+            let commentId = ele.dataset.commentId;
+            let commentDiv = document.querySelector(`#${commentId}`);
+            if (commentDiv) {
+                let titleHtml = commentDiv.querySelector("div:nth-child(1)").innerHTML;
+                let bodyHtml = commentDiv.querySelector("div:nth-child(2)").innerHTML;
+
+                showModalDialog(titleHtml, bodyHtml);
+            }
+        }
     </script>
 }

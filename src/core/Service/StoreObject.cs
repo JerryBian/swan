@@ -214,6 +214,15 @@ namespace Swan.Core.Service
 
                 read.HtmlMetadata = string.Join("/", metadatas);
                 read.HtmlComment = MarkdownHelper.ToHtml(read.Comment);
+
+                foreach(var p in read.Posts)
+                {
+                    var post = Posts.FirstOrDefault(x => StringHelper.EqualsIgoreCase(x.Id, p));
+                    if(post != null)
+                    {
+                        read.BlogPosts.Add(post);
+                    }
+                }
             }
         }
     }

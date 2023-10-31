@@ -12,6 +12,27 @@ function setActive(ele) {
     }
 }
 
+function showModalDialog(title, body) {
+    let id = makeId();
+    let dialog = `<div class="modal" tabindex="-1" id="${id}">
+  <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-fullscreen-md-down">
+    <div class="modal-content">
+      <div class="modal-header border-bottom">
+        <div class="modal-title fs-5">${title}</div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body post">
+        ${body}
+      </div>
+    </div>
+  </div>
+</div>`;
+    let temp = document.querySelector('#temp');
+    temp.innerHTML = dialog;
+    const modal = bootstrap.Modal.getOrCreateInstance(document.querySelector(`#${id}`));
+    modal.show();
+}
+
 function showErrorToast(message) {
     showToast("Error", "text-bg-danger", message);
 }
