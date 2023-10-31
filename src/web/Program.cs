@@ -2,7 +2,6 @@ using GitStoreDotnet;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
@@ -28,7 +27,7 @@ builder.WebHost.UseShutdownTimeout(TimeSpan.FromMinutes(5));
 builder.Services.AddOptions<SwanOption>().BindConfiguration("swan");
 
 var assetLoc = builder.Configuration.GetValue<string>("AssetLocation");
-if(assetLoc != null)
+if (assetLoc != null)
 {
     var dpFolder = Path.Combine(assetLoc, "dp", builder.Environment.EnvironmentName);
     Directory.CreateDirectory(dpFolder);

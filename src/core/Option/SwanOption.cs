@@ -28,5 +28,7 @@
         public string GTagId { get; set; }
 
         public string BaseUrl { get; set; }
+
+        public string ContactEmail { get; set; }
     }
 }

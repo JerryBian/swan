@@ -13,9 +13,9 @@ namespace Swan.Web.Middlewares
         private readonly ILogger<RequestSniffMiddleware> _logger;
 
         public RequestSniffMiddleware(
-            RequestDelegate next, 
-            ISwanStore swanStore, 
-            ISwanService swanService, 
+            RequestDelegate next,
+            ISwanStore swanStore,
+            ISwanService swanService,
             ILogger<RequestSniffMiddleware> logger)
         {
             _next = next;
@@ -26,7 +26,7 @@ namespace Swan.Web.Middlewares
 
         public async Task InvokeAsync(HttpContext context)
         {
-            if(context.IsAuthorized())
+            if (context.IsAuthorized())
             {
                 _logger.LogInformation($"Admin Request => URL: {context.Request.GetDisplayUrl()}, IP: {context.GetIpAddress()}, Method: {context.Request.Method}");
             }

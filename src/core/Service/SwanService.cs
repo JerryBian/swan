@@ -26,7 +26,7 @@ namespace Swan.Core.Service
             _cacheKeys = new ConcurrentDictionary<string, object>();
         }
 
-        public async Task<List<T>> FindAsync<T>(bool searchAdminStore, Predicate <T> wherePredicate = null) where T : SwanObject
+        public async Task<List<T>> FindAsync<T>(bool searchAdminStore, Predicate<T> wherePredicate = null) where T : SwanObject
         {
             await _asyncReaderWriterLock.EnterReadLockAsync();
 

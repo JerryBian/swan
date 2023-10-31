@@ -9,11 +9,11 @@ namespace Swan.Core.Service
 
         Task DeleteAsync<T>(string id) where T : SwanObject;
 
-        Task<List<T>> FindAsync<T>(bool searchAdminStore, Predicate <T> wherePredicate = null) where T : SwanObject;
+        Task<List<T>> FindAsync<T>(bool searchAdminStore, Predicate<T> wherePredicate = null) where T : SwanObject;
 
         Task<List<T>> FindAsync<T>(HttpContext httpContext, Predicate<T> wherePredicate = null) where T : SwanObject;
 
-        Task<T> FindFirstOrDefaultAsync<T>(bool searchAdminStore, Predicate <T> predicate = null) where T : SwanObject;
+        Task<T> FindFirstOrDefaultAsync<T>(bool searchAdminStore, Predicate<T> predicate = null) where T : SwanObject;
 
         Task<T> FindFirstOrDefaultAsync<T>(HttpContext context, Predicate<T> predicate = null) where T : SwanObject;
 

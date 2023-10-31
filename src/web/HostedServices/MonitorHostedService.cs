@@ -22,13 +22,13 @@ namespace Swan.Web.HostedServices
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            while(!stoppingToken.IsCancellationRequested)
+            while (!stoppingToken.IsCancellationRequested)
             {
                 await Task.Delay(TimeSpan.FromMinutes(10), stoppingToken).OkForCancel();
 
-                if(!stoppingToken.IsCancellationRequested)
+                if (!stoppingToken.IsCancellationRequested)
                 {
-                    if(DateTime.Now - _startAt > TimeSpan.FromDays(3) && !_hostEnvironment.IsProduction())
+                    if (DateTime.Now - _startAt > TimeSpan.FromDays(3) && !_hostEnvironment.IsProduction())
                     {
                         _hostApplicationLifetime.StopApplication();
                         return;

@@ -19,7 +19,7 @@ namespace Swan.Core.Model
         public string GetLogClassName()
         {
             var name = string.Empty;
-            if(Level == LogLevel.Warning.ToString())
+            if (Level == LogLevel.Warning.ToString())
             {
                 name = "text-bg-warning";
             }

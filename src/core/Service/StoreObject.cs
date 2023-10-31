@@ -192,12 +192,12 @@ namespace Swan.Core.Service
                 }
             }
 
-            foreach(var read in ReadItems)
+            foreach (var read in ReadItems)
             {
                 var metadatas = new List<string>();
-                if(!string.IsNullOrEmpty(read.Author))
+                if (!string.IsNullOrEmpty(read.Author))
                 {
-                    if(!string.IsNullOrEmpty(read.AuthorCountry))
+                    if (!string.IsNullOrEmpty(read.AuthorCountry))
                     {
                         metadatas.Add($"({read.AuthorCountry}){read.Author}");
                     }
@@ -207,7 +207,7 @@ namespace Swan.Core.Service
                     }
                 }
 
-                if(!string.IsNullOrEmpty(read.Translator))
+                if (!string.IsNullOrEmpty(read.Translator))
                 {
                     metadatas.Add($"{read.Translator}(译)");
                 }
@@ -215,10 +215,10 @@ namespace Swan.Core.Service
                 read.HtmlMetadata = string.Join("/", metadatas);
                 read.HtmlComment = MarkdownHelper.ToHtml(read.Comment);
 
-                foreach(var p in read.Posts)
+                foreach (var p in read.Posts)
                 {
                     var post = Posts.FirstOrDefault(x => StringHelper.EqualsIgoreCase(x.Id, p));
-                    if(post != null)
+                    if (post != null)
                     {
                         read.BlogPosts.Add(post);
                     }
