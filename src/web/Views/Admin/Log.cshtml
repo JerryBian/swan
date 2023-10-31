@@ -2,6 +2,7 @@
 @{
     Layout = "_LayoutAdmin";
     var logs = await _swanLogService.GetAsync();
+    ViewData["Title"] = "View Logs :: Admin";
 }
 
 @foreach (var item in logs.GroupBy(x => x.CreatedAt.Date).OrderByDescending(x => x.Key))
@@ -21,10 +22,10 @@
             var styleClass = log.GetLogClassName();
             <div class="container-fluid border-bottom py-2 @styleClass">
                 <div class="row small text-muted my-2">
-                    <div class="col-9 text-truncate">
+                    <div class="col-8 text-truncate">
                         @log.CreatedAt
                     </div>
-                    <div class="col-3 text-truncate">
+                    <div class="col-4 text-truncate">
                         @log.Level
                     </div>
                 </div>

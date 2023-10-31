@@ -2,7 +2,9 @@
 @model PostTag
 @{
     Layout = "_LayoutAdmin";
+    ViewData["Title"] = $"Edit tag [{Model.Name}] :: Admin";
 }
+
 <div class="my-4 p-3 rounded-1 shadow-sm bg-white">
     <div class="form-text mb-2">
         <span class="text-danger">*</span>
