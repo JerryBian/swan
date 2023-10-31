@@ -1,8 +1,8 @@
 @import "_shared";
 
-/*@import "../../../../node_modules/bootswatch/dist/zephyr/variables";*/
+@import "../../../../node_modules/bootswatch/dist/zephyr/variables";
 @import "../../../../node_modules/bootstrap/scss/bootstrap";
-/*@import "../../../../node_modules/bootswatch/dist/zephyr/bootswatch";*/
+@import "../../../../node_modules/bootswatch/dist/zephyr/bootswatch";
 
 :root {
     --bs-primary-text-emphasis: #392e4a;

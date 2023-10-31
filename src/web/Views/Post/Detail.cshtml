@@ -4,6 +4,9 @@
     Layout = "_LayoutPublic";
     ViewData["Title"] = Model.Title;
     var privateStype = Model.IsPublicToEveryOne() ? "" : "bg-warning-subtle";
+    ViewData["EnableSEO"] = bool.TrueString;
+    ViewData["Url"] = Model.GetFullLink();
+    ViewData["Description"] = Model.TextExcerpt;
 }
 
 @Html.Raw(Model.HtmlMetadata1)
@@ -41,7 +44,7 @@
             <div class="list-group">
                 @foreach (var item in Model.RecommendPostsBySeries)
                 {
-                    if(item.Id == Model.Id)
+                    if (item.Id == Model.Id)
                     {
                         <div class="list-group-item text-muted">
                             <i class="bi bi-hash"></i>@item.Title
@@ -53,7 +56,7 @@
                             <i class="bi bi-hash"></i>@item.Title
                         </a>
                     }
-                    
+
                 }
             </div>
         </div>
@@ -77,6 +80,18 @@
             <div class="list-group-item text-muted"><i class="bi bi-slash"></i> 最后修改于：@Model.LastUpdatedAt</div>
         </div>
     </div>
+}
+
+@section Style{
+    @if (Model.PreviousPost != null)
+    {
+        <link rel="previous" href="@Model.PreviousPost.GetFullLink()">
+    }
+
+    @if (Model.NextPost != null)
+    {
+        <link rel="next" href="@Model.NextPost.GetFullLink()">
+    }
 }
 
 @section Script{

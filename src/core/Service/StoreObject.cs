@@ -107,12 +107,12 @@ namespace Swan.Core.Service
                     var p = htmlDoc.DocumentNode.Descendants("p").FirstOrDefault(x => !string.IsNullOrEmpty(x.InnerText));
                     if (p != null)
                     {
-                        post.HtmlExcerpt = MarkdownHelper.ToHtml(p.InnerText);
+                        post.TextExcerpt = p.InnerText;
                     }
                 }
                 else
                 {
-                    post.HtmlExcerpt = MarkdownHelper.ToHtml(post.Excerpt);
+                    post.TextExcerpt = post.Excerpt;
                 }
 
                 post.HtmlContent = htmlDoc.DocumentNode.OuterHtml;

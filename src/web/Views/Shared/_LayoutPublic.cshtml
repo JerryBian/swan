@@ -46,6 +46,10 @@
 
 @section Style {
     <link href="~/style.min.css" rel="stylesheet" asp-append-version="true" />
+    <link rel="alternate" type="application/rss+xml" title="Post RSS" href="/post/rss">
+    <link rel="alternate" type="application/rss+xml" title="Read RSS" href="/read/rss">
+
+    @await RenderSectionAsync("Style", false)
 }
 
 @section Script {
@@ -53,7 +57,7 @@
 
     @await RenderSectionAsync("Script", false)
 
-    @if (_env.IsProduction())
+    @if (_env.IsProduction() && !Context.IsAuthorized())
     {
         <!-- Google tag (gtag.js) -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=@_option.Value.GTagId"></script>

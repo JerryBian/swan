@@ -10,6 +10,7 @@
             Title = "Swan";
             Description = "A blog engine";
             AssetLocation = Path.Combine(Path.GetTempPath(), "swan");
+            BaseUrl = "https://example.com";
         }
 
         public string AssetLocation { get; set; }
@@ -25,5 +26,7 @@
         public string AdminPassword { get; set; }
 
         public string GTagId { get; set; }
+
+        public string BaseUrl { get; set; }
     }
 }

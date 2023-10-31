@@ -2,6 +2,9 @@
 @{
     Layout = "_LayoutPublic";
     ViewData["Title"] = "近期文章";
+    ViewData["EnableSEO"] = bool.TrueString;
+    ViewData["Url"] = "/post";
+    ViewData["Description"] = "近期文章";
 }
 
 <div>
@@ -15,7 +18,7 @@
             </h5>
 
             <div class="mt-2 mb-1">
-                @Html.Raw(item.HtmlExcerpt)
+                @item.TextExcerpt
             </div>
             @Html.Raw(item.HtmlMetadata2)
         </div>
