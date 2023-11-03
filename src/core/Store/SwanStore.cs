@@ -35,5 +35,18 @@ namespace Swan.Core.Store
 
             return await Task.FromResult(result);
         }
+
+        public async Task AddBlacklistAsync(string ip)
+        {
+            var cacheKey = $"core.ss.blacklist.{ip}";
+            _cache.Set(cacheKey, new object(), TimeSpan.FromMinutes(5));
+            await Task.CompletedTask;
+        }
+
+        public async Task<bool> IsInBlacklistAsync(string ip)
+        {
+            var cacheKey = $"core.ss.blacklist.{ip}";
+            return await Task.FromResult(_cache.Get(cacheKey) != null);
+        }
     }
 }

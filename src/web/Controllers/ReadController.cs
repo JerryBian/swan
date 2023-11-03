@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 using Swan.Core.Model;
 using Swan.Core.Service;
 
 namespace Swan.Web.Controllers
 {
+    [OutputCache]
+    [ResponseCache(CacheProfileName = "Default")]
     public class ReadController : Controller
     {
         private readonly ISwanService _swanService;
