@@ -1,8 +1,8 @@
 using GitStoreDotnet;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
@@ -26,15 +26,6 @@ builder.WebHost.UseShutdownTimeout(TimeSpan.FromMinutes(5));
 // Add services to the container.
 builder.Services.AddOptions<SwanOption>().BindConfiguration("swan");
 
-var assetLoc = builder.Configuration.GetValue<string>("AssetLocation");
-if (assetLoc != null)
-{
-    var dpFolder = Path.Combine(assetLoc, "dp", builder.Environment.EnvironmentName);
-    Directory.CreateDirectory(dpFolder);
-    builder.Services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(dpFolder))
-        .SetApplicationName($"APP_{builder.Environment.EnvironmentName}");
-}
-
 builder.Logging.SetMinimumLevel(LogLevel.Debug);
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
@@ -43,6 +34,7 @@ builder.Logging.AddGitFile();
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.ForwardedForHeaderName = "CF-Connecting-IP";
     options.KnownNetworks.Add(new IPNetwork(IPAddress.Parse("172.17.0.0"), 24));
 });
 
@@ -50,7 +42,12 @@ builder.Services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.BasicLatin, Unico
 
 builder.Services.AddMemoryCache();
 builder.Services.AddSwanService();
-
+builder.Services.AddOutputCache(options =>
+{
+    options.DefaultExpirationTimeSpan = TimeSpan.FromMinutes(30);
+    options.AddBasePolicy(x => x.Cache().Tag("obj-all"));
+});
+builder.Services.AddResponseCaching();
 builder.Services.AddHostedService<MonitorHostedService>();
 builder.Services.AddHostedService<GitFileHostedService>();
 builder.Services.AddHostedService<PageHitHostedService>();
@@ -66,7 +63,15 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
                 options.LogoutPath = new PathString("/logout");
             });
 
-builder.Services.AddControllersWithViews().AddJsonOptions(config =>
+builder.Services.AddControllersWithViews(options =>
+{
+    options.CacheProfiles.Add("Default", new CacheProfile
+    {
+        Duration = 60,
+        Location = ResponseCacheLocation.Client,
+        VaryByHeader = "User-Agent"
+    });
+}).AddJsonOptions(config =>
 {
     config.JsonSerializerOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
     IsoDateTimeConverter converter = new();
@@ -99,8 +104,9 @@ if (!app.Environment.IsDevelopment())
     });
 }
 
-app.UseSwanService();
+app.UseMiddleware<BlacklistMiddleware>();
 app.UseStatusCodePages();
+app.UseSwanService();
 
 FileExtensionContentTypeProvider fileContentTypeProvider = new()
 {
@@ -122,7 +128,7 @@ app.UseStaticFiles(new StaticFileOptions
     {
         if (!app.Environment.IsDevelopment())
         {
-            Microsoft.AspNetCore.Http.Headers.ResponseHeaders headers = context.Context.Response.GetTypedHeaders();
+            var headers = context.Context.Response.GetTypedHeaders();
             headers.CacheControl = new CacheControlHeaderValue
             {
                 Public = true,
@@ -133,10 +139,13 @@ app.UseStaticFiles(new StaticFileOptions
 });
 
 app.UseRouting();
+app.UseResponseCaching();
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseMiddleware<RequestSniffMiddleware>();
+
+app.UseOutputCache();
 
 app.MapControllerRoute(
     name: "default",

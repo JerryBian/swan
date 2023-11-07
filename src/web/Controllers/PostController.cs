@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.Extensions.Options;
 using Swan.Core.Helper;
 using Swan.Core.Model;
@@ -10,6 +11,8 @@ using System.Xml;
 
 namespace Swan.Web.Controllers
 {
+    [OutputCache]
+    [ResponseCache(CacheProfileName = "Default")]
     public class PostController : Controller
     {
         private readonly SwanOption _option;
@@ -88,7 +91,8 @@ namespace Swan.Web.Controllers
                 NewLineHandling = NewLineHandling.Entitize,
                 NewLineOnAttributes = false,
                 Async = true,
-                Indent = true
+                Indent = true,
+                CheckCharacters = false
             };
 
             using MemoryStream ms = new();

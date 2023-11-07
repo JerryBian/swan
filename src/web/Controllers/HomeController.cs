@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.Extensions.Options;
 using Swan.Core.Extension;
 using Swan.Core.Model;
@@ -8,6 +9,8 @@ using System.Text;
 
 namespace Swan.Web.Controllers
 {
+    [OutputCache]
+    [ResponseCache(CacheProfileName = "Default")]
     public class HomeController : Controller
     {
         private readonly SwanOption _option;
