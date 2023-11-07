@@ -26,6 +26,7 @@ namespace Swan.Web.Middlewares
 
         public async Task InvokeAsync(HttpContext context)
         {
+            _logger.LogInformation($"IP: {context.GetIpAddress()}, IP2: {context.GetIpAddress2()}, Headers: {string.Join(", ", context.Request.Headers.Select(x => $"{x.Key} -> {x.Value}"))}");
             if (context.IsAuthorized())
             {
                 _logger.LogInformation($"Admin Request => URL: {context.Request.GetDisplayUrl()}, IP: {context.GetIpAddress()}, Method: {context.Request.Method}");
