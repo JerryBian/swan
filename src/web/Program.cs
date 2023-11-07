@@ -89,7 +89,8 @@ builder.Services.AddControllersWithViews(options =>
 WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
-app.UseForwardedHeaders();
+//app.UseForwardedHeaders();
+app.UseMiddleware<TestMiddleware>();
 app.UseHttpLogging();
 if (!app.Environment.IsDevelopment())
 {
