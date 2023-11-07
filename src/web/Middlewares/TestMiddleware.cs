@@ -105,6 +105,8 @@ public class TestMiddleware
                 throw new ArgumentException($"options.{propertyName} is required", nameof(options));
             }
         }
+
+        _logger.LogDebug("Init Done.");
     }
 
     private void PreProcessHosts()
@@ -172,6 +174,8 @@ public class TestMiddleware
             checkFor = true;
             forwardedFor = requestHeaders.GetCommaSeparatedValues(_options.ForwardedForHeaderName);
             entryCount = Math.Max(forwardedFor.Length, entryCount);
+
+            _logger.LogDebug($"Has flag XForwardedFor. Entry count = {entryCount}, forwaredFor = {string.Join("||", forwardedFor)}");
         }
 
         if (_options.ForwardedHeaders.HasFlag(ForwardedHeaders.XForwardedProto))
@@ -200,10 +204,13 @@ public class TestMiddleware
             entryCount = Math.Max(forwardedHost.Length, entryCount);
         }
 
+        _logger.LogDebug($"Entry count = {entryCount}");
+
         // Apply ForwardLimit, if any
         if (_options.ForwardLimit.HasValue && entryCount > _options.ForwardLimit)
         {
             entryCount = _options.ForwardLimit.Value;
+            _logger.LogDebug($"Apply ForwardLimit {_options.ForwardLimit}, Entry count = {entryCount}");
         }
 
         // Group the data together.
@@ -227,6 +234,7 @@ public class TestMiddleware
             sets[i] = set;
         }
 
+        _logger.LogDebug($"sets IpAndPortText: {string.Join("||", sets.Select(x => x.IpAndPortText))}");
         // Gather initial values
         var connection = context.Connection;
         var currentValues = new SetOfForwarders()
@@ -235,6 +243,7 @@ public class TestMiddleware
             // Host and Scheme initial values are never inspected, no need to set them here.
         };
 
+        _logger.LogDebug($"Current IP: {currentValues.RemoteIpAndPort}");
         var checkKnownIps = _options.KnownNetworks.Count > 0 || _options.KnownProxies.Count > 0;
         var applyChanges = false;
         var entriesConsumed = 0;
@@ -258,6 +267,8 @@ public class TestMiddleware
                     set.RemoteIpAndPort = parsedEndPoint;
                     currentValues.IpAndPortText = set.IpAndPortText;
                     currentValues.RemoteIpAndPort = set.RemoteIpAndPort;
+
+                    _logger.LogDebug($"Set finished. IpAndPortText {set.IpAndPortText}, Parsed {parsedEndPoint}");
                 }
                 else if (!string.IsNullOrEmpty(set.IpAndPortText))
                 {
@@ -269,6 +280,10 @@ public class TestMiddleware
                 {
                     _logger.LogWarning(2, "Missing forwarded IPAddress.");
                     return;
+                }
+                else
+                {
+                    _logger.LogDebug("nonooooo");
                 }
             }
 
