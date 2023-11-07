@@ -41,6 +41,7 @@ builder.Services.AddHttpLogging(options =>
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.ForwardLimit = 2;
     options.KnownNetworks.Clear();
     options.KnownProxies.Clear();
     options.KnownNetworks.Add(new IPNetwork(IPAddress.Parse("172.17.0.0"), 24));
