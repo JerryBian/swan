@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.Extensions.Options;
-using Microsoft.Net.Http.Headers;
 using Swan.Core.Extension;
 using Swan.Core.Option;
 using Swan.Core.Store;
