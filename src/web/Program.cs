@@ -128,7 +128,7 @@ app.UseStaticFiles(new StaticFileOptions
     {
         if (!app.Environment.IsDevelopment())
         {
-            Microsoft.AspNetCore.Http.Headers.ResponseHeaders headers = context.Context.Response.GetTypedHeaders();
+            var headers = context.Context.Response.GetTypedHeaders();
             headers.CacheControl = new CacheControlHeaderValue
             {
                 Public = true,
