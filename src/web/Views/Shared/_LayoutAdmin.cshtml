@@ -124,10 +124,15 @@
         </div>
 
         <div class="col-lg-10">
-            <form id="adminForm" class="needs-validation" novalidate>
+            <form id="adminForm" class="needs-validation" novalidate onsubmit="return false;">
                 <fieldset>
-                    <legend class="py-2 px-1 position-sticky top-0 bg-light container-fluid" style="z-index:5;">@await RenderSectionAsync("AdminLegend", false)</legend>
+                    <legend class="py-2 px-1 position-sticky top-0 bg-light container-fluid fs-6" style="z-index:5;">@await RenderSectionAsync("AdminLegend", false)</legend>
                     <div class="px-1">
+                        <div class="d-flex justify-content-center d-none" id="loadingSpinner">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
                         @RenderBody()
                     </div>
                     

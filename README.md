@@ -10,7 +10,7 @@ The prebuilt docker image can be found either on [Docker Hub](https://hub.docker
 
 #### Required tools:
 - [Microsoft Visual Studio](https://visualstudio.microsoft.com/)
-- [.NET 7](https://dotnet.microsoft.com/)
+- [.NET 8](https://dotnet.microsoft.com/)
 - [Powershell](https://github.com/PowerShell/PowerShell)
 - [Node.js](https://nodejs.org/en/)
 
