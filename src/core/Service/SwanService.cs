@@ -190,5 +190,12 @@ namespace Swan.Core.Service
                 _memoryCache.Remove(item);
             }
         }
+
+        public async Task<string> UploadFileAsync(string fileName, byte[] binary)
+        {
+            var fullPath = $"static/{fileName}";
+            await _gitStore.InsertOrUpdateAsync(fullPath, binary);
+            return fullPath;
+        }
     }
 }

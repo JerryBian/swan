@@ -20,5 +20,7 @@ namespace Swan.Core.Service
         Task<T> FindAsync<T>(string id) where T : SwanObject;
 
         Task UpdateAsync<T>(T item) where T : SwanObject;
+
+        Task<string> UploadFileAsync(string fileName, byte[] binary);
     }
 }

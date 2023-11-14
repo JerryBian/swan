@@ -354,5 +354,53 @@ namespace Swan.Web.Controllers
         {
             return View("Stat");
         }
+
+        [HttpPost("/admin/file-upload")]
+        [RequestSizeLimit(20 * 1024 * 1024)]
+        public async Task<IActionResult> UploadFile([FromForm(Name = "file")] IFormFile file)
+        {
+            ApiResponse<string> res = new();
+            try
+            {
+                string fileName = StringHelper.Random();
+                string ext = Path.GetExtension(file.FileName);
+                await using MemoryStream ms = new();
+                await file.CopyToAsync(ms);
+                _ = ms.Seek(0, SeekOrigin.Begin);
+                string url = await _swanService.UploadFileAsync($"file/{fileName}{ext}", ms.ToArray());
+                res.Content = url;
+            }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.IsOk = false;
+                _logger.LogError(ex, "File upload failed.");
+            }
+
+            return Json(res);
+        }
+
+        [HttpPost("/admin/image-upload")]
+        [RequestSizeLimit(10 * 1024 * 1024)]
+        public async Task<IActionResult> UploadImage([FromForm(Name = "image")] IFormFile file)
+        {
+            try
+            {
+                string fileName = StringHelper.Random();
+                string ext = Path.GetExtension(file.FileName);
+                await using MemoryStream ms = new();
+                await file.CopyToAsync(ms);
+                _ = ms.Seek(0, SeekOrigin.Begin);
+                string url = await _swanService.UploadFileAsync($"img/{fileName}{ext}", ms.ToArray());
+                var obj = new { data = new { filePath = url } };
+                return Json(obj);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "File upload failed.");
+                var obj = new { error = 500 };
+                return Json(obj);
+            }
+        }
     }
 }

@@ -2,9 +2,11 @@
     const editor = new EasyMDE({
         element: textArea,
         autosave: {
-            enabled: false,
+            enabled: true,
             uniqueId: u,
-            text: "自动保存："
+            text: "自动保存：",
+            delay: 10000,
+            submit_delay: 10000
         },
         lineNumbers: false,
         lineWrapping: true,
@@ -12,10 +14,10 @@
         previewClass: ["editor-preview", "post"],
         promptURLs: true,
         uploadImage: true,
-        imageMaxSize: 1024 * 1024 * 20,
+        imageMaxSize: 1024 * 1024 * 10,
         imageAccept: ["image/png", "image/jpeg", "application/pdf", "image/svg+xml", "image/bmp", "image/gif", "image/tiff", "image/webp"],
-        imageUploadEndpoint: "/file/upload",
-        imagePathAbsolute: true,
+        imageUploadEndpoint: "/admin/image-upload",
+        imagePathAbsolute: false,
         imageTexts: {
             sbInit: "拖拽或者从剪切板复制图片",
             sbOnDragEnter: "拖拽图片",
@@ -30,7 +32,14 @@
             codeSyntaxHighlighting: true,
             hljs: window.hljs
         },
-        spellChecker: false
+        spellChecker: false,
+        toolbarButtonClassPrefix: "mde",
+        toolbar: ['bold', 'italic', 'strikethrough', 'heading', '|', 'quote', 'unordered-list', 'ordered-list', 'code', 'table', '|', 'image', 'horizontal-rule', 'link', {
+            name: "upload-image",
+            action: EasyMDE.drawUploadedImage,
+            className: "bi bi-images",
+            title: "Upload Image",
+        }, '|', 'preview', 'side-by-side', 'fullscreen', '|', 'guide', '|']
     });
     return editor;
 }
