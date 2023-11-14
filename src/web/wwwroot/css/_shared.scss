@@ -21,10 +21,25 @@ $secondary: $gray-600 !default;
 $min-contrast-ratio: 2.05 !default;
 $font-size-base: 1rem;
 
+/* inter-regular - latin */
+@font-face {
+    font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../fonts/inter-v13-latin-regular.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
 
-.navbar-brand {
+$body-color: black;
+$font-family-sans-serif: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+
+.brand {
     letter-spacing: .02em;
-    color: #2e3131;
+    -webkit-text-fill-color: transparent;
+    background: linear-gradient(128.87deg,#512bd4 14.05%,#d600aa 89.3%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
 }
 
 a {
@@ -32,10 +47,11 @@ a {
 }
 
 .post {
-    line-height: 1.7em;
+    line-height: 1.8em;
+    vertical-align: baseline;
 
-    & > p {
-        margin-bottom: 1.2rem;
+    & > p:not(:last-child) {
+        margin-bottom: 1em;
     }
 
     a {
@@ -65,6 +81,9 @@ a {
     img {
         transition: 0.3s;
         max-width: 100%;
+        margin-bottom: 1.8rem;
+        margin-top: 1.8rem;
+        display: block;
     }
 
     li {
@@ -77,7 +96,7 @@ a {
 
     h4, h5 {
         margin-top: 1.8rem;
-        margin-bottom: 0.8rem;
+        margin-bottom: 1.0rem;
     }
 
     h4 {

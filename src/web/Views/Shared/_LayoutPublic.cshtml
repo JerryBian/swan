@@ -6,9 +6,8 @@
 
 <nav class="navbar navbar-expand bg-body-tertiary">
     <div class="container">
-        <a class="navbar-brand" href="/">
+        <a class="navbar-brand brand" href="/">
             @_option.Value.Title
-            <span class="text-dark blinker">_</span>
         </a>
         <div>
             <ul class="navbar-nav ms-auto">
@@ -41,7 +40,8 @@
 </div>
 
 <footer class="text-center py-3 small mt-auto bg-light">
-    &copy; @DateTime.Now.Year
+    &copy; @DateTime.Now.Year @_option.Value.Title &middot;
+    <a href="mailto:@_option.Value.ContactEmail" class="text-reset"><i class="bi bi-envelope"></i></a>
 </footer>
 
 @section Style {

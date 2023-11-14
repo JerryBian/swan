@@ -16,6 +16,9 @@
     @Html.Raw(Model.HtmlContent)
 </article>
 @Html.Raw(Model.HtmlMetadata2)
+<div class="alert alert-warning mt-3 small" role="alert">
+    <i class="bi bi-exclamation-circle"></i> 本文遵循 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh-hans" class="link-body-emphasis">署名-非商业性使用-禁止演绎 4.0 国际</a> 协议。
+</div>
 
 @section Aside{
     @if (Model.RecommendPostsByTag.Any())

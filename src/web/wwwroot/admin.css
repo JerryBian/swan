@@ -8285,9 +8285,21 @@ code.hljs {
   content: "賈";
 }
 
-.navbar-brand {
+/* inter-regular - latin */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  src: url("../fonts/inter-v13-latin-regular.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+.brand {
   letter-spacing: 0.02em;
-  color: #2e3131;
+  -webkit-text-fill-color: transparent;
+  background: linear-gradient(128.87deg, #512bd4 14.05%, #d600aa 89.3%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
 }
 
 a {
@@ -8295,10 +8307,11 @@ a {
 }
 
 .post {
-  line-height: 1.7em;
+  line-height: 1.8em;
+  vertical-align: baseline;
 }
-.post > p {
-  margin-bottom: 1.2rem;
+.post > p:not(:last-child) {
+  margin-bottom: 1em;
 }
 .post a {
   color: inherit;
@@ -8322,6 +8335,9 @@ a {
 .post img {
   transition: 0.3s;
   max-width: 100%;
+  margin-bottom: 2rem;
+  margin-top: 2rem;
+  display: block;
 }
 .post li {
   margin-bottom: 0.7rem;
@@ -8331,7 +8347,7 @@ a {
 }
 .post h4, .post .h4, .post h5, .post .h5 {
   margin-top: 1.8rem;
-  margin-bottom: 0.8rem;
+  margin-bottom: 1rem;
 }
 .post h4, .post .h4 {
   padding-bottom: 0.25rem !important;
@@ -8341,14 +8357,6 @@ a {
   border-bottom: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color) !important;
 }
 
-/* inter-regular - latin */
-@font-face {
-  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
-  font-family: "Inter";
-  font-style: normal;
-  font-weight: 400;
-  src: url("../fonts/inter-v13-latin-regular.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
-}
 /*!
  * Bootstrap  v5.3.2 (https://getbootstrap.com/)
  * Copyright 2011-2023 The Bootstrap Authors

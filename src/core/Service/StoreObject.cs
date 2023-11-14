@@ -171,6 +171,12 @@ namespace Swan.Core.Service
             </div>";
             }
 
+            if(!_adminOnly)
+            {
+                Tags.RemoveAll(x => !x.BlogPosts.Any());
+                Series.RemoveAll(x => !x.BlogPosts.Any());
+            }
+
             // random posts recommend
             // TODO: use .NET 8 Random functions
             foreach (var post in Posts)
