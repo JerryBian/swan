@@ -73,7 +73,7 @@ namespace Swan.Web.Controllers
                 _option.BaseUrl));
             feed.BaseUri = new Uri(_option.BaseUrl);
             feed.Language = "zh-cn";
-            List<SyndicationItem> items = new();
+            List<SyndicationItem> items = [];
 
             var posts = await _swanService.FindAsync<SwanPost>(false);
             foreach (var post in posts)

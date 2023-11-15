@@ -13,7 +13,7 @@ namespace Swan.Core.Logger
         public GitFileLoggerProcessor(ISwanLogService swanLogService)
         {
             _swanLogService = swanLogService;
-            _logs = new BlockingCollection<SwanLog>();
+            _logs = [];
 
             _thread = new Thread(Process)
             {

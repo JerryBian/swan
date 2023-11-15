@@ -8335,8 +8335,8 @@ a {
 .post img {
   transition: 0.3s;
   max-width: 100%;
-  margin-bottom: 2rem;
-  margin-top: 2rem;
+  margin-bottom: 1.8rem;
+  margin-top: 1.8rem;
   display: block;
 }
 .post li {

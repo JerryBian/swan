@@ -22,7 +22,7 @@ namespace Swan.Core.Model
         #region Extension
 
         [JsonIgnore]
-        public List<SwanPost> BlogPosts { get; } = new();
+        public List<SwanPost> BlogPosts { get; } = [];
 
         #endregion
 

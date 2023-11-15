@@ -8,7 +8,7 @@
 }
 
 <div>
-    @foreach (var item in (await _swanService.FindAsync<SwanPost>(Context)).OrderByDescending(x => x.PublishDate).Take(8))
+    @foreach (var item in (await _swanService.FindAsync<SwanPost>(Context)).OrderByDescending(x => x.PublishDate).Take(9))
     {
         var privateStype = item.IsPublicToEveryOne() ? "" : "bg-warning-subtle";
         <div class="mb-3 border-bottom pt-1 pb-2 px-1 @privateStype">

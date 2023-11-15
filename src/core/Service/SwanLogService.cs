@@ -22,7 +22,7 @@ namespace Swan.Core.Service
             try
             {
                 var logs = JsonHelper.Deserialize<List<SwanLog>>(await _gitStore.GetTextAsync(log.GetGitStorePath()));
-                logs ??= new List<SwanLog>();
+                logs ??= [];
                 logs.Add(log);
 
                 logs.RemoveAll(x => DateTime.Now.Date - x.CreatedAt.Date > TimeSpan.FromDays(30));

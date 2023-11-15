@@ -24,19 +24,19 @@ namespace Swan.Core.Service
             };
         }
 
-        public List<SwanPost> Posts { get; } = new();
+        public List<SwanPost> Posts { get; } = [];
 
-        public List<PostTag> Tags { get; } = new();
+        public List<PostTag> Tags { get; } = [];
 
-        public List<PostSeries> Series { get; } = new();
+        public List<PostSeries> Series { get; } = [];
 
-        public List<SwanRead> ReadItems { get; } = new();
+        public List<SwanRead> ReadItems { get; } = [];
 
-        public List<SwanPage> Pages { get; } = new();
+        public List<SwanPage> Pages { get; } = [];
 
         public List<T> Get<T>() where T : SwanObject
         {
-            return _typedObjects.ContainsKey(typeof(T)) ? _typedObjects[typeof(T)] as List<T> : new List<T>();
+            return _typedObjects.ContainsKey(typeof(T)) ? _typedObjects[typeof(T)] as List<T> : [];
         }
 
         public async Task PopulateDataAsync(IGitStore gitStore)
@@ -171,30 +171,33 @@ namespace Swan.Core.Service
             </div>";
             }
 
-            if(!_adminOnly)
+            if (!_adminOnly)
             {
                 Tags.RemoveAll(x => !x.BlogPosts.Any());
                 Series.RemoveAll(x => !x.BlogPosts.Any());
             }
 
-            // random posts recommend
-            // TODO: use .NET 8 Random functions
             foreach (var post in Posts)
             {
-                if (post.Tags.Any())
+                const int maxItems = 7;
+                if (post.BlogTags.Any())
                 {
-                    var similarPosts = new List<SwanPost>();
-                    foreach (var item in post.BlogTags)
+                    var collection = post.BlogTags.SelectMany(x => x.BlogPosts).Distinct().Where(x => x != post).ToArray();
+                    if (collection.Any())
                     {
-                        similarPosts.AddRange(item.BlogPosts);
+                        var similarPosts = Random.Shared.GetItems(collection, maxItems);
+                        post.RecommendPostsByTag.AddRange(similarPosts.Distinct());
                     }
 
-                    post.RecommendPostsByTag.AddRange(similarPosts.Distinct().Take(8));
                 }
 
                 if (post.BlogSeries != null)
                 {
-                    post.RecommendPostsBySeries.AddRange(post.BlogSeries.BlogPosts.Take(8));
+                    post.RecommendPostsBySeries.AddRange(post.BlogSeries.BlogPosts.Where(x => x.PublishDate < post.PublishDate).OrderBy(x => x.PublishDate).Take(maxItems / 2));
+                    var remainingItems = maxItems - 1 - post.RecommendPostsByTag.Count();
+                    post.RecommendPostsBySeries.AddRange(post.BlogSeries.BlogPosts.Where(x => x.PublishDate > post.PublishDate).OrderByDescending(x => x.PublishDate).Take(remainingItems));
+                    post.RecommendPostsBySeries.Add(post);
+
                 }
             }
 
