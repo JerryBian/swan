@@ -46,11 +46,11 @@ namespace Swan.Web.Controllers
             string ip = HttpContext.GetIpAddress();
             if (userName == _option.AdminUserName && password == _option.AdminPassword)
             {
-                List<Claim> claims = new()
-                {
+                List<Claim> claims =
+                [
                     new("user", userName),
                     new("role", "admin")
-                };
+                ];
 
                 AuthenticationProperties authProperty = new()
                 {

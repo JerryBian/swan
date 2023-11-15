@@ -9,7 +9,7 @@
     @foreach (var item in Model)
     {
         <div class="pb-2 mb-2 pt-3 border-bottom">
-            <h5 class="ps-2 mb-3" id="year-@item.Key"><i class="bi bi-folder2"></i> @item.Key 年文章</h5>
+            <h5 class="ps-2 mb-3" id="year-@item.Key"><i class="bi bi-folder2"></i> @item.Key 年文章 <span class="small text-muted">(@item.Count())</span></h5>
             @foreach (var item2 in item.OrderByDescending(x => x.PublishDate))
             {
                 var privateStype = item2.IsPublicToEveryOne() ? "" : "bg-warning-subtle";

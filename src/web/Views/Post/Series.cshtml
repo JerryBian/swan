@@ -8,7 +8,7 @@
     @foreach (var item in Model)
     {
         <div class="pb-2 mb-2 pt-3 border-bottom">
-            <h5 class="ps-2 mb-3" id="link-@item.Link"><span data-bs-toggle="tooltip" data-bs-title="@item.Description"><i class="bi bi-bookmark"></i> @item.Name</span></h5>
+            <h5 class="ps-2 mb-3" id="link-@item.Link"><span data-bs-toggle="tooltip" data-bs-title="@item.Description"><i class="bi bi-bookmark"></i> @item.Name</span> <span class="small text-muted">(@item.BlogPosts.Count())</span></h5>
             @foreach (var item2 in item.BlogPosts.OrderByDescending(x => x.PublishDate))
             {
                 var privateStype = item.IsPublicToEveryOne() ? "" : "bg-warning-subtle";

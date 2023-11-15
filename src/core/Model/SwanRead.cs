@@ -25,14 +25,14 @@ namespace Swan.Core.Model
         public string Comment { get; set; }
 
         [JsonPropertyName("posts")]
-        public List<string> Posts { get; set; } = new();
+        public List<string> Posts { get; set; } = [];
 
         #endregion
 
         #region Extension
 
         [JsonIgnore]
-        public List<SwanPost> BlogPosts { get; } = new();
+        public List<SwanPost> BlogPosts { get; } = [];
 
         [JsonIgnore]
         public string HtmlMetadata { get; set; }

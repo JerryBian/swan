@@ -8,7 +8,7 @@
 }
 
 <div>
-    @foreach (var item in (await _swanService.FindAsync<SwanPost>(Context)).OrderByDescending(x => x.PublishDate).Take(8))
+    @foreach (var item in (await _swanService.FindAsync<SwanPost>(Context)).OrderByDescending(x => x.PublishDate).Take(9))
     {
         var privateStype = item.IsPublicToEveryOne() ? "" : "bg-warning-subtle";
         <div class="mb-3 border-bottom pt-1 pb-2 px-1 @privateStype">
@@ -28,7 +28,7 @@
 </div>
 
 <div class="text-start mb-2 mt-3">
-    <a href="/post/archive" class="font-monospace text-primary-emphasis fst-italic">
+    <a href="/post/archive" class="font-monospace link-body-emphasis fst-italic">
         <i class="bi bi-signpost small"></i>更多文章...
     </a>
 </div>

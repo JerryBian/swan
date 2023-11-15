@@ -8285,9 +8285,21 @@ code.hljs {
   content: "賈";
 }
 
-.navbar-brand {
+/* inter-regular - latin */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  src: url("../fonts/inter-v13-latin-regular.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+.brand {
   letter-spacing: 0.02em;
-  color: #2e3131;
+  -webkit-text-fill-color: transparent;
+  background: linear-gradient(128.87deg, #512bd4 14.05%, #d600aa 89.3%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
 }
 
 a {
@@ -8295,10 +8307,11 @@ a {
 }
 
 .post {
-  line-height: 1.7em;
+  line-height: 1.8em;
+  vertical-align: baseline;
 }
-.post > p {
-  margin-bottom: 1.2rem;
+.post > p:not(:last-child) {
+  margin-bottom: 1em;
 }
 .post a {
   color: inherit;
@@ -8322,6 +8335,9 @@ a {
 .post img {
   transition: 0.3s;
   max-width: 100%;
+  margin-bottom: 1.8rem;
+  margin-top: 1.8rem;
+  display: block;
 }
 .post li {
   margin-bottom: 0.7rem;
@@ -8331,7 +8347,7 @@ a {
 }
 .post h4, .post .h4, .post h5, .post .h5 {
   margin-top: 1.8rem;
-  margin-bottom: 0.8rem;
+  margin-bottom: 1rem;
 }
 .post h4, .post .h4 {
   padding-bottom: 0.25rem !important;
@@ -8413,25 +8429,25 @@ a {
   --bs-dark-border-subtle: #b4bcc2;
   --bs-white-rgb: 255, 255, 255;
   --bs-black-rgb: 0, 0, 0;
-  --bs-font-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  --bs-font-sans-serif: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
   --bs-body-font-family: var(--bs-font-sans-serif);
   --bs-body-font-size: 1rem;
   --bs-body-font-weight: 400;
   --bs-body-line-height: 1.5;
-  --bs-body-color: #7b8a8b;
-  --bs-body-color-rgb: 123, 138, 139;
+  --bs-body-color: black;
+  --bs-body-color-rgb: 0, 0, 0;
   --bs-body-bg: #fff;
   --bs-body-bg-rgb: 255, 255, 255;
   --bs-emphasis-color: #000;
   --bs-emphasis-color-rgb: 0, 0, 0;
-  --bs-secondary-color: rgba(123, 138, 139, 0.75);
-  --bs-secondary-color-rgb: 123, 138, 139;
+  --bs-secondary-color: rgba(0, 0, 0, 0.75);
+  --bs-secondary-color-rgb: 0, 0, 0;
   --bs-secondary-bg: #ecf0f1;
   --bs-secondary-bg-rgb: 236, 240, 241;
-  --bs-tertiary-color: rgba(123, 138, 139, 0.5);
-  --bs-tertiary-color-rgb: 123, 138, 139;
+  --bs-tertiary-color: rgba(0, 0, 0, 0.5);
+  --bs-tertiary-color-rgb: 0, 0, 0;
   --bs-tertiary-bg: #f8f9fa;
   --bs-tertiary-bg-rgb: 248, 249, 250;
   --bs-heading-color: var(--bs-primary-color);
@@ -8441,7 +8457,7 @@ a {
   --bs-link-hover-color: #2a47b8;
   --bs-link-hover-color-rgb: 42, 71, 184;
   --bs-code-color: #d63384;
-  --bs-highlight-color: #7b8a8b;
+  --bs-highlight-color: black;
   --bs-highlight-bg: #fdf2df;
   --bs-border-width: 1px;
   --bs-border-style: solid;
@@ -12523,8 +12539,8 @@ textarea.form-control-lg {
   --bs-nav-link-padding-x: 1rem;
   --bs-nav-link-padding-y: 0.5rem;
   --bs-nav-link-font-weight: ;
-  --bs-nav-link-color: #7b8a8b;
-  --bs-nav-link-hover-color: #7b8a8b;
+  --bs-nav-link-color: black;
+  --bs-nav-link-hover-color: black;
   --bs-nav-link-disabled-color: var(--bs-secondary-color);
   display: flex;
   flex-wrap: wrap;
@@ -12670,7 +12686,7 @@ textarea.form-control-lg {
   --bs-navbar-toggler-padding-y: 0.25rem;
   --bs-navbar-toggler-padding-x: 0.75rem;
   --bs-navbar-toggler-font-size: 1.25rem;
-  --bs-navbar-toggler-icon-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28123, 138, 139, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+  --bs-navbar-toggler-icon-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%280, 0, 0, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
   --bs-navbar-toggler-border-color: rgba(var(--bs-emphasis-color-rgb), 0.15);
   --bs-navbar-toggler-border-radius: var(--bs-border-radius);
   --bs-navbar-toggler-focus-width: 0.25rem;
@@ -13287,7 +13303,7 @@ textarea.form-control-lg {
   --bs-accordion-btn-padding-y: 1rem;
   --bs-accordion-btn-color: var(--bs-body-color);
   --bs-accordion-btn-bg: var(--bs-accordion-bg);
-  --bs-accordion-btn-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%237b8a8b'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+  --bs-accordion-btn-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='black'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
   --bs-accordion-btn-icon-width: 1.25rem;
   --bs-accordion-btn-icon-transform: rotate(-180deg);
   --bs-accordion-btn-icon-transition: transform 0.2s ease-in-out;
@@ -20851,21 +20867,12 @@ thead th {
   border-radius: 0 !important;
 }
 
-@keyframes blinker {
-  50% {
-    opacity: 0;
-  }
-}
 .popover {
   overflow: auto;
 }
 
 .popover-header {
   background-color: transparent;
-}
-
-.blinker {
-  animation: blinker 5s linear 3s infinite;
 }
 
 .card {

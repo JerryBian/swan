@@ -24,7 +24,7 @@ namespace Swan.Core.Model
         public string Series { get; set; }
 
         [JsonPropertyName("tags")]
-        public List<string> Tags { get; set; } = new();
+        public List<string> Tags { get; set; } = [];
 
         [JsonPropertyName("publishDate")]
         public DateTime PublishDate { get; set; }
@@ -46,7 +46,7 @@ namespace Swan.Core.Model
         public PostSeries BlogSeries { get; set; }
 
         [JsonIgnore]
-        public List<PostTag> BlogTags { get; } = new();
+        public List<PostTag> BlogTags { get; } = [];
 
         [JsonIgnore]
         public SwanPage PageStat { get; set; } = new();
@@ -58,10 +58,10 @@ namespace Swan.Core.Model
         public SwanPost NextPost { get; set; }
 
         [JsonIgnore]
-        public List<SwanPost> RecommendPostsByTag { get; } = new();
+        public List<SwanPost> RecommendPostsByTag { get; } = [];
 
         [JsonIgnore]
-        public List<SwanPost> RecommendPostsBySeries { get; } = new();
+        public List<SwanPost> RecommendPostsBySeries { get; } = [];
 
         public string HtmlMetadata1 { get; set; }
 
