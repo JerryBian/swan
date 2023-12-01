@@ -56,7 +56,10 @@ namespace Swan.Web.HostedServices
                 }
 
                 stopwatch.Stop();
-                _logger.LogInformation($"Flush page stats({pages.Count} records) completed in {stopwatch.ElapsedMilliseconds}ms.");
+                if (pages.Any())
+                {
+                    _logger.LogInformation($"Flush page stats({pages.Count} records) completed in {stopwatch.ElapsedMilliseconds}ms.");
+                }
             }
             catch (Exception ex)
             {
