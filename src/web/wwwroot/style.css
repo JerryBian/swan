@@ -8313,6 +8313,16 @@ a {
 .post > p:not(:last-child) {
   margin-bottom: 1em;
 }
+.post blockquote {
+  padding-left: 0.8rem;
+  border-left-color: #95a5a6;
+  border-left-width: 2px;
+  border-left-style: solid;
+  font-size: 0.95rem;
+}
+.post blockquote > p:not(:last-child) {
+  margin-bottom: 0.8em;
+}
 .post a {
   color: inherit;
   padding-left: 1px;

@@ -54,9 +54,20 @@ a {
         margin-bottom: 1em;
     }
 
+    blockquote {
+        padding-left: 0.8rem;
+        border-left-color: $secondary;
+        border-left-width: 2px;
+        border-left-style: solid;
+        font-size: 0.95rem;
+
+        & > p:not(:last-child) {
+            margin-bottom: 0.8em;
+        }
+    }
+
     a {
         color: inherit;
-
         padding-left: 1px;
         padding-right: 1px;
 
