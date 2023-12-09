@@ -101,7 +101,10 @@ function submitRequest(url, option) {
                 showErrorToast(result.message);
                 formPostAction();
             } else {
-                showInfoToast("Submit successfully.");
+                if (option.form) {
+                    showInfoToast("Submit successfully.");
+                }
+                
                 if (result.redirectTo) {
                     window.location.href = result.redirectTo;
                 } else {

@@ -130,11 +130,7 @@
     <script>
         const form = document.querySelector("#adminForm");
         const contentEl = document.querySelector("#content");
-        let editor = createEditor(contentEl, "admin_blog_post_add");
-
-        let txt = document.createElement("textarea");
-        txt.innerHTML = "@Model.Content";
-        editor.value(txt.value);
+        let editor = createEditor(contentEl, "admin_blog_post_edit");
 
         form.addEventListener("submit", e => {
             e.preventDefault();
@@ -146,5 +142,11 @@
         });
 
         setActive(document.querySelectorAll("[data-nav-id=navHeading_posts]"));
+
+        submitRequest(`/admin/post-get?id=@Model.Id`, {
+            method: "POST", okAction: x => {
+                editor.value(x.content);
+            }
+        });
     </script>
 }

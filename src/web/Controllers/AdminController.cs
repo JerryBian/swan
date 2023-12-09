@@ -60,6 +60,26 @@ namespace Swan.Web.Controllers
             return Json(res);
         }
 
+        [HttpPost("/admin/post-get")]
+        public async Task<IActionResult> GetPost([FromQuery]string id)
+        {
+            ApiResponse<SwanPost> res = new();
+            try
+            {
+                var allPosts = await _swanService.FindAsync<SwanPost>(true);
+                var post = allPosts.Find(x => StringHelper.EqualsIgoreCase(id, x.Id));
+                res.Content = post;
+            }
+            catch(Exception ex)
+            {
+                res.IsOk = false;
+                res.Message = ex.Message;
+                _logger.LogError(ex, $"Get post {id} failed.");
+            }
+
+            return Json(res);
+        }
+
         [HttpGet("/admin/post-edit/{id}")]
         public async Task<IActionResult> EditPost([FromRoute] string id)
         {
