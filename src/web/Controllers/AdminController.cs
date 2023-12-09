@@ -387,7 +387,7 @@ namespace Swan.Web.Controllers
                 await using MemoryStream ms = new();
                 await file.CopyToAsync(ms);
                 _ = ms.Seek(0, SeekOrigin.Begin);
-                string url = await _swanService.UploadFileAsync($"file/{fileName}{ext}", ms.ToArray());
+                string url = await _swanService.UploadFileAsync($"file/{DateTime.Now.Year}/{fileName}{ext}", ms.ToArray());
                 res.Content = url;
             }
             catch (Exception ex)
@@ -411,7 +411,7 @@ namespace Swan.Web.Controllers
                 await using MemoryStream ms = new();
                 await file.CopyToAsync(ms);
                 _ = ms.Seek(0, SeekOrigin.Begin);
-                string url = await _swanService.UploadFileAsync($"img/{fileName}{ext}", ms.ToArray());
+                string url = await _swanService.UploadFileAsync($"img/{DateTime.Now.Year}/{fileName}{ext}", ms.ToArray());
                 var obj = new { data = new { filePath = url } };
                 return Json(obj);
             }

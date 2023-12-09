@@ -17,7 +17,7 @@
         imageMaxSize: 1024 * 1024 * 10,
         imageAccept: ["image/png", "image/jpeg", "application/pdf", "image/svg+xml", "image/bmp", "image/gif", "image/tiff", "image/webp"],
         imageUploadEndpoint: "/admin/image-upload",
-        imagePathAbsolute: false,
+        imagePathAbsolute: true,
         imageTexts: {
             sbInit: "拖拽或者从剪切板复制图片",
             sbOnDragEnter: "拖拽图片",

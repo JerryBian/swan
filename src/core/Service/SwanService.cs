@@ -195,7 +195,7 @@ namespace Swan.Core.Service
         {
             var fullPath = $"static/{fileName}";
             await _gitStore.InsertOrUpdateAsync(fullPath, binary);
-            return fullPath;
+            return "/" + fullPath;
         }
     }
 }

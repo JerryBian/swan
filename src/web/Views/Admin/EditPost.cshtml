@@ -130,7 +130,7 @@
     <script>
         const form = document.querySelector("#adminForm");
         const contentEl = document.querySelector("#content");
-        let editor = createEditor(contentEl, "admin_blog_post_edit");
+        let editor = createEditor(contentEl, `admin_blog_post_edit_@Model.Id`);
 
         form.addEventListener("submit", e => {
             e.preventDefault();
