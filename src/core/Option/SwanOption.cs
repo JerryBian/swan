@@ -30,5 +30,7 @@
         public string BaseUrl { get; set; }
 
         public string ContactEmail { get; set; }
+
+        public string DataLocation { get; set; }
     }
 }

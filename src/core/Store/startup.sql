@@ -1,0 +1,75 @@
+PRAGMA journal_mode = 'wal';
+
+-- log
+CREATE TABLE IF NOT EXISTS log
+(
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    url TEXT COLLATE BINARY,
+    ip_address TEXT COLLATE BINARY,
+    user_agent TEXT COLLATE BINARY,
+    message TEXT COLLATE BINARY,
+    exception TEXT COLLATE BINARY,
+    level TEXT COLLATE BINARY,
+    created_at TEXT COLLATE BINARY
+);
+
+-- config
+CREATE TABLE IF NOT EXISTS config
+(
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    name TEXT COLLATE BINARY,
+    value TEXT COLLATE BINARY,
+    comment TEXT COLLATE BINARY,
+    created_at TEXT COLLATE BINARY,
+    last_modified_at TEXT COLLATE BINARY
+);
+
+-- tag
+CREATE TABLE IF NOT EXISTS tag
+(
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    name TEXT COLLATE BINARY,
+    url TEXT COLLATE BINARY,
+    description TEXT COLLATE BINARY,
+    image_url TEXT COLLATE BINARY,
+    is_public INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT COLLATE BINARY,
+    last_modified_at TEXT COLLATE BINARY
+);
+
+CREATE INDEX IF NOT EXISTS IX_tag_url ON tag(url ASC);
+CREATE INDEX IF NOT EXISTS IX_tag_is_public ON tag(is_public ASC);
+
+-- post
+CREATE TABLE IF NOT EXISTS post
+(
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    title TEXT COLLATE BINARY,
+    url TEXT COLLATE BINARY,
+    content TEXT COLLATE BINARY,
+    tag_id TEXT COLLATE BINARY,
+    visits INTEGER NOT NULL DEFAULT 0,
+    is_public INTEGER NOT NULL DEFAULT 0,
+    published_at TEXT COLLATE BINARY,
+    created_at TEXT COLLATE BINARY,
+    last_modified_at TEXT COLLATE BINARY,
+    FOREIGN KEY(tag_id) REFERENCES tag(id)
+);
+
+CREATE INDEX IF NOT EXISTS IX_post_url ON post(url ASC);
+CREATE INDEX IF NOT EXISTS IX_post_is_public ON post(is_public ASC);
+
+-- read
+CREATE TABLE IF NOT EXISTS read
+(
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    book_name TEXT COLLATE BINARY,
+    author TEXT COLLATE BINARY,
+    author_country TEXT COLLATE BINARY,
+    translator TEXT COLLATE BINARY,
+    comment TEXT COLLATE BINARY,
+    grade INTEGER NOT NULL DEFAULT 0,
+    is_public INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT COLLATE BINARY,
+    last_modified_at TEXT COLLATE BINARY
+);

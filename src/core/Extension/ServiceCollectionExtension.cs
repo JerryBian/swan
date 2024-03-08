@@ -15,6 +15,9 @@ namespace Swan.Core.Extension
         {
             services.AddGitStore();
 
+            services.AddSingleton<ISwanDatabase, SwanDatabase>();
+            services.AddSingleton<ISwanGitFolder, SwanGitFolder>();
+
             services.AddSingleton<ISwanStore, SwanStore>();
             services.AddSingleton<ISwanService, SwanService>();
             services.AddSingleton<ISwanLogService, SwanLogService>();
@@ -28,7 +31,7 @@ namespace Swan.Core.Extension
             // Options post setup
             var generalOption = builder.ApplicationServices.GetRequiredService<IOptions<SwanOption>>();
             var gitStoreOption = builder.ApplicationServices.GetRequiredService<IOptions<GitStoreOption>>();
-            gitStoreOption.Value.LocalDirectory = Path.Combine(Path.GetFullPath(generalOption.Value.AssetLocation), "data");
+            gitStoreOption.Value.LocalDirectory = Path.Combine(Path.GetFullPath(generalOption.Value.DataLocation), "git");
 
             return builder;
         }

@@ -11,12 +11,18 @@ using Swan.Core.Converter;
 using Swan.Core.Extension;
 using Swan.Core.Logger;
 using Swan.Core.Option;
+using Swan.Core.Store;
 using Swan.Web.HostedServices;
 using Swan.Web.Middlewares;
 using System.Net;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using static System.Net.Mime.MediaTypeNames;
+
+//var o = new SwanOption { DataLocation = "C:\\temp4\\swan11\\dev" };
+//var repo = new SwanDatabase(Options.Create(o));
+//await repo.TestAsync(@"C:\Users\jerry\git\swan-data");
+//return;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables("ENV_");
