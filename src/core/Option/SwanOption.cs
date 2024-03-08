@@ -10,6 +10,7 @@
             Title = "Swan";
             Description = "A blog engine";
             AssetLocation = Path.Combine(Path.GetTempPath(), "swan");
+            DataLocation = Path.Combine(Path.GetTempPath(), "swan");
             BaseUrl = "https://example.com";
         }
 

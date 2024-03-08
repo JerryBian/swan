@@ -1,18 +1,1 @@
 @import "_shared";
-
-@import "../../../../node_modules/bootswatch/dist/zephyr/variables";
-@import "../../../../node_modules/bootstrap/scss/bootstrap";
-@import "../../../../node_modules/bootswatch/dist/zephyr/bootswatch";
-
-#navbar, .offcanvs-navbar {
-    .active {
-        background-color: $white;
-        color: $primary-text-emphasis;
-        font-weight: 500;
-        border-left: 1px solid $secondary-text-emphasis;
-    }
-}
-
-.navHeading{
-    font-size: 1.1rem;
-}

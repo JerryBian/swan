@@ -82,7 +82,7 @@ builder.Services.AddControllersWithViews(options =>
     config.JsonSerializerOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
     IsoDateTimeConverter converter = new();
     config.JsonSerializerOptions.Converters.Add(converter);
-});
+}).AddRazorRuntimeCompilation();
 
 WebApplication app = builder.Build();
 

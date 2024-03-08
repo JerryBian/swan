@@ -36,8 +36,21 @@
         <meta name="robots" content="noindex,nofollow,noarchive" />
     }
 </head>
-<body class="d-flex min-vh-100 w-100 flex-column">
-    @RenderBody()
+<body>
+    <header>
+        <div class="page-width flex-space-between py-3 px-1">
+            <a href="/" class="text-decoration-none">@_option.Value.Title</a>
+            <span>Hello221</span>
+        </div>
+    </header>
+
+    <main class="page-width">
+        @RenderBody()
+    </main>
+
+    <footer class="page-width">
+        ffff
+    </footer>
 
     <div id="temp"></div>
     @await RenderSectionAsync("Script", false)
