@@ -2,9 +2,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Swan.Core.Logger;
 using Swan.Core.Option;
-using Swan.Core.Service;
 using Swan.Core.Store;
 
 namespace Swan.Core.Extension
@@ -19,9 +17,9 @@ namespace Swan.Core.Extension
             services.AddSingleton<ISwanGitFolder, SwanGitFolder>();
 
             services.AddSingleton<ISwanStore, SwanStore>();
-            services.AddSingleton<ISwanService, SwanService>();
-            services.AddSingleton<ISwanLogService, SwanLogService>();
-            services.AddSingleton<IGitFileLoggerProcessor, GitFileLoggerProcessor>();
+            //services.AddSingleton<ISwanService, SwanService>();
+            //services.AddSingleton<ISwanLogService, SwanLogService>();
+            //services.AddSingleton<IGitFileLoggerProcessor, GitFileLoggerProcessor>();
 
             return services;
         }

@@ -1,38 +1,40 @@
-﻿using Microsoft.Extensions.Logging;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace Swan.Core.Model
 {
-    public class SwanLog : SwanObject
+    public class SwanLog : ISwanObject
     {
+        #region Object
+
+        [JsonPropertyName("id")]
+        public string Id { get; set; }
+
+        [JsonPropertyName("last_modified_at")]
+        public DateTime LastModifiedAt { get; set; }
+
+        [JsonPropertyName("created_at")]
+        public DateTime CreatedAt { get; set; }
+
+        [JsonPropertyName("url")]
+        public string Url { get; set; }
+
+        [JsonPropertyName("ip_address")]
+        public string IpAddress { get; set; }
+
+        [JsonPropertyName("user_agent")]
+        public string UserAgent { get; set; }
+
         [JsonPropertyName("message")]
         public string Message { get; set; }
 
-        [JsonPropertyName("error")]
-        public string Error { get; set; }
+        [JsonPropertyName("exception")]
+        public string Exception { get; set; }
 
         [JsonPropertyName("level")]
         public string Level { get; set; }
 
-        public override string GetGitStorePath() => "obj/_log.json";
+        #endregion
 
-        public string GetLogClassName()
-        {
-            var name = string.Empty;
-            if (Level == LogLevel.Warning.ToString())
-            {
-                name = "text-bg-warning";
-            }
-            else if (Level == LogLevel.Error.ToString())
-            {
-                name = "text-bg-danger";
-            }
-            else if (Level == LogLevel.Debug.ToString())
-            {
-                name = "text-bg-light";
-            }
-
-            return name;
-        }
+        public static string GitPath => "data/_log.json";
     }
 }

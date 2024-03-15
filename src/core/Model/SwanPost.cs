@@ -1,78 +1,55 @@
-﻿using System.Text.Json.Serialization;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 
 namespace Swan.Core.Model
 {
-    public class SwanPost : SwanObject
+    public class SwanPost : ISwanObject
     {
-        #region Raw
+        #region Object
 
-        [StoreUnique]
+        [JsonPropertyName("id")]
+        public string Id { get; set; }
+
+        [JsonPropertyName("last_modified_at")]
+        public DateTime LastModifiedAt { get; set; }
+
+        [JsonPropertyName("created_at")]
+        public DateTime CreatedAt { get; set; }
+
         [JsonPropertyName("title")]
         public string Title { get; set; }
 
-        [StoreUnique]
-        [JsonPropertyName("link")]
-        public string Link { get; set; }
-
-        [JsonPropertyName("excerpt")]
-        public string Excerpt { get; set; }
+        [JsonPropertyName("url")]
+        public string Url { get; set; }
 
         [JsonPropertyName("content")]
         public string Content { get; set; }
 
-        [JsonPropertyName("series")]
-        public string Series { get; set; }
+        [JsonPropertyName("tag_id")]
+        public long TagId { get; set; }
 
-        [JsonPropertyName("tags")]
-        public List<string> Tags { get; set; } = [];
+        [JsonPropertyName("is_public")]
+        public bool IsPublic { get; set; }
 
-        [JsonPropertyName("publishDate")]
-        public DateTime PublishDate { get; set; }
+        [JsonPropertyName("visits")]
+        public int Visits { get; set; }
 
-        [JsonPropertyName("isDeleted")]
-        public bool IsDeleted { get; set; } = false;
-
-        #endregion
-
-        #region Extension
-
-        [JsonIgnore]
-        public string TextExcerpt { get; set; }
-
-        [JsonIgnore]
-        public string HtmlContent { get; set; }
-
-        [JsonIgnore]
-        public PostSeries BlogSeries { get; set; }
-
-        [JsonIgnore]
-        public List<PostTag> BlogTags { get; } = [];
-
-        [JsonIgnore]
-        public SwanPage PageStat { get; set; } = new();
-
-        [JsonIgnore]
-        public SwanPost PreviousPost { get; set; }
-
-        [JsonIgnore]
-        public SwanPost NextPost { get; set; }
-
-        [JsonIgnore]
-        public List<SwanPost> RecommendPostsByTag { get; } = [];
-
-        [JsonIgnore]
-        public List<SwanPost> RecommendPostsBySeries { get; } = [];
-
-        public string HtmlMetadata1 { get; set; }
-
-        public string HtmlMetadata2 { get; set; }
+        [JsonPropertyName("published_at")]
+        public DateTime PublishedAt { get; set; }
 
         #endregion
 
-        public override string GetGitStorePath() => "obj/post.json";
+        #region ViewModels
 
-        public override bool IsPublicToEveryOne() => base.IsPublicToEveryOne() && !IsDeleted && PublishDate <= DateTime.Now;
+        [JsonIgnore]
+        public SwanTag tag { get; set; }
 
-        public override string GetFullLink() => $"/post/{Link}.html";
+        #endregion
+
+        public static string GitPath => "data/post.json";
     }
 }

@@ -26,6 +26,6 @@
     "sass": "^1.71.1",
     "uglify-js": "^3.17.4",
     "uglifycss": "^0.0.29",
-    "normalize.css": "^8.0.1"
+    "bootstrap": "^5.3.3"
   }
 }

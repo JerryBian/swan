@@ -2,7 +2,7 @@
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Options;
 using Swan.Core.Helper;
-using Swan.Core.Model2;
+using Swan.Core.Model;
 using Swan.Core.Option;
 
 namespace Swan.Core.Store
@@ -18,58 +18,58 @@ namespace Swan.Core.Store
             _connectionString = new Lazy<string>(() => BuildConnectionString(), true);
         }
 
-        public async Task TestAsync(string oldDir)
-        {
-            var dbFile = Path.Combine(_option.DataLocation, "swan.db");
-            if(File.Exists(dbFile))
-            {
-                File.Delete(dbFile);
-            }
-            await StartAsync();
-            var tagId = await InsertAsync(new SwanTag
-            {
-                Description = "POST",
-                IsPublic = true,
-                Name = "post",
-                Url = "post"
-            });
+        //public async Task TestAsync(string oldDir)
+        //{
+        //    var dbFile = Path.Combine(_option.DataLocation, "swan.db");
+        //    if(File.Exists(dbFile))
+        //    {
+        //        File.Delete(dbFile);
+        //    }
+        //    await StartAsync();
+        //    var tagId = await InsertAsync(new SwanTag
+        //    {
+        //        Description = "POST",
+        //        IsPublic = true,
+        //        Name = "post",
+        //        Url = "post"
+        //    });
 
-            var oldPosts = JsonHelper.Deserialize<List<Model.SwanPost>>(await File.ReadAllTextAsync(Path.Combine(oldDir, "obj", "post.json")));
-            foreach(var  post in oldPosts)
-            {
-                var newPost = new SwanPost
-                {
-                    Content = post.Content,
-                    CreatedAt = post.CreatedAt,
-                    IsPublic = post.IsPublic,
-                    LastModifiedAt = post.LastUpdatedAt,
-                    PublishedAt = post.PublishDate,
-                    TagId = tagId.Value,
-                    Title = post.Title,
-                    Url = post.Link,
-                    Visits = 300
-                };
-                await InsertAsync(newPost);
-            }
+        //    var oldPosts = JsonHelper.Deserialize<List<Model.SwanPost>>(await File.ReadAllTextAsync(Path.Combine(oldDir, "obj", "post.json")));
+        //    foreach(var  post in oldPosts)
+        //    {
+        //        var newPost = new SwanPost
+        //        {
+        //            Content = post.Content,
+        //            CreatedAt = post.CreatedAt,
+        //            IsPublic = post.IsPublic,
+        //            LastModifiedAt = post.LastUpdatedAt,
+        //            PublishedAt = post.PublishDate,
+        //            TagId = tagId.Value,
+        //            Title = post.Title,
+        //            Url = post.Link,
+        //            Visits = 300
+        //        };
+        //        await InsertAsync(newPost);
+        //    }
 
-            var oldReads = JsonHelper.Deserialize<List<Model.SwanRead>>(await File.ReadAllTextAsync(Path.Combine(oldDir, "obj", "read.json")));
-            foreach (var post in oldReads)
-            {
-                var newRead = new SwanRead
-                {
-                    Translator = post.Translator,
-                    LastModifiedAt = post.LastUpdatedAt,
-                    Author = post.Author,
-                    AuthorCountry = post.AuthorCountry,
-                    Comment = post.Comment,
-                    CreatedAt = post.CreatedAt,
-                    Grade = post.Grade,
-                    IsPublic = post.IsPublic,
-                    BookName = post.BookName
-                };
-                await InsertAsync(newRead);
-            }
-        }
+        //    var oldReads = JsonHelper.Deserialize<List<Model.SwanRead>>(await File.ReadAllTextAsync(Path.Combine(oldDir, "obj", "read.json")));
+        //    foreach (var post in oldReads)
+        //    {
+        //        var newRead = new SwanRead
+        //        {
+        //            Translator = post.Translator,
+        //            LastModifiedAt = post.LastUpdatedAt,
+        //            Author = post.Author,
+        //            AuthorCountry = post.AuthorCountry,
+        //            Comment = post.Comment,
+        //            CreatedAt = post.CreatedAt,
+        //            Grade = post.Grade,
+        //            IsPublic = post.IsPublic,
+        //            BookName = post.BookName
+        //        };
+        //        await InsertAsync(newRead);
+        //    }
+        //}
 
         public async Task StartAsync()
         {
@@ -125,21 +125,19 @@ namespace Swan.Core.Store
             await connection.ExecuteAsync(sql, obj);
         }
 
-        public async Task<List<T>> QueryAsync<T>(IDictionary<string, string> queryProperties = null) where T : ISwanObject
+        public async Task<List<T>> QueryAsync<T>(DatabaseQuery queryProperties = null) where T : ISwanObject
         {
-            var sql = queryProperties == null || !queryProperties.Any() ?
-                $"SELECT * FROM {T.ObjectName} WHERE {string.Join(" AND ", queryProperties.Select(x => $"{StringHelper.Underscored(x.Key)}='{x.Value}'"))}" :
-                $"SELECT * FROM {T.ObjectName}";
+            queryProperties ??= new DatabaseQuery();
+            var sql = $"SELECT * FROM {T.ObjectName} {queryProperties}";
             await using SqliteConnection connection = new(_connectionString.Value);
             var result = await connection.QueryAsync<T>(sql);
             return result.AsList();
         }
 
-        public async Task<T> QueryFirstOrDefaultAsync<T>(IDictionary<string, string> queryProperties = null) where T : ISwanObject
+        public async Task<T> QueryFirstOrDefaultAsync<T>(DatabaseQuery queryProperties = null) where T : ISwanObject
         {
-            var sql = queryProperties == null || !queryProperties.Any() ?
-                $"SELECT * FROM {T.ObjectName} WHERE {string.Join(" AND ", queryProperties.Select(x => $"{StringHelper.Underscored(x.Key)}='{x.Value}'"))}" :
-                $"SELECT * FROM {T.ObjectName}";
+            queryProperties ??= new DatabaseQuery();
+            var sql = $"SELECT * FROM {T.ObjectName} {queryProperties}";
             await using SqliteConnection connection = new(_connectionString.Value);
             var result = await connection.QueryFirstOrDefaultAsync<T>(sql);
             return result;

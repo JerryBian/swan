@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>swan</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.35" />
+    <PackageReference Include="GitStore" Version="1.4.0" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.59" />
+    <PackageReference Include="Markdig" Version="0.35.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="8.0.2" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Core\Store\startup.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

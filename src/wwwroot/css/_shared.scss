@@ -1,0 +1,23 @@
+$page-background-color: hsl(0, 0%, 96.9%);
+$page-text-color: hsl(0, 0%, 20%);
+
+@import "../../../node_modules/bootstrap/dist/css/bootstrap";
+
+body {
+    font-weight: 400;
+    letter-spacing: -0.021rem;
+    padding: 0;
+    vertical-align: baseline;
+    background-color: $page-background-color;
+    color: $page-text-color;
+}
+
+header {
+    background-color: pink;
+}
+
+.page-width {
+    width: 100%;
+    margin: 0 auto;
+    max-width: 1140px;
+}

@@ -2,48 +2,39 @@
 
 namespace Swan.Core.Model
 {
-    public class SwanRead : SwanObject
+    public class SwanRead : SwanObject<SwanRead>
     {
-        #region Raw
+        #region Object
 
-        [JsonPropertyName("bookName")]
+        [JsonPropertyName("book_name")]
         public string BookName { get; set; }
 
         [JsonPropertyName("author")]
         public string Author { get; set; }
 
-        [JsonPropertyName("authorCountry")]
+        [JsonPropertyName("author_country")]
         public string AuthorCountry { get; set; }
 
         [JsonPropertyName("translator")]
         public string Translator { get; set; }
 
+        [JsonPropertyName("is_public")]
+        public bool IsPublic { get; set; }
+
         [JsonPropertyName("grade")]
-        public short Grade { get; set; }
+        public int Grade { get; set; }
 
         [JsonPropertyName("comment")]
         public string Comment { get; set; }
 
-        [JsonPropertyName("posts")]
-        public List<string> Posts { get; set; } = [];
+        #endregion
+
+        #region View Models
+
+
 
         #endregion
 
-        #region Extension
-
-        [JsonIgnore]
-        public List<SwanPost> BlogPosts { get; } = [];
-
-        [JsonIgnore]
-        public string HtmlMetadata { get; set; }
-
-        [JsonIgnore]
-        public string HtmlComment { get; set; }
-
-        #endregion
-
-        public override string GetGitStorePath() => "obj/read.json";
-
-        public override string GetFullLink() => $"/read#link-{Id}";
+        public static string GitPath => "data/read.json";
     }
 }

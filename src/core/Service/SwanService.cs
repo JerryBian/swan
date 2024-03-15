@@ -1,201 +1,207 @@
-﻿using DotNext.Threading;
-using GitStoreDotnet;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Caching.Memory;
-using Swan.Core.Extension;
-using Swan.Core.Helper;
-using Swan.Core.Model;
-using System.Collections.Concurrent;
-using System.Reflection;
-using System.Text.Json.Serialization;
+﻿using Swan.Core.Model;
+using Swan.Core.Store;
 
 namespace Swan.Core.Service
 {
-    internal class SwanService : ISwanService
+    public class SwanService
     {
-        private readonly IGitStore _gitStore;
-        private readonly IMemoryCache _memoryCache;
-        private readonly AsyncReaderWriterLock _asyncReaderWriterLock;
-        private readonly ConcurrentDictionary<string, object> _cacheKeys;
+        private readonly ILogger<SwanService> _logger;
+        private readonly ISwanDatabase _swanDatabase;
 
-        public SwanService(IGitStore gitStore, IMemoryCache memoryCache)
+        public SwanService(
+            ISwanDatabase swanDatabase,
+            ILogger<SwanService> logger)
         {
-            _gitStore = gitStore;
-            _memoryCache = memoryCache;
-            _asyncReaderWriterLock = new AsyncReaderWriterLock();
-            _cacheKeys = new ConcurrentDictionary<string, object>();
+            _swanDatabase = swanDatabase;
+            _logger = logger;
         }
 
-        public async Task<List<T>> FindAsync<T>(bool searchAdminStore, Predicate<T> wherePredicate = null) where T : SwanObject
-        {
-            await _asyncReaderWriterLock.EnterReadLockAsync();
+        #region SwanTag
 
-            try
+        public async Task<List<SwanTag>> GetTagsAsync(bool publicOnly = true)
+        {
+            var tagQuery = new DatabaseQuery();
+            if(publicOnly)
             {
-                var storeObject = await GetStoreObjectAsync(searchAdminStore);
-                var result = storeObject.Get<T>();
-                result = result.
-                    Where(x => wherePredicate == null || wherePredicate(x)).
-                    ToList();
-                return result;
+                tagQuery.Add(nameof(SwanTag.IsPublic), 1);
             }
-            finally
+
+            var tags = await _swanDatabase.QueryAsync<SwanTag>(tagQuery);
+            foreach (var tag in tags)
             {
-                _asyncReaderWriterLock.Release();
-            }
-        }
-
-        public async Task<List<T>> FindAsync<T>(HttpContext httpContext, Predicate<T> wherePredicate = null) where T : SwanObject
-        {
-            return await FindAsync(httpContext.IsAuthorized(), wherePredicate);
-        }
-
-        public async Task<T> FindAsync<T>(string id) where T : SwanObject
-        {
-            return await FindFirstOrDefaultAsync<T>(true, x => StringHelper.EqualsIgoreCase(x.Id, id));
-        }
-
-        public async Task<T> FindFirstOrDefaultAsync<T>(bool searchAdminStore, Predicate<T> predicate = null) where T : SwanObject
-        {
-            var items = await FindAsync<T>(searchAdminStore, x => predicate(x));
-            return items.FirstOrDefault();
-        }
-
-        public async Task<T> FindFirstOrDefaultAsync<T>(HttpContext context, Predicate<T> predicate = null) where T : SwanObject
-        {
-            var item = await FindFirstOrDefaultAsync<T>(context.IsAuthorized(), x => predicate(x));
-            return item;
-        }
-
-        public async Task AddAsync<T>(T item) where T : SwanObject
-        {
-            await _asyncReaderWriterLock.EnterWriteLockAsync();
-
-            try
-            {
-                var obj = await GetStoreObjectAsync(true);
-                var items = obj.Get<T>();
-
-                item.CreatedAt = item.LastUpdatedAt = DateTime.Now;
-                Add(items, item);
-                var content = JsonHelper.Serialize(items.OrderByDescending(x => x.CreatedAt));
-                await _gitStore.InsertOrUpdateAsync(item.GetGitStorePath(), content);
-                ExpireCache();
-            }
-            finally
-            {
-                _asyncReaderWriterLock.Release();
-            }
-        }
-
-        public async Task UpdateAsync<T>(T item) where T : SwanObject
-        {
-            await _asyncReaderWriterLock.EnterWriteLockAsync();
-
-            try
-            {
-                var obj = await GetStoreObjectAsync(true);
-                var items = obj.Get<T>();
-                var oldObj = items.FirstOrDefault(x => StringHelper.EqualsIgoreCase(x.Id, item.Id));
-                if (oldObj == null)
+                var postQuery = new DatabaseQuery();
+                if(publicOnly)
                 {
-                    throw new Exception($"{typeof(T).Name} with id {item.Id} not exists.");
+                    postQuery.Add(nameof(SwanPost.IsPublic), 1);
                 }
 
-                var newItems = new List<T>(items);
-                newItems.Remove(oldObj);
-                item.CreatedAt = oldObj.CreatedAt;
-                Add(newItems, item);
-                var content = JsonHelper.Serialize(newItems.OrderByDescending(x => x.CreatedAt));
-                await _gitStore.InsertOrUpdateAsync(item.GetGitStorePath(), content);
-                ExpireCache();
+                var taggedPosts = await _swanDatabase.QueryAsync<SwanPost>(postQuery);
+                tag.Posts.AddRange(taggedPosts);
             }
-            finally
-            {
-                _asyncReaderWriterLock.Release();
-            }
+
+            return tags;
         }
 
-        public async Task DeleteAsync<T>(string id) where T : SwanObject
+        public async Task<SwanTag> GetTagAsync(string url, bool publicOnly = true)
         {
-            await _asyncReaderWriterLock.EnterWriteLockAsync();
+            var tagQuery = new DatabaseQuery();
+            tagQuery.Add(nameof(SwanTag.Url), url);
 
-            try
+            if (publicOnly)
             {
-                var obj = await GetStoreObjectAsync(true);
-                var items = obj.Get<T>();
-                var oldObj = items.FirstOrDefault(x => StringHelper.EqualsIgoreCase(x.Id, id));
-                if (oldObj == null)
+                tagQuery.Add(nameof(SwanTag.IsPublic), 1);
+            }
+
+            var tag = await _swanDatabase.QueryFirstOrDefaultAsync<SwanTag>(tagQuery);
+            if(tag == null)
+            {
+                return null;
+            }
+
+            var postQuery = new DatabaseQuery();
+            postQuery.Add(nameof(SwanPost.TagId), tag.Id);
+
+            if (publicOnly)
+            {
+                postQuery.Add(nameof(SwanPost.IsPublic), 1);
+            }
+
+            var taggedPosts = await _swanDatabase.QueryAsync<SwanPost>(postQuery);
+            tag.Posts.AddRange(taggedPosts);
+
+            return tag;
+        }
+
+        public async Task<SwanTag> GetTagAsync(int id)
+        {
+            var tagQuery = new DatabaseQuery();
+            tagQuery.Add(nameof(SwanTag.Id), id);
+
+            var tag = await _swanDatabase.QueryFirstOrDefaultAsync<SwanTag>(tagQuery);
+            if (tag == null)
+            {
+                return null;
+            }
+
+            var postQuery = new DatabaseQuery();
+            postQuery.Add(nameof(SwanPost.TagId), tag.Id);
+
+            var taggedPosts = await _swanDatabase.QueryAsync<SwanPost>(postQuery);
+            tag.Posts.AddRange(taggedPosts);
+
+            return tag;
+        }
+
+        public async Task UpdateTagAsync(SwanTag tag)
+        {
+            var query = new DatabaseQuery();
+            query.Add(nameof(SwanTag.Id), tag.Id);
+
+            var oldTag = await _swanDatabase.QueryFirstOrDefaultAsync<SwanTag>(query);
+            if(oldTag == null)
+            {
+                throw new Exception($"Failed to update tag, id {tag.Id} not exists.");
+            }
+
+            tag.CreatedAt = oldTag.CreatedAt;
+            tag.LastModifiedAt = DateTime.Now;
+            await _swanDatabase.UpdateAsync(tag);
+        }
+
+        #endregion
+
+        #region SwanPost
+
+        public async Task<List<SwanPost>> GetPostsAsync(bool publicOnly = true)
+        {
+            var postQuery = new DatabaseQuery();
+            if (publicOnly)
+            {
+                postQuery.Add(nameof(SwanPost.IsPublic), 1);
+            }
+
+            var posts = await _swanDatabase.QueryAsync<SwanPost>(postQuery);
+            foreach (var post in posts)
+            {
+                var tagQuery = new DatabaseQuery();
+                if (publicOnly)
                 {
-                    return;
+                    tagQuery.Add(nameof(SwanTag.IsPublic), 1);
                 }
 
-                var newItems = new List<T>(items);
-                newItems.Remove(oldObj);
-
-                var content = JsonHelper.Serialize(newItems.OrderByDescending(x => x.CreatedAt));
-                await _gitStore.InsertOrUpdateAsync(oldObj.GetGitStorePath(), content);
-                ExpireCache();
-            }
-            finally
-            {
-                _asyncReaderWriterLock.Release();
-            }
-        }
-
-        private void Add<T>(List<T> values, T value)
-        {
-            foreach (var prop in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance))
-            {
-                if (prop.GetCustomAttribute<JsonPropertyNameAttribute>() == null ||
-                    prop.GetCustomAttribute<StoreUniqueAttribute>() == null)
-                {
-                    continue;
-                }
-
-                var val1 = prop.GetValue(value);
-                if (values.FirstOrDefault(x => prop.GetValue(x).Equals(val1)) != null)
-                {
-                    throw new Exception($"{prop.Name} with value {val1} already exists in {typeof(T).Name} list.");
-                }
+                var taggedPosts = await _swanDatabase.QueryAsync<SwanPost>(tagQuery);
+                post.Posts.AddRange(taggedPosts);
             }
 
-            values.Add(value);
+            return posts;
         }
 
-        private async Task<StoreObject> GetStoreObjectAsync(bool adminOnly = false)
+        public async Task<SwanTag> GetTagAsync(string url, bool publicOnly = true)
         {
-            var storeObject = await _memoryCache.GetOrCreateAsync(GetCacheKey<StoreObject>("storeobj", adminOnly.ToString()), async _ =>
+            var tagQuery = new DatabaseQuery();
+            tagQuery.Add(nameof(SwanTag.Url), url);
+
+            if (publicOnly)
             {
-                var obj = new StoreObject(adminOnly);
-                await obj.PopulateDataAsync(_gitStore);
-
-                return obj;
-            });
-
-            return storeObject;
-        }
-
-        private string GetCacheKey<T>(params string[] keys)
-        {
-            var key = $"core.ss.{string.Join(".", keys)}";
-            _cacheKeys.TryAdd(key, new object());
-            return key;
-        }
-
-        private void ExpireCache()
-        {
-            foreach (var item in _cacheKeys.Keys)
-            {
-                _memoryCache.Remove(item);
+                tagQuery.Add(nameof(SwanTag.IsPublic), 1);
             }
+
+            var tag = await _swanDatabase.QueryFirstOrDefaultAsync<SwanTag>(tagQuery);
+            if (tag == null)
+            {
+                return null;
+            }
+
+            var postQuery = new DatabaseQuery();
+            postQuery.Add(nameof(SwanPost.TagId), tag.Id);
+
+            if (publicOnly)
+            {
+                postQuery.Add(nameof(SwanPost.IsPublic), 1);
+            }
+
+            var taggedPosts = await _swanDatabase.QueryAsync<SwanPost>(postQuery);
+            tag.Posts.AddRange(taggedPosts);
+
+            return tag;
         }
 
-        public async Task<string> UploadFileAsync(string fileName, byte[] binary)
+        public async Task<SwanTag> GetTagAsync(int id)
         {
-            var fullPath = $"static/{fileName}";
-            await _gitStore.InsertOrUpdateAsync(fullPath, binary);
-            return "/" + fullPath;
+            var tagQuery = new DatabaseQuery();
+            tagQuery.Add(nameof(SwanTag.Id), id);
+
+            var tag = await _swanDatabase.QueryFirstOrDefaultAsync<SwanTag>(tagQuery);
+            if (tag == null)
+            {
+                return null;
+            }
+
+            var postQuery = new DatabaseQuery();
+            postQuery.Add(nameof(SwanPost.TagId), tag.Id);
+
+            var taggedPosts = await _swanDatabase.QueryAsync<SwanPost>(postQuery);
+            tag.Posts.AddRange(taggedPosts);
+
+            return tag;
         }
+
+        public async Task UpdateTagAsync(SwanTag tag)
+        {
+            var query = new DatabaseQuery();
+            query.Add(nameof(SwanTag.Id), tag.Id);
+
+            var oldTag = await _swanDatabase.QueryFirstOrDefaultAsync<SwanTag>(query);
+            if (oldTag == null)
+            {
+                throw new Exception($"Failed to update tag, id {tag.Id} not exists.");
+            }
+
+            tag.CreatedAt = oldTag.CreatedAt;
+            tag.LastModifiedAt = DateTime.Now;
+            await _swanDatabase.UpdateAsync(tag);
+        }
+
+        #endregion
     }
 }

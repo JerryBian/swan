@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>swan</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/icon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/icon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/icon/favicon-16x16.png">
+    <link rel="manifest" href="/static/icon/site.webmanifest">
+    <link rel="mask-icon" href="/static/icon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/static/icon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-config" content="/static/icon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <link rel="stylesheet" href="~/style.min.css" asp-append-version="true" />
+</head>
+<body class="d-flex min-vh-100 w-100 flex-column">
+    <header>
+        <div class="container d-flex justify-content-between py-3 px-1">
+            <a href="/" class="text-decoration-none">swan1</a>
+            <span>Hello221</span>
+        </div>
+    </header>
+
+    <main class="container">
+        @RenderBody()
+    </main>
+
+    <footer class="container text-center py-3 small mt-auto bg-light">
+        ffff0
+    </footer>
+
+    <div id="temp"></div>
+    <script src="~/js/script.min.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Script", false)
+</body>
+</html>

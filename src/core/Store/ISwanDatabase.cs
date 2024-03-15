@@ -1,4 +1,4 @@
-﻿using Swan.Core.Model2;
+﻿using Swan.Core.Model;
 
 namespace Swan.Core.Store
 {
@@ -10,9 +10,9 @@ namespace Swan.Core.Store
 
         Task UpdateAsync<T>(T obj) where T : ISwanObject;
 
-        Task<List<T>> QueryAsync<T>(IDictionary<string, string> queryProperties = null) where T : ISwanObject;
+        Task<List<T>> QueryAsync<T>(DatabaseQuery queryProperties = null) where T : ISwanObject;
 
-        Task<T> QueryFirstOrDefaultAsync<T>(IDictionary<string, string> queryProperties = null) where T : ISwanObject;
+        Task<T> QueryFirstOrDefaultAsync<T>(DatabaseQuery queryProperties = null) where T : ISwanObject;
 
         Task DeleteAsync<T>(long id) where T : ISwanObject;
     }

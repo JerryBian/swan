@@ -1,4 +1,4 @@
-$WWWRootLoc = Join-Path $PSScriptRoot src web wwwroot
+$WWWRootLoc = Join-Path $PSScriptRoot src wwwroot
 $NodeModulesLoc = Join-Path $PSScriptRoot node_modules
 
 npm install
@@ -9,23 +9,13 @@ npx sass $(Join-Path $WWWRootLoc css style.scss) $(Join-Path $WWWRootLoc style.c
 uglifycss --ugly-comments `
     --output $(Join-Path $WWWRootLoc style.min.css) `
 $(Join-Path $WWWRootLoc style.css)
-Write-Output "[normal]: CSS completed"
+Write-Output "CSS completed"
 
 uglifyjs --compress -o $(Join-Path $WWWRootLoc script.min.js) `
-$(Join-Path $WWWRootLoc js _shared.js)
-Write-Output "[normal]: JS completed"
-
-npx sass $(Join-Path $WWWRootLoc css admin.scss) $(Join-Path $WWWRootLoc admin.css)
-uglifycss --ugly-comments `
-    --output $(Join-Path $WWWRootLoc admin.min.css) `
-$(Join-Path $NodeModulesLoc easymde dist easymde.min.css) `
-$(Join-Path $WWWRootLoc admin.css)
-Write-Output "[admin]: CSS completed"
-
-uglifyjs --compress -o $(Join-Path $WWWRootLoc admin.min.js) `
+$(Join-Path $NodeModulesLoc bootstrap dist js bootstrap.js) `
 $(Join-Path $WWWRootLoc js _shared.js) `
 $(Join-Path $NodeModulesLoc easymde dist easymde.min.js) `
-$(Join-Path $WWWRootLoc js admin.js)
-Write-Output "[admin]: JS completed"
+$(Join-Path $WWWRootLoc js script.js)
+Write-Output "JS completed"
 
 Write-Output "All Done!"
