@@ -12,7 +12,7 @@ public static class ServiceCollectionExtension
     {
         services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
 
-        services.AddOptions<SwanOption>().BindConfiguration("swan");
+        services.AddOptions<SwanOption>().BindConfiguration("Swan");
 
         services.AddMemoryCache();
         services.AddOutputCache(options =>
