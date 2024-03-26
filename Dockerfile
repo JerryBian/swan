@@ -10,7 +10,7 @@ RUN dotnet publish \
     -o /publish \
     -v normal \
     /property:Version=${ver} \
-    ./web/Swan.csproj
+    ./Swan.csproj
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
