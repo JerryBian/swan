@@ -3,33 +3,32 @@ using System.Text.Json.Serialization;
 using System.Text.Json;
 using Swan.Core.Converter;
 
-namespace Swan.Core.Helper
+namespace Swan.Core.Helper;
+
+public static class JsonHelper
 {
-    public static class JsonHelper
+    public static string Serialize<T>(T obj, bool writeIndented = false, List<JsonConverter> converters = null)
     {
-        public static string Serialize<T>(T obj, bool writeIndented = false, List<JsonConverter> converters = null)
+        JsonSerializerOptions option = new()
         {
-            JsonSerializerOptions option = new()
-            {
-                WriteIndented = writeIndented,
-                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-            };
+            WriteIndented = writeIndented,
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+        };
 
-            if (converters != null)
-            {
-                converters.ForEach(option.Converters.Add);
-            }
-            else
-            {
-                option.Converters.Add(new IsoDateTimeConverter());
-            }
-
-            return JsonSerializer.Serialize(obj, option);
+        if (converters != null)
+        {
+            converters.ForEach(option.Converters.Add);
+        }
+        else
+        {
+            option.Converters.Add(new IsoDateTimeConverter());
         }
 
-        public static T Deserialize<T>(string json)
-        {
-            return string.IsNullOrEmpty(json) ? default : JsonSerializer.Deserialize<T>(json);
-        }
+        return JsonSerializer.Serialize(obj, option);
+    }
+
+    public static T Deserialize<T>(string json)
+    {
+        return string.IsNullOrEmpty(json) ? default : JsonSerializer.Deserialize<T>(json);
     }
 }

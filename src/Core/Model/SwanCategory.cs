@@ -1,6 +1,5 @@
-﻿namespace Swan.Core.Model
+﻿namespace Swan.Core.Model;
+
+public class SwanCategory
 {
-    public class SwanCategory
-    {
-    }
 }

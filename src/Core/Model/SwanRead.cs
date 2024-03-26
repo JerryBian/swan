@@ -1,45 +1,61 @@
-﻿using System.Text.Json.Serialization;
+﻿using Swan.Core.Helper;
+using System.Text.Json.Serialization;
 
-namespace Swan.Core.Model
+namespace Swan.Core.Model;
+
+public class SwanRead
 {
-    public class SwanRead
-    {
-        #region Raw
+    #region Raw
 
-        [JsonPropertyName("bookName")]
-        public string BookName { get; set; }
+    [JsonPropertyName("bookName")]
+    public string BookName { get; set; }
 
-        [JsonPropertyName("author")]
-        public string Author { get; set; }
+    [JsonPropertyName("author")]
+    public string Author { get; set; }
 
-        [JsonPropertyName("authorCountry")]
-        public string AuthorCountry { get; set; }
+    [JsonPropertyName("authorCountry")]
+    public string AuthorCountry { get; set; }
 
-        [JsonPropertyName("translator")]
-        public string Translator { get; set; }
+    [JsonPropertyName("translator")]
+    public string Translator { get; set; }
 
-        [JsonPropertyName("grade")]
-        public short Grade { get; set; }
+    [JsonPropertyName("grade")]
+    public short Grade { get; set; }
 
-        [JsonPropertyName("comment")]
-        public string Comment { get; set; }
+    [JsonPropertyName("comment")]
+    public string Comment { get; set; }
 
-        [JsonPropertyName("posts")]
-        public List<string> Posts { get; set; } = [];
+    [JsonPropertyName("posts")]
+    public List<string> Posts { get; set; } = [];
 
-        #endregion
+    [JsonPropertyName("id")]
+    [JsonPropertyOrder(-100)]
+    public string Id { get; set; }
 
-        #region Extension
+    [JsonPropertyOrder(100)]
+    [JsonPropertyName("createdAt")]
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
 
-        [JsonIgnore]
-        public List<SwanPost> BlogPosts { get; } = [];
+    [JsonPropertyOrder(101)]
+    [JsonPropertyName("lastUpdatedAt")]
+    public DateTime LastUpdatedAt { get; set; } = DateTime.Now;
 
-        [JsonIgnore]
-        public string HtmlMetadata { get; set; }
+    [JsonPropertyOrder(103)]
+    [JsonPropertyName("isPublic")]
+    public bool IsPublic { get; set; } = false;
 
-        [JsonIgnore]
-        public string HtmlComment { get; set; }
+    #endregion
 
-        #endregion
-    }
+    #region Extension
+
+    [JsonIgnore]
+    public List<SwanPost> BlogPosts { get; } = [];
+
+    [JsonIgnore]
+    public string HtmlMetadata { get; set; }
+
+    [JsonIgnore]
+    public string HtmlComment { get; set; }
+
+    #endregion
 }

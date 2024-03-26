@@ -1,7 +1,6 @@
-﻿namespace Swan.Core.Model
+﻿namespace Swan.Core.Model;
+
+public class SwanObject
 {
-    public class SwanObject
-    {
-        public List<SwanRead> ReadItems { get; init; } = new();
-    }
+    public List<SwanRead> ReadItems { get; init; } = new();
 }

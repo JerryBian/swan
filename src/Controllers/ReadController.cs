@@ -1,12 +1,20 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Swan.Core.Store;
 
-namespace Swan.Controllers
+namespace Swan.Controllers;
+
+public class ReadController : Controller
 {
-    public class ReadController : Controller
+    private readonly ISwanStore _swanStore;
+
+    public ReadController(ISwanStore swanStore)
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+        _swanStore = swanStore;
+    }
+
+    public async Task<IActionResult> Index()
+    {
+        var readItems = await _swanStore.GetReadItemsAsync(true);
+        return View(readItems);
     }
 }

@@ -1,3 +1,5 @@
+using Swan.Core.Extension;
+
 namespace Swan;
 
 public class Program
@@ -5,6 +7,7 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        builder.Services.AddSwanService();
 
         // Add services to the container.
         builder.Services.AddControllersWithViews();
@@ -12,6 +15,7 @@ public class Program
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
+        app.UseSwanService();
         if (!app.Environment.IsDevelopment())
         {
             app.UseExceptionHandler("/Home/Error");
