@@ -10,7 +10,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="GitStore" Version="1.4.0" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.59" />
+    <PackageReference Include="Markdig" Version="0.36.2" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="8.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Core\Model\" />
+    <Folder Include="Core\Extension\" />
   </ItemGroup>
 
 </Project>
