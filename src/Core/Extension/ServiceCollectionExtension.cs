@@ -1,6 +1,7 @@
 ﻿using GitStoreDotnet;
 using Microsoft.Extensions.Options;
 using Swan.Core.Store;
+using Swan.HostedServices;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 
@@ -24,6 +25,7 @@ public static class ServiceCollectionExtension
         //services.AddHostedService<MonitorHostedService>();
         //services.AddHostedService<GitFileHostedService>();
         //services.AddHostedService<PageHitHostedService>();
+        services.AddHostedService<GitStoreHostedService>();
 
         services.AddGitStore();
 
