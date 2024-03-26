@@ -16,12 +16,15 @@ public class SwanStore : ISwanStore
     private readonly SwanOption _swanOption;
     private readonly IMemoryCache _memoryCahce;
     private readonly SemaphoreSlim _semaphoreSlim;
+    private readonly ILogger<SwanStore> _logger;
 
     public SwanStore(
         IGitStore gitStore,
         IMemoryCache memoryCache,
+        ILogger<SwanStore> logger,
         IOptions<SwanOption> option)
     {
+        _logger = logger;
         _gitStore = gitStore;
         _swanOption = option.Value;
         _memoryCahce = memoryCache;
@@ -37,6 +40,7 @@ public class SwanStore : ISwanStore
             if(!_swanOption.SkipGitOperation)
             {
                 await _gitStore.PullFromRemoteAsync();
+                _logger.LogInformation($"Load from git store to {_swanOption.DataLocation}");
             }
         }
         finally
