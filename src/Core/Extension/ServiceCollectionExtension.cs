@@ -40,7 +40,7 @@ public static class ServiceCollectionExtension
         // Options post setup
         var generalOption = builder.ApplicationServices.GetRequiredService<IOptions<SwanOption>>();
         var gitStoreOption = builder.ApplicationServices.GetRequiredService<IOptions<GitStoreOption>>();
-        gitStoreOption.Value.LocalDirectory = Path.Combine(Path.GetFullPath(generalOption.Value.DataLoaction), "asset");
+        gitStoreOption.Value.LocalDirectory = Path.Combine(Path.GetFullPath(generalOption.Value.DataLocation), "asset");
 
         return builder;
     }

@@ -4,12 +4,12 @@ public class SwanOption
 {
     public SwanOption()
     {
-        DataLoaction = Path.GetTempPath();
+        DataLocation = Path.GetTempPath();
         Title = "Swan";
         SkipGitOperation = true;
     }
 
-    public string DataLoaction { get; set; }
+    public string DataLocation { get; set; }
 
     public string Title { get; set; }
 
