@@ -24,12 +24,26 @@
                 <div class="mt-2">
                     @foreach (var item2 in item)
                     {
-                        <div class="mb-1 d-flex">
-                            <span class="flex-grow-1 me-1">
+                        <div class="mb-1">
+                            <span class="me-1">
                                 <i class="bi bi-hash small text-muted"></i>
                                 @item2.BookName 
                             </span>
-                            <span class="small text-muted">@Html.Raw(item2.HtmlMetadata)</span>
+                            <span class="x-small text-muted">
+                                (@item2.CreatedAt.ToCnDate(true))
+                            </span>
+                            @if(item2.Grade > 0)
+                            {
+                                <span>
+                                    <i class="bi bi-hand-thumbs-up"></i>
+                                </span>
+                            }
+                            else if (item2.Grade < 0)
+                            {
+                                <span>
+                                    <i class="bi bi-hand-thumbs-down"></i>
+                                </span>
+                            }
                         </div>
                     }
                 </div>
