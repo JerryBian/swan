@@ -14,36 +14,51 @@
 </head>
 <body>
     <div class="container" id="read">
-        <h1>Hello World!</h1>
+        <div class="mb-3 text-end mt-2">
+            <h2 class="font-monospace">我的阅读</h2>
+        </div>
 
         @foreach (var item in Model.OrderByDescending(x => x.CreatedAt).GroupBy(x => x.CreatedAt.Year))
         {
-            <section class="mb-4">
-                <h3 class="border-bottom">@item.Key 年</h3>
+            <section class="mb-5">
+                <h3 class="border-bottom mb-3">@item.Key 年</h3>
 
                 <div class="mt-2">
                     @foreach (var item2 in item)
                     {
-                        <div class="mb-1">
-                            <span class="me-1">
-                                <i class="bi bi-hash small text-muted"></i>
-                                @item2.BookName 
+                        var itemId = StringHelper.Random();
+                        <div class="mb-2 row">
+                            <span class="col-9">
+                                <i class="bi bi-hash x-small text-muted" data-bs-toggle="collapse" href="#@itemId" role="button" aria-expanded="false" aria-controls="@itemId"></i>
+                                @item2.BookName
+                                @if (item2.Grade > 0)
+                                {
+                                    <i class="bi bi-hand-thumbs-up"></i>
+                                }
+                                else if (item2.Grade < 0)
+                                {
+                                    <i class="bi bi-hand-thumbs-down"></i>
+                                }
                             </span>
-                            <span class="x-small text-muted">
+                            <span class="x-small text-muted col-3 text-end">
                                 (@item2.CreatedAt.ToCnDate(true))
                             </span>
-                            @if(item2.Grade > 0)
-                            {
-                                <span>
-                                    <i class="bi bi-hand-thumbs-up"></i>
-                                </span>
-                            }
-                            else if (item2.Grade < 0)
-                            {
-                                <span>
-                                    <i class="bi bi-hand-thumbs-down"></i>
-                                </span>
-                            }
+                        </div>
+                        <div class="collapse mb-4 font-monospace mt-2" id="@itemId">
+                            <div class="card card-body border-light shadow ">
+                                <div class="small text-end text-primary-emphasis">
+                                    by @Html.Raw(item2.HtmlMetadata)
+                                </div>
+
+                                @if (!string.IsNullOrEmpty(item2.HtmlComment))
+                                {
+                                    <div class="mt-2 mb-2 text-secondary-emphasis">
+                                        @Html.Raw(item2.HtmlComment)
+                                    </div>
+                                }
+                                
+                                
+                            </div>
                         </div>
                     }
                 </div>
@@ -52,5 +67,7 @@
             </section>
         }
     </div>
+
+    <script src="~/script.min.js" asp-append-version="true"></script>
 </body>
 </html>

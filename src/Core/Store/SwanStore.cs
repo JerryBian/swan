@@ -153,7 +153,6 @@ public class SwanStore : ISwanStore
                 metadatas.Add($"{read.Translator}(译)");
             }
 
-            metadatas.Add(read.CreatedAt.ToCnDate(true));
             read.HtmlMetadata = string.Join(" &middot; ", metadatas);
             read.HtmlComment = MarkdownHelper.ToHtml(read.Comment);
         }

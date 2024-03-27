@@ -1,5 +1,6 @@
 ﻿using GitStoreDotnet;
 using Microsoft.Extensions.Options;
+using NReco.Logging.File;
 using Swan.Core.Store;
 using Swan.HostedServices;
 using System.Text.Encodings.Web;
@@ -14,6 +15,12 @@ public static class ServiceCollectionExtension
         services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
 
         services.AddOptions<SwanOption>().BindConfiguration("Swan");
+
+        services.AddLogging(builder =>
+        {
+            builder.ClearProviders();
+            builder.AddConsole();
+        });
 
         services.AddMemoryCache();
         services.AddOutputCache(options =>
