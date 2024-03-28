@@ -20184,4 +20184,12 @@ textarea.form-control-lg {
   font-size: 0.8rem;
 }
 
+.ff-serif {
+  font-family: Georgia, serif;
+}
+
+#read div p:last-child {
+  margin-bottom: 0;
+}
+
 /*# sourceMappingURL=style.css.map */

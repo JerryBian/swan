@@ -15,7 +15,7 @@
 <body>
     <div class="container" id="read">
         <div class="mb-3 text-end mt-2">
-            <h2 class="font-monospace">我的阅读</h2>
+            <h2 class="ff-serif pe-2">我的阅读</h2>
         </div>
 
         @foreach (var item in Model.OrderByDescending(x => x.CreatedAt).GroupBy(x => x.CreatedAt.Year))
@@ -28,7 +28,7 @@
                     {
                         var itemId = StringHelper.Random();
                         <div class="mb-2 row">
-                            <span class="col-9">
+                            <span class="col-9 ff-serif">
                                 <i class="bi bi-hash x-small text-muted" data-bs-toggle="collapse" href="#@itemId" role="button" aria-expanded="false" aria-controls="@itemId"></i>
                                 @item2.BookName
                                 @if (item2.Grade > 0)
@@ -45,14 +45,14 @@
                             </span>
                         </div>
                         <div class="collapse mb-4 font-monospace mt-2 small" id="@itemId">
-                            <div class="card card-body border-light shadow-sm">
+                            <div class="card card-body border-success border-opacity-10">
                                 <div>
                                     <span class="text-primary-emphasis fst-italic">@Html.Raw(item2.HtmlMetadata)</span>
                                 </div>
 
                                 @if (!string.IsNullOrEmpty(item2.HtmlComment))
                                 {
-                                    <div class="mt-4 mb-2 text-secondary-emphasis">
+                                    <div class="mt-2 py-2 text-secondary-emphasis">
                                         @Html.Raw(item2.HtmlComment)
                                     </div>
                                 }

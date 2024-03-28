@@ -1,2 +1,9 @@
 @import "shared";
 
+#read{
+    div{
+        p:last-child{
+            margin-bottom:0;
+        }
+    }
+}
