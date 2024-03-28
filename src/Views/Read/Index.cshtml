@@ -44,20 +44,18 @@
                                 (@item2.CreatedAt.ToCnDate(true))
                             </span>
                         </div>
-                        <div class="collapse mb-4 font-monospace mt-2" id="@itemId">
-                            <div class="card card-body border-light shadow ">
-                                <div class="small text-end text-primary-emphasis">
-                                    by @Html.Raw(item2.HtmlMetadata)
+                        <div class="collapse mb-4 font-monospace mt-2 small" id="@itemId">
+                            <div class="card card-body border-light shadow-sm">
+                                <div>
+                                    <span class="text-primary-emphasis fst-italic">@Html.Raw(item2.HtmlMetadata)</span>
                                 </div>
 
                                 @if (!string.IsNullOrEmpty(item2.HtmlComment))
                                 {
-                                    <div class="mt-2 mb-2 text-secondary-emphasis">
+                                    <div class="mt-4 mb-2 text-secondary-emphasis">
                                         @Html.Raw(item2.HtmlComment)
                                     </div>
                                 }
-                                
-                                
                             </div>
                         </div>
                     }
