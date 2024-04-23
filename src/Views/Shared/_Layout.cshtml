@@ -11,16 +11,12 @@
     <link rel="stylesheet" href="~/style.min.css" asp-append-version="true" />
 </head>
 <body class="container">
-    <header>
-        <h2 class="fw-normal">
-            <a href="/" class="text-dcoration-none">@options.Value.Title</a>
-        </h2>
+    <header class="my-4">
+        <a href="/" class="text-dcoration-none">@options.Value.Title</a>
+        @await RenderSectionAsync("SubTitle", false)
     </header>
 
-    @await RenderSectionAsync("SubTitle", false)
-
     <main>
-        
         @RenderBody()
     </main>
 

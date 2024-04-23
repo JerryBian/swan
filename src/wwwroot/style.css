@@ -317,6 +317,10 @@ html, body {
   font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
+.float-right {
+  float: right;
+}
+
 h1, h2, h3, h4, h5, h6 {
   font-weight: normal;
 }
@@ -745,6 +749,7 @@ header h2 {
 }
 header a {
   color: inherit;
+  font-size: 1.339rem;
 }
 .breadcrumb {
   font-size: 0.9785rem;
