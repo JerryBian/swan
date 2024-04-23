@@ -452,28 +452,6 @@ header {
     }
 }
 
-.breadcrumb {
-    font-size: 0.95 * $font-size-base;
-    padding: 2%;
-    text-align: right;
-
-    .divider {
-        color: $color-grey;
-    }
-
-    .active {
-        color: $color-grey;
-    }
-
-    a {
-        color: inherit;
-        text-decoration-line: none;
-
-        &:hover {
-        }
-    }
-}
-
 main {
     background-color: white;
     padding: 1% 4%;
