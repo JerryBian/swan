@@ -1,71 +1,67 @@
 ﻿@model List<SwanRead>
-@{
-    Layout = null;
+
+@section SubTitle {
+    <div class="breadcrumb">
+        <a href="/">首页</a>
+        <span class="divider"> / </span>
+        <span class="active">阅读</span>
+    </div>
 }
 
-<!doctype html>
-<html lang="zh">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
+<div id="read">
+    @foreach (var item in Model.OrderByDescending(x => x.CreatedAt).GroupBy(x => x.CreatedAt.Year))
+    {
+        <section class="mb-5">
+            <h3 class="text-center">@item.Key 年</h3>
 
-    <link rel="stylesheet" href="~/style.min.css" asp-append-version="true" />
-</head>
-<body>
-    <div class="container" id="read">
-        <div class="mb-3 text-end mt-2">
-            <h2 class="ff-serif pe-2">我的阅读</h2>
-        </div>
-
-        @foreach (var item in Model.OrderByDescending(x => x.CreatedAt).GroupBy(x => x.CreatedAt.Year))
-        {
-            <section class="mb-5">
-                <h3 class="border-bottom mb-3">@item.Key 年</h3>
-
-                <div class="mt-2">
-                    @foreach (var item2 in item)
-                    {
-                        var itemId = StringHelper.Random();
-                        <div class="mb-2 row">
-                            <span class="col-9 ff-serif">
-                                <i class="bi bi-hash x-small text-muted" data-bs-toggle="collapse" href="#@itemId" role="button" aria-expanded="false" aria-controls="@itemId"></i>
-                                @item2.BookName
-                                @if (item2.Grade > 0)
-                                {
-                                    <i class="bi bi-hand-thumbs-up"></i>
-                                }
-                                else if (item2.Grade < 0)
-                                {
-                                    <i class="bi bi-hand-thumbs-down"></i>
-                                }
-                            </span>
-                            <span class="x-small text-muted col-3 text-end">
-                                (@item2.CreatedAt.ToCnDate(true))
-                            </span>
+            <div>
+                @foreach (var item2 in item)
+                {
+                    <div class="mb-2">
+                        <div>
+                            <span class="small text-grey me-1">» </span>
+                            <span class="book-name">@item2.BookName</span>
+                            @if (item2.Grade > 0)
+                            {
+                                <span class="small">&#128077;</span>
+                            }
+                            else if (item2.Grade < 0)
+                            {
+                                <span class="small">&#128078;</span>
+                            }
                         </div>
-                        <div class="collapse mb-4 font-monospace mt-2 small" id="@itemId">
-                            <div class="card card-body border-success border-opacity-10">
-                                <div>
-                                    <span class="text-primary-emphasis fst-italic">@Html.Raw(item2.HtmlMetadata)</span>
-                                </div>
-
-                                @if (!string.IsNullOrEmpty(item2.HtmlComment))
-                                {
-                                    <div class="mt-2 py-2 text-secondary-emphasis">
-                                        @Html.Raw(item2.HtmlComment)
-                                    </div>
-                                }
+                        <div class="book-metadata py-3 small mt-2">
+                            <div class="text-grey">
+                                @Html.Raw(item2.HtmlMetadata)
                             </div>
+                            @if (!string.IsNullOrEmpty(item2.HtmlComment))
+                            {
+                                <div class="font-monospace post">
+                                    @Html.Raw(item2.HtmlComment)
+                                </div>
+                            }
                         </div>
-                    }
-                </div>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+</div>
 
 
-            </section>
+@section Script {
+    <script>
+        let metadata = document.getElementsByClassName("book-name");
+        for (let i = 0; i < metadata.length; i++) {
+            metadata[i].addEventListener("click", function () {
+                this.classList.toggle("active");
+                let content = this.parentNode.nextElementSibling;
+                if (content.style.display === "block") {
+                    content.style.display = "none";
+                } else {
+                    content.style.display = "block";
+                }
+            });
         }
-    </div>
-
-    <script src="~/script.min.js" asp-append-version="true"></script>
-</body>
-</html>
+    </script>
+}

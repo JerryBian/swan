@@ -26,8 +26,9 @@
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
     "npm-check-updates": "^16.14.18",
-    "sass": "^1.72.0",
+    "sass": "^1.75.0",
     "uglify-js": "^3.17.4",
-    "uglifycss": "^0.0.29"
+    "uglifycss": "^0.0.29",
+    "normalize.css": "^8.0.1"
   }
 }

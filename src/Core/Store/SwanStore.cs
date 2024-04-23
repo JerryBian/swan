@@ -117,10 +117,14 @@ public class SwanStore : ISwanStore
 
                 var obj = new SwanObject();
                 var readItemsJson = await _gitStore.GetTextAsync(ReadGitPath);
-                var readItems = JsonHelper.Deserialize<List<SwanRead>>(readItemsJson);
-                obj.ReadItems.AddRange(readItems);
+                if(!string.IsNullOrEmpty(readItemsJson))
+                {
+                    var readItems = JsonHelper.Deserialize<List<SwanRead>>(readItemsJson);
+                    obj.ReadItems.AddRange(readItems);
 
-                ExtendReadItems(obj);
+                    ExtendReadItems(obj);
+                }
+                
                 return obj;
             }
             finally
