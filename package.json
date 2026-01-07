@@ -20,15 +20,15 @@
   },
   "homepage": "https://github.com/JerryBian/swan#readme",
   "devDependencies": {
-    "@highlightjs/cdn-assets": "^11.9.0",
-    "easymde": "^2.18.0",
+    "@highlightjs/cdn-assets": "^11.11.1",
+    "easymde": "^2.20.0",
     "anchor-js": "^5.0.0",
-    "bootstrap": "^5.3.2",
-    "bootstrap-icons": "^1.11.2",
-    "npm-check-updates": "^16.14.11",
-    "sass": "^1.69.5",
-    "uglify-js": "^3.17.4",
+    "bootstrap": "^5.3.8",
+    "bootstrap-icons": "^1.13.1",
+    "npm-check-updates": "^19.3.1",
+    "sass": "^1.97.2",
+    "uglify-js": "^3.19.3",
     "uglifycss": "^0.0.29",
-    "bootswatch":"^5.3.2"
+    "bootswatch": "^5.3.8"
   }
 }

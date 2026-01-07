@@ -35,7 +35,7 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
     options.ForwardedForHeaderName = "CF-Connecting-IP";
-    options.KnownNetworks.Add(new Microsoft.AspNetCore.HttpOverrides.IPNetwork(IPAddress.Parse("172.17.0.0"), 24));
+    options.KnownIPNetworks.Add(new System.Net.IPNetwork(IPAddress.Parse("172.17.0.0"), 24));
 });
 
 builder.Services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
