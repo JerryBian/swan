@@ -1,6 +1,53 @@
-﻿@{
+@{
     Layout = "_LayoutAdmin";
-    ViewData["Title"] = "Admin";
+    ViewData["Title"] = "管理后台";
 }
 
-<h1>Hello world</h1>
+<div class="row g-3">
+    <div class="col-6 col-md-4">
+        <a href="/admin/post-list" class="admin-dash-card">
+            <i class="bi bi-file-text admin-dash-icon"></i>
+            <span class="admin-dash-label">文章管理</span>
+        </a>
+    </div>
+    <div class="col-6 col-md-4">
+        <a href="/admin/tag-list" class="admin-dash-card">
+            <i class="bi bi-tags admin-dash-icon"></i>
+            <span class="admin-dash-label">标签管理</span>
+        </a>
+    </div>
+    <div class="col-6 col-md-4">
+        <a href="/admin/series-list" class="admin-dash-card">
+            <i class="bi bi-bookmarks admin-dash-icon"></i>
+            <span class="admin-dash-label">系列管理</span>
+        </a>
+    </div>
+    <div class="col-6 col-md-4">
+        <a href="/admin/read-list" class="admin-dash-card">
+            <i class="bi bi-book admin-dash-icon"></i>
+            <span class="admin-dash-label">阅读管理</span>
+        </a>
+    </div>
+    <div class="col-6 col-md-4">
+        <a href="/admin/log" class="admin-dash-card">
+            <i class="bi bi-journals admin-dash-icon"></i>
+            <span class="admin-dash-label">查看日志</span>
+        </a>
+    </div>
+    <div class="col-6 col-md-4">
+        <a href="/admin/stat" class="admin-dash-card">
+            <i class="bi bi-soundwave admin-dash-icon"></i>
+            <span class="admin-dash-label">访问统计</span>
+        </a>
+    </div>
+    <div class="col-6 col-md-4">
+        <a href="/admin/file-list" class="admin-dash-card">
+            <i class="bi bi-folder admin-dash-icon"></i>
+            <span class="admin-dash-label">文件管理</span>
+        </a>
+    </div>
+</div>
+
+@section AdminLegend {
+    <span>控制面板</span>
+}

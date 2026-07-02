@@ -55,14 +55,14 @@ a {
     }
 
     blockquote {
-        padding-left: 0.8rem;
-        border-left-color: $secondary;
-        border-left-width: 2px;
-        border-left-style: solid;
-        font-size: 0.95rem;
+        padding: 0.6rem 1rem 0.1rem;
+        border-left: 3px solid var(--swan-accent);
+        background: rgba(122,95,75,0.04);
+        border-radius: 0 4px 4px 0;
+        font-size: inherit;
 
         & > p:not(:last-child) {
-            margin-bottom: 0.8em;
+            margin-bottom: 0.6em;
         }
     }
 
@@ -72,21 +72,33 @@ a {
         padding-right: 1px;
 
         &:hover, &:focus, &:visited {
-            color: #1e3799;
+            color: var(--swan-accent);
         }
     }
 
-    *:not(pre) > code {
-        padding-left: 4px;
-        padding-right: 4px;
-        font-size: $font-size-base * 0.9;
+    :not(pre) > code {
+        padding: 0.15em 0.4em;
+        font-size: 0.88em;
+        background: #f5f4f1;
+        border: 1px solid var(--swan-border-light);
+        border-radius: 3px;
+        color: #5e4433;
     }
 
     pre {
-        font-size: 92%;
+        font-size: 0.88rem;
         max-height: 600px;
         width: auto;
-        line-height: 17px;
+        line-height: 1.55;
+        padding: 1rem 1.15rem;
+        background: #f8f7f5;
+        border: 1px solid var(--swan-border-light);
+        border-radius: 6px;
+        overflow-x: auto;
+    }
+    pre code.hljs {
+        padding: 0;
+        background: transparent;
     }
 
     img {
@@ -113,8 +125,6 @@ a {
     h4 {
         padding-bottom: .25rem !important;
         padding-right: .5rem !important;
-        --bs-border-opacity: 1;
-        border-color: rgba(var(--bs-dark-rgb),var(--bs-border-opacity)) !important;
-        border-bottom: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color) !important;
+        border-bottom: 1px solid var(--swan-border) !important;
     }
 }

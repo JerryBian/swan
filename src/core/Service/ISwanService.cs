@@ -22,5 +22,7 @@ namespace Swan.Core.Service
         Task UpdateAsync<T>(T item) where T : SwanObject;
 
         Task<string> UploadFileAsync(string fileName, byte[] binary);
+
+        Task BulkUpdatePageHitsAsync(Dictionary<string, int> pathHits);
     }
 }

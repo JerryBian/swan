@@ -68,37 +68,39 @@ function toggleLoadingSpinner() {
 function searchChildren(id, txt, filterFunc, sortAttr) {
     try {
         toggleLoadingSpinner();
-        let ele = document.querySelector(id);
-        let children = Array.prototype.slice.call(ele.children, 0);
-        
-        children.forEach(x => {
+        var ele = document.querySelector(id);
+        if (!ele) return;
+        var children = Array.prototype.slice.call(ele.children, 0);
+        var searchTerm = (txt || '').toLowerCase();
+
+        children.forEach(function (x) {
             if (filterFunc && !filterFunc(x)) {
                 hideEle(x);
+            } else if (!searchTerm) {
+                showEle(x);
             } else {
-                if (!txt) {
+                var text = (x.textContent || '').toLowerCase();
+                if (text.indexOf(searchTerm) >= 0) {
                     showEle(x);
-                    return;
                 } else {
                     hideEle(x);
-                    let text = x.innerText || x.textContent;
-                    if (text.search(new RegExp(txt, "i")) >= 0) {
-                        showEle(x);
-                    }
-                } 
+                }
             }
         });
 
         if (sortAttr) {
-            children.sort((a, b) => {
-                let val1 = a.getAttribute(sortAttr);
-                let val2 = b.getAttribute(sortAttr);
+            children.sort(function (a, b) {
+                var val1 = parseFloat(a.getAttribute(sortAttr)) || 0;
+                var val2 = parseFloat(b.getAttribute(sortAttr)) || 0;
                 return val2 - val1;
             });
-
-            let html = "";
-            ele.innerHTML = "";
-            children.forEach(x => html = html + x.outerHTML);
-            ele.innerHTML = html;
+            // Reorder DOM without destroying elements
+            var ref = ele.firstChild;
+            children.forEach(function (child) {
+                if (child.parentNode === ele) {
+                    ele.insertBefore(child, ref);
+                }
+            });
         }
     } finally {
         toggleLoadingSpinner();

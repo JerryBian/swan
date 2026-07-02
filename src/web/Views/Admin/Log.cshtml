@@ -1,40 +1,48 @@
-﻿@inject ISwanLogService _swanLogService
+@inject ISwanLogService _swanLogService
+@using Microsoft.Extensions.Logging
 @{
     Layout = "_LayoutAdmin";
     var logs = await _swanLogService.GetAsync();
-    ViewData["Title"] = "View Logs :: Admin";
+    ViewData["Title"] = "查看日志 :: 管理";
 }
 
-@foreach (var item in logs.GroupBy(x => x.CreatedAt.Date).OrderByDescending(x => x.Key))
-{
-    <div class="my-4 p-3 rounded-1 shadow-sm bg-white">
-        <h4>@item.Key.ToCnDate()</h4>
-        <div class="small text-muted font-monospace">
-            Debug: @item.Count(x => x.Level == LogLevel.Debug.ToString()) &middot;
-            Information: @item.Count(x => x.Level == LogLevel.Information.ToString()) &middot;
-            Warning: @item.Count(x => x.Level == LogLevel.Warning.ToString()) &middot;
-            Error: @item.Count(x => x.Level == LogLevel.Error.ToString())
-        </div>
-        <hr />
+<div class="small text-muted mb-3">
+    近30天 · Debug: @logs.Count(x => x.Level == LogLevel.Debug.ToString()) &middot;
+    Info: @logs.Count(x => x.Level == LogLevel.Information.ToString()) &middot;
+    Warning: @logs.Count(x => x.Level == LogLevel.Warning.ToString()) &middot;
+    Error: @logs.Count(x => x.Level == LogLevel.Error.ToString())
+</div>
 
-        @foreach (var log in item.OrderByDescending(x => x.CreatedAt))
+@foreach (var day in logs.GroupBy(x => x.CreatedAt.Date).OrderByDescending(x => x.Key))
+{
+    <div class="admin-form-card mb-3">
+        <h5 class="mb-1">@day.Key.ToCnDate()</h5>
+        <div class="small text-muted mb-3">
+            Debug: @day.Count(x => x.Level == LogLevel.Debug.ToString()) &middot;
+            Info: @day.Count(x => x.Level == LogLevel.Information.ToString()) &middot;
+            Warning: @day.Count(x => x.Level == LogLevel.Warning.ToString()) &middot;
+            Error: @day.Count(x => x.Level == LogLevel.Error.ToString())
+        </div>
+        @foreach (var log in day.OrderByDescending(x => x.CreatedAt))
         {
-            var styleClass = log.GetLogClassName();
-            <div class="container-fluid border-bottom py-2 @styleClass">
-                <div class="row small text-muted my-2">
-                    <div class="col-8 text-truncate">
-                        @log.CreatedAt
-                    </div>
-                    <div class="col-4 text-truncate">
-                        @log.Level
-                    </div>
+            var level = log.Level;
+            var logClass = level == LogLevel.Error.ToString() ? "log-entry-error"
+                : level == LogLevel.Warning.ToString() ? "log-entry-warning"
+                : level == LogLevel.Information.ToString() ? "log-entry-info"
+                : "log-entry-debug";
+            var badgeClass = level == LogLevel.Error.ToString() ? "text-bg-danger"
+                : level == LogLevel.Warning.ToString() ? "text-bg-warning"
+                : level == LogLevel.Information.ToString() ? "text-bg-info"
+                : "text-bg-light";
+            <div class="log-entry @logClass">
+                <div class="log-entry-head">
+                    <span>@log.CreatedAt.ToString("HH:mm:ss")</span>
+                    <span class="badge @badgeClass">@level</span>
                 </div>
-                <div class="my-1 text-break font-monospace small">
-                    @log.Message
-                </div>
+                <div class="log-entry-msg">@log.Message</div>
                 @if (!string.IsNullOrEmpty(log.Error))
                 {
-                    <pre class="font-monospace small text-break border-start p-2">@log.Error</pre>
+                    <pre class="log-entry-stack">@log.Error</pre>
                 }
             </div>
         }
@@ -42,17 +50,5 @@
 }
 
 @section AdminLegend {
-    <div><span><i class="bi bi-list"></i> List of logs(Recent 30 days)</span></div>
-    <div class="small text-muted font-monospace">
-        Debug: @logs.Count(x => x.Level == LogLevel.Debug.ToString()) &middot;
-        Information: @logs.Count(x => x.Level == LogLevel.Information.ToString()) &middot;
-        Warning: @logs.Count(x => x.Level == LogLevel.Warning.ToString()) &middot;
-        Error: @logs.Count(x => x.Level == LogLevel.Error.ToString())
-    </div>
-}
-
-@section Script{
-    <script>
-        setActive(document.querySelectorAll("[data-nav-id=navHeading_logs]"));
-    </script>
+    <span>系统日志</span>
 }

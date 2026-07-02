@@ -40,26 +40,33 @@ namespace Swan.Web.HostedServices
             try
             {
                 var stopwatch = Stopwatch.StartNew();
-                var pages = await _swanStore.GetPageHitsAsync();
-                foreach (var page in pages)
+                var rawPages = await _swanStore.GetPageHitsAsync();
+                if (rawPages.Count == 0) return;
+
+                // Normalize paths and aggregate hit counts locally
+                var pathHits = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+                foreach (var rawPage in rawPages)
                 {
-                    var stat = await _swanService.FindFirstOrDefaultAsync<SwanPage>(true, x => StringHelper.EqualsIgoreCase(x.Path, page));
-                    if (stat == null)
+                    var path = rawPage;
+                    if (!string.IsNullOrEmpty(path) && path.Length > 1 && path.EndsWith('/'))
                     {
-                        await _swanService.AddAsync<SwanPage>(new SwanPage { Path = page, Hit = 1 });
+                        path = path.TrimEnd('/');
+                    }
+                    if (pathHits.ContainsKey(path))
+                    {
+                        pathHits[path]++;
                     }
                     else
                     {
-                        stat.Hit += 1;
-                        await _swanService.UpdateAsync(stat);
+                        pathHits[path] = 1;
                     }
                 }
 
+                // Single batched read+write under one lock
+                await _swanService.BulkUpdatePageHitsAsync(pathHits);
+
                 stopwatch.Stop();
-                if (pages.Any())
-                {
-                    _logger.LogInformation($"Flush page stats({pages.Count} records) completed in {stopwatch.ElapsedMilliseconds}ms.");
-                }
+                _logger.LogInformation($"Flush page stats({rawPages.Count} raw hits, {pathHits.Count} unique pages) completed in {stopwatch.ElapsedMilliseconds}ms.");
             }
             catch (Exception ex)
             {

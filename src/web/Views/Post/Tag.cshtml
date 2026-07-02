@@ -1,4 +1,4 @@
-﻿@model IEnumerable<PostTag>
+@model IEnumerable<PostTag>
 @{
     Layout = "_LayoutPublic";
     ViewData["Title"] = "文章标签";
@@ -8,24 +8,30 @@
 }
 
 <div data-bs-spy="scroll" data-bs-target="#tagIndex" data-bs-smooth-scroll="true">
-    @foreach (var item in Model)
+    @foreach (var item in Model.OrderByDescending(x => x.BlogPosts.Any() ? x.BlogPosts.Max(p => p.PublishDate) : DateTime.MinValue))
     {
-        <div class="pb-2 mb-2 pt-3 border-bottom">
-            <h5 class="ps-2 mb-3" id="link-@item.Link"><span data-bs-toggle="tooltip" data-bs-title="@item.Description"><i class="bi bi-tag"></i> @item.Name</span> <span class="small text-muted">(@item.BlogPosts.Count())</span></h5>
-            @foreach (var item2 in item.BlogPosts.OrderByDescending(x => x.PublishDate))
+        <div class="section-card">
+            <div class="section-card-header">
+                <h4 class="section-card-title" id="link-@item.Link"><i class="bi bi-tag"></i> @item.Name</h4>
+                <span class="section-card-count">@item.BlogPosts.Count() 篇</span>
+            </div>
+            @if (!string.IsNullOrEmpty(item.Description))
             {
-                var privateStype = item.IsPublicToEveryOne() ? "" : "bg-warning-subtle";
-                <div class="mb-3 ps-2 pe-1 @privateStype">
-                    <span class="small text-muted me-2"><i class="bi bi-caret-right"></i> @item2.PublishDate.ToCnDate(true)</span>
-                    <a href="@item2.GetFullLink()" class="large-title">
-                        <i class="bi bi-hash small text-muted"></i>@item2.Title
-                    </a>
-                </div>
+                <div class="section-card-desc">@item.Description</div>
             }
+            <div class="section-card-body">
+                @foreach (var post in item.BlogPosts.OrderByDescending(x => x.PublishDate))
+                {
+                    var privateStyle = post.IsPublicToEveryOne() ? "" : "bg-warning-subtle";
+                    <div class="section-item @privateStyle">
+                        <span class="section-item-date">@post.PublishDate.ToCnDate()</span>
+                        <a href="@post.GetFullLink()" class="section-item-link">@post.Title</a>
+                    </div>
+                }
+            </div>
         </div>
     }
 </div>
-
 
 @section Aside{
     <div class="card" id="tagIndex">
@@ -45,8 +51,8 @@
 
 @section Script{
     <script>
-        setActive(document.querySelector("#navbarPost"));
-        document.addEventListener('DOMContentLoaded', function (event) {
+        setActive(document.querySelector("#navbarTag"));
+        document.addEventListener('DOMContentLoaded', function () {
             anchors.options = {
                 placement: "right",
                 visible: "hover",
@@ -56,8 +62,5 @@
             };
             anchors.add("h4, h5");
         });
-
-        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
     </script>
 }

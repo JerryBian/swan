@@ -4,15 +4,249 @@
 @import "../../../../node_modules/bootstrap/scss/bootstrap";
 @import "../../../../node_modules/bootswatch/dist/zephyr/bootswatch";
 
-#navbar, .offcanvs-navbar {
-    .active {
-        background-color: $white;
-        color: $primary-text-emphasis;
-        font-weight: 500;
-        border-left: 1px solid $secondary-text-emphasis;
-    }
+/* Admin dashboard cards */
+.admin-dash-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 2rem 1rem;
+    background: #fff;
+    border: 1px solid var(--swan-border);
+    border-radius: 6px;
+    text-decoration: none;
+    color: var(--swan-text);
+    transition: all 0.2s ease;
+    text-align: center;
+    min-height: 120px;
+}
+.admin-dash-card:hover {
+    border-color: var(--swan-accent);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    color: var(--swan-accent);
+    transform: translateY(-1px);
+}
+.admin-dash-icon {
+    font-size: 1.5rem;
+    color: var(--swan-accent);
+    opacity: 0.7;
+}
+.admin-dash-label {
+    font-size: 0.88rem;
+    font-weight: 500;
 }
 
-.navHeading{
-    font-size: 1.1rem;
+/* Admin list cards */
+.admin-list-card {
+    background: #fff;
+    border: 1px solid var(--swan-border);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+.admin-list-item {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--swan-border-light);
+    font-size: 0.92rem;
+}
+.admin-list-item:last-child {
+    border-bottom: none;
+}
+.admin-list-item:nth-child(even) {
+    background: rgba(0,0,0,0.012);
+}
+.admin-list-item .item-main {
+    flex: 1;
+    min-width: 0;
+}
+.admin-list-item .item-main a {
+    color: var(--swan-text);
+    text-decoration: none;
+}
+.admin-list-item .item-main a:hover {
+    color: var(--swan-accent);
+}
+.admin-list-item .item-meta {
+    font-size: 0.78rem;
+    color: var(--swan-text-muted);
+}
+.admin-list-item .item-actions {
+    flex-shrink: 0;
+}
+
+/* Override Bootstrap warning highlight */
+.bg-warning-subtle {
+    background-color: rgba(122,95,75,0.06) !important;
+}
+
+/* Deleted item */
+.admin-item-deleted {
+    background-color: rgba(180,80,60,0.06) !important;
+}
+.admin-item-deleted .item-main a {
+    opacity: 0.6;
+}
+
+/* Shared with public — ensure admin has these too */
+.post-meta-row {
+    font-size: 0.82rem;
+    color: var(--swan-text-muted);
+    margin-bottom: 0.15rem;
+}
+.post-meta-row a {
+    color: var(--swan-text-muted);
+    text-decoration: none;
+}
+.post-meta-row a:hover {
+    color: var(--swan-accent);
+}
+
+/* Admin legend bar */
+.admin-legend {
+    font-size: 0.92rem;
+}
+
+/* Admin form card */
+.admin-form-card {
+    background: #fff;
+    border: 1px solid var(--swan-border);
+    border-radius: 6px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+/* Admin toolbar */
+.admin-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+.admin-toolbar input[type="search"] {
+    max-width: 180px;
+}
+.admin-toolbar-sep {
+    width: 1px;
+    height: 24px;
+    background: var(--swan-border);
+    margin: 0 0.25rem;
+}
+
+/* Admin controls row */
+.admin-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+.admin-controls input[type="search"] {
+    flex: 1;
+    min-width: 150px;
+}
+
+/* Log entries */
+.log-entry {
+    padding: 0.5rem 0.75rem;
+    margin-bottom: 2px;
+    border-radius: 4px;
+    border-left: 3px solid transparent;
+}
+.log-entry-error {
+    background: rgba(200,70,50,0.05);
+    border-left-color: #c84632;
+}
+.log-entry-warning {
+    background: rgba(200,170,50,0.05);
+    border-left-color: #c8aa32;
+}
+.log-entry-info {
+    background: rgba(70,130,180,0.04);
+    border-left-color: #4682b4;
+}
+.log-entry-debug {
+    background: transparent;
+    border-left-color: #ccc;
+}
+.log-entry-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.2rem;
+    font-size: 0.75rem;
+    color: var(--swan-text-muted);
+}
+.log-entry-msg {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    word-break: break-all;
+    line-height: 1.5;
+}
+.log-entry-stack {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    padding: 0.5rem 0.75rem;
+    margin-top: 0.4rem;
+    background: rgba(0,0,0,0.03);
+    border-radius: 4px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+}
+
+/* Stat items — allow multiline */
+.admin-list-card .admin-list-item {
+    align-items: flex-start;
+}
+
+/* Stat badges */
+.stat-badge {
+    display: inline-block;
+    font-size: 0.68rem;
+    padding: 0.1em 0.5em;
+    border-radius: 3px;
+    font-weight: 500;
+    margin-left: 0.4rem;
+    vertical-align: middle;
+}
+.stat-orphan {
+    background: rgba(150,150,150,0.15);
+    color: #888;
+}
+.stat-private {
+    background: rgba(122,95,75,0.12);
+    color: #7a5f4b;
+}
+.stat-deleted {
+    background: rgba(180,80,60,0.12);
+    color: #b4503c;
+}
+.stat-orphan-row {
+    opacity: 0.55;
+}
+
+/* Mobile */
+@media (max-width: 575.98px) {
+    .admin-dash-card {
+        padding: 1.2rem 0.75rem;
+        min-height: 80px;
+    }
+    .admin-dash-icon {
+        font-size: 1.3rem;
+    }
+    .admin-dash-label {
+        font-size: 0.82rem;
+    }
+    .admin-list-item {
+        padding: 0.6rem 0.75rem;
+        font-size: 0.85rem;
+    }
+    .admin-form-card {
+        padding: 1rem;
+    }
 }

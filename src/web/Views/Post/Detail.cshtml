@@ -1,26 +1,34 @@
-﻿@inject ISwanService _swanService
+@inject ISwanService _swanService
 @inject IOptions<SwanOption> _option
 @model SwanPost
 @{
     Layout = "_LayoutPublic";
     ViewData["Title"] = Model.Title;
-    var privateStype = Model.IsPublicToEveryOne() ? "" : "bg-warning-subtle";
+    var privateStyle = Model.IsDeleted ? "admin-item-deleted" : (Model.IsPublicToEveryOne() ? "" : "bg-warning-subtle");
     ViewData["EnableSEO"] = bool.TrueString;
     ViewData["Url"] = Model.GetFullLink();
     ViewData["Description"] = Model.TextExcerpt;
 }
 
-@Html.Raw(Model.HtmlMetadata1)
-<h3 class="mb-2 large-title @privateStype">@Model.Title</h3>
+<div class="@privateStyle">
+    @Html.Raw(Model.HtmlMetadata1)
+    <h2 class="large-title" style="font-size:1.45rem;font-weight:700;@(Model.IsDeleted ? "text-decoration:line-through;" : "")">@Model.Title</h2>
+    @if (Model.IsDeleted)
+    {
+        <span class="text-danger small">此文章已删除</span>
+    }
 
-<article class="mt-4 mb-3 post">
-    @Html.Raw(Model.HtmlContent)
-</article>
-@Html.Raw(Model.HtmlMetadata2)
-<div class="alert alert-warning mt-3 small" role="alert">
-    <i class="bi bi-exclamation-circle"></i> 
-    本文遵循 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh-hans" class="link-body-emphasis">署名-非商业性使用-禁止演绎 4.0 国际</a> 协议，
-    可以通过 <a href="mailto:@_option.Value.ContactEmail" class="link-body-emphasis">邮件</a> 联系我。
+    <article class="mt-4 mb-3 post">
+        @Html.Raw(Model.HtmlContent)
+    </article>
+
+    @Html.Raw(Model.HtmlMetadata2)
+
+    <div class="license-box">
+        <i class="bi bi-exclamation-circle"></i>
+        本文遵循 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh-hans">署名-非商业性使用-禁止演绎 4.0 国际</a> 协议，
+        可以通过 <a href="mailto:@_option.Value.ContactEmail">邮件</a> 联系我。
+    </div>
 </div>
 
 @section Aside{
@@ -52,7 +60,7 @@
                 {
                     if (item.Id == Model.Id)
                     {
-                        <div class="list-group-item">
+                        <div class="list-group-item" style="font-weight:600;">
                             <i class="bi bi-hash"></i>@item.Title
                         </div>
                     }
@@ -62,7 +70,6 @@
                             <i class="bi bi-hash"></i>@item.Title
                         </a>
                     }
-
                 }
             </div>
         </div>
@@ -75,15 +82,13 @@
         <div class="list-group">
             @if (Model.PreviousPost != null)
             {
-                <a href="@Model.PreviousPost.GetFullLink()" class="list-group-item list-group-action"><i class="bi bi-arrow-right-short"></i> 前一篇： @Model.PreviousPost.Title</a>
+                <a href="@Model.PreviousPost.GetFullLink()" class="list-group-item list-group-action"><i class="bi bi-arrow-left-short"></i> @Model.PreviousPost.Title</a>
             }
-
             @if (Model.NextPost != null)
             {
-                <a href="@Model.NextPost.GetFullLink()" class="list-group-item list-group-action"><i class="bi bi-arrow-right-short"></i> 后一篇： @Model.NextPost.Title</a>
+                <a href="@Model.NextPost.GetFullLink()" class="list-group-item list-group-action"><i class="bi bi-arrow-right-short"></i> @Model.NextPost.Title</a>
             }
-
-            <div class="list-group-item"><i class="bi bi-arrow-right-short"></i> 最后修改于：@Model.LastUpdatedAt.ToCnDate()</div>
+            <div class="list-group-item sidebar-timestamp"><i class="bi bi-clock"></i> 修改于 @Model.LastUpdatedAt.ToCnDate()</div>
         </div>
     </div>
 }
@@ -93,7 +98,6 @@
     {
         <link rel="previous" href="@Model.PreviousPost.GetFullLink()">
     }
-
     @if (Model.NextPost != null)
     {
         <link rel="next" href="@Model.NextPost.GetFullLink()">
@@ -103,8 +107,8 @@
 @section Script{
     <script>
         setActive(document.querySelector("#navbarPost"));
-        hljs.highlightAll();
         document.addEventListener('DOMContentLoaded', function (event) {
+            hljs.highlightAll();
             anchors.options = {
                 placement: "right",
                 visible: "hover",

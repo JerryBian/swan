@@ -1,6 +1,7 @@
 using GitStoreDotnet;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
@@ -58,6 +59,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
                 options.Cookie.Name = $".APP.{builder.Environment.EnvironmentName}";
                 options.ExpireTimeSpan = TimeSpan.FromDays(7);
                 options.Cookie.HttpOnly = true;
+                options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Strict;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                 options.ReturnUrlParameter = "returnUrl";
                 options.LoginPath = new PathString("/login");
                 options.LogoutPath = new PathString("/logout");

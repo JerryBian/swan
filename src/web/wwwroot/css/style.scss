@@ -47,11 +47,9 @@ $popover-max-width: 480px;
     a {
         text-decoration-line: none;
         color: inherit;
-        border-left: 0.8px double transparent;
 
         &:hover, &.active {
-            border-left: 0.8px double var(--bs-primary-text-emphasis);
-            border-radius: 0;
+            color: var(--swan-accent);
         }
     }
 
@@ -74,4 +72,500 @@ $popover-max-width: 480px;
 .large-title {
     font-family: "Trebuchet MS";
     color: var(--bs-primary-text-emphasis);
+}
+
+/* ==================================================================
+   Swan custom layer — writer identity on top of Bootstrap
+   ================================================================== */
+
+:root {
+    --font-mono: "SF Mono", "Cascadia Code", "Fira Code", Consolas, "Source Code Pro", monospace;
+    --swan-accent: #7a5f4b;
+    --swan-accent-hover: #5e4433;
+    --swan-bg: #f5f4f1;
+    --swan-text: #1a1816;
+    --swan-text-secondary: #5e5954;
+    --swan-text-muted: #8c8782;
+    --swan-border: #dedbd6;
+    --swan-border-light: #edeae5;
+}
+
+/* Nav: warmer, cleaner */
+.navbar {
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+
+.brand {
+    letter-spacing: .02em;
+    background: linear-gradient(135deg, #7a5f4b 0%, #5e4433 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Post list cards */
+.post-list-item {
+    background: #fff;
+    border: 1px solid var(--swan-border);
+    border-radius: 6px;
+    padding: 1.25rem 1.25rem 0.75rem;
+    margin-bottom: 1rem;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+    position: relative;
+}
+.post-list-item:hover {
+    border-color: var(--swan-accent);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+}
+.post-list-item .large-title {
+    font-size: 1.15rem;
+    font-weight: 650;
+}
+.post-list-item .large-title a {
+    color: var(--swan-text);
+    text-decoration: none;
+}
+.post-list-item .large-title a:hover {
+    color: var(--swan-accent);
+}
+.post-meta-row {
+    font-size: 0.82rem;
+    color: var(--swan-text-muted);
+    margin-bottom: 0.4rem;
+}
+.post-meta-row a {
+    color: var(--swan-text-muted);
+    text-decoration: none;
+}
+.post-meta-row a:hover {
+    color: var(--swan-accent);
+}
+.post-list-item .post-excerpt {
+    font-size: 0.9rem;
+    color: var(--swan-text-secondary);
+    line-height: 1.7;
+    margin-top: 0.5rem;
+}
+.post-tags-row {
+    margin-top: 0.75rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--swan-border-light);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    align-items: center;
+}
+.post-tag-pill {
+    display: inline-block;
+    padding: 0.12rem 0.55rem;
+    font-size: 0.75rem;
+    color: var(--swan-text-secondary);
+    background: var(--swan-border-light);
+    border-radius: 3px;
+    text-decoration: none;
+    max-width: 8em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+.post-tag-pill:hover {
+    background: var(--swan-accent);
+    color: #fff;
+}
+.post-hit-count {
+    font-size: 0.73rem;
+    color: var(--swan-text-muted);
+    margin-left: auto;
+}
+
+/* More link */
+.more-link {
+    display: inline-block;
+    padding: 0.6rem 2rem;
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: var(--swan-accent);
+    text-decoration: none;
+    border: 1px solid var(--swan-accent);
+    border-radius: 24px;
+    transition: all 0.25s ease;
+}
+.more-link:hover {
+    background: var(--swan-accent);
+    color: #fff;
+}
+
+.sidebar-timestamp {
+    cursor: default;
+}
+.sidebar-timestamp:hover,
+.sidebar-timestamp:hover * {
+    color: inherit !important;
+    background: transparent !important;
+    border-left-color: transparent !important;
+}
+
+/* Override Bootstrap warning for private/deleted items */
+.bg-warning-subtle {
+    background-color: rgba(122,95,75,0.06) !important;
+}
+.admin-item-deleted {
+    background-color: rgba(180,80,60,0.06) !important;
+}
+
+/* Sidebar cards: warmer */
+.card {
+    border-color: var(--swan-border);
+}
+.list-group-item {
+    color: var(--swan-text);
+}
+.list-group-item:hover {
+    color: var(--swan-accent);
+}
+
+/* Article detail improvements */
+.post {
+    font-size: 1.05rem;
+    color: var(--swan-text);
+}
+.post h2 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.3rem;
+    border-bottom: 1px solid var(--swan-border);
+    color: var(--swan-text);
+}
+.post h3 {
+    font-size: 1.15rem;
+    font-weight: 650;
+    margin-top: 1.6rem;
+    margin-bottom: 0.75rem;
+    color: var(--swan-text);
+}
+.post img {
+    border-radius: 4px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+/* License notice */
+.license-box {
+    background: #faf9f7;
+    border: 1px solid #e4e0da;
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    margin: 2rem 0 0;
+    font-size: 0.85rem;
+    color: var(--swan-text-secondary);
+}
+.license-box a {
+    color: var(--swan-text);
+}
+
+/* Inline expand for read page */
+.inline-expand {
+    cursor: pointer;
+    color: var(--swan-text);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--swan-border);
+    transition: color 0.15s ease;
+}
+.inline-expand:hover {
+    color: var(--swan-accent);
+    border-bottom-color: var(--swan-accent);
+}
+.inline-expand-content {
+    display: none;
+    width: 100%;
+    padding: 0.85rem 1rem;
+    margin-top: 0.6rem;
+    background: #fafaf9;
+    border: 1px solid var(--swan-border-light);
+    border-radius: 6px;
+    font-size: 0.84rem;
+    line-height: 1.75;
+    color: var(--swan-text-secondary);
+}
+.inline-expand-content.open {
+    display: block;
+}
+
+/* Article link buttons on read page */
+.read-article-link {
+    display: inline-block;
+    padding: 0.2rem 0.65rem;
+    font-size: 0.8rem;
+    color: var(--swan-accent);
+    border: 1px solid var(--swan-accent);
+    border-radius: 4px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    margin-bottom: 0.25rem;
+}
+.read-article-link:hover {
+    background: var(--swan-accent);
+    color: #fff;
+}
+
+/* Tag / Series section cards */
+.section-card {
+    background: #fff;
+    border: 1px solid var(--swan-border);
+    border-radius: 6px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+}
+.section-card-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.15rem;
+}
+.section-card-title {
+    font-size: 1.1rem;
+    font-weight: 650;
+    color: var(--swan-text);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+.section-card-count {
+    font-size: 0.78rem;
+    color: var(--swan-text-muted);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.section-card-desc {
+    font-size: 0.82rem;
+    color: var(--swan-text-secondary);
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+}
+.section-card-body {
+    border-top: 1px solid var(--swan-border-light);
+    padding-top: 0.5rem;
+}
+.section-item {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid var(--swan-border-light);
+    font-size: 0.92rem;
+}
+.section-item:last-child {
+    border-bottom: none;
+}
+.section-item-date {
+    font-size: 0.8rem;
+    color: var(--swan-text-muted);
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-width: 4.5em;
+}
+.section-item-link {
+    color: var(--swan-text);
+    text-decoration: none;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.section-item-link:hover {
+    color: var(--swan-accent);
+}
+
+/* Read page: book rows */
+.read-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    padding: 0.55rem 0;
+    border-bottom: 1px solid var(--swan-border-light);
+    flex-wrap: wrap;
+    font-size: 0.92rem;
+}
+.read-row:last-child {
+    border-bottom: none;
+}
+.read-row-date {
+    font-size: 0.78rem;
+    color: var(--swan-text-muted);
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-width: 4.5em;
+}
+.read-row-main {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-width: 0;
+}
+.read-row-name,
+.read-row .inline-expand {
+    color: var(--swan-text);
+}
+.read-row-meta {
+    font-size: 0.78rem;
+    color: var(--swan-text-muted);
+    font-style: italic;
+    margin-left: auto;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.read-grade-up {
+    color: #6b8a6a;
+    font-size: 0.8rem;
+}
+.read-grade-down {
+    color: #a0908a;
+    font-size: 0.8rem;
+}
+.read-comment {
+    margin-bottom: 0.75rem;
+    font-size: 0.84rem !important;
+    line-height: 1.7;
+}
+.read-comment p {
+    margin-bottom: 0.5em;
+}
+.read-comment p:last-child {
+    margin-bottom: 0;
+}
+.read-linked-posts {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--swan-border-light);
+}
+.read-linked-label {
+    font-size: 0.78rem;
+    color: var(--swan-text-muted);
+    margin-right: 0.25rem;
+}
+
+/* Mobile: stack date above title */
+@media (max-width: 575.98px) {
+    .section-card {
+        padding: 1rem;
+    }
+    .section-card-title {
+        font-size: 1rem;
+    }
+    .section-item {
+        flex-direction: column;
+        gap: 0;
+        padding: 0.45rem 0;
+    }
+    .section-item-date {
+        font-size: 0.75rem;
+        min-width: auto;
+    }
+    .section-item-link {
+        font-size: 0.88rem;
+        white-space: normal;
+    }
+    .read-row {
+        flex-direction: column;
+        gap: 0.15rem;
+        padding: 0.5rem 0;
+    }
+    .read-row-date {
+        font-size: 0.73rem;
+        min-width: auto;
+    }
+    .read-row-meta {
+        margin-left: 0;
+        font-size: 0.75rem;
+    }
+}
+
+/* Footer */
+footer {
+    color: var(--swan-text-muted);
+}
+footer a {
+    color: var(--swan-text-secondary);
+}
+
+/* ==================================================================
+   Responsive tweaks
+   ================================================================== */
+
+/* Mobile: tighter cards, smaller type */
+@media (max-width: 575.98px) {
+    main {
+        border-radius: 0 !important;
+        box-shadow: none !important;
+    }
+    .post-list-item {
+        padding: 1rem;
+        border-left: none;
+        border-right: none;
+        border-radius: 0;
+        margin-left: -0.75rem;
+        margin-right: -0.75rem;
+    }
+    .post-list-item .large-title {
+        font-size: 1.05rem;
+    }
+    .post-list-item .post-excerpt {
+        font-size: 0.85rem;
+    }
+    .post-meta-row {
+        font-size: 0.78rem;
+    }
+    .post-tags-row {
+        gap: 0.25rem;
+    }
+    .post-tag-pill {
+        font-size: 0.72rem;
+        padding: 0.1rem 0.45rem;
+    }
+    .post {
+        font-size: 1rem;
+    }
+    .post h2 {
+        font-size: 1.2rem;
+    }
+    .post img {
+        margin: 1rem auto;
+    }
+    .container > .row {
+        margin-left: -0.75rem;
+        margin-right: -0.75rem;
+    }
+    .license-box {
+        font-size: 0.8rem;
+        padding: 0.6rem 0.75rem;
+    }
+    .inline-expand-content {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.84rem;
+    }
+    .more-link {
+        padding: 0.5rem 1.5rem;
+        font-size: 0.85rem;
+    }
+    .navbar-nav {
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+    .navbar-nav .nav-link {
+        padding: 0.5rem 0;
+    }
+    footer {
+        font-size: 0.78rem;
+    }
 }

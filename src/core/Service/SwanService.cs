@@ -197,5 +197,41 @@ namespace Swan.Core.Service
             await _gitStore.InsertOrUpdateAsync(fullPath, binary);
             return "/" + fullPath;
         }
+
+        public async Task BulkUpdatePageHitsAsync(Dictionary<string, int> pathHits)
+        {
+            if (pathHits.Count == 0) return;
+
+            await _asyncReaderWriterLock.EnterWriteLockAsync();
+
+            try
+            {
+                var obj = await GetStoreObjectAsync(true);
+                var pages = obj.Get<SwanPage>();
+                var newPage = new SwanPage();
+
+                foreach (var kv in pathHits)
+                {
+                    var page = pages.FirstOrDefault(x => StringHelper.EqualsIgoreCase(x.Path, kv.Key));
+                    if (page == null)
+                    {
+                        page = new SwanPage { Path = kv.Key, Hit = kv.Value };
+                        pages.Add(page);
+                    }
+                    else
+                    {
+                        page.Hit += kv.Value;
+                    }
+                }
+
+                var content = JsonHelper.Serialize(pages.OrderByDescending(x => x.CreatedAt));
+                await _gitStore.InsertOrUpdateAsync(newPage.GetGitStorePath(), content);
+                ExpireCache();
+            }
+            finally
+            {
+                _asyncReaderWriterLock.Release();
+            }
+        }
     }
 }

@@ -10,11 +10,11 @@
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="DotNext" Version="5.26.1" />
-    <PackageReference Include="DotNext.Threading" Version="5.26.1" />
+    <PackageReference Include="DotNext" Version="6.3.0" />
+    <PackageReference Include="DotNext.Threading" Version="6.4.0" />
     <PackageReference Include="GitStore" Version="1.18.0" />
     <PackageReference Include="HtmlAgilityPack" Version="1.12.4" />
-    <PackageReference Include="Markdig" Version="0.44.0" />
+    <PackageReference Include="Markdig" Version="1.3.2" />
   </ItemGroup>
 
 </Project>

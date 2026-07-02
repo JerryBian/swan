@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using GitStoreDotnet;
 using Swan.Core.Helper;
 using Swan.Core.Model;
 using Swan.Core.Service;
@@ -8,15 +10,40 @@ using Swan.Web.Models;
 namespace Swan.Web.Controllers
 {
     [Authorize]
+    [AutoValidateAntiforgeryToken]
     public class AdminController : Controller
     {
+        private static readonly HashSet<string> DisallowedExtensions = new(StringComparer.OrdinalIgnoreCase)
+        {
+            // ASP.NET / server-side code
+            ".aspx", ".ashx", ".asmx", ".ascx", ".asp", ".cshtml", ".vbhtml", ".razor",
+            // PHP / other server-side
+            ".php", ".phtml", ".php3", ".php4", ".php5", ".phps", ".jsp", ".cgi", ".pl", ".py", ".rb",
+            // Executables
+            ".exe", ".dll", ".com", ".scr", ".msi", ".pif", ".app", ".bin",
+            // Scripts
+            ".bat", ".cmd", ".ps1", ".psm1", ".psd1", ".vbs", ".vbe", ".wsf", ".wsc", ".hta",
+            ".sh", ".bash", ".zsh", ".ksh", ".csh",
+        };
+
+        private static void ValidateFileExtension(string fileName)
+        {
+            var ext = Path.GetExtension(fileName);
+            if (DisallowedExtensions.Contains(ext))
+            {
+                throw new InvalidOperationException($"File extension '{ext}' is not allowed for security reasons.");
+            }
+        }
+
         private readonly ISwanService _swanService;
         private readonly ILogger<AdminController> _logger;
+        private readonly GitStoreOption _gitStoreOption;
 
-        public AdminController(ISwanService swanService, ILogger<AdminController> logger)
+        public AdminController(ISwanService swanService, ILogger<AdminController> logger, IOptions<GitStoreOption> gitStoreOption)
         {
             _swanService = swanService;
             _logger = logger;
+            _gitStoreOption = gitStoreOption.Value;
         }
 
         public IActionResult Index()
@@ -382,6 +409,7 @@ namespace Swan.Web.Controllers
             ApiResponse<string> res = new();
             try
             {
+                ValidateFileExtension(file.FileName);
                 string fileName = StringHelper.Random();
                 string ext = Path.GetExtension(file.FileName);
                 await using MemoryStream ms = new();
@@ -406,6 +434,7 @@ namespace Swan.Web.Controllers
         {
             try
             {
+                ValidateFileExtension(file.FileName);
                 string fileName = StringHelper.Random();
                 string ext = Path.GetExtension(file.FileName);
                 await using MemoryStream ms = new();
@@ -421,6 +450,46 @@ namespace Swan.Web.Controllers
                 var obj = new { error = 500 };
                 return Json(obj);
             }
+        }
+
+        [HttpGet("/admin/file-list")]
+        public IActionResult ListFiles()
+        {
+            var staticDir = Path.Combine(_gitStoreOption.LocalDirectory, "static");
+            if (!Directory.Exists(staticDir))
+            {
+                return View("ListFile", Array.Empty<StaticFileItem>());
+            }
+
+            var files = Directory.GetFiles(staticDir, "*", SearchOption.AllDirectories)
+                .Select(f =>
+                {
+                    var relative = Path.GetRelativePath(staticDir, f).Replace("\\", "/");
+                    var segments = relative.Split('/');
+                    // Only treat a segment as a year if it looks like a 4-digit year (19xx–20xx)
+                    string pathYear = "";
+                    foreach (var seg in segments)
+                    {
+                        if (seg.Length == 4 && int.TryParse(seg, out var y) && y >= 1900 && y <= 2099)
+                        {
+                            pathYear = seg;
+                            break;
+                        }
+                    }
+                    return new StaticFileItem
+                    {
+                        PhysicalPath = f,
+                        RelativePath = "/static/" + relative,
+                        Size = new FileInfo(f).Length,
+                        LastModified = System.IO.File.GetLastWriteTime(f),
+                        PathType = segments.Length > 0 ? segments[0] : "",
+                        PathYear = pathYear
+                    };
+                })
+                .OrderByDescending(f => f.LastModified)
+                .ToList();
+
+            return View("ListFile", files);
         }
     }
 }

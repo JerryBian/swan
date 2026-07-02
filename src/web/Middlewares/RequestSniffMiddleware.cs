@@ -33,9 +33,14 @@ namespace Swan.Web.Middlewares
 
             await _next(context);
 
-            if (context.Response.StatusCode == 200 && !context.IsAuthorized())
+            if (context.Response.StatusCode == 200)
             {
-                await _swanStore.AddPageHitAsync(context.Request.Path.Value, context.GetIpAddress());
+                var path = context.Request.Path.Value;
+                if (!string.IsNullOrEmpty(path) && path.Length > 1 && path.EndsWith('/'))
+                {
+                    path = path.TrimEnd('/');
+                }
+                await _swanStore.AddPageHitAsync(path, context.GetIpAddress());
             }
         }
     }

@@ -27,7 +27,7 @@ namespace Swan.Core.Store
 
         public async Task<List<string>> GetPageHitsAsync()
         {
-            var result = new List<string>();
+            var result = new List<string>(_pageHitQueue.Count);
             while (_pageHitQueue.TryDequeue(out var url))
             {
                 result.Add(url);

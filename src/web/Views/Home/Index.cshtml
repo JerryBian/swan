@@ -1,34 +1,163 @@
-﻿@inject IOptions<SwanOption> _option
+@inject IOptions<SwanOption> _option
 @{
     ViewData["EnableSEO"] = bool.TrueString;
     ViewData["Url"] = "/";
 }
 
-<div class="d-flex align-items-center justify-content-center min-vh-100">
-    <div class="py-5 text-center text-muted container-fluid">
-        <img src="/static/icon/site.png" width="64" loading="lazy" height="64"/>
-        <h1 class="text-body-emphasis brand">@_option.Value.Title</h1>
-        <p class="col-lg-6 mx-auto mb-4">
-            @_option.Value.Description
-        </p>
-        <a class="btn btn-success px-5 mx-2 mb-3" href="/post">
-            <i class="bi bi-file-text"></i> 文章
-        </a>
-        <a class="btn btn-light px-5 mx-2 mb-3" href="/read">
-            <i class="bi bi-book"></i> 阅读
-        </a>
-        @if (Context.IsAuthorized())
-        {
-            <a class="btn btn-danger px-5 mx-2 mb-3" href="/admin">
-                <i class="bi bi-gear"></i> 管理
-            </a>
-        }
+<div class="home-hero-wrapper">
+    <div class="home-hero-inner">
+        <div class="home-hero-icon-wrap">
+            <img src="/static/icon/site.png" width="72" height="72" class="home-hero-icon" alt="" loading="lazy" />
+        </div>
+        <h1 class="home-hero-title">@_option.Value.Title</h1>
+        <div class="home-hero-line"></div>
+        <p class="home-hero-desc">@_option.Value.Description</p>
+        <div class="home-hero-actions">
+            <a class="home-hero-btn home-hero-btn-primary" href="/post">文章</a>
+            <a class="home-hero-btn" href="/read">阅读</a>
+            @if (Context.IsAuthorized())
+            {
+                <a class="home-hero-btn home-hero-btn-admin" href="/admin">管理</a>
+            }
+        </div>
     </div>
 </div>
 
-
 @section Style {
     <link href="~/style.min.css" rel="stylesheet" asp-append-version="true" />
+    <style>
+        .home-hero-wrapper {
+            min-height: 85vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 1.5rem;
+        }
+
+        .home-hero-inner {
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .home-hero-icon-wrap {
+            margin-bottom: 1.5rem;
+        }
+
+        .home-hero-icon {
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+            transition: transform 0.4s ease;
+        }
+
+        .home-hero-icon:hover {
+            transform: scale(1.05) rotate(-2deg);
+        }
+
+        .home-hero-title {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin: 0 0 0.75rem;
+            color: #1a1816;
+            line-height: 1.15;
+        }
+
+        .home-hero-line {
+            width: 36px;
+            height: 2px;
+            background: #7a5f4b;
+            margin: 0 auto 1.25rem;
+            opacity: 0.6;
+        }
+
+        .home-hero-desc {
+            font-size: 1.05rem;
+            color: #6b6560;
+            line-height: 1.8;
+            max-width: 440px;
+            margin: 0 auto 2rem;
+            font-family: Georgia, "Noto Serif CJK SC", "STSong", serif;
+            font-style: italic;
+        }
+
+        .home-hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            justify-content: center;
+        }
+
+        .home-hero-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 130px;
+            padding: 0.65rem 1.6rem;
+            font-size: 0.92rem;
+            font-weight: 500;
+            text-decoration: none;
+            border-radius: 24px;
+            border: 1px solid #d4cfc9;
+            color: #4a3f38;
+            background: #fff;
+            transition: all 0.25s ease;
+        }
+
+        .home-hero-btn:hover {
+            border-color: #7a5f4b;
+            color: #7a5f4b;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+        }
+
+        .home-hero-btn-primary {
+            background: #7a5f4b;
+            color: #fff;
+            border-color: #7a5f4b;
+            font-weight: 600;
+        }
+
+        .home-hero-btn-primary:hover {
+            background: #5e4433;
+            border-color: #5e4433;
+            color: #fff;
+        }
+
+        .home-hero-btn-admin {
+            background: transparent;
+            color: #9e968e;
+            border-color: #ddd8d2;
+        }
+
+        .home-hero-btn-admin:hover {
+            color: #7a5f4b;
+            border-color: #7a5f4b;
+        }
+
+        @@media (max-width: 600px) {
+            .home-hero-wrapper {
+                min-height: 70vh;
+                padding: 2rem 1rem;
+            }
+            .home-hero-title {
+                font-size: 1.8rem;
+            }
+            .home-hero-desc {
+                font-size: 0.95rem;
+            }
+            .home-hero-btn {
+                min-width: auto;
+                width: 100%;
+                padding: 0.6rem 1.2rem;
+            }
+            .home-hero-actions {
+                flex-direction: column;
+                width: 100%;
+                max-width: 280px;
+                margin: 0 auto;
+            }
+        }
+    </style>
 }
 
 @section Script {

@@ -1,18 +1,32 @@
-﻿@inject IOptions<SwanOption> _option
+@inject IOptions<SwanOption> _option
 @inject IHostEnvironment _env
+@inject ISwanService _swanService
 @{
     Layout = "_Layout";
+    var hasSeries = (await _swanService.FindAsync<PostSeries>(Context)).Any();
 }
 
-<nav class="navbar navbar-expand bg-body-tertiary">
+<nav class="navbar navbar-expand-md bg-body-tertiary">
     <div class="container">
         <a class="navbar-brand brand" href="/">
             @_option.Value.Title
         </a>
-        <div>
+        <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="导航菜单">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item me-2">
                     <a class="nav-link" href="/post" id="navbarPost"><i class="bi bi-file-text"></i> 文章</a>
+                </li>
+                @if (hasSeries)
+                {
+                    <li class="nav-item me-2">
+                        <a class="nav-link" href="/post/series" id="navbarSeries"><i class="bi bi-bookmarks"></i> 系列</a>
+                    </li>
+                }
+                <li class="nav-item me-2">
+                    <a class="nav-link" href="/post/tag" id="navbarTag"><i class="bi bi-tags"></i> 标签</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/read" id="navbarRead"><i class="bi bi-book"></i> 阅读</a>
@@ -28,11 +42,11 @@
     </div>
 </nav>
 
-<div class="bg-light">
+<div class="bg-light pt-2">
     <div class="container">
         <div class="row">
-            <main class="col-md-9 bg-white px-3 py-4 rounded shadow-sm">@RenderBody()</main>
-            <aside class="col-3 small d-none d-md-block text-muted" id="aside">
+            <main class="col-md-9 bg-white px-3 px-md-4 py-3 py-md-4 rounded shadow-sm">@RenderBody()</main>
+            <aside class="col-md-3 small d-none d-md-block text-muted" id="aside">
                 @await RenderSectionAsync("Aside", false)
             </aside>
         </div>

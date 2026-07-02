@@ -87,6 +87,14 @@ namespace Swan.Core.Service
 
         private void PostExtend()
         {
+            // Pre-sort posts by date once for O(n) prev/next linking
+            var postsByDate = Posts.OrderBy(x => x.PublishDate).ToList();
+            for (int i = 0; i < postsByDate.Count; i++)
+            {
+                postsByDate[i].PreviousPost = i > 0 ? postsByDate[i - 1] : null;
+                postsByDate[i].NextPost = i < postsByDate.Count - 1 ? postsByDate[i + 1] : null;
+            }
+
             foreach (var post in Posts)
             {
                 var postHtml = MarkdownHelper.ToHtml(post.Content);
@@ -97,7 +105,6 @@ namespace Swan.Core.Service
                 {
                     if (imageNode.Attributes.Contains("src"))
                     {
-                        imageNode.AddClass("img-thumbnail mx-auto d-block");
                         imageNode.Attributes.Add("loading", "lazy");
                     }
                 }
@@ -125,7 +132,7 @@ namespace Swan.Core.Service
                     {
                         post.BlogTags.Add(tag);
                         tag.BlogPosts.Add(post);
-                        tagSnippets.Add($"<span><a href=\"{tag.GetFullLink()}\" class=\"btn btn-outline-light btn-sm\"><i class=\"bi bi-tag\"></i> {tag.Name}</a></span>");
+                        tagSnippets.Add($"<a href=\"{tag.GetFullLink()}\" class=\"post-tag-pill\">{tag.Name}</a>");
                     }
                 }
 
@@ -137,12 +144,9 @@ namespace Swan.Core.Service
                     {
                         post.BlogSeries = series;
                         series.BlogPosts.Add(post);
-                        seriesSnippet = $"<a href=\"{series.GetFullLink()}\" class=\"btn btn-outline-light btn-sm\"><i class=\"bi bi-bookmark\"></i> {series.Name}</a>";
+                        seriesSnippet = $"<a href=\"{series.GetFullLink()}\" class=\"post-tag-pill\">{series.Name}</a>";
                     }
                 }
-
-                post.PreviousPost = Posts.OrderBy(x => x.PublishDate).LastOrDefault(x => x.PublishDate < post.PublishDate);
-                post.NextPost = Posts.OrderBy(x => x.PublishDate).FirstOrDefault(x => x.PublishDate > post.PublishDate);
 
                 var page = Pages.FirstOrDefault(x => StringHelper.EqualsIgoreCase(x.Path, post.GetFullLink()));
                 if (page != null)
@@ -150,8 +154,8 @@ namespace Swan.Core.Service
                     post.PageStat = page;
                 }
 
-                post.HtmlMetadata1 = $@"<div class=""small text-muted text-truncate mb-1"">
-                <a href=""/post/archive#year-{post.PublishDate.Year}"" class=""text-reset text-decoration-none"">
+                post.HtmlMetadata1 = $@"<div class=""post-meta-row"">
+                <a href=""/post/archive#year-{post.PublishDate.Year}"">
                     {post.PublishDate.ToCnDate()}
                 </a>
                 <span> &middot; </span>
@@ -159,15 +163,9 @@ namespace Swan.Core.Service
                     {post.PageStat.Hit} 次访问
                 </span>
             </div>";
-                post.HtmlMetadata2 = $@"<div class=""small text-muted container-fluid"">
-                <div class=""row"">
-                    <div class=""col-md-7 text-truncate mb-1 px-0"">
-                        {string.Join(" ", tagSnippets)}
-                    </div>
-                    <div class=""col-md-5  text-truncate mb-1 px-0"">
-                        {seriesSnippet}
-                    </div>
-                </div>
+                post.HtmlMetadata2 = $@"<div class=""post-tags-row"">
+                    {string.Join(" ", tagSnippets)}
+                    {seriesSnippet}
             </div>";
             }
 
@@ -177,18 +175,38 @@ namespace Swan.Core.Service
                 Series.RemoveAll(x => !x.BlogPosts.Any());
             }
 
+            // Build reverse index: tag → posts for O(1) lookup
+            var tagToPosts = new Dictionary<PostTag, List<SwanPost>>();
+            foreach (var tag in Tags)
+            {
+                if (tag.BlogPosts.Count > 0)
+                {
+                    tagToPosts[tag] = tag.BlogPosts;
+                }
+            }
+
             foreach (var post in Posts)
             {
                 const int maxItems = 7;
                 if (post.BlogTags.Any())
                 {
-                    var collection = post.BlogTags.SelectMany(x => x.BlogPosts).Distinct().Where(x => x != post).ToArray();
-                    if (collection.Any())
+                    var seen = new HashSet<SwanPost> { post };
+                    foreach (var tag in post.BlogTags)
                     {
-                        var similarPosts = Random.Shared.GetItems(collection, maxItems);
-                        post.RecommendPostsByTag.AddRange(similarPosts.Distinct());
+                        if (tagToPosts.TryGetValue(tag, out var tagPosts))
+                        {
+                            foreach (var tp in tagPosts)
+                            {
+                                seen.Add(tp);
+                            }
+                        }
                     }
-
+                    seen.Remove(post);
+                    if (seen.Count > 0)
+                    {
+                        var similarPosts = Random.Shared.GetItems(seen.ToArray(), Math.Min(maxItems, seen.Count));
+                        post.RecommendPostsByTag.AddRange(similarPosts);
+                    }
                 }
 
                 if (post.BlogSeries != null)

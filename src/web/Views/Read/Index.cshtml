@@ -1,4 +1,4 @@
-﻿@inject ISwanService _swanService
+@inject ISwanService _swanService
 @model IEnumerable<IGrouping<int, SwanRead>>
 @{
     Layout = "_LayoutPublic";
@@ -9,75 +9,73 @@
 }
 
 <div data-bs-spy="scroll" data-bs-target="#archiveIndex" data-bs-smooth-scroll="true">
-    @foreach (var item in Model)
+    @foreach (var year in Model.OrderByDescending(x => x.Key))
     {
-        <div class="pb-2 mb-2 pt-3 border-bottom">
-            <h5 class="ps-2 mb-3" id="year-@item.Key"><i class="bi bi-book"></i> @item.Key 年阅读 <span class="small text-muted">(@item.Count())</span></h5>
-            @foreach (var item2 in item)
-            {
-                var privateStype = item2.IsPublicToEveryOne() ? "" : "bg-warning-subtle";
-                <div class="mb-3 ps-2 pe-1 container-fluid @privateStype">
-                    <div class="row">
-                        <div class="col-md-2 text-truncate">
-                            <span class="small text-muted"><i class="bi bi-caret-right"></i> @item2.CreatedAt.ToCnDate(true)</span>
-                        </div>
-                        <div class="col-md-10 text-truncate">
-                            @if (!string.IsNullOrEmpty(item2.HtmlComment) || item2.BlogPosts.Any())
-                            {
-                                <a class="text-reset" role="button" href="javascript:;" onclick="showCommentModal(this)" data-comment-id="comment-@item2.Id">
-                                    <i class="bi bi-hash small text-muted"></i>@item2.BookName
-                                </a>
-                                <div class="d-none" id="comment-@item2.Id">
-                                    <div><i class="bi bi-book"></i> @item2.BookName</div>
-                                    <div>
-                                        @if (!string.IsNullOrEmpty(item2.HtmlComment))
-                                        {
-                                            @Html.Raw(item2.HtmlComment)
-                                        }
+        <div class="section-card">
+            <div class="section-card-header">
+                <h4 class="section-card-title" id="year-@year.Key"><i class="bi bi-book"></i> @year.Key</h4>
+                <span class="section-card-count">@year.Count() 本</span>
+            </div>
+            <div class="section-card-body">
+                @foreach (var book in year)
+                {
+                    var privateStyle = book.IsPublicToEveryOne() ? "" : "bg-warning-subtle";
+                    var hasContent = !string.IsNullOrEmpty(book.HtmlComment) || book.BlogPosts.Any();
 
-                                        @if (item2.BlogPosts.Any())
-                                        {
-                                            <div class="border border-secondary p-2 small">
-                                                <div class="mb-1">相关文章：</div>
-                                                <ul>
-                                                    @foreach (var post in item2.BlogPosts)
-                                                    {
-                                                        <li>
-                                                            <a href="@post.GetFullLink()" class="text-reset">@post.Title</a>
-                                                        </li>
-                                                    }
-                                                </ul>
-                                            </div>
-                                        }
-                                    </div>
-                                </div>
+                    <div class="read-row @privateStyle">
+                        <span class="read-row-date">@book.CreatedAt.ToCnDate(true)</span>
+
+                        <div class="read-row-main">
+                            @if (hasContent)
+                            {
+                                <a class="inline-expand" href="javascript:;" onclick="toggleInline(this)" data-target="book-@book.Id">
+                                    @book.BookName
+                                </a>
                             }
                             else
                             {
-                                <i class="bi bi-hash small text-muted"></i>@item2.BookName
+                                <span class="read-row-name">@book.BookName</span>
                             }
 
-                            @if (item2.Grade > 0)
+                            @if (book.Grade > 0)
                             {
-                                <i class="bi bi-hand-thumbs-up text-success"></i>
+                                <i class="bi bi-hand-thumbs-up read-grade-up" title="好评"></i>
                             }
-
-                            @if (item2.Grade < 0)
+                            else if (book.Grade < 0)
                             {
-                                <i class="bi bi-hand-thumbs-down text-dark"></i>
+                                <i class="bi bi-hand-thumbs-down read-grade-down" title="差评"></i>
                             }
-
-                            <span class="small text-muted fst-italic ms-3">
-                                @Html.Raw(item2.HtmlMetadata)
-                            </span>
                         </div>
+
+                        <span class="read-row-meta">@Html.Raw(book.HtmlMetadata)</span>
+
+                        @if (hasContent)
+                        {
+                            <div class="inline-expand-content" id="book-@book.Id">
+                                @if (!string.IsNullOrEmpty(book.HtmlComment))
+                                {
+                                    <div class="post read-comment">
+                                        @Html.Raw(book.HtmlComment)
+                                    </div>
+                                }
+                                @if (book.BlogPosts.Any())
+                                {
+                                    <div class="read-linked-posts">
+                                        <span class="read-linked-label">相关文章</span>
+                                        @foreach (var post in book.BlogPosts)
+                                        {
+                                            <a href="@post.GetFullLink()" class="read-article-link">@post.Title</a>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        }
                     </div>
-                </div>
-            }
+                }
+            </div>
         </div>
     }
 </div>
-
 
 @section Aside{
     <div class="card" id="archiveIndex">
@@ -87,9 +85,9 @@
             </span>
         </div>
         <div class="list-group">
-            @foreach (var item in Model)
+            @foreach (var year in Model.OrderByDescending(x => x.Key))
             {
-                <a href="#year-@item.Key" class="list-group-item list-group-action"><i class="bi bi-book"></i> @item.Key 年阅读</a>
+                <a href="#year-@year.Key" class="list-group-item list-group-action"><i class="bi bi-book"></i> @year.Key 年</a>
             }
         </div>
     </div>
@@ -98,25 +96,21 @@
 @section Script{
     <script>
         setActive(document.querySelector("#navbarRead"));
-        document.addEventListener('DOMContentLoaded', function (event) {
+        document.addEventListener('DOMContentLoaded', function () {
             anchors.options = {
                 placement: "right",
                 visible: "hover",
                 icon: "¶",
-                base: "/post/tag",
+                base: "/read",
                 class: "text-reset"
             };
             anchors.add("h4, h5");
         });
 
-        function showCommentModal(ele) {
-            let commentId = ele.dataset.commentId;
-            let commentDiv = document.querySelector(`#${commentId}`);
-            if (commentDiv) {
-                let titleHtml = commentDiv.querySelector("div:nth-child(1)").innerHTML;
-                let bodyHtml = commentDiv.querySelector("div:nth-child(2)").innerHTML;
-
-                showModalDialog(titleHtml, bodyHtml);
+        function toggleInline(el) {
+            var target = document.getElementById(el.dataset.target);
+            if (target) {
+                target.classList.toggle('open');
             }
         }
     </script>

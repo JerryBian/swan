@@ -1,4 +1,4 @@
-﻿@inject ISwanService _swanService
+@inject ISwanService _swanService
 @{
     Layout = "_LayoutPublic";
     ViewData["Title"] = "近期文章";
@@ -10,26 +10,33 @@
 <div>
     @foreach (var item in (await _swanService.FindAsync<SwanPost>(Context)).OrderByDescending(x => x.PublishDate).Take(9))
     {
-        var privateStype = item.IsPublicToEveryOne() ? "" : "bg-warning-subtle";
-        <div class="mb-3 border-bottom pt-1 pb-2 px-1 @privateStype">
+        var privateStyle = item.IsPublicToEveryOne() ? "" : "bg-warning-subtle";
+        <div class="post-list-item @privateStyle">
             @Html.Raw(item.HtmlMetadata1)
             <h5 class="large-title">
-                <a href="@item.GetFullLink()" class="text-decoration-none text-reset">@item.Title</a>
+                <a href="@item.GetFullLink()">@item.Title</a>
             </h5>
-
-            <div class="mt-3 mb-1 border-start border-dark-subtle ps-2 py-1">
+            <div class="post-excerpt">
                 @item.TextExcerpt
             </div>
-            <div class="mt-3">
-                @Html.Raw(item.HtmlMetadata2)
+            <div class="post-tags-row">
+                @if (item.BlogSeries != null)
+                {
+                    <a href="@item.BlogSeries.GetFullLink()" class="post-tag-pill">@item.BlogSeries.Name</a>
+                }
+                @foreach (var tag in item.BlogTags)
+                {
+                    <a href="@tag.GetFullLink()" class="post-tag-pill">@tag.Name</a>
+                }
+                <span class="post-hit-count">@item.PageStat.Hit 次阅读</span>
             </div>
         </div>
     }
 </div>
 
-<div class="text-start mb-2 mt-3">
-    <a href="/post/archive" class="font-monospace link-body-emphasis fst-italic">
-        <i class="bi bi-signpost small"></i>更多文章...
+<div class="text-center mt-4 mb-2">
+    <a href="/post/archive" class="more-link">
+        浏览全部文章 &rarr;
     </a>
 </div>
 

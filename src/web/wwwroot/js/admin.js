@@ -16,7 +16,26 @@
         uploadImage: true,
         imageMaxSize: 1024 * 1024 * 10,
         imageAccept: ["image/png", "image/jpeg", "application/pdf", "image/svg+xml", "image/bmp", "image/gif", "image/tiff", "image/webp"],
-        imageUploadEndpoint: "/admin/image-upload",
+        imageUploadFunction: function(file, onSuccess, onError) {
+            var formData = new FormData();
+            formData.append("image", file);
+            var csrfInput = document.querySelector('input[name="__RequestVerificationToken"]');
+            if (csrfInput) {
+                formData.append("__RequestVerificationToken", csrfInput.value);
+            }
+            window.fetch("/admin/image-upload", {
+                method: "POST",
+                body: formData
+            }).then(response => response.json()).then(result => {
+                if (result.data && result.data.filePath) {
+                    onSuccess(result.data.filePath);
+                } else {
+                    onError(result.error || "Upload failed");
+                }
+            }).catch(error => {
+                onError(error.message || "Upload failed");
+            });
+        },
         imagePathAbsolute: true,
         imageTexts: {
             sbInit: "拖拽或者从剪切板复制图片",
@@ -68,7 +87,22 @@ function submitRequest(url, option) {
     }
 
     const method = option.method ?? "POST";
-    const body = option.body ?? "";
+    var body = option.body ?? "";
+    // Append anti-forgery token for CSRF protection
+    var csrfForm = option.form || document.querySelector('#adminForm');
+    if (csrfForm) {
+        const csrfToken = csrfForm.querySelector('input[name="__RequestVerificationToken"]');
+        if (csrfToken) {
+            const tokenValue = csrfToken.value;
+            if (body instanceof FormData) {
+                body.append("__RequestVerificationToken", tokenValue);
+            } else if (typeof body === 'string' && body.length > 0) {
+                body += "&__RequestVerificationToken=" + encodeURIComponent(tokenValue);
+            } else {
+                body = "__RequestVerificationToken=" + encodeURIComponent(tokenValue);
+            }
+        }
+    }
     const formPostAction = function () {
         if (option.form) {
             if (option.form.classList.contains("was-validated")) {

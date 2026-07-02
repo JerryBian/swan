@@ -1,41 +1,79 @@
-﻿@inject ISwanService _swanService
+@inject ISwanService _swanService
 @{
     Layout = "_LayoutAdmin";
     var pages = await _swanService.FindAsync<SwanPage>(true);
-    ViewData["Title"] = "View Page Stats :: Admin";
+    var allPosts = await _swanService.FindAsync<SwanPost>(true);
+
+    // Only show user-facing paths — filter out internal/system routes
+    var publicPages = pages
+        .Where(p => !string.IsNullOrEmpty(p.Path)
+            && !p.Path.StartsWith("/admin", StringComparison.OrdinalIgnoreCase)
+            && !p.Path.StartsWith("/login", StringComparison.OrdinalIgnoreCase)
+            && !p.Path.StartsWith("/logout", StringComparison.OrdinalIgnoreCase)
+            && !p.Path.StartsWith("/Home", StringComparison.OrdinalIgnoreCase)
+            && !p.Path.StartsWith("/Account", StringComparison.OrdinalIgnoreCase)
+            && p.Path != "/"
+            && p.Path != "/sitemap"
+            && p.Path != "/sitemap.xml")
+        .OrderByDescending(x => x.Hit)
+        .ToList();
+
+    ViewData["Title"] = "访问统计 :: 管理";
 }
 
-<div class="my-4 py-3 rounded-1 shadow-sm bg-white container-fluid">
-    @foreach (var item in pages.OrderByDescending(x => x.Hit))
+<div class="small text-muted mb-3">
+    @publicPages.Count 个页面，共 @publicPages.Sum(x => x.Hit) 次访问
+</div>
+
+<div class="admin-list-card">
+    @{
+        var knownPages = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "/read", "/read/", "/post", "/post/", "/post/archive", "/post/tag", "/post/series", "/post/rss"
+        };
+    }
+    @foreach (var item in publicPages)
     {
-        <div class="row mb-2 border-bottom pb-2">
-            <div class="col-10 font-monospace text-truncate">
-                <a href="@item.Path" class="text-reset text-decoration-none"><i class="bi bi-caret-right-fill"></i> @item.Path</a>
-            </div>
-            <div class="col-2">
-                <span class="badge rounded-pill text-bg-info">@item.Hit</span>
+        var post = allPosts.FirstOrDefault(p => string.Equals(p.GetFullLink(), item.Path, StringComparison.OrdinalIgnoreCase));
+        string statusLabel = null;
+        string rowClass = "";
+        if (post == null && !knownPages.Contains(item.Path))
+        {
+            statusLabel = "已移除";
+            rowClass = "stat-orphan-row";
+        }
+        else if (post != null && post.IsDeleted)
+        {
+            statusLabel = "已删除";
+            rowClass = "admin-item-deleted";
+        }
+        else if (post != null && !post.IsPublicToEveryOne())
+        {
+            statusLabel = "未发布";
+            rowClass = "bg-warning-subtle";
+        }
+
+        <div class="admin-list-item @rowClass">
+            <div class="item-main w-100">
+                <div class="d-flex align-items-center gap-2">
+                    <a href="@item.Path" class="font-monospace small text-truncate @(post != null && post.IsDeleted ? "text-decoration-line-through" : "")" style="flex:1;min-width:0;">
+                        @item.Path
+                    </a>
+                    @if (statusLabel != null)
+                    {
+                        <span class="stat-badge flex-shrink-0 @(post == null ? "stat-orphan" : post.IsDeleted ? "stat-deleted" : "stat-private")">@statusLabel</span>
+                    }
+                    <span class="badge rounded-pill text-bg-secondary flex-shrink-0">@item.Hit</span>
+                </div>
+                @if (post != null)
+                {
+                    <div class="item-meta mt-1">@post.Title</div>
+                }
             </div>
         </div>
     }
 </div>
 
-
 @section AdminLegend {
-    <div class="row">
-        <div class="col-6 text-truncate">
-            <span><i class="bi bi-list"></i> Page stats</span>
-        </div>
-        <div class="col-6 text-end">
-            
-        </div>
-    </div>
-    <div class="small text-muted font-monospace">
-        @pages.Count pages, @pages.Sum(x => x.Hit) hits in total.
-    </div>
-}
-
-@section Script{
-    <script>
-        setActive(document.querySelectorAll("[data-nav-id=navHeading_stats]"));
-    </script>
+    <span>页面统计</span>
 }
