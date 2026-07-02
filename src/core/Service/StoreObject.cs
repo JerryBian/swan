@@ -211,9 +211,13 @@ namespace Swan.Core.Service
 
                 if (post.BlogSeries != null)
                 {
-                    post.RecommendPostsBySeries.AddRange(post.BlogSeries.BlogPosts.Where(x => x.PublishDate < post.PublishDate).OrderBy(x => x.PublishDate).Take(maxItems / 2));
+                    post.RecommendPostsBySeries.AddRange(post.BlogSeries.BlogPosts
+                        .Where(x => x.PublishDate < post.PublishDate && !post.RecommendPostsByTag.Contains(x))
+                        .OrderBy(x => x.PublishDate).Take(maxItems / 2));
                     var remainingItems = maxItems - 1 - post.RecommendPostsByTag.Count();
-                    post.RecommendPostsBySeries.AddRange(post.BlogSeries.BlogPosts.Where(x => x.PublishDate > post.PublishDate).OrderByDescending(x => x.PublishDate).Take(remainingItems));
+                    post.RecommendPostsBySeries.AddRange(post.BlogSeries.BlogPosts
+                        .Where(x => x.PublishDate > post.PublishDate && !post.RecommendPostsByTag.Contains(x))
+                        .OrderByDescending(x => x.PublishDate).Take(remainingItems));
                     post.RecommendPostsBySeries.Add(post);
 
                 }
