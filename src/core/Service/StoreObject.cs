@@ -205,7 +205,7 @@ namespace Swan.Core.Service
                     if (seen.Count > 0)
                     {
                         var similarPosts = Random.Shared.GetItems(seen.ToArray(), Math.Min(maxItems, seen.Count));
-                        post.RecommendPostsByTag.AddRange(similarPosts);
+                        post.RecommendPostsByTag.AddRange(similarPosts.DistinctBy(x => x.Id));
                     }
                 }
 
@@ -213,11 +213,13 @@ namespace Swan.Core.Service
                 {
                     post.RecommendPostsBySeries.AddRange(post.BlogSeries.BlogPosts
                         .Where(x => x.PublishDate < post.PublishDate && !post.RecommendPostsByTag.Contains(x))
-                        .OrderBy(x => x.PublishDate).Take(maxItems / 2));
+                        .OrderBy(x => x.PublishDate).Take(maxItems / 2)
+                        .DistinctBy(x => x.Id));
                     var remainingItems = maxItems - 1 - post.RecommendPostsByTag.Count();
                     post.RecommendPostsBySeries.AddRange(post.BlogSeries.BlogPosts
                         .Where(x => x.PublishDate > post.PublishDate && !post.RecommendPostsByTag.Contains(x))
-                        .OrderByDescending(x => x.PublishDate).Take(remainingItems));
+                        .OrderByDescending(x => x.PublishDate).Take(remainingItems)
+                        .DistinctBy(x => x.Id));
                     post.RecommendPostsBySeries.Add(post);
 
                 }
