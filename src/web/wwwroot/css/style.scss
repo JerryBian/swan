@@ -461,7 +461,7 @@ $popover-max-width: 480px;
         padding: 1rem;
     }
     .section-card-title {
-        font-size: 1rem;
+        font-size: 1.05rem;
     }
     .section-item {
         flex-direction: column;
@@ -469,11 +469,11 @@ $popover-max-width: 480px;
         padding: 0.45rem 0;
     }
     .section-item-date {
-        font-size: 0.75rem;
+        font-size: 0.8rem;
         min-width: auto;
     }
     .section-item-link {
-        font-size: 0.88rem;
+        font-size: 0.92rem;
         white-space: normal;
     }
     .read-row {
@@ -482,12 +482,12 @@ $popover-max-width: 480px;
         padding: 0.5rem 0;
     }
     .read-row-date {
-        font-size: 0.73rem;
+        font-size: 0.78rem;
         min-width: auto;
     }
     .read-row-meta {
         margin-left: 0;
-        font-size: 0.75rem;
+        font-size: 0.78rem;
     }
 }
 
@@ -510,34 +510,38 @@ footer a {
         box-shadow: none !important;
     }
     .post-list-item {
-        padding: 1rem;
-        border-left: none;
-        border-right: none;
+        padding: 1rem 0.75rem;
+        border: none;
+        border-bottom: 1px solid var(--swan-border-light);
         border-radius: 0;
         margin-left: -0.75rem;
         margin-right: -0.75rem;
+        margin-bottom: 0;
+    }
+    .post-list-item:last-child {
+        border-bottom: none;
     }
     .post-list-item .large-title {
-        font-size: 1.05rem;
+        font-size: 1.1rem;
     }
     .post-list-item .post-excerpt {
-        font-size: 0.85rem;
+        font-size: 0.9rem;
     }
     .post-meta-row {
-        font-size: 0.78rem;
+        font-size: 0.82rem;
     }
     .post-tags-row {
         gap: 0.25rem;
     }
     .post-tag-pill {
-        font-size: 0.72rem;
+        font-size: 0.75rem;
         padding: 0.1rem 0.45rem;
     }
     .post {
-        font-size: 1rem;
+        font-size: 1.05rem;
     }
     .post h2 {
-        font-size: 1.2rem;
+        font-size: 1.3rem;
     }
     .post img {
         margin: 1rem auto;
@@ -547,7 +551,7 @@ footer a {
         margin-right: -0.75rem;
     }
     .license-box {
-        font-size: 0.8rem;
+        font-size: 0.85rem;
         padding: 0.6rem 0.75rem;
     }
     .inline-expand-content {
@@ -556,7 +560,7 @@ footer a {
     }
     .more-link {
         padding: 0.5rem 1.5rem;
-        font-size: 0.85rem;
+        font-size: 0.9rem;
     }
     .navbar-nav {
         padding-top: 0.5rem;
@@ -566,6 +570,6 @@ footer a {
         padding: 0.5rem 0;
     }
     footer {
-        font-size: 0.78rem;
+        font-size: 0.82rem;
     }
 }

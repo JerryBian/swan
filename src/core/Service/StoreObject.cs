@@ -187,7 +187,9 @@ namespace Swan.Core.Service
 
             foreach (var post in Posts)
             {
-                const int maxItems = 7;
+                const int maxTagItems = 8;
+                const int maxSeriesItems = 6;
+
                 if (post.BlogTags.Any())
                 {
                     var seen = new HashSet<SwanPost> { post };
@@ -204,24 +206,25 @@ namespace Swan.Core.Service
                     seen.Remove(post);
                     if (seen.Count > 0)
                     {
-                        var similarPosts = Random.Shared.GetItems(seen.ToArray(), Math.Min(maxItems, seen.Count));
+                        var similarPosts = Random.Shared.GetItems(seen.ToArray(), Math.Min(maxTagItems, seen.Count));
                         post.RecommendPostsByTag.AddRange(similarPosts.DistinctBy(x => x.Id));
                     }
                 }
 
                 if (post.BlogSeries != null)
                 {
+                    // Older posts from same series (up to half budget)
                     post.RecommendPostsBySeries.AddRange(post.BlogSeries.BlogPosts
                         .Where(x => x.PublishDate < post.PublishDate && !post.RecommendPostsByTag.Contains(x))
-                        .OrderBy(x => x.PublishDate).Take(maxItems / 2)
+                        .OrderByDescending(x => x.PublishDate).Take(maxSeriesItems / 2)
                         .DistinctBy(x => x.Id));
-                    var remainingItems = maxItems - 1 - post.RecommendPostsByTag.Count();
+                    // Fill remaining budget with newer posts
+                    var taken = post.RecommendPostsBySeries.Count();
                     post.RecommendPostsBySeries.AddRange(post.BlogSeries.BlogPosts
                         .Where(x => x.PublishDate > post.PublishDate && !post.RecommendPostsByTag.Contains(x))
-                        .OrderByDescending(x => x.PublishDate).Take(remainingItems)
+                        .OrderBy(x => x.PublishDate).Take(maxSeriesItems - taken)
                         .DistinctBy(x => x.Id));
                     post.RecommendPostsBySeries.Add(post);
-
                 }
             }
 

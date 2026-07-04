@@ -26,6 +26,12 @@ namespace Swan.Core.Model
 
         public virtual bool IsPublicToEveryOne() => IsPublic;
 
+        /// <summary>
+        /// When true, UpdateAsync preserves the original CreatedAt (default for most entities).
+        /// Override to false to allow editing CreatedAt from forms.
+        /// </summary>
+        public virtual bool ShouldPreserveCreatedAt() => true;
+
         public virtual string GetFullLink() => string.Empty;
     }
 }

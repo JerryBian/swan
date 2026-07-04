@@ -341,6 +341,26 @@ namespace Swan.Web.Controllers
             return Json(res);
         }
 
+        [HttpGet("/admin/read-get")]
+        public async Task<IActionResult> GetRead([FromQuery] string id)
+        {
+            ApiResponse<SwanRead> res = new();
+            try
+            {
+                var allReads = await _swanService.FindAsync<SwanRead>(true);
+                var readItem = allReads.Find(x => StringHelper.EqualsIgoreCase(id, x.Id));
+                res.Content = readItem;
+            }
+            catch (Exception ex)
+            {
+                res.IsOk = false;
+                res.Message = ex.Message;
+                _logger.LogError(ex, $"Get read {id} failed.");
+            }
+
+            return Json(res);
+        }
+
         [HttpGet("/admin/read-edit/{id}")]
         public async Task<IActionResult> EditReadItem([FromRoute] string id)
         {
@@ -356,6 +376,7 @@ namespace Swan.Web.Controllers
             try
             {
                 readItem.IsPublic = Request.Form["isPublic"] == "on";
+                readItem.IsDeleted = Request.Form["isDeleted"] == "on";
 
                 await _swanService.UpdateAsync(readItem);
                 res.RedirectTo = readItem.GetFullLink();

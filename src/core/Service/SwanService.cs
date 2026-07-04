@@ -76,7 +76,7 @@ namespace Swan.Core.Service
                 var obj = await GetStoreObjectAsync(true);
                 var items = obj.Get<T>();
 
-                item.CreatedAt = item.LastUpdatedAt = DateTime.Now;
+                item.LastUpdatedAt = DateTime.Now;
                 Add(items, item);
                 var content = JsonHelper.Serialize(items.OrderByDescending(x => x.CreatedAt));
                 await _gitStore.InsertOrUpdateAsync(item.GetGitStorePath(), content);
@@ -104,7 +104,10 @@ namespace Swan.Core.Service
 
                 var newItems = new List<T>(items);
                 newItems.Remove(oldObj);
-                item.CreatedAt = oldObj.CreatedAt;
+                if (oldObj.ShouldPreserveCreatedAt())
+                {
+                    item.CreatedAt = oldObj.CreatedAt;
+                }
                 Add(newItems, item);
                 var content = JsonHelper.Serialize(newItems.OrderByDescending(x => x.CreatedAt));
                 await _gitStore.InsertOrUpdateAsync(item.GetGitStorePath(), content);

@@ -23,6 +23,8 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables("ENV_");
 builder.WebHost.CaptureStartupErrors(true);
 builder.WebHost.UseShutdownTimeout(TimeSpan.FromMinutes(5));
+// Suppress Kestrel Server header to avoid revealing .NET stack
+builder.WebHost.ConfigureKestrel(options => options.AddServerHeader = false);
 
 // Add services to the container.
 builder.Services.AddOptions<SwanOption>().BindConfiguration("swan");
@@ -56,7 +58,7 @@ builder.Services.AddHostedService<PageHitHostedService>();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
             {
-                options.Cookie.Name = $".APP.{builder.Environment.EnvironmentName}";
+                options.Cookie.Name = ".SWAN.AUTH";
                 options.ExpireTimeSpan = TimeSpan.FromDays(7);
                 options.Cookie.HttpOnly = true;
                 options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Strict;
@@ -85,6 +87,19 @@ WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.UseForwardedHeaders();
+
+// Security headers — suppress tech fingerprint and prevent common attacks
+app.Use(async (context, next) =>
+{
+    var headers = context.Response.Headers;
+    headers["X-Content-Type-Options"] = "nosniff";
+    headers["X-Frame-Options"] = "DENY";
+    headers["Referrer-Policy"] = "no-referrer";
+    headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()";
+    // Strip Server header (belt-and-suspenders with Kestrel config above)
+    headers.Remove("Server");
+    await next();
+});
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler(exceptionHandlerApp =>

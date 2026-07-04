@@ -29,6 +29,10 @@
             <div class="form-label fw-semibold mb-3">阅读设置</div>
 
             <div class="mb-3">
+                <label for="createdAt" class="form-label">阅读日期</label>
+                <input type="date" class="form-control form-control-sm" id="createdAt" name="createdAt" value="@DateTime.Today.ToDate()">
+            </div>
+            <div class="mb-3">
                 <label for="authorCountry" class="form-label">作者国籍</label>
                 <input type="text" class="form-control form-control-sm" id="authorCountry" name="authorCountry" placeholder="可选">
             </div>

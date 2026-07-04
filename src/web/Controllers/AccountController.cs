@@ -77,7 +77,7 @@ namespace Swan.Web.Controllers
             }
 
             _logger.LogWarning(
-                $"Login failed. User Name = {userName}, Password = {password}. IP: {ip}. Headers: {string.Join(", ", Request.Headers.Select(x => $"{x.Key} -> {x.Value}"))}");
+                $"Login failed. User = {userName}, IP = {ip}. Headers: {string.Join(", ", Request.Headers.Select(x => $"{x.Key} -> {x.Value}"))}");
             await _swanStore.AddBlacklistAsync(ip);
             return Redirect("/");
         }

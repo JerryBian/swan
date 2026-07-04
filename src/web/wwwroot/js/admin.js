@@ -95,9 +95,17 @@ function submitRequest(url, option) {
         if (csrfToken) {
             const tokenValue = csrfToken.value;
             if (body instanceof FormData) {
-                body.append("__RequestVerificationToken", tokenValue);
+                if (!body.has("__RequestVerificationToken")) {
+                    body.append("__RequestVerificationToken", tokenValue);
+                }
+            } else if (body instanceof URLSearchParams) {
+                if (!body.has("__RequestVerificationToken")) {
+                    body.append("__RequestVerificationToken", tokenValue);
+                }
             } else if (typeof body === 'string' && body.length > 0) {
-                body += "&__RequestVerificationToken=" + encodeURIComponent(tokenValue);
+                if (!body.includes("__RequestVerificationToken")) {
+                    body += "&__RequestVerificationToken=" + encodeURIComponent(tokenValue);
+                }
             } else {
                 body = "__RequestVerificationToken=" + encodeURIComponent(tokenValue);
             }

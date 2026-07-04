@@ -25,9 +25,7 @@
     @Html.Raw(Model.HtmlMetadata2)
 
     <div class="license-box">
-        <i class="bi bi-exclamation-circle"></i>
-        本文遵循 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh-hans">署名-非商业性使用-禁止演绎 4.0 国际</a> 协议，
-        可以通过 <a href="mailto:@_option.Value.ContactEmail">邮件</a> 联系我。
+        &copy; @Model.PublishDate.Year @_option.Value.Title. 原创文章，未经许可请勿转载、摘编或镜像。合作请 <a href="mailto:@_option.Value.ContactEmail">邮件联系</a>。
     </div>
 </div>
 

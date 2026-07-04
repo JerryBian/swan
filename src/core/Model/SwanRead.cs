@@ -27,6 +27,9 @@ namespace Swan.Core.Model
         [JsonPropertyName("posts")]
         public List<string> Posts { get; set; } = [];
 
+        [JsonPropertyName("isDeleted")]
+        public bool IsDeleted { get; set; } = false;
+
         #endregion
 
         #region Extension
@@ -43,6 +46,10 @@ namespace Swan.Core.Model
         #endregion
 
         public override string GetGitStorePath() => "obj/read.json";
+
+        public override bool IsPublicToEveryOne() => base.IsPublicToEveryOne() && !IsDeleted;
+
+        public override bool ShouldPreserveCreatedAt() => false;
 
         public override string GetFullLink() => $"/read#link-{Id}";
     }
