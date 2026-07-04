@@ -1,6 +1,7 @@
 ﻿using DotNext.Threading;
 using GitStoreDotnet;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.Extensions.Caching.Memory;
 using Swan.Core.Extension;
 using Swan.Core.Helper;
@@ -15,13 +16,15 @@ namespace Swan.Core.Service
     {
         private readonly IGitStore _gitStore;
         private readonly IMemoryCache _memoryCache;
+        private readonly IOutputCacheStore _outputCacheStore;
         private readonly AsyncReaderWriterLock _asyncReaderWriterLock;
         private readonly ConcurrentDictionary<string, object> _cacheKeys;
 
-        public SwanService(IGitStore gitStore, IMemoryCache memoryCache)
+        public SwanService(IGitStore gitStore, IMemoryCache memoryCache, IOutputCacheStore outputCacheStore)
         {
             _gitStore = gitStore;
             _memoryCache = memoryCache;
+            _outputCacheStore = outputCacheStore;
             _asyncReaderWriterLock = new AsyncReaderWriterLock();
             _cacheKeys = new ConcurrentDictionary<string, object>();
         }
@@ -81,6 +84,7 @@ namespace Swan.Core.Service
                 var content = JsonHelper.Serialize(items.OrderByDescending(x => x.CreatedAt));
                 await _gitStore.InsertOrUpdateAsync(item.GetGitStorePath(), content);
                 ExpireCache();
+                ExpireOutputCache();
             }
             finally
             {
@@ -112,6 +116,7 @@ namespace Swan.Core.Service
                 var content = JsonHelper.Serialize(newItems.OrderByDescending(x => x.CreatedAt));
                 await _gitStore.InsertOrUpdateAsync(item.GetGitStorePath(), content);
                 ExpireCache();
+                ExpireOutputCache();
             }
             finally
             {
@@ -139,6 +144,7 @@ namespace Swan.Core.Service
                 var content = JsonHelper.Serialize(newItems.OrderByDescending(x => x.CreatedAt));
                 await _gitStore.InsertOrUpdateAsync(oldObj.GetGitStorePath(), content);
                 ExpireCache();
+                ExpireOutputCache();
             }
             finally
             {
@@ -192,6 +198,11 @@ namespace Swan.Core.Service
             {
                 _memoryCache.Remove(item);
             }
+        }
+
+        private void ExpireOutputCache()
+        {
+            _outputCacheStore.EvictByTagAsync("obj-all", default).AsTask().Wait();
         }
 
         public async Task<string> UploadFileAsync(string fileName, byte[] binary)
