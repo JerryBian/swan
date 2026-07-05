@@ -19,7 +19,7 @@ namespace Swan.Core.Store
             var cacheKey = $"core.ss.page.hit.{url}.{ip}";
             await _cache.GetOrCreateAsync(cacheKey, async entry =>
             {
-                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1);
+                entry.SlidingExpiration = TimeSpan.FromMinutes(10);
                 _pageHitQueue.Enqueue(url);
                 return await Task.FromResult(true);
             });
