@@ -408,6 +408,7 @@ $popover-max-width: 480px;
     align-items: center;
     gap: 0.35rem;
     min-width: 0;
+    flex: 1;
 }
 .read-row-name,
 .read-row .inline-expand {
@@ -418,9 +419,7 @@ $popover-max-width: 480px;
     color: var(--swan-text-muted);
     font-style: italic;
     margin-left: auto;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    flex-shrink: 0;
 }
 .read-grade-up {
     color: #6b8a6a;

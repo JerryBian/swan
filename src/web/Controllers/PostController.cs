@@ -63,12 +63,12 @@ namespace Swan.Web.Controllers
         {
             SyndicationFeed feed = new(_option.Title, _option.Description,
                     new Uri($"{_option.BaseUrl}/post/rss"),
-                    _option.Title, DateTimeOffset.UtcNow)
+                    "swan", DateTimeOffset.UtcNow)
             {
                 Copyright = new TextSyndicationContent(
-                        $"&#169; {DateTime.Now.Year} {_option.Title}")
+                        $"&#x26;amp;#169; {DateTime.Now.Year} {_option.Title}")
             };
-            feed.Authors.Add(new SyndicationPerson(null,
+            feed.Authors.Add(new SyndicationPerson(_option.ContactEmail,
                 _option.Title,
                 _option.BaseUrl));
             feed.BaseUri = new Uri(_option.BaseUrl);

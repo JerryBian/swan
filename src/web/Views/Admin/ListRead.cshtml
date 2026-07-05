@@ -31,7 +31,6 @@
             </div>
             <div class="item-actions">
                 <a class="btn btn-outline-secondary btn-sm" href="/admin/read-edit/@item.Id">编辑</a>
-                <button class="btn btn-outline-danger btn-sm btn-delete-read" data-id="@item.Id" data-name="@item.BookName">删除</button>
             </div>
         </div>
     }
@@ -51,16 +50,5 @@
         document.querySelector("#searchBtn").addEventListener("click", function(e) { e.preventDefault(); doSearch(); });
         filterEl.addEventListener("change", doSearch);
         doSearch();
-
-        document.querySelectorAll(".btn-delete-read").forEach(function(btn) {
-            btn.addEventListener("click", function(e) {
-                e.preventDefault();
-                var id = btn.getAttribute("data-id");
-                var name = btn.getAttribute("data-name");
-                if (confirm("确定要删除《" + name + "》吗？此操作不可撤销。")) {
-                    submitRequest("/admin/read-delete/" + id, { method: "DELETE" });
-                }
-            });
-        });
     </script>
 }
