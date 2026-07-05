@@ -3,9 +3,11 @@ using GitStoreDotnet;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 using Swan.Core.Extension;
 using Swan.Core.Helper;
 using Swan.Core.Model;
+using Swan.Core.Option;
 using System.Collections.Concurrent;
 using System.Reflection;
 using System.Text.Json.Serialization;
@@ -17,14 +19,16 @@ namespace Swan.Core.Service
         private readonly IGitStore _gitStore;
         private readonly IMemoryCache _memoryCache;
         private readonly IOutputCacheStore _outputCacheStore;
+        private readonly SwanOption _option;
         private readonly AsyncReaderWriterLock _asyncReaderWriterLock;
         private readonly ConcurrentDictionary<string, object> _cacheKeys;
 
-        public SwanService(IGitStore gitStore, IMemoryCache memoryCache, IOutputCacheStore outputCacheStore)
+        public SwanService(IGitStore gitStore, IMemoryCache memoryCache, IOutputCacheStore outputCacheStore, IOptions<SwanOption> options)
         {
             _gitStore = gitStore;
             _memoryCache = memoryCache;
             _outputCacheStore = outputCacheStore;
+            _option = options.Value;
             _asyncReaderWriterLock = new AsyncReaderWriterLock();
             _cacheKeys = new ConcurrentDictionary<string, object>();
         }
@@ -85,6 +89,7 @@ namespace Swan.Core.Service
                 await _gitStore.InsertOrUpdateAsync(item.GetGitStorePath(), content);
                 ExpireCache();
                 ExpireOutputCache();
+                await PushToRemoteAsync();
             }
             finally
             {
@@ -117,6 +122,7 @@ namespace Swan.Core.Service
                 await _gitStore.InsertOrUpdateAsync(item.GetGitStorePath(), content);
                 ExpireCache();
                 ExpireOutputCache();
+                await PushToRemoteAsync();
             }
             finally
             {
@@ -145,6 +151,7 @@ namespace Swan.Core.Service
                 await _gitStore.InsertOrUpdateAsync(oldObj.GetGitStorePath(), content);
                 ExpireCache();
                 ExpireOutputCache();
+                await PushToRemoteAsync();
             }
             finally
             {
@@ -203,6 +210,14 @@ namespace Swan.Core.Service
         private void ExpireOutputCache()
         {
             _outputCacheStore.EvictByTagAsync("obj-all", default).AsTask().Wait();
+        }
+
+        private async Task PushToRemoteAsync()
+        {
+            if (!_option.SkipGitOperation)
+            {
+                await _gitStore.PushToRemoteAsync("Data change");
+            }
         }
 
         public async Task<string> UploadFileAsync(string fileName, byte[] binary)

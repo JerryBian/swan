@@ -87,7 +87,7 @@
         <div class="list-group">
             @foreach (var year in Model.OrderByDescending(x => x.Key))
             {
-                <a href="#year-@year.Key" class="list-group-item list-group-action"><i class="bi bi-book"></i> @year.Key 年</a>
+                <a href="#year-@year.Key" class="list-group-item list-group-item-action"><i class="bi bi-book"></i> @year.Key 年</a>
             }
         </div>
     </div>

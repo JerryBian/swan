@@ -8473,6 +8473,17 @@ a {
   margin-top: 1.8rem;
   display: block;
 }
+.post table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-collapse: collapse;
+}
+.post th, .post td {
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--swan-border);
+}
 .post li {
   margin-bottom: 0.7rem;
 }
